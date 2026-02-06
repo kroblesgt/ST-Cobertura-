@@ -35,4 +35,219 @@
         
         .badge { padding:6px 12px; border-radius:20px; color:white; font-size:11px; font-weight:bold; text-transform: uppercase; display: inline-block; }
         .bg-green { background: var(--success); }
-        .bg
+        .bg-red { background: var(--danger); }
+        .bg-yellow { background: var(--warning); color: #000; }
+        .bg-gray { background:#777; }
+        
+        .card { border:1px solid #e1e4e8; padding:15px; border-radius:10px; margin-bottom:15px; background:#fafafa; }
+        #loader { font-size: 13px; color: #666; font-style: italic; }
+        .logout-btn { background: #e74c3c; width: auto; padding: 5px 15px; font-size: 12px; position: absolute; right: 0; top: 0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="title-row">Sistema de Cobertura Distelsa</div>
+        <div id="loader">Conectando con Google Sheets...</div>
+        <button id="btnLogout" class="hidden logout-btn" onclick="location.reload()">Cerrar Sesión</button>
+    </div>
+
+    <div id="loginPanel" class="card" style="max-width: 400px; margin: auto;">
+        <h3 style="text-align:center;">Ingreso de Personal</h3>
+        <input id="usuario" placeholder="Usuario" type="text">
+        <input id="password" type="password" placeholder="Contraseña" onkeyup="if(event.keyCode===13) loginSistema()">
+        <button id="btnLogin" onclick="loginSistema()">Ingresar</button>
+    </div>
+
+    <div id="appPanel" class="hidden">
+        <div class="search-card">
+            <label style="font-size: 14px; color: var(--primary); font-weight: bold;">🔍 BUSCADOR EN TIEMPO REAL:</label>
+            <input id="busqueda" placeholder="Escribe municipio, colonia, zona o palabra clave..." oninput="buscarTiempoReal()">
+            <div id="contador">Cargando base de datos...</div>
+        </div>
+
+        <div class="table-container">
+            <table id="tabla">
+                <thead>
+                    <tr>
+                        <th>Municipio</th>
+                        <th>Nombre / Colonia</th>
+                        <th>Zona</th>
+                        <th>Referencia</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div id="adminPanel" class="card" style="display:none; margin-top: 40px; border-top: 4px solid var(--primary);">
+            <h3>⚙️ Gestión de Usuarios (Admin)</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                <input id="nuevoUser" placeholder="Nuevo Usuario">
+                <input id="nuevoPass" placeholder="Contraseña">
+                <select id="nuevoRol">
+                    <option value="agente">Rol: Agente</option>
+                    <option value="admin">Rol: Administrador</option>
+                </select>
+            </div>
+            <button id="btnCrear" onclick="crearUsuario()">Registrar en Base de Datos</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// --- NUEVO LINK ACTUALIZADO ---
+const API_URL = "https://script.google.com/macros/s/AKfycbwzOlJDVp6Xst-L8sKmvN_VnwIh6g4HFrjccXlFpBom3SvTlA3fhxf69tW9cYjd35aG/exec";
+
+let USUARIOS_DATA = [];
+let COBERTURA_DATA = [];
+let cargando = false;
+
+function rowsToObjects(rows){
+    if(!rows || rows.length < 1) return [];
+    const headers = rows[0];
+    return rows.slice(1).map(r => {
+        let o = {};
+        headers.forEach((h, i) => o[h] = r[i]);
+        return o;
+    });
+}
+
+async function cargarDatos(){
+    cargando = true;
+    document.getElementById("loader").innerText = "Sincronizando con la nube...";
+    try {
+        const r = await fetch(API_URL);
+        const data = await r.json();
+        
+        if(data.error) throw new Error(data.error);
+
+        USUARIOS_DATA = rowsToObjects(data.usuarios);
+        COBERTURA_DATA = rowsToObjects(data.cobertura);
+        
+        renderTabla(COBERTURA_DATA);
+        document.getElementById("loader").innerText = "● Base de datos actualizada";
+        document.getElementById("contador").innerText = `Total de registros: ${COBERTURA_DATA.length}`;
+        cargando = false;
+    } catch (e) {
+        console.error(e);
+        document.getElementById("loader").innerText = "❌ Error de conexión: Revisa el Script o permisos.";
+        document.getElementById("contador").innerText = "Error al cargar datos.";
+        cargando = false;
+    }
+}
+
+async function loginSistema(){
+    const u = document.getElementById("usuario").value.trim().toLowerCase();
+    const p = document.getElementById("password").value.trim();
+    
+    if (cargando && USUARIOS_DATA.length === 0) {
+        alert("Aún estamos descargando los datos, espera un segundo...");
+        return;
+    }
+
+    const user = USUARIOS_DATA.find(x => 
+        String(x.usuario).toLowerCase() === u && String(x.password) === p
+    );
+
+    if(!user){
+        alert("Usuario o contraseña incorrectos");
+        return;
+    }
+
+    // Mostrar App
+    document.getElementById("loginPanel").classList.add("hidden");
+    document.getElementById("appPanel").classList.remove("hidden");
+    document.getElementById("btnLogout").classList.remove("hidden");
+    
+    if(String(user.rol).toLowerCase() === "admin") {
+        document.getElementById("adminPanel").style.display = "block";
+    }
+}
+
+function buscarTiempoReal() {
+    const q = document.getElementById("busqueda").value.toLowerCase().trim();
+    const cont = document.getElementById("contador");
+
+    if (!q) {
+        renderTabla(COBERTURA_DATA);
+        cont.innerText = `Total de registros: ${COBERTURA_DATA.length}`;
+        return;
+    }
+
+    const terminos = q.split(" ");
+    const filtrados = COBERTURA_DATA.filter(r => {
+        const textoFila = `${r.Municipio} ${r.Nombre} ${r.Zona} ${r.Referencia}`.toLowerCase();
+        return terminos.every(t => textoFila.includes(t));
+    });
+
+    renderTabla(filtrados);
+    cont.innerText = `Encontrados: ${filtrados.length} resultados`;
+}
+
+function renderTabla(data){
+    const tb = document.querySelector("#tabla tbody");
+    tb.innerHTML = "";
+    
+    if(data.length === 0) {
+        tb.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:20px;'>No se encontraron resultados</td></tr>";
+        return;
+    }
+
+    const frag = document.createDocumentFragment();
+    data.forEach(r => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${r.Municipio ?? "-"}</td>
+            <td><strong>${r.Nombre ?? "-"}</strong></td>
+            <td>${r.Zona ?? "-"}</td>
+            <td style="font-size:12px; color:#555;">${r.Referencia ?? ""}</td>
+            <td>${badgeCobertura(r.Cobertura)}</td>
+        `;
+        frag.appendChild(tr);
+    });
+    tb.appendChild(frag);
+}
+
+function badgeCobertura(v){
+    if(!v) return "";
+    const t = String(v).toLowerCase();
+    if(t.includes("no") || t.includes("sin")) return `<span class="badge bg-red">Sin Cobertura</span>`;
+    if(t.includes("consultar") || t.includes("duda")) return `<span class="badge bg-yellow">Consultar</span>`;
+    if(t.includes("si") || t.includes("con") || t.includes("cobertura")) return `<span class="badge bg-green">Con Cobertura</span>`;
+    return `<span class="badge bg-gray">${v}</span>`;
+}
+
+async function crearUsuario(){
+    const u = document.getElementById("nuevoUser").value.trim();
+    const p = document.getElementById("nuevoPass").value.trim();
+    const r = document.getElementById("nuevoRol").value;
+
+    if(!u || !p) return alert("Completa los datos");
+
+    const btn = document.getElementById("btnCrear");
+    btn.disabled = true;
+    btn.innerText = "Guardando...";
+
+    try {
+        await fetch(API_URL, {
+            method: "POST",
+            mode: "no-cors",
+            body: JSON.stringify({ usuario: u, password: p, rol: r })
+        });
+        alert("Usuario enviado. Se actualizará en breve.");
+        location.reload(); 
+    } catch (e) {
+        alert("Error al guardar");
+        btn.disabled = false;
+        btn.innerText = "Registrar en Base de Datos";
+    }
+}
+
+window.addEventListener("load", cargarDatos);
+</script>
+
+</body>
+</html>
