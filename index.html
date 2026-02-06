@@ -5,235 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cobertura v4 -- Distelsa</title>
     <style>
-        :root { --primary: #2c3e50; --accent: #34495e; --success: #00b050; --danger: #c00000; }
+        :root { 
+            --primary: #2c3e50; 
+            --accent: #34495e; 
+            --success: #00b050; 
+            --danger: #c00000; 
+            --warning: #f1c40f;
+        }
+        
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f0f2f5; padding:10px; margin:0; }
-        .container { max-width:900px; margin:20px auto; background:white; padding:25px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,.1); }
+        .container { max-width:1100px; margin:20px auto; background:white; padding:25px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,.1); }
         .hidden { display:none !important; }
-        .header { text-align: center; margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 10px; position: relative; }
-        .title-row { font-size:24px; font-weight:bold; color: var(--primary); }
+        
+        /* Encabezado */
+        .header { text-align: center; margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 15px; position: relative; }
+        .title-row { font-size:26px; font-weight:bold; color: var(--primary); }
         
         /* Inputs y Botones */
         input, select, button { padding:12px; border-radius:8px; border:1px solid #ddd; font-size:15px; margin: 8px 0; width: 100%; box-sizing: border-box; outline: none; }
         button { cursor:pointer; background: var(--primary); color:white; border:none; transition: 0.3s; font-weight: bold; }
         button:hover { background: var(--accent); transform: translateY(-1px); }
-        button:disabled { background: #ccc; cursor: not-allowed; }
-
-        /* Tabla */
-        .table-container { overflow-x: auto; margin-top: 20px; }
-        table { width:100%; border-collapse:collapse; font-size:14px; }
-        th { background: var(--primary); color:white; padding:12px; text-align: left; }
-        td { padding:10px; border-bottom:1px solid #eee; }
         
-        /* Componentes */
-        .badge { padding:5px 10px; border-radius:20px; color:white; font-size:11px; font-weight:bold; text-transform: uppercase; }
+        /* Buscador */
+        .search-card { border: 2px solid var(--primary); padding: 15px; border-radius: 10px; background: #fff; margin-bottom: 20px; }
+        #contador { font-size: 12px; color: #666; font-weight: bold; margin-top: 5px; }
+
+        /* Tabla Responsiva */
+        .table-container { overflow-x: auto; margin-top: 10px; border-radius: 8px; border: 1px solid #eee; }
+        table { width:100%; border-collapse:collapse; font-size:14px; min-width: 600px; }
+        th { background: var(--primary); color:white; padding:12px; text-align: left; position: sticky; top: 0; }
+        td { padding:12px; border-bottom:1px solid #eee; vertical-align: middle; }
+        tr:hover { background-color: #f9f9f9; }
+        
+        /* Badges de Cobertura */
+        .badge { padding:6px 12px; border-radius:20px; color:white; font-size:11px; font-weight:bold; text-transform: uppercase; display: inline-block; }
         .bg-green { background: var(--success); }
         .bg-red { background: var(--danger); }
+        .bg-yellow { background: var(--warning); color: #000; }
         .bg-gray { background:#777; }
-        .card { border:1px solid #e1e4e8; padding:15px; border-radius:10px; margin-bottom:15px; background:#fafafa; }
         
-        /* Loader */
-        #loader { font-size: 13px; color: #666; font-style: italic; margin-bottom: 10px; }
-        .logout-btn { background: #eee; color: #333; width: auto; padding: 5px 15px; font-size: 12px; position: absolute; right: 0; top: 0; }
+        .card { border:1px solid #e1e4e8; padding:15px; border-radius:10px; margin-bottom:15px; background:#fafafa; }
+        #loader { font-size: 13px; color: #666; font-style: italic; }
+        .logout-btn { background: #e74c3c; width: auto; padding: 5px 15px; font-size: 12px; position: absolute; right: 0; top: 0; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <div class="title-row">Cobertura Distelsa</div>
-        <div id="loader">Conectando con base de datos...</div>
-        <button id="btnLogout" class="hidden logout-btn" onclick="logout()">Cerrar Sesión</button>
-    </div>
-
-    <div id="loginPanel" class="card">
-        <h3>Ingreso al sistema</h3>
-        <input id="usuario" placeholder="Usuario" type="text">
-        <input id="password" type="password" placeholder="Contraseña" onkeyup="if(event.keyCode===13) loginSistema()">
-        <button id="btnLogin" onclick="loginSistema()">Ingresar</button>
-    </div>
-
-    <div id="appPanel" class="hidden">
-        <div class="card">
-            <label style="font-size: 13px; color: #666;">Buscador Inteligente:</label>
-            <input id="busqueda" placeholder="Escribe zona, departamento o ciudad..." onkeyup="buscar()">
-        </div>
-
-        <div class="table-container">
-            <table id="tabla">
-                <thead>
-                    <tr>
-                        <th>Zona</th>
-                        <th>Ciudad / Municipio</th>
-                        <th>Estado de Cobertura</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <div id="adminPanel" class="card" style="display:none; margin-top: 30px; border-top: 3px solid var(--primary);">
-            <h3>⚙️ Panel Administrativo</h3>
-            <p style="font-size: 12px; color: #666;">Registrar nuevo acceso al sistema:</p>
-            <input id="nuevoUser" placeholder="Nombre de usuario">
-            <input id="nuevoPass" placeholder="Contraseña">
-            <select id="nuevoRol">
-                <option value="agente">Rol: Agente</option>
-                <option value="admin">Rol: Administrador</option>
-            </select>
-            <button id="btnCrear" onclick="crearUsuario()">Guardar en Base de Datos</button>
-        </div>
-    </div>
-</div>
-
-<script>
-const API_URL = "https://script.google.com/macros/s/AKfycbymq1Q8b6MtSRuQcVchbDSnWdWdbiLTlMgN65eRxKy1J4Gqn30pcGnE3ya-i2ZEBaIw/exec";
-
-let USUARIOS_DATA = [];
-let COBERTURA_DATA = [];
-let cargando = false;
-
-// Helpers
-function rowsToObjects(rows){
-    if(!rows || rows.length < 1) return [];
-    const headers = rows[0];
-    return rows.slice(1).map(r => {
-        let o = {};
-        headers.forEach((h, i) => o[h] = r[i]);
-        return o;
-    });
-}
-
-async function cargarSheets(){
-    cargando = true;
-    document.getElementById("loader").innerText = "Actualizando datos...";
-    try {
-        const r = await fetch(API_URL);
-        const data = await r.json();
-        USUARIOS_DATA = rowsToObjects(data.usuarios);
-        COBERTURA_DATA = rowsToObjects(data.cobertura);
-        renderTabla(COBERTURA_DATA);
-        document.getElementById("loader").innerText = "● Base de datos conectada";
-        cargando = false;
-    } catch (e) {
-        document.getElementById("loader").innerText = "❌ Error de conexión";
-        console.error(e);
-        cargando = false;
-    }
-}
-
-async function loginSistema(){
-    const u = document.getElementById("usuario").value.trim().toLowerCase();
-    const p = document.getElementById("password").value.trim();
-    const btn = document.getElementById("btnLogin");
-
-    if (cargando) {
-        alert("Espera un momento, estamos sincronizando con Google Sheets...");
-        return;
-    }
-
-    btn.innerText = "Verificando...";
-    btn.disabled = true;
-
-    const user = USUARIOS_DATA.find(x => 
-        String(x.usuario).toLowerCase() === u && String(x.password) === p
-    );
-
-    if(!user){
-        alert("Credenciales incorrectas. Intenta de nuevo.");
-        btn.innerText = "Ingresar";
-        btn.disabled = false;
-        return;
-    }
-
-    // Login Exitoso
-    const rolActual = String(user.rol).toLowerCase();
-    document.getElementById("loginPanel").classList.add("hidden");
-    document.getElementById("appPanel").classList.remove("hidden");
-    document.getElementById("btnLogout").classList.remove("hidden");
-    
-    if(rolActual === "admin") {
-        document.getElementById("adminPanel").style.display = "block";
-    }
-}
-
-function logout() {
-    location.reload(); // Forma más segura de limpiar estados y volver al inicio
-}
-
-function buscar(){
-    const q = document.getElementById("busqueda").value.toLowerCase().trim();
-    if(!q) return renderTabla(COBERTURA_DATA);
-    
-    const res = COBERTURA_DATA.filter(r =>
-        Object.values(r).some(v => String(v).toLowerCase().includes(q))
-    );
-    renderTabla(res);
-}
-
-function renderTabla(data){
-    const tb = document.querySelector("#tabla tbody");
-    tb.innerHTML = "";
-    
-    if(data.length === 0) {
-        tb.innerHTML = "<tr><td colspan='3' style='text-align:center;'>No se encontraron resultados</td></tr>";
-        return;
-    }
-
-    data.forEach(r => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td>${r.zona ?? "-"}</td>
-            <td>${r.ciudad ?? "-"}</td>
-            <td>${badgeCobertura(r.cobertura)}</td>
-        `;
-        tb.appendChild(tr);
-    });
-}
-
-function badgeCobertura(v){
-    if(!v) return "";
-    const t = String(v).toLowerCase();
-    if(t.includes("si") || t.includes("cubre") || t.includes("completa")) 
-        return `<span class="badge bg-green">${v}</span>`;
-    if(t.includes("no") || t.includes("limitada")) 
-        return `<span class="badge bg-red">${v}</span>`;
-    return `<span class="badge bg-gray">${v}</span>`;
-}
-
-async function crearUsuario(){
-    const u = document.getElementById("nuevoUser").value.trim();
-    const p = document.getElementById("nuevoPass").value.trim();
-    const r = document.getElementById("nuevoRol").value;
-
-    if(!u || !p) return alert("Por favor completa los campos del nuevo usuario");
-
-    const btn = document.getElementById("btnCrear");
-    btn.disabled = true;
-    btn.innerText = "Enviando a Google Sheets...";
-
-    try {
-        await fetch(API_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "text/plain" },
-            body: JSON.stringify({ usuario: u, password: p, rol: r })
-        });
-        
-        alert("Usuario enviado correctamente. Se reflejará en unos segundos.");
-        document.getElementById("nuevoUser").value = "";
-        document.getElementById("nuevoPass").value = "";
-        setTimeout(cargarSheets, 3000); 
-
-    } catch (e) {
-        alert("Error al intentar guardar.");
-    } finally {
-        btn.disabled = false;
-        btn.innerText = "Guardar en Base de Datos";
-    }
-}
-
-window.addEventListener("load", cargarSheets);
-</script>
-
-</body>
-</html>
+        <div class="title-row">Sistema de Cobertura Distelsa</div>
+        <div id="loader">Conectando con Google Sheets...</div>
+        <button id="btnLogout" class
