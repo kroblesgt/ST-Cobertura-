@@ -172,24 +172,20 @@ async function crearUsuario(){
     btn.disabled = true;
     btn.innerText = "Guardando...";
 
+    // Construimos la URL con los parámetros
+    const urlConDatos = ${API_URL}?action=addUsuario&usuario=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}&rol=${encodeURIComponent(r)};
+
     try {
-        // Usar un formulario ficticio o enviar como texto plano para evitar bloqueos CORS en Apps Script
-        await fetch(API_URL, {
-            method: "POST",
-            mode: "no-cors", // Crucial para Google Apps Script desde el navegador
-            headers: { "Content-Type": "text/plain" },
-            body: JSON.stringify({
-                action: "addUsuario",
-                data: { usuario: u, password: p, rol: r }
-            })
+        await fetch(urlConDatos, {
+            method: "POST", // O puedes intentar GET si tu script lo soporta
+            mode: "no-cors"
         });
         
-        alert("Petición enviada (Si los datos son correctos se guardarán)");
+        alert("Petición enviada. Revisa tu hoja en unos segundos.");
         document.getElementById("nuevoUser").value = "";
         document.getElementById("nuevoPass").value = "";
-        await cargarSheets();
     } catch (e) {
-        alert("Error al guardar");
+        alert("Error al conectar");
     } finally {
         btn.disabled = false;
         btn.innerText = "Crear Usuario";
