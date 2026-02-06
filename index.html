@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cobertura v4 -- Distelsa</title>
     <style>
-        /* Tu CSS se mantiene igual, está perfecto */
         body { font-family: 'Segoe UI', Arial; background:#f0f2f5; padding:20px; }
         .container { max-width:1100px; margin:auto; background:white; padding:25px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,.1); }
         .hidden { display:none; }
         .header { display:flex; flex-direction:column; gap:10px; align-items:center; margin-bottom:20px; }
         .title-row { font-size:26px; font-weight:bold; color:#2c3e50; }
-        input, select, button { padding:9px; border-radius:6px; border:1px solid #ccc; font-size:14px; margin: 5px 0; }
-        button { cursor:pointer; background:#2c3e50; color:white; border:none; transition: 0.3s; }
+        input, select, button { padding:9px; border-radius:6px; border:1px solid #ccc; font-size:14px; margin: 5px 0; width: 100%; box-sizing: border-box; }
+        button { cursor:pointer; background:#2c3e50; color:white; border:none; transition: 0.3s; font-weight: bold; }
         button:hover { background:#34495e; }
         table { width:100%; border-collapse:collapse; font-size:14px; margin-top: 20px; }
         th { background:#2c3e50; color:white; padding:10px; text-align: left; }
@@ -22,6 +21,7 @@
         .bg-red { background:#c00000; }
         .bg-gray { background:#777; }
         .card { border:1px solid #ddd; padding:12px; border-radius:8px; margin-bottom:15px; background:#fafafa; }
+        #adminPanel { border-top: 3px solid #2c3e50; margin-top: 30px; }
     </style>
 </head>
 <body>
@@ -33,167 +33,9 @@
 
     <div id="loginPanel" class="card">
         <h3>Ingreso al sistema</h3>
-        <input id="usuario" placeholder="Usuario" type="text"><br>
-        <input id="password" type="password" placeholder="Contraseña"><br>
+        <input id="usuario" placeholder="Usuario" type="text">
+        <input id="password" type="password" placeholder="Contraseña">
         <button onclick="loginSistema()">Ingresar</button>
     </div>
 
-    <div id="appPanel" class="hidden">
-        <div class="card">
-            <b>Buscar cobertura</b><br>
-            <input id="busqueda" placeholder="Buscar por zona o ciudad...">
-            <button onclick="buscar()">Buscar</button>
-        </div>
-
-        <table id="tabla">
-            <thead>
-                <tr>
-                    <th>Zona</th>
-                    <th>Ciudad</th>
-                    <th>Cobertura</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-
-        <div id="adminPanel" class="card solo-admin" style="display:none;">
-            <h3>Crear Usuario</h3>
-            <input id="nuevoUser" placeholder="Nuevo usuario"><br>
-            <input id="nuevoPass" placeholder="Nueva contraseña"><br>
-            <select id="nuevoRol">
-                <option value="agente">Agente</option>
-                <option value="admin">Admin</option>
-            </select><br>
-            <button id="btnCrear" onclick="crearUsuario()">Crear Usuario</button>
-        </div>
-    </div>
-</div>
-
-<script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwHaHKd0QGIIGEj8naTqm6oT-p2WHzB7yNQ_Dnqk9QGGCOyNkhbdouG8J7y1xIQqH_U/exec";
-
-let USUARIOS_DATA = [];
-let COBERTURA_DATA = [];
-let rolActual = null;
-
-function rowsToObjects(rows){
-    if(!rows || rows.length < 1) return [];
-    const headers = rows[0];
-    return rows.slice(1).map(r => {
-        let o = {};
-        headers.forEach((h, i) => o[h] = r[i]);
-        return o;
-    });
-}
-
-async function cargarSheets(){
-    try {
-        const r = await fetch(API_URL);
-        const data = await r.json();
-        USUARIOS_DATA = rowsToObjects(data.usuarios);
-        COBERTURA_DATA = rowsToObjects(data.cobertura);
-        renderTabla(COBERTURA_DATA);
-    } catch (e) {
-        console.error("Error cargando datos:", e);
-        alert("Error de conexión con la base de datos.");
-    }
-}
-
-async function loginSistema(){
-    const u = document.getElementById("usuario").value.trim().toLowerCase();
-    const p = document.getElementById("password").value.trim();
-
-    if(USUARIOS_DATA.length === 0) {
-        await cargarSheets();
-    }
-
-    const user = USUARIOS_DATA.find(x => 
-        String(x.usuario).toLowerCase() === u && String(x.password) === p
-    );
-
-    if(!user){
-        alert("Usuario o contraseña incorrectos");
-        return;
-    }
-
-    rolActual = String(user.rol).toLowerCase();
-    
-    // Mostrar/Ocultar paneles
-    document.getElementById("loginPanel").classList.add("hidden");
-    document.getElementById("appPanel").classList.remove("hidden");
-    
-    if(rolActual === "admin") {
-        document.getElementById("adminPanel").style.display = "block";
-    }
-}
-
-function buscar(){
-    const q = document.getElementById("busqueda").value.toLowerCase().trim();
-    if(!q){
-        renderTabla(COBERTURA_DATA);
-        return;
-    }
-    const res = COBERTURA_DATA.filter(r =>
-        Object.values(r).some(v => String(v).toLowerCase().includes(q))
-    );
-    renderTabla(res);
-}
-
-function renderTabla(data){
-    const tb = document.querySelector("#tabla tbody");
-    tb.innerHTML = "";
-    data.forEach(r => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td>${r.zona ?? ""}</td>
-            <td>${r.ciudad ?? ""}</td>
-            <td>${badgeCobertura(r.cobertura)}</td>
-        `;
-        tb.appendChild(tr);
-    });
-}
-
-function badgeCobertura(v){
-    if(!v) return "";
-    const t = String(v).toLowerCase();
-    if(t.includes("si") || t.includes("cubre")) return `<span class="badge bg-green">${v}</span>`;
-    if(t.includes("no")) return `<span class="badge bg-red">${v}</span>`;
-    return `<span class="badge bg-gray">${v}</span>`;
-}
-
-async function crearUsuario(){
-    const u = document.getElementById("nuevoUser").value.trim();
-    const p = document.getElementById("nuevoPass").value.trim();
-    const r = document.getElementById("nuevoRol").value;
-
-    if(!u || !p) return alert("Faltan datos");
-
-    const btn = document.getElementById("btnCrear");
-    btn.disabled = true;
-    btn.innerText = "Guardando...";
-
-    // Construimos la URL con los parámetros
-    const urlConDatos = ${API_URL}?action=addUsuario&usuario=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}&rol=${encodeURIComponent(r)};
-
-    try {
-        await fetch(urlConDatos, {
-            method: "POST", // O puedes intentar GET si tu script lo soporta
-            mode: "no-cors"
-        });
-        
-        alert("Petición enviada. Revisa tu hoja en unos segundos.");
-        document.getElementById("nuevoUser").value = "";
-        document.getElementById("nuevoPass").value = "";
-    } catch (e) {
-        alert("Error al conectar");
-    } finally {
-        btn.disabled = false;
-        btn.innerText = "Crear Usuario";
-    }
-}
-
-window.addEventListener("load", cargarSheets);
-</script>
-
-</body>
-</html>
+    <div id="appPanel" class
