@@ -21,7 +21,6 @@
         .bg-red { background:#c00000; }
         .bg-gray { background:#777; }
         .card { border:1px solid #ddd; padding:12px; border-radius:8px; margin-bottom:15px; background:#fafafa; }
-        #adminPanel { border-top: 3px solid #2c3e50; margin-top: 30px; }
     </style>
 </head>
 <body>
@@ -35,7 +34,164 @@
         <h3>Ingreso al sistema</h3>
         <input id="usuario" placeholder="Usuario" type="text">
         <input id="password" type="password" placeholder="Contraseña">
-        <button onclick="loginSistema()">Ingresar</button>
+        <button id="btnLogin" onclick="loginSistema()">Ingresar</button>
     </div>
 
-    <div id="appPanel" class
+    <div id="appPanel" class="hidden">
+        <div class="card">
+            <b>Buscar cobertura</b>
+            <input id="busqueda" placeholder="Buscar por zona o ciudad..." onkeyup="if(event.keyCode===13) buscar()">
+            <button onclick="buscar()">Buscar</button>
+        </div>
+
+        <table id="tabla">
+            <thead>
+                <tr>
+                    <th>Zona</th>
+                    <th>Ciudad</th>
+                    <th>Cobertura</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <div id="adminPanel" class="card" style="display:none;">
+            <h3>Crear Nuevo Usuario</h3>
+            <input id="nuevoUser" placeholder="Nombre de usuario">
+            <input id="nuevoPass" placeholder="Contraseña">
+            <select id="nuevoRol">
+                <option value="agente">Agente</option>
+                <option value="admin">Admin</option>
+            </select>
+            <button id="btnCrear" onclick="crearUsuario()">Guardar en Base de Datos</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// URL Actualizada con tu nuevo ID de Script
+const API_URL = "https://script.google.com/macros/s/AKfycbymq1Q8b6MtSRuQcVchbDSnWdWdbiLTlMgN65eRxKy1J4Gqn30pcGnE3ya-i2ZEBaIw/exec";
+
+let USUARIOS_DATA = [];
+let COBERTURA_DATA = [];
+let cargando = false;
+
+function rowsToObjects(rows){
+    if(!rows || rows.length < 1) return [];
+    const headers = rows[0];
+    return rows.slice(1).map(r => {
+        let o = {};
+        headers.forEach((h, i) => o[h] = r[i]);
+        return o;
+    });
+}
+
+async function cargarSheets(){
+    cargando = true;
+    try {
+        const r = await fetch(API_URL);
+        const data = await r.json();
+        USUARIOS_DATA = rowsToObjects(data.usuarios);
+        COBERTURA_DATA = rowsToObjects(data.cobertura);
+        renderTabla(COBERTURA_DATA);
+        cargando = false;
+    } catch (e) {
+        console.error("Error cargando datos:", e);
+        cargando = false;
+    }
+}
+
+async function loginSistema(){
+    const u = document.getElementById("usuario").value.trim().toLowerCase();
+    const p = document.getElementById("password").value.trim();
+
+    if (cargando) {
+        alert("Aún se están cargando los datos de la nube, espera un segundo...");
+        return;
+    }
+
+    if(USUARIOS_DATA.length === 0) {
+        await cargarSheets();
+    }
+
+    const user = USUARIOS_DATA.find(x => 
+        String(x.usuario).toLowerCase() === u && String(x.password) === p
+    );
+
+    if(!user){
+        alert("Usuario o contraseña incorrectos");
+        return;
+    }
+
+    const rolActual = String(user.rol).toLowerCase();
+    document.getElementById("loginPanel").classList.add("hidden");
+    document.getElementById("appPanel").classList.remove("hidden");
+    
+    if(rolActual === "admin") {
+        document.getElementById("adminPanel").style.display = "block";
+    }
+}
+
+function buscar(){
+    const q = document.getElementById("busqueda").value.toLowerCase().trim();
+    if(!q) return renderTabla(COBERTURA_DATA);
+    const res = COBERTURA_DATA.filter(r =>
+        Object.values(r).some(v => String(v).toLowerCase().includes(q))
+    );
+    renderTabla(res);
+}
+
+function renderTabla(data){
+    const tb = document.querySelector("#tabla tbody");
+    tb.innerHTML = "";
+    data.forEach(r => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${r.zona ?? ""}</td>
+            <td>${r.ciudad ?? ""}</td>
+            <td>${badgeCobertura(r.cobertura)}</td>
+        `;
+        tb.appendChild(tr);
+    });
+}
+
+function badgeCobertura(v){
+    if(!v) return "";
+    const t = String(v).toLowerCase();
+    if(t.includes("si") || t.includes("cubre")) return `<span class="badge bg-green">${v}</span>`;
+    if(t.includes("no")) return `<span class="badge bg-red">${v}</span>`;
+    return `<span class="badge bg-gray">${v}</span>`;
+}
+
+async function crearUsuario(){
+    const u = document.getElementById("nuevoUser").value.trim();
+    const p = document.getElementById("nuevoPass").value.trim();
+    const r = document.getElementById("nuevoRol").value;
+
+    if(!u || !p) return alert("Faltan datos");
+
+    const btn = document.getElementById("btnCrear");
+    btn.disabled = true;
+    btn.innerText = "Guardando...";
+
+    const payload = { usuario: u, password: p, rol: r };
+
+    try {
+        await fetch(API_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify(payload)
+        });
+        
+        alert("Solicitud de creación enviada.");
+        document.getElementById("nuevoUser").value = "";
+        document.getElementById("nuevoPass").value = "";
+        setTimeout(cargarSheets, 2000); // Recarga para ver el cambio
+
+    } catch (e) {
+        alert("Error de conexión");
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "Guardar en Base de Datos";
+    }
