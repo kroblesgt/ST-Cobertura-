@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA COBERTURA v7.5 - ADMIN</title>
+    <title>SISTEMA COBERTURA v7.7 - CACHE & SYNC</title>
     <style>
         :root { 
             --primary: #0054a6; 
@@ -18,6 +18,29 @@
         .container { max-width: 1250px; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         .hidden { display: none !important; }
         
+        /* Indicador Visual de Sincronización */
+        .sync-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: var(--neutral);
+            transition: 0.3s;
+        }
+        .sync-active { background: var(--primary); box-shadow: 0 0 8px var(--primary); }
+        .sync-success { background: var(--success); }
+        .sync-alert { 
+            background: var(--warning); 
+            animation: pulse 1s infinite; 
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
         .header-main {
             display: flex; justify-content: space-between; align-items: center;
             padding: 10px 30px; background: #fff; border-bottom: 3px solid var(--primary);
@@ -33,7 +56,6 @@
         .btn-admin { background: #8e44ad; }
         .btn-logout { background: var(--dark); }
         .btn-save { background: var(--success); }
-        .btn-danger { background: var(--danger); padding: 5px 10px; font-size: 12px; }
 
         .table-container { overflow-x: auto; border-radius: 8px; border: 1px solid #eee; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -63,8 +85,11 @@
 <header class="header-main">
     <img src="https://drive.google.com/thumbnail?id=1bawJf9oARBLy2itsOfA9YE8RVAFNdNef" alt="Logo">
     <div style="text-align:center">
-        <h1 style="margin:0; color:var(--primary); font-size:1.5rem;">COBERTURA</h1>
-        <small id="loader">CONECTANDO...</small>
+        <h1 style="margin:0; color:var(--primary); font-size:1.5rem;">COBERTURA MASTER</h1>
+        <div style="display:flex; align-items:center; justify-content:center;">
+            <span id="syncDot" class="sync-indicator"></span>
+            <small id="loader">CONECTANDO...</small>
+        </div>
     </div>
     <img src="https://drive.google.com/thumbnail?id=1zh0lISfhL33lIht-Iis1TtQBEeqahnJg" alt="Soporte">
 </header>
@@ -113,44 +138,9 @@
     </div>
 </div>
 
-<div id="modalUsuarios" class="modal hidden">
-    <div class="modal-content">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h2 style="margin:0; color:var(--primary);">Gestión de Usuarios</h2>
-            <button onclick="toggleModalUsuarios(false)" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
-        </div>
-        
-        <div style="background:#f9f9f9; padding:15px; border-radius:8px; margin-bottom:20px;">
-            <h4 style="margin-top:0;">Agregar Nuevo Usuario</h4>
-            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:10px;">
-                <input id="new_user" placeholder="Usuario" style="padding:8px;">
-                <input id="new_pass" placeholder="Password" style="padding:8px;">
-                <select id="new_rol" style="padding:8px;">
-                    <option value="lider">Líder</option>
-                    <option value="lector">Lector</option>
-                    <option value="admin">Admin</option>
-                </select>
-                <button class="btn btn-save" onclick="crearUsuario()">+</button>
-            </div>
-        </div>
-
-        <table style="width:100%;">
-            <thead>
-                <tr style="background:#eee; color:var(--dark);">
-                    <th>Usuario</th>
-                    <th>Rol</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody id="listaUsuarios"></tbody>
-        </table>
-    </div>
-</div>
-
 <script>
 /**
- * SISTEMA COBERTURA v7.5
- * Link de Apps Script Actualizado
+ * SISTEMA COBERTURA v7.7 - CACHE & REAL-TIME SYNC INDICATOR
  */
 const API_URL = "https://script.google.com/macros/s/AKfycbz5vy582BX7vTWabzvbOAk9S6iBn0g3MI9Kxs9dg3S0ampNxoFS0L77oZ4ZK6SNLTOCIg/exec";
 
@@ -160,8 +150,9 @@ let DATA_FILTRADA = [];
 let ROLE_ACTUAL = "";
 let PAGINA_ACTUAL = 1;
 const ITEMS_POR_PAGINA = 10;
+let ULTIMA_VERSION_DATA = "";
 
-// Algoritmo de Similitud (Fuzzy Search)
+// Algoritmo de Distancia de Levenshtein (Fuzzy Search)
 function calcularSimilitud(s1, s2) {
     s1 = s1.toLowerCase(); s2 = s2.toLowerCase();
     const len1 = s1.length, len2 = s2.length;
@@ -176,23 +167,64 @@ function calcularSimilitud(s1, s2) {
     return 1 - matrix[len1][len2] / Math.max(len1, len2);
 }
 
+// Carga Inicial con Cache de Sesión
 async function cargarDatos() {
+    actualizarIndicador("active", "SINCRONIZANDO...");
     try {
         const response = await fetch(API_URL);
         const data = await response.json();
+        
         USUARIOS_DATA = parseSheet(data.usuarios);
         COBERTURA_DATA = parseSheet(data.cobertura);
         DATA_FILTRADA = [...COBERTURA_DATA];
+        ULTIMA_VERSION_DATA = JSON.stringify(COBERTURA_DATA);
         
-        document.getElementById("loader").innerText = "● SERVIDOR CONECTADO";
-        document.getElementById("loader").style.color = "green";
+        actualizarIndicador("success", "SISTEMA LISTO");
         document.getElementById("btnLogin").innerText = "ENTRAR";
         document.getElementById("btnLogin").disabled = false;
-        verificarSesion();
+
+        // VERIFICAR CACHE DE SESIÓN
+        const cacheSesion = localStorage.getItem("session_cobertura");
+        if (cacheSesion) {
+            const user = JSON.parse(cacheSesion);
+            // Validamos que el usuario aún exista en la lista fresca
+            if (USUARIOS_DATA.some(u => u.usuario === user.usuario)) {
+                activarApp(user.rol);
+            }
+        }
     } catch (e) {
-        document.getElementById("loader").innerText = "❌ ERROR DE CONEXIÓN";
-        document.getElementById("loader").style.color = "red";
+        actualizarIndicador("alert", "ERROR DE CONEXIÓN");
     }
+}
+
+// Sincronización silenciosa en segundo plano
+async function cargarDatosSilencioso() {
+    const dot = document.getElementById("syncDot");
+    actualizarIndicador("active", "VERIFICANDO...");
+
+    try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        const nuevaData = parseSheet(data.cobertura);
+        
+        // Comparamos si hay cambios reales
+        if (JSON.stringify(nuevaData) !== ULTIMA_VERSION_DATA) {
+            actualizarIndicador("alert", "ACTUALIZANDO DATOS...");
+            COBERTURA_DATA = nuevaData;
+            ULTIMA_VERSION_DATA = JSON.stringify(nuevaData);
+            iniciarBusqueda(); // Refresca la vista actual
+            setTimeout(() => actualizarIndicador("success", "SISTEMA AL DÍA"), 2000);
+        } else {
+            actualizarIndicador("success", "SISTEMA AL DÍA");
+        }
+    } catch (e) { console.warn("Fallo sync de fondo"); }
+}
+
+function actualizarIndicador(clase, texto) {
+    const dot = document.getElementById("syncDot");
+    const loader = document.getElementById("loader");
+    dot.className = "sync-indicator sync-" + clase;
+    loader.innerText = texto;
 }
 
 function parseSheet(rows) {
@@ -208,17 +240,11 @@ function loginSistema() {
     const u = document.getElementById("usuario").value.trim().toLowerCase();
     const p = document.getElementById("password").value.trim();
     const user = USUARIOS_DATA.find(x => String(x.usuario).toLowerCase() === u && String(x.password) === p);
+    
     if (user) {
         localStorage.setItem("session_cobertura", JSON.stringify(user));
         activarApp(user.rol);
-    } else {
-        alert("Credenciales incorrectas");
-    }
-}
-
-function verificarSesion() {
-    const session = localStorage.getItem("session_cobertura");
-    if (session) { activarApp(JSON.parse(session).rol); }
+    } else { alert("Usuario o contraseña incorrectos"); }
 }
 
 function activarApp(rol) {
@@ -227,9 +253,10 @@ function activarApp(rol) {
     document.getElementById("appPanel").classList.remove("hidden");
     if (ROLE_ACTUAL === "admin") document.getElementById("btnAdmin").classList.remove("hidden");
     renderTabla();
+    // Refresco cada 45 segundos
+    setInterval(cargarDatosSilencioso, 45000);
 }
 
-// Búsqueda Inteligente (Fuzzy Search + Tokens)
 function iniciarBusqueda() {
     const q = document.getElementById("busqueda").value.toLowerCase().trim();
     if (!q) {
@@ -253,7 +280,6 @@ function iniciarBusqueda() {
         });
         DATA_FILTRADA = scores.filter(s => s.score > 0.4).sort((a,b) => b.score - a.score).map(s => s.registro);
     }
-    PAGINA_ACTUAL = 1;
     renderTabla();
 }
 
@@ -290,59 +316,31 @@ function actualizarUI() {
     document.getElementById("infoPagina").innerText = `Página ${PAGINA_ACTUAL} de ${totalPags || 1}`;
     document.getElementById("btnPrev").disabled = PAGINA_ACTUAL === 1;
     document.getElementById("btnNext").disabled = (PAGINA_ACTUAL >= totalPags || totalPags === 0);
-    document.getElementById("contador").innerText = `Se encontraron ${DATA_FILTRADA.length} registros`;
+    document.getElementById("contador").innerText = `Resultados: ${DATA_FILTRADA.length}`;
 }
-
-function cambiarPagina(n) { PAGINA_ACTUAL += n; renderTabla(); }
 
 async function guardarRegistro(nombre, btn) {
     const sel = btn.parentElement.querySelector("select");
     const row = btn.closest("tr");
     btn.innerText = "⏳"; btn.disabled = true;
+    actualizarIndicador("active", "GUARDANDO...");
+
     try {
-        await fetch(API_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ accion: "update_status", nombre: nombre, estado: sel.value }) });
+        await fetch(API_URL, { 
+            method: "POST", mode: "no-cors", 
+            body: JSON.stringify({ accion: "update_status", nombre: nombre, estado: sel.value }) 
+        });
+        
         row.classList.add("row-flash");
         btn.innerText = "✅";
-        const item = COBERTURA_DATA.find(x => x.Nombre === nombre);
-        if(item) item.Cobertura = sel.value;
-        setTimeout(() => { btn.innerText = "💾"; btn.disabled = false; row.classList.remove("row-flash"); }, 2000);
-    } catch (e) { alert("Error al conectar"); btn.innerText = "💾"; btn.disabled = false; }
-}
-
-function toggleModalUsuarios(show) {
-    const modal = document.getElementById("modalUsuarios");
-    if (show) { modal.classList.remove("hidden"); listarUsuariosAdmin(); } 
-    else { modal.classList.add("hidden"); }
-}
-
-function listarUsuariosAdmin() {
-    const tbody = document.getElementById("listaUsuarios");
-    tbody.innerHTML = "";
-    USUARIOS_DATA.forEach(u => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${u.usuario}</td><td><span class="badge bg-gray">${u.rol}</span></td><td><button class="btn btn-danger" onclick="eliminarUsuario('${u.usuario}')">Eliminar</button></td>`;
-        tbody.appendChild(tr);
-    });
-}
-
-async function crearUsuario() {
-    const u = document.getElementById("new_user").value.trim(), p = document.getElementById("new_pass").value.trim(), r = document.getElementById("new_rol").value;
-    if(!u || !p) return alert("Completa todos los campos");
-    if(confirm(`¿Crear usuario ${u}?`)) {
-        await fetch(API_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ accion: "usuarios_crud", tipo: "crear", usuario: u, pass: p, rol: r }) });
-        alert("Enviado. Recargue el sistema para ver los cambios.");
-        toggleModalUsuarios(false);
-    }
-}
-
-async function eliminarUsuario(user) {
-    const sesion = JSON.parse(localStorage.getItem("session_cobertura"));
-    if(user === sesion.usuario) return alert("No puedes eliminarte a ti mismo");
-    if(confirm(`¿Eliminar definitivamente a ${user}?`)) {
-        await fetch(API_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ accion: "usuarios_crud", tipo: "eliminar", usuario: user }) });
-        alert("Petición de eliminación enviada.");
-        toggleModalUsuarios(false);
-    }
+        
+        // Forzamos actualización silenciosa tras guardar
+        setTimeout(async () => {
+            await cargarDatosSilencioso();
+            btn.innerText = "💾"; btn.disabled = false; 
+            row.classList.remove("row-flash");
+        }, 1000);
+    } catch (e) { alert("Error de conexión"); btn.innerText = "💾"; btn.disabled = false; }
 }
 
 function getColor(v) {
@@ -353,13 +351,10 @@ function getColor(v) {
     return "bg-gray";
 }
 
+function cambiarPagina(n) { PAGINA_ACTUAL += n; renderTabla(); }
 function cambioColorSelect(sel) { sel.className = `select-edit ${getColor(sel.value)}`; }
-
 function limpiarBusqueda() { document.getElementById("busqueda").value = ""; iniciarBusqueda(); }
-
-function cerrarSesion() {
-    if(confirm("¿Cerrar sesión?")) { localStorage.removeItem("session_cobertura"); location.reload(); }
-}
+function cerrarSesion() { if(confirm("¿Cerrar sesión y borrar caché?")) { localStorage.removeItem("session_cobertura"); location.reload(); } }
 
 window.onload = cargarDatos;
 </script>
