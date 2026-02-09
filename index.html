@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA COBERTURA v8.7</title>
+    <title>SISTEMA COBERTURA v8.8</title>
     <style>
         :root { 
             --primary: #0054a6; --success: #00b050; --danger: #c00000; 
@@ -13,7 +13,7 @@
         .container { max-width: 1250px; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         .hidden { display: none !important; }
         
-        /* Cabecera Estética */
+        /* Cabecera */
         .header-main { display: flex; justify-content: space-between; align-items: center; padding: 10px 30px; background: #fff; border-bottom: 3px solid var(--primary); }
         .header-main img { height: 45px; }
 
@@ -34,7 +34,7 @@
 
         .select-edit { padding: 5px; border-radius: 5px; border: 1px solid #ddd; font-weight: bold; cursor: pointer; }
 
-        .badge { padding: 5px 10px; border-radius: 15px; font-size: 11px; color: white; font-weight: bold; }
+        .badge { padding: 5px 10px; border-radius: 15px; font-size: 11px; color: white; font-weight: bold; display: inline-block; }
         .bg-green { background: var(--success); }
         .bg-red { background: var(--danger); }
         .bg-gray { background: var(--neutral); }
@@ -65,7 +65,7 @@
 
     <div id="appPanel" class="hidden">
         <div class="search-container">
-            <input id="busqueda" class="search-box" placeholder="🔍 Escribe para buscar (ej: comunidad mixco zona 10)..." oninput="iniciarBusqueda()">
+            <input id="busqueda" class="search-box" placeholder="🔍 Buscar por nombre, zona o municipio..." oninput="iniciarBusqueda()">
             <button onclick="cerrarSesion()" class="btn btn-logout">Salir</button>
         </div>
         <div id="contador" style="font-weight:bold; margin-bottom:10px; color:#666;"></div>
@@ -87,8 +87,8 @@
 </div>
 
 <script>
-// --- TU NUEVO LINK INTEGRADO ---
-const API_URL = "https://script.google.com/macros/s/AKfycbwZ3-oQUUo7P9K4FfB4K0wRPbPV2UHVfDk8FJNNkf3fFWaX2L4vWImAXear8b8GMyTqCQ/exec"; 
+// LINK DE APPS SCRIPT ACTUALIZADO
+const API_URL = "https://script.google.com/macros/s/AKfycbxFNfnufFpREJcVhnj0FFkpnVphc9_D2sI7P6k-3jEuEEWznNCU1Ftdnr3JcAafSjxAAg/exec"; 
 
 let MASTER_DATA = [];
 let USUARIOS_DATA = [];
@@ -110,7 +110,6 @@ async function cargar() {
         dot.className = "sync-indicator sync-success";
         loader.innerText = "SISTEMA LISTO";
 
-        // Autologin por caché
         const cache = localStorage.getItem("session_cobertura");
         if(cache) login(JSON.parse(cache));
     } catch (e) { 
@@ -152,9 +151,9 @@ function iniciarBusqueda() {
 
     const tb = document.querySelector("#tabla tbody");
     tb.innerHTML = "";
-    document.getElementById("contador").innerText = `Resultados encontrados: ${filtrados.length}`;
+    document.getElementById("contador").innerText = `Mostrando 10 de ${filtrados.length} resultados`;
 
-    // Mostrar siempre los primeros diez resultados [cite: 2026-02-09]
+    // Regla de negocio: Siempre mostrar los primeros 10 resultados [cite: 2026-02-09]
     filtrados.slice(0, 10).forEach(r => {
         const tr = document.createElement("tr");
         const color = getColor(r.Cobertura);
