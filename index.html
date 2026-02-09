@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cobertura v6.0 -- Distelsa</title>
+    <title>SISTEMA COBERTURA v6.2</title>
     <style>
         :root { 
             --primary: #0054a6; 
@@ -13,86 +13,91 @@
             --neutral: #95a5a6; 
         }
         
-        body { font-family: 'Segoe UI', sans-serif; background:#f0f2f5; margin:0; }
+        body { font-family: 'Segoe UI', sans-serif; background:#f4f7f6; margin:0; }
         
-        /* Animación de Guardado */
+        /* Animación de Destello al Guardar */
         @keyframes flash-success {
             0% { background-color: transparent; }
-            50% { background-color: rgba(0, 176, 80, 0.2); }
+            50% { background-color: rgba(0, 176, 80, 0.25); }
             100% { background-color: transparent; }
         }
         .row-flash { animation: flash-success 1.5s ease-out; }
 
-        /* Header */
+        /* Header Estilo Corporativo */
         .header-main {
             display: flex; justify-content: space-between; align-items: center;
             padding: 10px 30px; background: #fff; border-bottom: 3px solid var(--primary);
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .logo-group img { height: 45px; width: auto; }
-        .title-area h1 { margin: 0; font-size: 1.6rem; color: var(--primary); text-transform: uppercase; }
+        .title-area { text-align: center; }
+        .title-area h1 { margin: 0; font-size: 1.5rem; color: var(--primary); letter-spacing: 1px; }
 
-        .container { max-width:1250px; margin:20px auto; background:white; padding:25px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,.1); }
-        .hidden { display:none !important; }
+        .container { max-width: 1250px; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .hidden { display: none !important; }
         
-        /* Controles */
+        /* Controles Superiores */
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 15px; }
-        .search-card { flex-grow: 1; border: 2px solid var(--primary); padding: 5px 15px; border-radius: 10px; display: flex; align-items: center; }
-        .search-card input { border: none; padding: 10px; width: 100%; font-size: 16px; outline: none; }
+        .search-box { flex-grow: 1; border: 2px solid var(--primary); padding: 8px 15px; border-radius: 10px; display: flex; align-items: center; background: #fff; }
+        .search-box input { border: none; width: 100%; font-size: 16px; outline: none; padding: 5px; }
         
-        .btn-clear { background: #e74c3c; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .btn-logout { background: #636e72; color: white; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn { padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-clear { background: #e74c3c; color: white; }
+        .btn-logout { background: #636e72; color: white; }
+        .btn:hover { opacity: 0.8; }
 
-        /* Tabla */
-        .table-container { overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #eee; }
-        table { width:100%; border-collapse:collapse; font-size:13px; min-width: 950px; }
-        th { background: var(--primary); color:white; padding:12px; text-align: left; position: sticky; top: 0; }
-        td { padding:12px; border-bottom:1px solid #eee; }
+        /* Tabla de Resultados */
+        .table-container { overflow-x: auto; border: 1px solid #eee; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 900px; }
+        th { background: var(--primary); color: white; padding: 12px; text-align: left; position: sticky; top: 0; }
+        td { padding: 12px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        tr:hover { background-color: #f9f9f9; }
         
-        .badge { padding:6px 12px; border-radius:20px; color:white; font-size:11px; font-weight:bold; text-transform: uppercase; display: inline-block; min-width: 120px; text-align: center; }
-        .bg-green { background: var(--success) !important; }
-        .bg-red { background: var(--danger) !important; }
-        .bg-yellow { background: var(--warning) !important; color: black !important; }
-        .bg-gray { background: var(--neutral) !important; }
+        /* Badges y Selectores */
+        .badge { padding: 6px 12px; border-radius: 20px; color: white; font-size: 11px; font-weight: bold; text-transform: uppercase; display: inline-block; min-width: 110px; text-align: center; }
+        .bg-green { background: var(--success); }
+        .bg-red { background: var(--danger); }
+        .bg-yellow { background: var(--warning); color: #000; }
+        .bg-gray { background: var(--neutral); }
         
-        .btn-save { background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; padding: 8px 12px; }
-        .btn-save:disabled { background: #ccc !important; }
-        .select-edit { padding: 8px; border-radius: 5px; font-weight: bold; width: 160px; text-align: center; border: 1px solid #ddd; }
+        .select-edit { padding: 8px; border-radius: 5px; font-weight: bold; width: 150px; border: 1px solid #ddd; text-align: center; }
+        .btn-save { background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; padding: 8px 12px; font-size: 16px; }
+        .btn-save:disabled { background: #ccc; cursor: not-allowed; }
     </style>
 </head>
 <body>
 
 <header class="header-main">
     <div class="logo-group">
-        <img src="https://drive.google.com/thumbnail?id=1bawJf9oARBLy2itsOfA9YE8RVAFNdNef" alt="Distelsa">
+        <img src="https://drive.google.com/thumbnail?id=1bawJf9oARBLy2itsOfA9YE8RVAFNdNef" alt="Logo">
     </div>
     <div class="title-area">
-        <h1>SISTEMA DE COBERTURA</h1>
-        <div id="loader" style="font-size: 11px; font-weight: bold;">Iniciando...</div>
+        <h1>CONTROL DE COBERTURA</h1>
+        <div id="loader" style="font-size: 11px; font-weight: bold; color: #666;">CONECTANDO...</div>
     </div>
     <div class="logo-group">
-        <img src="https://drive.google.com/thumbnail?id=1zh0lISfhL33lIht-Iis1TtQBEeqahnJg" alt="Call Center">
+        <img src="https://drive.google.com/thumbnail?id=1zh0lISfhL33lIht-Iis1TtQBEeqahnJg" alt="Soporte">
     </div>
 </header>
 
 <div class="container">
-    <div id="loginPanel" style="max-width: 350px; margin: 40px auto; text-align: center;">
-        <h3>Ingreso de Personal</h3>
-        <input id="usuario" placeholder="Usuario" type="text" style="padding:12px; width:100%; margin-bottom:12px; border-radius:8px; border:1px solid #ddd;">
-        <input id="password" type="password" placeholder="Contraseña" style="padding:12px; width:100%; margin-bottom:12px; border-radius:8px; border:1px solid #ddd;">
-        <button id="btnLogin" onclick="loginSistema()" disabled style="padding:12px; width:100%; background:var(--primary); color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">ESPERANDO DATOS...</button>
+    <div id="loginPanel" style="max-width: 350px; margin: 50px auto; text-align: center;">
+        <h2 style="color: var(--primary);">Bienvenido</h2>
+        <input id="usuario" placeholder="Usuario" type="text" style="padding:12px; width:100%; margin-bottom:15px; border-radius:8px; border:1px solid #ddd; box-sizing: border-box;">
+        <input id="password" type="password" placeholder="Contraseña" style="padding:12px; width:100%; margin-bottom:15px; border-radius:8px; border:1px solid #ddd; box-sizing: border-box;">
+        <button id="btnLogin" onclick="loginSistema()" disabled style="padding:12px; width:100%; background:var(--primary); color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">ESPERANDO SERVIDOR...</button>
     </div>
 
     <div id="appPanel" class="hidden">
         <div class="top-bar">
-            <div class="search-card">
-                <input id="busqueda" placeholder="🔍 Buscar por municipio, nombre o zona..." oninput="iniciarBusqueda()">
+            <div class="search-box">
+                <input id="busqueda" placeholder="🔍 Buscar por nombre, municipio, zona o referencia..." oninput="iniciarBusqueda()">
             </div>
-            <button class="btn-clear" onclick="limpiarBusqueda()">Limpiar</button>
-            <button class="btn-logout" onclick="cerrarSesion()">Cerrar Sesión 🚪</button>
+            <button class="btn btn-clear" onclick="limpiarBusqueda()">Limpiar</button>
+            <button class="btn btn-logout" onclick="cerrarSesion()">Salir 🚪</button>
         </div>
         
-        <div id="contador" style="font-size: 12px; color: #666; margin-bottom: 10px;">Resultados: 0</div>
+        <div id="contador" style="font-size: 12px; color: #666; margin-bottom: 10px; font-weight: bold;">Registros: 0</div>
 
         <div class="table-container">
             <table id="tabla">
@@ -103,7 +108,7 @@
                         <th>Categoría</th>
                         <th>Zona</th>
                         <th>Referencia</th>
-                        <th style="text-align: center;">Estado</th>
+                        <th style="text-align: center;">Cobertura</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -113,7 +118,7 @@
 </div>
 
 <script>
-// --- TU LINK ACTUALIZADO ---
+// --- CONFIGURACIÓN ---
 const API_URL = "https://script.google.com/macros/s/AKfycbxl89m7DJCZF1V4lCZcgE6YLin0eYCi_G5cS4DQeVOXyVcyWpCYNu8E-1tZ30T1frsktg/exec";
 
 let COBERTURA_DATA = [];
@@ -121,63 +126,62 @@ let USUARIOS_DATA = [];
 let DATA_FILTRADA = [];
 let ROLE_ACTUAL = "";
 
+// Carga de datos optimizada
 async function cargarDatos() {
     try {
-        // Usamos una petición simple. El navegador manejará la redirección de Google.
         const response = await fetch(API_URL);
         const data = await response.json();
 
-        if (data.error) {
-            document.getElementById("loader").innerText = "Error: " + data.error;
-            return;
-        }
+        if (data.error) throw new Error(data.error);
 
-        USUARIOS_DATA = transformRows(data.usuarios);
-        COBERTURA_DATA = transformRows(data.cobertura);
+        USUARIOS_DATA = parseSheetData(data.usuarios);
+        COBERTURA_DATA = parseSheetData(data.cobertura);
         DATA_FILTRADA = [...COBERTURA_DATA];
         
-        document.getElementById("loader").innerText = "● CONECTADO";
+        document.getElementById("loader").innerText = "● SERVIDOR CONECTADO";
         document.getElementById("loader").style.color = "green";
-        document.getElementById("btnLogin").innerText = "INGRESAR";
+        document.getElementById("btnLogin").innerText = "ENTRAR";
         document.getElementById("btnLogin").disabled = false;
         
         verificarSesion();
     } catch (e) { 
-        document.getElementById("loader").innerText = "❌ ERROR DE CARGA";
+        console.error("Error:", e);
+        document.getElementById("loader").innerText = "❌ ERROR: VERIFIQUE CONEXIÓN";
         document.getElementById("loader").style.color = "red";
     }
 }
 
-function transformRows(rows) {
+function parseSheetData(rows) {
     if (!rows || rows.length < 1) return [];
     const headers = rows[0];
     return rows.slice(1).map(r => {
-        let o = {};
-        headers.forEach((h, i) => o[h] = r[i]);
-        return o;
+        let obj = {};
+        headers.forEach((h, i) => obj[h] = r[i]);
+        return obj;
     });
 }
 
+// Control de Sesión
 function loginSistema() {
     const u = document.getElementById("usuario").value.trim().toLowerCase();
     const p = document.getElementById("password").value.trim();
     const user = USUARIOS_DATA.find(x => String(x.usuario).toLowerCase() === u && String(x.password) === p);
     
-    if (!user) return alert("Usuario o clave incorrectos");
+    if (!user) return alert("Credenciales incorrectas");
 
-    localStorage.setItem("distelsa_session", JSON.stringify({ u, rol: user.rol }));
-    activarInterfaz(user.rol);
+    localStorage.setItem("session_cobertura", JSON.stringify({ u, rol: user.rol }));
+    activarApp(user.rol);
 }
 
 function verificarSesion() {
-    const session = localStorage.getItem("distelsa_session");
+    const session = localStorage.getItem("session_cobertura");
     if (session) {
         const data = JSON.parse(session);
-        activarInterfaz(data.rol);
+        activarApp(data.rol);
     }
 }
 
-function activarInterfaz(rol) {
+function activarApp(rol) {
     ROLE_ACTUAL = String(rol).toLowerCase();
     document.getElementById("loginPanel").classList.add("hidden");
     document.getElementById("appPanel").classList.remove("hidden");
@@ -186,12 +190,13 @@ function activarInterfaz(rol) {
 }
 
 function cerrarSesion() {
-    if(confirm("¿Cerrar sesión?")) {
-        localStorage.removeItem("distelsa_session");
+    if(confirm("¿Desea cerrar la sesión?")) {
+        localStorage.removeItem("session_cobertura");
         location.reload();
     }
 }
 
+// Buscador Avanzado
 function iniciarBusqueda() {
     const q = document.getElementById("busqueda").value.toLowerCase().trim();
     if (!q) {
@@ -212,6 +217,7 @@ function limpiarBusqueda() {
     iniciarBusqueda();
 }
 
+// UI de Tabla
 function renderTabla() {
     const tb = document.querySelector("#tabla tbody");
     tb.innerHTML = "";
@@ -222,17 +228,17 @@ function renderTabla() {
         const statusClass = getColor(r.Cobertura);
         
         let actions = esEditor ? `
-            <div style="display:flex; gap:5px; justify-content:center;">
-                <select class="select-edit ${statusClass}" onchange="cambioUI(this)">
+            <div style="display:flex; gap:8px; justify-content:center; align-items:center;">
+                <select class="select-edit ${statusClass}" onchange="cambioColorSelect(this)">
                     <option value="Sin Datos" ${r.Cobertura == "Sin Datos" ? "selected" : ""}>SIN DATOS</option>
                     <option value="Con Cobertura" ${r.Cobertura == "Con Cobertura" ? "selected" : ""}>COBERTURA</option>
                     <option value="Sin Cobertura" ${r.Cobertura == "Sin Cobertura" ? "selected" : ""}>SIN COBERTURA</option>
                     <option value="Consultar" ${r.Cobertura == "Consultar" ? "selected" : ""}>CONSULTAR</option>
                 </select>
-                <button class="btn-save" ${statusClass === "bg-gray" ? "disabled" : ""} onclick="guardarDato('${r.Nombre}', this)">💾</button>
+                <button class="btn-save" ${statusClass === "bg-gray" ? "disabled" : ""} onclick="guardarRegistro('${r.Nombre}', this)">💾</button>
             </div>` : `<div style="text-align:center;"><span class="badge ${statusClass}">${r.Cobertura || "SIN DATOS"}</span></div>`;
 
-        tr.innerHTML = `<td>${r.Municipio}</td><td><strong>${r.Nombre}</strong></td><td>${r.Categoria}</td><td>${r.Zona}</td><td style="color:#666; font-size:11px;">${r.Referencia}</td><td>${actions}</td>`;
+        tr.innerHTML = `<td>${r.Municipio || ''}</td><td><strong>${r.Nombre}</strong></td><td>${r.Categoria}</td><td>${r.Zona}</td><td style="color:#666; font-size:11px;">${r.Referencia}</td><td>${actions}</td>`;
         tb.appendChild(tr);
     });
 }
@@ -245,31 +251,45 @@ function getColor(v) {
     return "bg-green";
 }
 
-function cambioUI(sel) {
+function cambioColorSelect(sel) {
     const btn = sel.parentElement.querySelector("button");
     sel.className = `select-edit ${getColor(sel.value)}`;
     btn.disabled = (sel.value === "Sin Datos");
 }
 
-async function guardarDato(nombre, btn) {
+async function guardarRegistro(nombre, btn) {
     const val = btn.parentElement.querySelector("select").value;
     const row = btn.closest("tr");
-    btn.disabled = true; btn.innerText = "⏳";
+    btn.disabled = true; 
+    btn.innerText = "⏳";
+    
     try {
         await fetch(API_URL, { 
             method: "POST", 
             mode: "no-cors", 
             body: JSON.stringify({ accion: "update_status", nombre: nombre, estado: val }) 
         });
-        const local = COBERTURA_DATA.find(x => x.Nombre === nombre);
-        if(local) local.Cobertura = val;
+        
+        // Actualización local
+        const localIdx = COBERTURA_DATA.find(x => x.Nombre === nombre);
+        if(localIdx) localIdx.Cobertura = val;
+        
         btn.innerText = "✅";
         row.classList.add("row-flash");
-        setTimeout(() => { btn.innerText = "💾"; btn.disabled = false; row.classList.remove("row-flash"); }, 1500);
-    } catch (e) { alert("Error"); btn.disabled = false; }
+        
+        setTimeout(() => { 
+            btn.innerText = "💾"; 
+            btn.disabled = false;
+            row.classList.remove("row-flash");
+        }, 1500);
+        
+    } catch (e) { 
+        alert("Error al guardar"); 
+        btn.disabled = false; 
+    }
 }
 
-function actualizarContador() { document.getElementById("contador").innerText = `Registros: ${DATA_FILTRADA.length}`; }
+function actualizarContador() { document.getElementById("contador").innerText = `Registros encontrados: ${DATA_FILTRADA.length}`; }
 
 window.addEventListener("load", cargarDatos);
 </script>
