@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA COBERTURA v8.2</title>
+    <title>SISTEMA COBERTURA v8.2 - OFICIAL</title>
     <style>
         :root { 
             --primary: #0054a6; --success: #00b050; --danger: #c00000; 
             --warning: #f1c40f; --neutral: #95a5a6; --dark: #2d3436;
         }
-        body { font-family: 'Segoe UI', sans-serif; background:#f4f7f6; margin:0; color: var(--dark); }
+        body { font-family: 'Segoe UI', sans-serif; background:#f4f7f6; margin:0; }
         .container { max-width: 1250px; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         .hidden { display: none !important; }
         
+        /* Cabecera con Logos */
         .header-main { display: flex; justify-content: space-between; align-items: center; padding: 10px 30px; background: #fff; border-bottom: 3px solid var(--primary); }
         .header-main img { height: 45px; }
 
@@ -20,14 +21,16 @@
         .sync-active { background: var(--primary); animation: pulse 1s infinite; }
         .sync-success { background: var(--success); }
 
-        .search-box { width: 100%; border: 2px solid var(--primary); padding: 12px; border-radius: 10px; outline: none; font-size: 16px; margin-bottom: 15px; box-sizing: border-box; }
+        .search-box { width: 100%; border: 2px solid var(--primary); padding: 12px; border-radius: 10px; font-size: 16px; margin-bottom: 15px; outline: none; box-sizing: border-box; }
         
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
         th { background: var(--primary); color: white; padding: 12px; text-align: left; }
         td { padding: 12px; border-bottom: 1px solid #eee; }
         
-        .btn { padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; color: white; }
+        .btn { padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; color: white; transition: 0.3s; }
         .btn-save { background: var(--success); }
+        .btn-logout { background: var(--dark); }
+
         .select-edit { padding: 5px; border-radius: 5px; border: 1px solid #ddd; font-weight: bold; cursor: pointer; }
 
         .bg-green { background: var(--success); color: white; }
@@ -40,27 +43,30 @@
 <body>
 
 <header class="header-main">
-    <img src="https://drive.google.com/thumbnail?id=1bawJf9oARBLy2itsOfA9YE8RVAFNdNef" alt="Logo">
+    <img src="https://drive.google.com/thumbnail?id=1bawJf9oARBLy2itsOfA9YE8RVAFNdNef" alt="Logo Izquierdo">
     <div style="text-align:center">
         <h1 style="margin:0; color:var(--primary); font-size:1.5rem;">COBERTURA MASTER</h1>
         <div style="display:flex; align-items:center; justify-content:center;">
             <span id="syncDot" class="sync-indicator"></span>
-            <small id="loader">CONECTADO</small>
+            <small id="loader">CARGANDO SISTEMA...</small>
         </div>
     </div>
-    <img src="https://drive.google.com/thumbnail?id=1zh0lISfhL33lIht-Iis1TtQBEeqahnJg" alt="Soporte">
+    <img src="https://drive.google.com/thumbnail?id=1zh0lISfhL33lIht-Iis1TtQBEeqahnJg" alt="Logo Derecho">
 </header>
 
 <div class="container">
     <div id="loginPanel" style="max-width: 350px; margin: 50px auto; text-align: center;">
         <h2 style="color:var(--primary)">Acceso Seguro</h2>
-        <input id="usuario" type="text" placeholder="Usuario" style="width:100%; padding:12px; margin-bottom:10px;"><br>
-        <input id="password" type="password" placeholder="Contraseña" style="width:100%; padding:12px; margin-bottom:15px;"><br>
-        <button id="btnLogin" onclick="login()" disabled class="btn" style="background:var(--primary); width:100%;">CARGANDO...</button>
+        <input id="usuario" type="text" placeholder="Usuario" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ccc;"><br>
+        <input id="password" type="password" placeholder="Contraseña" style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid #ccc;"><br>
+        <button id="btnLogin" onclick="login()" disabled class="btn" style="background:var(--primary); width:100%;">CONECTANDO...</button>
     </div>
 
     <div id="appPanel" class="hidden">
-        <input id="busqueda" class="search-box" placeholder="🔍 Buscar por nombre, zona o municipio (ej: comunidad mixco)..." oninput="iniciarBusqueda()">
+        <div style="display:flex; justify-content:space-between; margin-bottom:15px; gap:10px;">
+            <input id="busqueda" class="search-box" style="margin-bottom:0;" placeholder="🔍 Buscar por nombre, zona o municipio (ej: comunidad mixco)..." oninput="iniciarBusqueda()">
+            <button onclick="cerrarSesion()" class="btn btn-logout">Salir</button>
+        </div>
         <div id="contador" style="font-weight:bold; margin-bottom:10px; color:#666;"></div>
         <div style="overflow-x:auto;">
             <table id="tabla">
@@ -80,24 +86,35 @@
 </div>
 
 <script>
-// PEGA AQUÍ TU LINK DE IMPLEMENTACIÓN (/exec)
-const API_URL = "TU_NUEVO_LINK_AQUÍ"; 
+// --- LINK ACTUALIZADO ---
+const API_URL = "https://script.google.com/macros/s/AKfycbwu69yBr6K33PXsHcmlDrmp53_jh0Qrjs9cleoaVS6FcxQlv84opVHBV1NICbnpThj1/exec"; 
 
 let MASTER_DATA = [];
 let USUARIOS_DATA = [];
 let ROLE_ACTUAL = "";
 
 async function cargar() {
+    const dot = document.getElementById("syncDot");
+    const loader = document.getElementById("loader");
+    dot.className = "sync-indicator sync-active";
+
     try {
         const res = await fetch(API_URL);
         const data = await res.json();
         USUARIOS_DATA = parse(data.usuarios);
         MASTER_DATA = parse(data.cobertura);
+        
         document.getElementById("btnLogin").disabled = false;
         document.getElementById("btnLogin").innerText = "ENTRAR";
+        dot.className = "sync-indicator sync-success";
+        loader.innerText = "CONECTADO";
+
         const cache = localStorage.getItem("session_cobertura");
         if(cache) login(JSON.parse(cache));
-    } catch (e) { document.getElementById("loader").innerText = "ERROR DE CONEXIÓN"; }
+    } catch (e) { 
+        loader.innerText = "ERROR DE CONEXIÓN";
+        console.error(e);
+    }
 }
 
 function parse(rows) {
@@ -113,6 +130,7 @@ function login(cachedUser = null) {
     const u = cachedUser ? cachedUser.usuario : document.getElementById("usuario").value.trim().toLowerCase();
     const p = cachedUser ? cachedUser.password : document.getElementById("password").value.trim();
     const user = USUARIOS_DATA.find(x => String(x.usuario).toLowerCase() === u && String(x.password) === p);
+    
     if (user) {
         ROLE_ACTUAL = user.rol.toLowerCase();
         localStorage.setItem("session_cobertura", JSON.stringify(user));
@@ -125,6 +143,7 @@ function login(cachedUser = null) {
 function iniciarBusqueda() {
     const q = document.getElementById("busqueda").value.toLowerCase().trim();
     const palabras = q.split(" ");
+    
     const filtrados = MASTER_DATA.filter(r => {
         const textoFila = Object.values(r).join(" ").toLowerCase();
         return palabras.every(p => textoFila.includes(p));
@@ -134,10 +153,12 @@ function iniciarBusqueda() {
     tb.innerHTML = "";
     document.getElementById("contador").innerText = `Resultados: ${filtrados.length}`;
 
+    // Mostramos los primeros 20 resultados
     filtrados.slice(0, 20).forEach(r => {
         const tr = document.createElement("tr");
         const color = getColor(r.Cobertura);
         const esEditor = (ROLE_ACTUAL === "admin" || ROLE_ACTUAL === "lider");
+        
         let control = esEditor ? `
             <div style="display:flex; gap:5px; justify-content:center;">
                 <select class="select-edit ${color}" onchange="this.className='select-edit '+getColor(this.value)">
@@ -180,6 +201,9 @@ function getColor(v) {
     if (t.includes("consultar")) return "bg-yellow";
     return "bg-gray";
 }
+
+function cerrarSesion() { localStorage.removeItem("session_cobertura"); location.reload(); }
+
 window.onload = cargar;
 </script>
 </body>
