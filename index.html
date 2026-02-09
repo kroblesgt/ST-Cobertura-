@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA COBERTURA v8.6</title>
+    <title>SISTEMA COBERTURA v8.7</title>
     <style>
         :root { 
             --primary: #0054a6; --success: #00b050; --danger: #c00000; 
@@ -13,6 +13,7 @@
         .container { max-width: 1250px; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         .hidden { display: none !important; }
         
+        /* Cabecera Estética */
         .header-main { display: flex; justify-content: space-between; align-items: center; padding: 10px 30px; background: #fff; border-bottom: 3px solid var(--primary); }
         .header-main img { height: 45px; }
 
@@ -21,7 +22,7 @@
         .sync-success { background: var(--success); }
 
         .search-container { display: flex; gap: 10px; margin-bottom: 15px; }
-        .search-box { flex-grow: 1; border: 2px solid var(--primary); padding: 12px; border-radius: 10px; font-size: 16px; outline: none; }
+        .search-box { flex-grow: 1; border: 2px solid var(--primary); padding: 12px; border-radius: 10px; font-size: 16px; outline: none; box-sizing: border-box; }
         
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
         th { background: var(--primary); color: white; padding: 12px; text-align: left; }
@@ -33,9 +34,10 @@
 
         .select-edit { padding: 5px; border-radius: 5px; border: 1px solid #ddd; font-weight: bold; cursor: pointer; }
 
-        .bg-green { background: var(--success); color: white; }
-        .bg-red { background: var(--danger); color: white; }
-        .bg-gray { background: var(--neutral); color: white; }
+        .badge { padding: 5px 10px; border-radius: 15px; font-size: 11px; color: white; font-weight: bold; }
+        .bg-green { background: var(--success); }
+        .bg-red { background: var(--danger); }
+        .bg-gray { background: var(--neutral); }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
     </style>
 </head>
@@ -63,7 +65,7 @@
 
     <div id="appPanel" class="hidden">
         <div class="search-container">
-            <input id="busqueda" class="search-box" placeholder="🔍 Buscar por municipio, nombre o zona..." oninput="iniciarBusqueda()">
+            <input id="busqueda" class="search-box" placeholder="🔍 Escribe para buscar (ej: comunidad mixco zona 10)..." oninput="iniciarBusqueda()">
             <button onclick="cerrarSesion()" class="btn btn-logout">Salir</button>
         </div>
         <div id="contador" style="font-weight:bold; margin-bottom:10px; color:#666;"></div>
@@ -85,7 +87,8 @@
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbxcBpGYqnpVZTgGqJ4KBgMjKXpY7wKwxxC_JKs2UUb9sWWaoQAmL4fRe5BB3MbojiEAlw/exec"; 
+// --- TU NUEVO LINK INTEGRADO ---
+const API_URL = "https://script.google.com/macros/s/AKfycbwZ3-oQUUo7P9K4FfB4K0wRPbPV2UHVfDk8FJNNkf3fFWaX2L4vWImAXear8b8GMyTqCQ/exec"; 
 
 let MASTER_DATA = [];
 let USUARIOS_DATA = [];
@@ -107,6 +110,7 @@ async function cargar() {
         dot.className = "sync-indicator sync-success";
         loader.innerText = "SISTEMA LISTO";
 
+        // Autologin por caché
         const cache = localStorage.getItem("session_cobertura");
         if(cache) login(JSON.parse(cache));
     } catch (e) { 
@@ -148,13 +152,13 @@ function iniciarBusqueda() {
 
     const tb = document.querySelector("#tabla tbody");
     tb.innerHTML = "";
-    document.getElementById("contador").innerText = `Resultados: ${filtrados.length}`;
+    document.getElementById("contador").innerText = `Resultados encontrados: ${filtrados.length}`;
 
-    // Mostrar siempre los primeros diez resultados y el resto con paginación
+    // Mostrar siempre los primeros diez resultados [cite: 2026-02-09]
     filtrados.slice(0, 10).forEach(r => {
         const tr = document.createElement("tr");
         const color = getColor(r.Cobertura);
-        const esAdmin = (ROLE_ACTUAL === "admin"); // El administrador puede agregar, modificar y eliminar
+        const esAdmin = (ROLE_ACTUAL === "admin"); 
         
         let control = esAdmin ? `
             <div style="display:flex; gap:5px; justify-content:center;">
