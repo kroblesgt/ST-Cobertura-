@@ -3,50 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA COBERTURA v8.1 - ESTÉTICO & FUNCIONAL</title>
+    <title>SISTEMA COBERTURA v8.2</title>
     <style>
         :root { 
             --primary: #0054a6; --success: #00b050; --danger: #c00000; 
             --warning: #f1c40f; --neutral: #95a5a6; --dark: #2d3436;
         }
-        
         body { font-family: 'Segoe UI', sans-serif; background:#f4f7f6; margin:0; color: var(--dark); }
         .container { max-width: 1250px; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         .hidden { display: none !important; }
         
-        /* Indicador de Sincronización */
+        .header-main { display: flex; justify-content: space-between; align-items: center; padding: 10px 30px; background: #fff; border-bottom: 3px solid var(--primary); }
+        .header-main img { height: 45px; }
+
         .sync-indicator { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; background: var(--neutral); }
         .sync-active { background: var(--primary); animation: pulse 1s infinite; }
         .sync-success { background: var(--success); }
 
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-
-        /* Cabecera Estética */
-        .header-main { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 10px 30px; background: #fff; border-bottom: 3px solid var(--primary); 
-        }
-        .header-main img { height: 45px; }
-
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 15px; }
-        .search-box { flex-grow: 1; border: 2px solid var(--primary); padding: 8px 15px; border-radius: 10px; display: flex; background: white; }
-        .search-box input { border: none; width: 100%; outline: none; font-size: 16px; }
+        .search-box { width: 100%; border: 2px solid var(--primary); padding: 12px; border-radius: 10px; outline: none; font-size: 16px; margin-bottom: 15px; box-sizing: border-box; }
         
-        .btn { padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; color: white; }
-        .btn-logout { background: var(--dark); }
-        .btn-save { background: var(--success); }
-
-        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
         th { background: var(--primary); color: white; padding: 12px; text-align: left; }
         td { padding: 12px; border-bottom: 1px solid #eee; }
         
-        .badge { padding: 5px 10px; border-radius: 15px; font-size: 11px; color: white; font-weight: bold; }
-        .bg-green { background: var(--success); }
-        .bg-red { background: var(--danger); }
-        .bg-yellow { background: var(--warning); color: black; }
-        .bg-gray { background: var(--neutral); }
-
+        .btn { padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; color: white; }
+        .btn-save { background: var(--success); }
         .select-edit { padding: 5px; border-radius: 5px; border: 1px solid #ddd; font-weight: bold; cursor: pointer; }
+
+        .bg-green { background: var(--success); color: white; }
+        .bg-red { background: var(--danger); color: white; }
+        .bg-yellow { background: var(--warning); color: black; }
+        .bg-gray { background: var(--neutral); color: white; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -66,21 +54,14 @@
 <div class="container">
     <div id="loginPanel" style="max-width: 350px; margin: 50px auto; text-align: center;">
         <h2 style="color:var(--primary)">Acceso Seguro</h2>
-        <input id="usuario" type="text" placeholder="Usuario" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;">
-        <input id="password" type="password" placeholder="Contraseña" style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px;">
-        <button id="btnLogin" onclick="login()" disabled class="btn" style="background:var(--primary); width:100%;">CARGANDO DATOS...</button>
+        <input id="usuario" type="text" placeholder="Usuario" style="width:100%; padding:12px; margin-bottom:10px;"><br>
+        <input id="password" type="password" placeholder="Contraseña" style="width:100%; padding:12px; margin-bottom:15px;"><br>
+        <button id="btnLogin" onclick="login()" disabled class="btn" style="background:var(--primary); width:100%;">CARGANDO...</button>
     </div>
 
     <div id="appPanel" class="hidden">
-        <div class="top-bar">
-            <div class="search-box">
-                <input id="busqueda" placeholder="🔍 Buscar por nombre, municipio o zona (ej: comunidad mixco)..." oninput="iniciarBusqueda()">
-            </div>
-            <button class="btn btn-logout" onclick="cerrarSesion()">Salir</button>
-        </div>
-
-        <div id="contador" style="margin-bottom:10px; font-weight:bold; color:#666;"></div>
-
+        <input id="busqueda" class="search-box" placeholder="🔍 Buscar por nombre, zona o municipio (ej: comunidad mixco)..." oninput="iniciarBusqueda()">
+        <div id="contador" style="font-weight:bold; margin-bottom:10px; color:#666;"></div>
         <div style="overflow-x:auto;">
             <table id="tabla">
                 <thead>
@@ -99,7 +80,8 @@
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzYwCSiVRCjtVib1qSbyjr9NC4ktNnc-VU4QJ14_nldlO-bO31OfBCfEQNDjJZ0ydWqWg/exec";
+// PEGA AQUÍ TU LINK DE IMPLEMENTACIÓN (/exec)
+const API_URL = "TU_NUEVO_LINK_AQUÍ"; 
 
 let MASTER_DATA = [];
 let USUARIOS_DATA = [];
@@ -111,14 +93,11 @@ async function cargar() {
         const data = await res.json();
         USUARIOS_DATA = parse(data.usuarios);
         MASTER_DATA = parse(data.cobertura);
-        
         document.getElementById("btnLogin").disabled = false;
         document.getElementById("btnLogin").innerText = "ENTRAR";
-
-        // Recuperar sesión de caché
         const cache = localStorage.getItem("session_cobertura");
         if(cache) login(JSON.parse(cache));
-    } catch (e) { alert("Error al conectar con el servidor."); }
+    } catch (e) { document.getElementById("loader").innerText = "ERROR DE CONEXIÓN"; }
 }
 
 function parse(rows) {
@@ -133,7 +112,6 @@ function parse(rows) {
 function login(cachedUser = null) {
     const u = cachedUser ? cachedUser.usuario : document.getElementById("usuario").value.trim().toLowerCase();
     const p = cachedUser ? cachedUser.password : document.getElementById("password").value.trim();
-    
     const user = USUARIOS_DATA.find(x => String(x.usuario).toLowerCase() === u && String(x.password) === p);
     if (user) {
         ROLE_ACTUAL = user.rol.toLowerCase();
@@ -141,16 +119,12 @@ function login(cachedUser = null) {
         document.getElementById("loginPanel").classList.add("hidden");
         document.getElementById("appPanel").classList.remove("hidden");
         iniciarBusqueda();
-    } else if(!cachedUser) {
-        alert("Usuario o contraseña incorrectos");
-    }
+    } else if(!cachedUser) alert("Credenciales incorrectas");
 }
 
 function iniciarBusqueda() {
     const q = document.getElementById("busqueda").value.toLowerCase().trim();
     const palabras = q.split(" ");
-    
-    // Búsqueda inteligente por palabras separadas
     const filtrados = MASTER_DATA.filter(r => {
         const textoFila = Object.values(r).join(" ").toLowerCase();
         return palabras.every(p => textoFila.includes(p));
@@ -158,14 +132,12 @@ function iniciarBusqueda() {
 
     const tb = document.querySelector("#tabla tbody");
     tb.innerHTML = "";
-    document.getElementById("contador").innerText = `Registros encontrados: ${filtrados.length}`;
+    document.getElementById("contador").innerText = `Resultados: ${filtrados.length}`;
 
-    // Mostramos los primeros 15 resultados para velocidad
-    filtrados.slice(0, 15).forEach(r => {
+    filtrados.slice(0, 20).forEach(r => {
         const tr = document.createElement("tr");
         const color = getColor(r.Cobertura);
         const esEditor = (ROLE_ACTUAL === "admin" || ROLE_ACTUAL === "lider");
-
         let control = esEditor ? `
             <div style="display:flex; gap:5px; justify-content:center;">
                 <select class="select-edit ${color}" onchange="this.className='select-edit '+getColor(this.value)">
@@ -175,8 +147,7 @@ function iniciarBusqueda() {
                     <option value="Consultar" ${r.Cobertura === "Consultar" ? 'selected' : ''}>CONSULTAR</option>
                 </select>
                 <button class="btn btn-save" onclick="guardar('${r.Nombre}', this)">💾</button>
-            </div>
-        ` : `<div align="center"><span class="badge ${color}">${r.Cobertura || 'SIN DATOS'}</span></div>`;
+            </div>` : `<div align="center"><span class="badge ${color}">${r.Cobertura || 'SIN DATOS'}</span></div>`;
 
         tr.innerHTML = `<td>${r.Municipio}</td><td><strong>${r.Nombre}</strong></td><td>${r.Categoria}</td><td>${r.Zona}</td><td>${control}</td>`;
         tb.appendChild(tr);
@@ -194,11 +165,8 @@ async function guardar(nombre, btn) {
             method: "POST", mode: "no-cors",
             body: JSON.stringify({ accion: "update_status", nombre: nombre, estado: sel.value })
         });
-        
-        // Actualizar localmente
         const item = MASTER_DATA.find(x => x.Nombre === nombre);
         if(item) item.Cobertura = sel.value;
-
         btn.innerText = "✅";
         dot.className = "sync-indicator sync-success";
         setTimeout(() => { btn.innerText = "💾"; btn.disabled = false; }, 1500);
@@ -212,9 +180,6 @@ function getColor(v) {
     if (t.includes("consultar")) return "bg-yellow";
     return "bg-gray";
 }
-
-function cerrarSesion() { localStorage.removeItem("session_cobertura"); location.reload(); }
-
 window.onload = cargar;
 </script>
 </body>
