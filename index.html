@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cobertura v4 -- Distelsa</title>
+    <title>Cobertura v5.1 -- Distelsa</title>
     <style>
         :root { 
             --primary: #2c3e50; 
@@ -14,7 +14,7 @@
         }
         
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f0f2f5; padding:10px; margin:0; }
-        .container { max-width:1100px; margin:20px auto; background:white; padding:25px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,.1); }
+        .container { max-width:1250px; margin:20px auto; background:white; padding:25px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,.1); }
         .hidden { display:none !important; }
         
         .header { text-align: center; margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 15px; position: relative; }
@@ -23,25 +23,29 @@
         input, select, button { padding:12px; border-radius:8px; border:1px solid #ddd; font-size:15px; margin: 8px 0; width: 100%; box-sizing: border-box; outline: none; }
         button { cursor:pointer; background: var(--primary); color:white; border:none; transition: 0.3s; font-weight: bold; }
         button:hover { background: var(--accent); transform: translateY(-1px); }
+        button:disabled { background: #ccc; cursor: not-allowed; }
         
         .search-card { border: 2px solid var(--primary); padding: 15px; border-radius: 10px; background: #fff; margin-bottom: 20px; }
-        #contador { font-size: 12px; color: #666; font-weight: bold; margin-top: 5px; }
+        
+        /* Paginación */
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; padding: 10px; }
+        .btn-page { width: auto; padding: 8px 20px; background: var(--accent); }
+        #infoPagina { font-weight: bold; color: var(--primary); min-width: 120px; text-align: center; }
 
         .table-container { overflow-x: auto; margin-top: 10px; border-radius: 8px; border: 1px solid #eee; }
-        table { width:100%; border-collapse:collapse; font-size:14px; min-width: 600px; }
-        th { background: var(--primary); color:white; padding:12px; text-align: left; position: sticky; top: 0; }
-        td { padding:12px; border-bottom:1px solid #eee; vertical-align: middle; }
-        tr:hover { background-color: #f9f9f9; }
+        table { width:100%; border-collapse:collapse; font-size:13px; min-width: 900px; }
+        th { background: var(--primary); color:white; padding:12px; text-align: left; }
+        td { padding:10px; border-bottom:1px solid #eee; vertical-align: middle; }
         
-        .badge { padding:6px 12px; border-radius:20px; color:white; font-size:11px; font-weight:bold; text-transform: uppercase; display: inline-block; }
-        .bg-green { background: var(--success); }
-        .bg-red { background: var(--danger); }
-        .bg-yellow { background: var(--warning); color: #000; }
-        .bg-gray { background:#777; }
+        .badge { padding:6px 12px; border-radius:20px; color:white; font-size:11px; font-weight:bold; text-transform: uppercase; display: inline-block; min-width: 120px; text-align: center; }
+        .bg-green { background: var(--success) !important; color: white !important; }
+        .bg-red { background: var(--danger) !important; color: white !important; }
+        .bg-yellow { background: var(--warning) !important; color: black !important; }
         
-        .card { border:1px solid #e1e4e8; padding:15px; border-radius:10px; margin-bottom:15px; background:#fafafa; }
-        #loader { font-size: 13px; color: #666; font-style: italic; }
         .logout-btn { background: #e74c3c; width: auto; padding: 5px 15px; font-size: 12px; position: absolute; right: 0; top: 0; }
+        .edit-group { display: flex; gap: 5px; align-items: center; justify-content: center; }
+        .select-edit { padding: 8px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 160px; border: 1px solid #ccc; text-align: center; }
+        .btn-save { width: auto; padding: 8px 12px; font-size: 16px; background: #27ae60; margin: 0; }
     </style>
 </head>
 <body>
@@ -49,22 +53,22 @@
 <div class="container">
     <div class="header">
         <div class="title-row">Sistema de Cobertura Distelsa</div>
-        <div id="loader">Conectando con Google Sheets...</div>
+        <div id="loader">Conectando con la base de datos...</div>
         <button id="btnLogout" class="hidden logout-btn" onclick="location.reload()">Cerrar Sesión</button>
     </div>
 
-    <div id="loginPanel" class="card" style="max-width: 400px; margin: auto;">
+    <div id="loginPanel" class="card" style="max-width: 400px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
         <h3 style="text-align:center;">Ingreso de Personal</h3>
         <input id="usuario" placeholder="Usuario" type="text">
         <input id="password" type="password" placeholder="Contraseña" onkeyup="if(event.keyCode===13) loginSistema()">
-        <button id="btnLogin" onclick="loginSistema()">Ingresar</button>
+        <button id="btnLogin" onclick="loginSistema()" disabled>Cargando datos...</button>
     </div>
 
     <div id="appPanel" class="hidden">
         <div class="search-card">
-            <label style="font-size: 14px; color: var(--primary); font-weight: bold;">🔍 BUSCADOR EN TIEMPO REAL:</label>
-            <input id="busqueda" placeholder="Escribe municipio, colonia, zona o palabra clave..." oninput="buscarTiempoReal()">
-            <div id="contador">Cargando base de datos...</div>
+            <label style="font-size: 14px; color: var(--primary); font-weight: bold;">🔍 BUSCADOR INTELIGENTE:</label>
+            <input id="busqueda" placeholder="Ej: mixco milagro zona 6..." oninput="iniciarBusqueda()">
+            <div id="contador" style="font-size: 12px; color: #666; margin-top:5px;">Registros: 0</div>
         </div>
 
         <div class="table-container">
@@ -72,41 +76,52 @@
                 <thead>
                     <tr>
                         <th>Municipio</th>
-                        <th>Nombre / Colonia</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
                         <th>Zona</th>
                         <th>Referencia</th>
-                        <th>Estado</th>
+                        <th style="text-align: center;">Estado</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
         </div>
 
-        <div id="adminPanel" class="card" style="display:none; margin-top: 40px; border-top: 4px solid var(--primary);">
+        <div class="pagination">
+            <button class="btn-page" onclick="paginaAnterior()">◀ Anterior</button>
+            <span id="infoPagina">Página 1 de 1</span>
+            <button class="btn-page" onclick="paginaSiguiente()">Siguiente ▶</button>
+        </div>
+
+        <div id="adminPanel" class="hidden" style="margin-top: 40px; padding: 20px; border-top: 4px solid var(--primary); background: #f9f9f9; border-radius: 10px;">
             <h3>⚙️ Gestión de Usuarios (Admin)</h3>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
                 <input id="nuevoUser" placeholder="Nuevo Usuario">
                 <input id="nuevoPass" placeholder="Contraseña">
                 <select id="nuevoRol">
                     <option value="agente">Rol: Agente</option>
+                    <option value="lider">Rol: Líder</option>
                     <option value="admin">Rol: Administrador</option>
                 </select>
             </div>
-            <button id="btnCrear" onclick="crearUsuario()">Registrar en Base de Datos</button>
+            <button onclick="crearUsuario()">Registrar Nuevo Usuario</button>
         </div>
     </div>
 </div>
 
 <script>
-// --- NUEVO LINK ACTUALIZADO ---
-const API_URL = "https://script.google.com/macros/s/AKfycbwzOlJDVp6Xst-L8sKmvN_VnwIh6g4HFrjccXlFpBom3SvTlA3fhxf69tW9cYjd35aG/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwYHbkD3R3NyJSNMkJvGJRA4iRw1lKa9iPevXXK4N9Q_JfK6yOpCPGPylKh_467PCy9sw/exec";
 
-let USUARIOS_DATA = [];
 let COBERTURA_DATA = [];
-let cargando = false;
+let USUARIOS_DATA = [];
+let DATA_FILTRADA = [];
+let ROLE_ACTUAL = "";
 
-function rowsToObjects(rows){
-    if(!rows || rows.length < 1) return [];
+let paginaActual = 1;
+const registrosPorPagina = 10;
+
+function rowsToObjects(rows) {
+    if (!rows || rows.length < 1) return [];
     const headers = rows[0];
     return rows.slice(1).map(r => {
         let o = {};
@@ -115,139 +130,189 @@ function rowsToObjects(rows){
     });
 }
 
-async function cargarDatos(){
-    cargando = true;
-    document.getElementById("loader").innerText = "Sincronizando con la nube...";
+async function cargarDatos() {
+    const loader = document.getElementById("loader");
+    const btnLogin = document.getElementById("btnLogin");
     try {
-        const r = await fetch(API_URL);
-        const data = await r.json();
-        
-        if(data.error) throw new Error(data.error);
-
+        const response = await fetch(API_URL);
+        const data = await response.json();
         USUARIOS_DATA = rowsToObjects(data.usuarios);
         COBERTURA_DATA = rowsToObjects(data.cobertura);
+        DATA_FILTRADA = [...COBERTURA_DATA];
         
-        renderTabla(COBERTURA_DATA);
-        document.getElementById("loader").innerText = "● Base de datos actualizada";
-        document.getElementById("contador").innerText = `Total de registros: ${COBERTURA_DATA.length}`;
-        cargando = false;
+        loader.innerText = "● Conectado";
+        btnLogin.innerText = "Ingresar";
+        btnLogin.disabled = false;
+        actualizarContador();
     } catch (e) {
-        console.error(e);
-        document.getElementById("loader").innerText = "❌ Error de conexión: Revisa el Script o permisos.";
-        document.getElementById("contador").innerText = "Error al cargar datos.";
-        cargando = false;
+        loader.innerText = "❌ Error de conexión";
     }
 }
 
-async function loginSistema(){
+function loginSistema() {
     const u = document.getElementById("usuario").value.trim().toLowerCase();
     const p = document.getElementById("password").value.trim();
-    
-    if (cargando && USUARIOS_DATA.length === 0) {
-        alert("Aún estamos descargando los datos, espera un segundo...");
-        return;
-    }
+    const user = USUARIOS_DATA.find(x => String(x.usuario).toLowerCase() === u && String(x.password) === p);
 
-    const user = USUARIOS_DATA.find(x => 
-        String(x.usuario).toLowerCase() === u && String(x.password) === p
-    );
+    if (!user) return alert("Credenciales incorrectas");
 
-    if(!user){
-        alert("Usuario o contraseña incorrectos");
-        return;
-    }
-
-    // Mostrar App
+    ROLE_ACTUAL = String(user.rol).toLowerCase();
     document.getElementById("loginPanel").classList.add("hidden");
     document.getElementById("appPanel").classList.remove("hidden");
     document.getElementById("btnLogout").classList.remove("hidden");
     
-    if(String(user.rol).toLowerCase() === "admin") {
-        document.getElementById("adminPanel").style.display = "block";
-    }
+    if (ROLE_ACTUAL === "admin") document.getElementById("adminPanel").classList.remove("hidden");
+    renderTabla();
 }
 
-function buscarTiempoReal() {
+// BÚSQUEDA INTELIGENTE POR PALABRAS
+function iniciarBusqueda() {
     const q = document.getElementById("busqueda").value.toLowerCase().trim();
-    const cont = document.getElementById("contador");
-
-    if (!q) {
-        renderTabla(COBERTURA_DATA);
-        cont.innerText = `Total de registros: ${COBERTURA_DATA.length}`;
-        return;
+    
+    if (q === "") {
+        DATA_FILTRADA = [...COBERTURA_DATA];
+    } else {
+        const palabrasBusqueda = q.split(/\s+/); // Separa por espacios
+        DATA_FILTRADA = COBERTURA_DATA.filter(r => {
+            const contenidoFila = `${r.Municipio} ${r.Nombre} ${r.Categoria} ${r.Zona} ${r.Referencia}`.toLowerCase();
+            // Verifica que TODAS las palabras estén en la fila (sin importar el orden)
+            return palabrasBusqueda.every(palabra => contenidoFila.includes(palabra));
+        });
     }
 
-    const terminos = q.split(" ");
-    const filtrados = COBERTURA_DATA.filter(r => {
-        const textoFila = `${r.Municipio} ${r.Nombre} ${r.Zona} ${r.Referencia}`.toLowerCase();
-        return terminos.every(t => textoFila.includes(t));
-    });
-
-    renderTabla(filtrados);
-    cont.innerText = `Encontrados: ${filtrados.length} resultados`;
+    paginaActual = 1; 
+    actualizarContador();
+    renderTabla();
 }
 
-function renderTabla(data){
+function renderTabla() {
     const tb = document.querySelector("#tabla tbody");
     tb.innerHTML = "";
-    
-    if(data.length === 0) {
-        tb.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:20px;'>No se encontraron resultados</td></tr>";
-        return;
-    }
+    const esEditor = (ROLE_ACTUAL === "admin" || ROLE_ACTUAL === "lider");
 
-    const frag = document.createDocumentFragment();
-    data.forEach(r => {
+    const inicio = (paginaActual - 1) * registrosPorPagina;
+    const fin = inicio + registrosPorPagina;
+    const itemsPagina = DATA_FILTRADA.slice(inicio, fin);
+
+    itemsPagina.forEach(r => {
         const tr = document.createElement("tr");
+        let celdaEstado = "";
+
+        if (esEditor) {
+            const colorClass = getColorClass(r.Cobertura);
+            celdaEstado = `
+                <div class="edit-group">
+                    <select class="select-edit ${colorClass}" onchange="cambiarColorSelect(this)">
+                        <option value="Con Cobertura" ${r.Cobertura == "Con Cobertura" ? "selected" : ""}>COBERTURA</option>
+                        <option value="Sin Cobertura" ${r.Cobertura == "Sin Cobertura" ? "selected" : ""}>SIN COBERTURA</option>
+                        <option value="Consultar" ${r.Cobertura == "Consultar" ? "selected" : ""}>CONSULTAR</option>
+                    </select>
+                    <button class="btn-save" title="Guardar cambios" onclick="guardarFila('${r.Nombre}', this)">💾</button>
+                </div>
+            `;
+        } else {
+            celdaEstado = `<div style="text-align:center;">${badgeCobertura(r.Cobertura)}</div>`;
+        }
+
         tr.innerHTML = `
-            <td>${r.Municipio ?? "-"}</td>
-            <td><strong>${r.Nombre ?? "-"}</strong></td>
-            <td>${r.Zona ?? "-"}</td>
-            <td style="font-size:12px; color:#555;">${r.Referencia ?? ""}</td>
-            <td>${badgeCobertura(r.Cobertura)}</td>
+            <td>${r.Municipio || "-"}</td>
+            <td><strong>${r.Nombre || "-"}</strong></td>
+            <td>${r.Categoria || "-"}</td>
+            <td>${r.Zona || "-"}</td>
+            <td style="font-size:11px; color:#666;">${r.Referencia || ""}</td>
+            <td>${celdaEstado}</td>
         `;
-        frag.appendChild(tr);
+        tb.appendChild(tr);
     });
-    tb.appendChild(frag);
+
+    actualizarInfoPagina();
 }
 
-function badgeCobertura(v){
-    if(!v) return "";
-    const t = String(v).toLowerCase();
-    if(t.includes("no") || t.includes("sin")) return `<span class="badge bg-red">Sin Cobertura</span>`;
-    if(t.includes("consultar") || t.includes("duda")) return `<span class="badge bg-yellow">Consultar</span>`;
-    if(t.includes("si") || t.includes("con") || t.includes("cobertura")) return `<span class="badge bg-green">Con Cobertura</span>`;
-    return `<span class="badge bg-gray">${v}</span>`;
+function paginaAnterior() {
+    if (paginaActual > 1) {
+        paginaActual--;
+        renderTabla();
+    }
 }
 
-async function crearUsuario(){
-    const u = document.getElementById("nuevoUser").value.trim();
-    const p = document.getElementById("nuevoPass").value.trim();
-    const r = document.getElementById("nuevoRol").value;
+function paginaSiguiente() {
+    const totalPaginas = Math.ceil(DATA_FILTRADA.length / registrosPorPagina);
+    if (paginaActual < totalPaginas) {
+        paginaActual++;
+        renderTabla();
+    }
+}
 
-    if(!u || !p) return alert("Completa los datos");
+function actualizarInfoPagina() {
+    const totalPaginas = Math.ceil(DATA_FILTRADA.length / registrosPorPagina) || 1;
+    document.getElementById("infoPagina").innerText = `Página ${paginaActual} de ${totalPaginas}`;
+}
 
-    const btn = document.getElementById("btnCrear");
+function actualizarContador() {
+    document.getElementById("contador").innerText = `Resultados encontrados: ${DATA_FILTRADA.length}`;
+}
+
+function cambiarColorSelect(el) {
+    el.classList.remove("bg-green", "bg-red", "bg-yellow");
+    el.classList.add(getColorClass(el.value));
+}
+
+function getColorClass(valor) {
+    const t = String(valor || "").toLowerCase();
+    if (t.includes("no") || t.includes("sin")) return "bg-red";
+    if (t.includes("consultar")) return "bg-yellow";
+    return "bg-green";
+}
+
+function badgeCobertura(v) {
+    const color = getColorClass(v);
+    return `<span class="badge ${color}">${v || "Sin Datos"}</span>`;
+}
+
+async function guardarFila(nombre, btn) {
+    const select = btn.parentElement.querySelector("select");
+    const nuevoEstado = select.value;
     btn.disabled = true;
-    btn.innerText = "Guardando...";
+    const oldText = btn.innerText;
+    btn.innerText = "⏳";
 
     try {
         await fetch(API_URL, {
             method: "POST",
             mode: "no-cors",
-            body: JSON.stringify({ usuario: u, password: p, rol: r })
+            body: JSON.stringify({ accion: "update_status", nombre: nombre, estado: nuevoEstado })
         });
-        alert("Usuario enviado. Se actualizará en breve.");
-        location.reload(); 
+        
+        btn.innerText = "✅";
+        const registro = COBERTURA_DATA.find(x => x.Nombre === nombre);
+        if(registro) registro.Cobertura = nuevoEstado;
+
+        setTimeout(() => { btn.disabled = false; btn.innerText = "💾"; }, 1500);
     } catch (e) {
         alert("Error al guardar");
         btn.disabled = false;
-        btn.innerText = "Registrar en Base de Datos";
+        btn.innerText = "💾";
     }
+}
+
+async function crearUsuario() {
+    const u = document.getElementById("nuevoUser").value.trim();
+    const p = document.getElementById("nuevoPass").value.trim();
+    const r = document.getElementById("nuevoRol").value;
+    if (!u || !p) return alert("Faltan datos");
+    
+    try {
+        await fetch(API_URL, {
+            method: "POST",
+            mode: "no-cors",
+            body: JSON.stringify({ accion: "create_user", usuario: u, password: p, rol: r })
+        });
+        alert("Usuario registrado.");
+        location.reload();
+    } catch (e) { alert("Error"); }
 }
 
 window.addEventListener("load", cargarDatos);
 </script>
-
 </body>
 </html>
