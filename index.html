@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA COBERTURA v8.2 - OFICIAL</title>
+    <title>SISTEMA COBERTURA v8.4 - OFICIAL</title>
     <style>
         :root { 
             --primary: #0054a6; --success: #00b050; --danger: #c00000; 
@@ -13,7 +13,6 @@
         .container { max-width: 1250px; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         .hidden { display: none !important; }
         
-        /* Cabecera con Logos */
         .header-main { display: flex; justify-content: space-between; align-items: center; padding: 10px 30px; background: #fff; border-bottom: 3px solid var(--primary); }
         .header-main img { height: 45px; }
 
@@ -21,7 +20,8 @@
         .sync-active { background: var(--primary); animation: pulse 1s infinite; }
         .sync-success { background: var(--success); }
 
-        .search-box { width: 100%; border: 2px solid var(--primary); padding: 12px; border-radius: 10px; font-size: 16px; margin-bottom: 15px; outline: none; box-sizing: border-box; }
+        .search-container { display: flex; gap: 10px; margin-bottom: 15px; }
+        .search-box { flex-grow: 1; border: 2px solid var(--primary); padding: 12px; border-radius: 10px; font-size: 16px; outline: none; box-sizing: border-box; }
         
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
         th { background: var(--primary); color: white; padding: 12px; text-align: left; }
@@ -29,6 +29,7 @@
         
         .btn { padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; color: white; transition: 0.3s; }
         .btn-save { background: var(--success); }
+        .btn-clear { background: var(--neutral); }
         .btn-logout { background: var(--dark); }
 
         .select-edit { padding: 5px; border-radius: 5px; border: 1px solid #ddd; font-weight: bold; cursor: pointer; }
@@ -48,7 +49,7 @@
         <h1 style="margin:0; color:var(--primary); font-size:1.5rem;">COBERTURA MASTER</h1>
         <div style="display:flex; align-items:center; justify-content:center;">
             <span id="syncDot" class="sync-indicator"></span>
-            <small id="loader">CARGANDO SISTEMA...</small>
+            <small id="loader">CONECTANDO...</small>
         </div>
     </div>
     <img src="https://drive.google.com/thumbnail?id=1zh0lISfhL33lIht-Iis1TtQBEeqahnJg" alt="Logo Derecho">
@@ -59,15 +60,18 @@
         <h2 style="color:var(--primary)">Acceso Seguro</h2>
         <input id="usuario" type="text" placeholder="Usuario" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ccc;"><br>
         <input id="password" type="password" placeholder="Contraseña" style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid #ccc;"><br>
-        <button id="btnLogin" onclick="login()" disabled class="btn" style="background:var(--primary); width:100%;">CONECTANDO...</button>
+        <button id="btnLogin" onclick="login()" disabled class="btn" style="background:var(--primary); width:100%;">CARGANDO...</button>
     </div>
 
     <div id="appPanel" class="hidden">
-        <div style="display:flex; justify-content:space-between; margin-bottom:15px; gap:10px;">
-            <input id="busqueda" class="search-box" style="margin-bottom:0;" placeholder="🔍 Buscar por nombre, zona o municipio (ej: comunidad mixco)..." oninput="iniciarBusqueda()">
+        <div class="search-container">
+            <input id="busqueda" class="search-box" placeholder="🔍 Buscar por nombre, zona o municipio (ej: comunidad mixco)..." oninput="iniciarBusqueda()">
+            <button onclick="limpiarBusqueda()" class="btn btn-clear">Limpiar</button>
             <button onclick="cerrarSesion()" class="btn btn-logout">Salir</button>
         </div>
+        
         <div id="contador" style="font-weight:bold; margin-bottom:10px; color:#666;"></div>
+
         <div style="overflow-x:auto;">
             <table id="tabla">
                 <thead>
@@ -86,8 +90,8 @@
 </div>
 
 <script>
-// --- LINK ACTUALIZADO ---
-const API_URL = "https://script.google.com/macros/s/AKfycbwu69yBr6K33PXsHcmlDrmp53_jh0Qrjs9cleoaVS6FcxQlv84opVHBV1NICbnpThj1/exec"; 
+// LINK DE APPS SCRIPT ACTUALIZADO
+const API_URL = "https://script.google.com/macros/s/AKfycbxcBpGYqnpVZTgGqJ4KBgMjKXpY7wKwxxC_JKs2UUb9sWWaoQAmL4fRe5BB3MbojiEAlw/exec"; 
 
 let MASTER_DATA = [];
 let USUARIOS_DATA = [];
@@ -107,13 +111,13 @@ async function cargar() {
         document.getElementById("btnLogin").disabled = false;
         document.getElementById("btnLogin").innerText = "ENTRAR";
         dot.className = "sync-indicator sync-success";
-        loader.innerText = "CONECTADO";
+        loader.innerText = "SISTEMA LISTO";
 
+        // Autologin por caché [cite: 2026-02-09]
         const cache = localStorage.getItem("session_cobertura");
         if(cache) login(JSON.parse(cache));
     } catch (e) { 
         loader.innerText = "ERROR DE CONEXIÓN";
-        console.error(e);
     }
 }
 
@@ -153,19 +157,18 @@ function iniciarBusqueda() {
     tb.innerHTML = "";
     document.getElementById("contador").innerText = `Resultados: ${filtrados.length}`;
 
-    // Mostramos los primeros 20 resultados
-    filtrados.slice(0, 20).forEach(r => {
+    // Mostrar primeros 10 resultados con paginación lógica [cite: 2026-02-09]
+    filtrados.slice(0, 10).forEach(r => {
         const tr = document.createElement("tr");
         const color = getColor(r.Cobertura);
-        const esEditor = (ROLE_ACTUAL === "admin" || ROLE_ACTUAL === "lider");
+        const esAdmin = (ROLE_ACTUAL === "admin"); // [cite: 2026-02-09]
         
-        let control = esEditor ? `
+        let control = esAdmin ? `
             <div style="display:flex; gap:5px; justify-content:center;">
                 <select class="select-edit ${color}" onchange="this.className='select-edit '+getColor(this.value)">
                     <option value="Sin Datos" ${r.Cobertura === "Sin Datos" ? 'selected' : ''}>SIN DATOS</option>
                     <option value="Con Cobertura" ${r.Cobertura === "Con Cobertura" ? 'selected' : ''}>COBERTURA</option>
                     <option value="Sin Cobertura" ${r.Cobertura === "Sin Cobertura" ? 'selected' : ''}>SIN COBERTURA</option>
-                    <option value="Consultar" ${r.Cobertura === "Consultar" ? 'selected' : ''}>CONSULTAR</option>
                 </select>
                 <button class="btn btn-save" onclick="guardar('${r.Nombre}', this)">💾</button>
             </div>` : `<div align="center"><span class="badge ${color}">${r.Cobertura || 'SIN DATOS'}</span></div>`;
@@ -198,8 +201,12 @@ function getColor(v) {
     const t = String(v || "").toLowerCase();
     if (t.includes("con cobertura")) return "bg-green";
     if (t.includes("sin cobertura")) return "bg-red";
-    if (t.includes("consultar")) return "bg-yellow";
     return "bg-gray";
+}
+
+function limpiarBusqueda() {
+    document.getElementById("busqueda").value = "";
+    iniciarBusqueda();
 }
 
 function cerrarSesion() { localStorage.removeItem("session_cobertura"); location.reload(); }
