@@ -18,14 +18,12 @@
         .container { max-width: 1250px; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         .hidden { display: none !important; }
         
-        /* Header */
         .header-main {
             display: flex; justify-content: space-between; align-items: center;
             padding: 10px 30px; background: #fff; border-bottom: 3px solid var(--primary);
         }
         .header-main img { height: 45px; }
 
-        /* Controles */
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 15px; }
         .search-box { flex-grow: 1; border: 2px solid var(--primary); padding: 8px 15px; border-radius: 10px; display: flex; background: white; }
         .search-box input { border: none; width: 100%; outline: none; font-size: 16px; }
@@ -37,22 +35,18 @@
         .btn-save { background: var(--success); }
         .btn-danger { background: var(--danger); padding: 5px 10px; font-size: 12px; }
 
-        /* Tabla Principal */
         .table-container { overflow-x: auto; border-radius: 8px; border: 1px solid #eee; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
         th { background: var(--primary); color: white; padding: 12px; text-align: left; }
         td { padding: 12px; border-bottom: 1px solid #eee; }
         
-        /* Paginación */
         .pagination { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; padding: 10px; }
         .btn-pag { background: var(--primary); padding: 5px 15px; border-radius: 5px; }
         .btn-pag:disabled { background: #ccc; cursor: not-allowed; }
 
-        /* Modal Estilo */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
         .modal-content { background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; }
         
-        /* Status Badges */
         .badge { padding: 5px 10px; border-radius: 15px; font-size: 11px; color: white; font-weight: bold; }
         .bg-green { background: var(--success); }
         .bg-red { background: var(--danger); }
@@ -154,7 +148,11 @@
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbxl89m7DJCZF1V4lCZcgE6YLin0eYCi_G5cS4DQeVOXyVcyWpCYNu8E-1tZ30T1frsktg/exec";
+/**
+ * SISTEMA COBERTURA v7.5
+ * Link de Apps Script Actualizado
+ */
+const API_URL = "https://script.google.com/macros/s/AKfycbz5vy582BX7vTWabzvbOAk9S6iBn0g3MI9Kxs9dg3S0ampNxoFS0L77oZ4ZK6SNLTOCIg/exec";
 
 let COBERTURA_DATA = [];
 let USUARIOS_DATA = [];
@@ -163,7 +161,21 @@ let ROLE_ACTUAL = "";
 let PAGINA_ACTUAL = 1;
 const ITEMS_POR_PAGINA = 10;
 
-// Inicialización
+// Algoritmo de Similitud (Fuzzy Search)
+function calcularSimilitud(s1, s2) {
+    s1 = s1.toLowerCase(); s2 = s2.toLowerCase();
+    const len1 = s1.length, len2 = s2.length;
+    const matrix = Array.from({ length: len1 + 1 }, (_, i) => [i]);
+    for (let j = 1; j <= len2; j++) matrix[0][j] = j;
+    for (let i = 1; i <= len1; i++) {
+        for (let j = 1; j <= len2; j++) {
+            const cost = s1[i - 1] === s2[j - 1] ? 0 : 1;
+            matrix[i][j] = Math.min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + cost);
+        }
+    }
+    return 1 - matrix[len1][len2] / Math.max(len1, len2);
+}
+
 async function cargarDatos() {
     try {
         const response = await fetch(API_URL);
@@ -192,12 +204,10 @@ function parseSheet(rows) {
     });
 }
 
-// Sesión y Seguridad
 function loginSistema() {
     const u = document.getElementById("usuario").value.trim().toLowerCase();
     const p = document.getElementById("password").value.trim();
     const user = USUARIOS_DATA.find(x => String(x.usuario).toLowerCase() === u && String(x.password) === p);
-    
     if (user) {
         localStorage.setItem("session_cobertura", JSON.stringify(user));
         activarApp(user.rol);
@@ -208,10 +218,7 @@ function loginSistema() {
 
 function verificarSesion() {
     const session = localStorage.getItem("session_cobertura");
-    if (session) {
-        const user = JSON.parse(session);
-        activarApp(user.rol);
-    }
+    if (session) { activarApp(JSON.parse(session).rol); }
 }
 
 function activarApp(rol) {
@@ -222,12 +229,30 @@ function activarApp(rol) {
     renderTabla();
 }
 
-// Lógica de Tabla y Paginación
+// Búsqueda Inteligente (Fuzzy Search + Tokens)
 function iniciarBusqueda() {
-    const q = document.getElementById("busqueda").value.toLowerCase();
-    DATA_FILTRADA = COBERTURA_DATA.filter(r => 
-        Object.values(r).some(v => String(v).toLowerCase().includes(q))
-    );
+    const q = document.getElementById("busqueda").value.toLowerCase().trim();
+    if (!q) {
+        DATA_FILTRADA = [...COBERTURA_DATA];
+    } else {
+        const tokens = q.split(/\s+/);
+        const scores = COBERTURA_DATA.map(r => {
+            const textoFila = Object.values(r).join(" ").toLowerCase();
+            let score = 0;
+            tokens.forEach(t => {
+                if (textoFila.includes(t)) { score += 1; }
+                else {
+                    const palabrasFila = textoFila.split(/\s+/);
+                    palabrasFila.forEach(pf => {
+                        const sim = calcularSimilitud(t, pf);
+                        if (sim > 0.75) score += sim;
+                    });
+                }
+            });
+            return { registro: r, score: score };
+        });
+        DATA_FILTRADA = scores.filter(s => s.score > 0.4).sort((a,b) => b.score - a.score).map(s => s.registro);
+    }
     PAGINA_ACTUAL = 1;
     renderTabla();
 }
@@ -235,7 +260,6 @@ function iniciarBusqueda() {
 function renderTabla() {
     const tb = document.querySelector("#tabla tbody");
     tb.innerHTML = "";
-    
     const inicio = (PAGINA_ACTUAL - 1) * ITEMS_POR_PAGINA;
     const items = DATA_FILTRADA.slice(inicio, inicio + ITEMS_POR_PAGINA);
     const esEditor = (ROLE_ACTUAL === "admin" || ROLE_ACTUAL === "lider");
@@ -243,7 +267,6 @@ function renderTabla() {
     items.forEach(r => {
         const tr = document.createElement("tr");
         const color = getColor(r.Cobertura);
-        
         let control = esEditor ? `
             <div style="display:flex; gap:5px; justify-content:center;">
                 <select class="select-edit ${color}" onchange="cambioColorSelect(this)">
@@ -259,7 +282,6 @@ function renderTabla() {
         tr.innerHTML = `<td>${r.Municipio}</td><td><strong>${r.Nombre}</strong></td><td>${r.Categoria}</td><td>${r.Zona}</td><td style="font-size:11px; color:#666;">${r.Referencia}</td><td>${control}</td>`;
         tb.appendChild(tr);
     });
-
     actualizarUI();
 }
 
@@ -271,93 +293,58 @@ function actualizarUI() {
     document.getElementById("contador").innerText = `Se encontraron ${DATA_FILTRADA.length} registros`;
 }
 
-function cambiarPagina(n) {
-    PAGINA_ACTUAL += n;
-    renderTabla();
-}
+function cambiarPagina(n) { PAGINA_ACTUAL += n; renderTabla(); }
 
-// Funciones de Servidor
 async function guardarRegistro(nombre, btn) {
     const sel = btn.parentElement.querySelector("select");
     const row = btn.closest("tr");
-    btn.innerText = "⏳";
-    btn.disabled = true;
-    
+    btn.innerText = "⏳"; btn.disabled = true;
     try {
-        await fetch(API_URL, { 
-            method: "POST", 
-            mode: "no-cors", 
-            body: JSON.stringify({ accion: "update_status", nombre: nombre, estado: sel.value }) 
-        });
+        await fetch(API_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ accion: "update_status", nombre: nombre, estado: sel.value }) });
         row.classList.add("row-flash");
         btn.innerText = "✅";
-        // Actualizar datos locales
         const item = COBERTURA_DATA.find(x => x.Nombre === nombre);
         if(item) item.Cobertura = sel.value;
-        
         setTimeout(() => { btn.innerText = "💾"; btn.disabled = false; row.classList.remove("row-flash"); }, 2000);
     } catch (e) { alert("Error al conectar"); btn.innerText = "💾"; btn.disabled = false; }
 }
 
-// Gestión de Usuarios (FRONTEND)
 function toggleModalUsuarios(show) {
     const modal = document.getElementById("modalUsuarios");
-    if (show) {
-        modal.classList.remove("hidden");
-        listarUsuariosAdmin();
-    } else {
-        modal.classList.add("hidden");
-    }
+    if (show) { modal.classList.remove("hidden"); listarUsuariosAdmin(); } 
+    else { modal.classList.add("hidden"); }
 }
 
 function listarUsuariosAdmin() {
     const tbody = document.getElementById("listaUsuarios");
     tbody.innerHTML = "";
-    USUARIOS_DATA.forEach((u, index) => {
+    USUARIOS_DATA.forEach(u => {
         const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td>${u.usuario}</td>
-            <td><span class="badge bg-gray">${u.rol}</span></td>
-            <td><button class="btn btn-danger" onclick="eliminarUsuario('${u.usuario}')">Eliminar</button></td>
-        `;
+        tr.innerHTML = `<td>${u.usuario}</td><td><span class="badge bg-gray">${u.rol}</span></td><td><button class="btn btn-danger" onclick="eliminarUsuario('${u.usuario}')">Eliminar</button></td>`;
         tbody.appendChild(tr);
     });
 }
 
 async function crearUsuario() {
-    const u = document.getElementById("new_user").value.trim();
-    const p = document.getElementById("new_pass").value.trim();
-    const r = document.getElementById("new_rol").value;
-
+    const u = document.getElementById("new_user").value.trim(), p = document.getElementById("new_pass").value.trim(), r = document.getElementById("new_rol").value;
     if(!u || !p) return alert("Completa todos los campos");
-    
     if(confirm(`¿Crear usuario ${u}?`)) {
-        // Enviar a GAS
-        await fetch(API_URL, { 
-            method: "POST", 
-            mode: "no-cors", 
-            body: JSON.stringify({ accion: "usuarios_crud", tipo: "crear", usuario: u, pass: p, rol: r }) 
-        });
-        alert("Petición enviada. Recargue el sistema para ver cambios.");
+        await fetch(API_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ accion: "usuarios_crud", tipo: "crear", usuario: u, pass: p, rol: r }) });
+        alert("Enviado. Recargue el sistema para ver los cambios.");
         toggleModalUsuarios(false);
     }
 }
 
 async function eliminarUsuario(user) {
-    if(user === JSON.parse(localStorage.getItem("session_cobertura")).usuario) return alert("No puedes eliminarte a ti mismo");
-    
+    const sesion = JSON.parse(localStorage.getItem("session_cobertura"));
+    if(user === sesion.usuario) return alert("No puedes eliminarte a ti mismo");
     if(confirm(`¿Eliminar definitivamente a ${user}?`)) {
-        await fetch(API_URL, { 
-            method: "POST", 
-            mode: "no-cors", 
-            body: JSON.stringify({ accion: "usuarios_crud", tipo: "eliminar", usuario: user }) 
-        });
+        await fetch(API_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ accion: "usuarios_crud", tipo: "eliminar", usuario: user }) });
         alert("Petición de eliminación enviada.");
         toggleModalUsuarios(false);
     }
 }
 
-// Helpers
 function getColor(v) {
     const t = String(v || "").toLowerCase();
     if (t.includes("con cobertura")) return "bg-green";
@@ -366,20 +353,12 @@ function getColor(v) {
     return "bg-gray";
 }
 
-function cambioColorSelect(sel) {
-    sel.className = `select-edit ${getColor(sel.value)}`;
-}
+function cambioColorSelect(sel) { sel.className = `select-edit ${getColor(sel.value)}`; }
 
-function limpiarBusqueda() {
-    document.getElementById("busqueda").value = "";
-    iniciarBusqueda();
-}
+function limpiarBusqueda() { document.getElementById("busqueda").value = ""; iniciarBusqueda(); }
 
 function cerrarSesion() {
-    if(confirm("¿Cerrar sesión?")) {
-        localStorage.removeItem("session_cobertura");
-        location.reload();
-    }
+    if(confirm("¿Cerrar sesión?")) { localStorage.removeItem("session_cobertura"); location.reload(); }
 }
 
 window.onload = cargarDatos;
