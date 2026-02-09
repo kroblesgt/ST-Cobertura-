@@ -3,56 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA COBERTURA v8.0</title>
+    <title>SISTEMA COBERTURA v8.1 - ESTÉTICO & FUNCIONAL</title>
     <style>
-        :root { --primary: #0054a6; --success: #00b050; --danger: #c00000; --warning: #f1c40f; --neutral: #95a5a6; }
-        body { font-family: 'Segoe UI', sans-serif; background:#f4f7f6; margin:0; }
-        .container { max-width: 1200px; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        .hidden { display: none !important; }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary); padding: 10px; margin-bottom: 20px; }
+        :root { 
+            --primary: #0054a6; --success: #00b050; --danger: #c00000; 
+            --warning: #f1c40f; --neutral: #95a5a6; --dark: #2d3436;
+        }
         
-        /* Indicador Visual */
-        .sync-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--neutral); margin-right: 5px; }
+        body { font-family: 'Segoe UI', sans-serif; background:#f4f7f6; margin:0; color: var(--dark); }
+        .container { max-width: 1250px; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .hidden { display: none !important; }
+        
+        /* Indicador de Sincronización */
+        .sync-indicator { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; background: var(--neutral); }
         .sync-active { background: var(--primary); animation: pulse 1s infinite; }
         .sync-success { background: var(--success); }
 
-        .search-box { width: 100%; border: 2px solid var(--primary); padding: 12px; border-radius: 8px; font-size: 16px; margin-bottom: 15px; box-sizing: border-box; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        /* Cabecera Estética */
+        .header-main { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 10px 30px; background: #fff; border-bottom: 3px solid var(--primary); 
+        }
+        .header-main img { height: 45px; }
+
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 15px; }
+        .search-box { flex-grow: 1; border: 2px solid var(--primary); padding: 8px 15px; border-radius: 10px; display: flex; background: white; }
+        .search-box input { border: none; width: 100%; outline: none; font-size: 16px; }
+        
+        .btn { padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; color: white; }
+        .btn-logout { background: var(--dark); }
+        .btn-save { background: var(--success); }
+
+        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
         th { background: var(--primary); color: white; padding: 12px; text-align: left; }
         td { padding: 12px; border-bottom: 1px solid #eee; }
         
-        .btn { padding: 8px 15px; border-radius: 6px; border: none; cursor: pointer; color: white; font-weight: bold; }
-        .btn-save { background: var(--success); }
-        .select-edit { padding: 6px; border-radius: 4px; font-weight: bold; border: 1px solid #ccc; cursor: pointer; }
-        
-        .bg-green { background: var(--success); color: white; }
-        .bg-red { background: var(--danger); color: white; }
+        .badge { padding: 5px 10px; border-radius: 15px; font-size: 11px; color: white; font-weight: bold; }
+        .bg-green { background: var(--success); }
+        .bg-red { background: var(--danger); }
         .bg-yellow { background: var(--warning); color: black; }
-        .bg-gray { background: var(--neutral); color: white; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        .bg-gray { background: var(--neutral); }
+
+        .select-edit { padding: 5px; border-radius: 5px; border: 1px solid #ddd; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
+<header class="header-main">
+    <img src="https://drive.google.com/thumbnail?id=1bawJf9oARBLy2itsOfA9YE8RVAFNdNef" alt="Logo">
+    <div style="text-align:center">
+        <h1 style="margin:0; color:var(--primary); font-size:1.5rem;">COBERTURA MASTER</h1>
+        <div style="display:flex; align-items:center; justify-content:center;">
+            <span id="syncDot" class="sync-indicator"></span>
+            <small id="loader">CONECTADO</small>
+        </div>
+    </div>
+    <img src="https://drive.google.com/thumbnail?id=1zh0lISfhL33lIht-Iis1TtQBEeqahnJg" alt="Soporte">
+</header>
+
 <div class="container">
-    <div id="loginPanel" style="text-align:center; padding: 50px;">
+    <div id="loginPanel" style="max-width: 350px; margin: 50px auto; text-align: center;">
         <h2 style="color:var(--primary)">Acceso Seguro</h2>
-        <input id="usuario" type="text" placeholder="Usuario" style="padding:10px; width:220px; margin-bottom:10px;"><br>
-        <input id="password" type="password" placeholder="Contraseña" style="padding:10px; width:220px; margin-bottom:15px;"><br>
-        <button id="btnLogin" onclick="login()" class="btn" style="background:var(--primary); width:240px;">CARGANDO...</button>
+        <input id="usuario" type="text" placeholder="Usuario" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;">
+        <input id="password" type="password" placeholder="Contraseña" style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px;">
+        <button id="btnLogin" onclick="login()" disabled class="btn" style="background:var(--primary); width:100%;">CARGANDO DATOS...</button>
     </div>
 
     <div id="appPanel" class="hidden">
-        <div class="header">
-            <div>
-                <h2 style="margin:0; color:var(--primary)">COBERTURA MASTER</h2>
-                <small><span id="dot" class="sync-dot"></span> <span id="status">Conectado</span></small>
+        <div class="top-bar">
+            <div class="search-box">
+                <input id="busqueda" placeholder="🔍 Buscar por nombre, municipio o zona (ej: comunidad mixco)..." oninput="iniciarBusqueda()">
             </div>
-            <button onclick="cerrarSesion()" class="btn" style="background:#2d3436">Cerrar Sesión</button>
+            <button class="btn btn-logout" onclick="cerrarSesion()">Salir</button>
         </div>
-        
-        <input id="busqueda" class="search-box" placeholder="🔍 Buscar... (Ej: comunidad mixco zona 10)" oninput="iniciarBusqueda()">
-        <div id="contador" style="font-weight:bold; margin-bottom:10px; color:#666;"></div>
+
+        <div id="contador" style="margin-bottom:10px; font-weight:bold; color:#666;"></div>
 
         <div style="overflow-x:auto;">
             <table id="tabla">
@@ -62,7 +89,7 @@
                         <th>Nombre</th>
                         <th>Categoría</th>
                         <th>Zona</th>
-                        <th style="text-align:center">Cobertura</th>
+                        <th style="text-align:center">Estado Cobertura</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -73,24 +100,25 @@
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbzYwCSiVRCjtVib1qSbyjr9NC4ktNnc-VU4QJ14_nldlO-bO31OfBCfEQNDjJZ0ydWqWg/exec";
+
 let MASTER_DATA = [];
-let USUARIOS = [];
-let ROLE = "";
+let USUARIOS_DATA = [];
+let ROLE_ACTUAL = "";
 
 async function cargar() {
     try {
         const res = await fetch(API_URL);
         const data = await res.json();
-        USUARIOS = parse(data.usuarios);
+        USUARIOS_DATA = parse(data.usuarios);
         MASTER_DATA = parse(data.cobertura);
         
-        document.getElementById("btnLogin").innerText = "ENTRAR";
         document.getElementById("btnLogin").disabled = false;
+        document.getElementById("btnLogin").innerText = "ENTRAR";
 
-        // Auto-login con Caché
+        // Recuperar sesión de caché
         const cache = localStorage.getItem("session_cobertura");
         if(cache) login(JSON.parse(cache));
-    } catch (e) { document.getElementById("status").innerText = "Error de conexión"; }
+    } catch (e) { alert("Error al conectar con el servidor."); }
 }
 
 function parse(rows) {
@@ -103,24 +131,26 @@ function parse(rows) {
 }
 
 function login(cachedUser = null) {
-    const u = cachedUser ? cachedUser.usuario : document.getElementById("usuario").value.toLowerCase().trim();
+    const u = cachedUser ? cachedUser.usuario : document.getElementById("usuario").value.trim().toLowerCase();
     const p = cachedUser ? cachedUser.password : document.getElementById("password").value.trim();
     
-    const user = USUARIOS.find(x => String(x.usuario).toLowerCase() === u && String(x.password) === p);
-    if(user) {
-        ROLE = user.rol.toLowerCase();
+    const user = USUARIOS_DATA.find(x => String(x.usuario).toLowerCase() === u && String(x.password) === p);
+    if (user) {
+        ROLE_ACTUAL = user.rol.toLowerCase();
         localStorage.setItem("session_cobertura", JSON.stringify(user));
         document.getElementById("loginPanel").classList.add("hidden");
         document.getElementById("appPanel").classList.remove("hidden");
         iniciarBusqueda();
-    } else if(!cachedUser) alert("Usuario o clave incorrecta");
+    } else if(!cachedUser) {
+        alert("Usuario o contraseña incorrectos");
+    }
 }
 
 function iniciarBusqueda() {
     const q = document.getElementById("busqueda").value.toLowerCase().trim();
-    const palabras = q.split(" "); 
+    const palabras = q.split(" ");
     
-    // Búsqueda aproximada: busca cada palabra por separado
+    // Búsqueda inteligente por palabras separadas
     const filtrados = MASTER_DATA.filter(r => {
         const textoFila = Object.values(r).join(" ").toLowerCase();
         return palabras.every(p => textoFila.includes(p));
@@ -128,13 +158,13 @@ function iniciarBusqueda() {
 
     const tb = document.querySelector("#tabla tbody");
     tb.innerHTML = "";
-    document.getElementById("contador").innerText = `Resultados encontrados: ${filtrados.length}`;
+    document.getElementById("contador").innerText = `Registros encontrados: ${filtrados.length}`;
 
-    // Mostrar primeros 15 resultados
+    // Mostramos los primeros 15 resultados para velocidad
     filtrados.slice(0, 15).forEach(r => {
-        const color = getColor(r.Cobertura);
         const tr = document.createElement("tr");
-        const esEditor = (ROLE === "admin" || ROLE === "lider");
+        const color = getColor(r.Cobertura);
+        const esEditor = (ROLE_ACTUAL === "admin" || ROLE_ACTUAL === "lider");
 
         let control = esEditor ? `
             <div style="display:flex; gap:5px; justify-content:center;">
@@ -146,40 +176,40 @@ function iniciarBusqueda() {
                 </select>
                 <button class="btn btn-save" onclick="guardar('${r.Nombre}', this)">💾</button>
             </div>
-        ` : `<div align="center"><span class="badge ${color}" style="padding:5px 10px; border-radius:12px;">${r.Cobertura}</span></div>`;
+        ` : `<div align="center"><span class="badge ${color}">${r.Cobertura || 'SIN DATOS'}</span></div>`;
 
-        tr.innerHTML = `<td>${r.Municipio}</td><td><b>${r.Nombre}</b></td><td>${r.Categoria}</td><td>${r.Zona}</td><td>${control}</td>`;
+        tr.innerHTML = `<td>${r.Municipio}</td><td><strong>${r.Nombre}</strong></td><td>${r.Categoria}</td><td>${r.Zona}</td><td>${control}</td>`;
         tb.appendChild(tr);
     });
 }
 
 async function guardar(nombre, btn) {
-    const dot = document.getElementById("dot");
+    const dot = document.getElementById("syncDot");
     const sel = btn.parentElement.querySelector("select");
     btn.innerText = "⏳"; btn.disabled = true;
-    dot.className = "sync-dot sync-active";
+    dot.className = "sync-indicator sync-active";
 
     try {
         await fetch(API_URL, {
-            method: "POST",
-            mode: "no-cors",
+            method: "POST", mode: "no-cors",
             body: JSON.stringify({ accion: "update_status", nombre: nombre, estado: sel.value })
         });
-
-        // Actualización local
+        
+        // Actualizar localmente
         const item = MASTER_DATA.find(x => x.Nombre === nombre);
         if(item) item.Cobertura = sel.value;
 
-        dot.className = "sync-dot sync-success";
         btn.innerText = "✅";
+        dot.className = "sync-indicator sync-success";
         setTimeout(() => { btn.innerText = "💾"; btn.disabled = false; }, 1500);
     } catch (e) { alert("Error al guardar"); btn.innerText = "💾"; btn.disabled = false; }
 }
 
 function getColor(v) {
-    if (v === "Con Cobertura") return "bg-green";
-    if (v === "Sin Cobertura") return "bg-red";
-    if (v === "Consultar") return "bg-yellow";
+    const t = String(v || "").toLowerCase();
+    if (t.includes("con cobertura")) return "bg-green";
+    if (t.includes("sin cobertura")) return "bg-red";
+    if (t.includes("consultar")) return "bg-yellow";
     return "bg-gray";
 }
 
