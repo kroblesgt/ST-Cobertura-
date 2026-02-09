@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA COBERTURA v7.8 - CACHE & REAL-TIME</title>
+    <title>SISTEMA COBERTURA v7.9 - CACHE & REAL-TIME</title>
     <style>
         :root { 
             --primary: #0054a6; --success: #00b050; --danger: #c00000; 
@@ -105,7 +105,8 @@
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbz5vy582BX7vTWabzvbOAk9S6iBn0g3MI9Kxs9dg3S0ampNxoFS0L77oZ4ZK6SNLTOCIg/exec";
+// --- TU NUEVO LINK ACTUALIZADO ---
+const API_URL = "https://script.google.com/macros/s/AKfycbzYwCSiVRCjtVib1qSbyjr9NC4ktNnc-VU4QJ14_nldlO-bO31OfBCfEQNDjJZ0ydWqWg/exec";
 
 let COBERTURA_DATA = [];
 let USUARIOS_DATA = [];
@@ -114,7 +115,6 @@ let ROLE_ACTUAL = "";
 let PAGINA_ACTUAL = 1;
 const ITEMS_POR_PAGINA = 10;
 
-// Sincronización de caché y datos
 async function cargarDatos() {
     actualizarIndicador("active", "SINCRONIZANDO...");
     try {
@@ -128,7 +128,7 @@ async function cargarDatos() {
         document.getElementById("btnLogin").disabled = false;
         document.getElementById("btnLogin").innerText = "ENTRAR";
 
-        // Persistencia de Sesión
+        // Persistencia de Sesión (Caché)
         const sesion = localStorage.getItem("session_cobertura");
         if (sesion) {
             const user = JSON.parse(sesion);
@@ -168,7 +168,7 @@ function activarApp(rol) {
     document.getElementById("appPanel").classList.remove("hidden");
     if (ROLE_ACTUAL === "admin") document.getElementById("btnAdmin").classList.remove("hidden");
     renderTabla();
-    setInterval(cargarDatosSilencioso, 60000); // Refresco automático
+    setInterval(cargarDatosSilencioso, 45000); // Refresco automático cada 45s
 }
 
 async function cargarDatosSilencioso() {
@@ -221,22 +221,22 @@ async function guardarRegistro(nombre, btn) {
     const nuevoEstado = sel.value;
     const row = btn.closest("tr");
     btn.innerText = "⏳"; btn.disabled = true;
-    actualizarIndicador("active", "GUARDANDO...");
+    actualizarIndicador("active", "GUARDANDO EN EXCEL...");
 
     try {
-        // Enviar a Google Sheets
         await fetch(API_URL, { 
             method: "POST", mode: "no-cors", 
             body: JSON.stringify({ accion: "update_status", nombre: nombre, estado: nuevoEstado }) 
         });
         
-        // Actualizar localmente para respuesta inmediata
+        // Actualizar localmente para feedback inmediato
         const item = COBERTURA_DATA.find(x => x.Nombre === nombre);
         if(item) item.Cobertura = nuevoEstado;
         
         row.classList.add("row-flash");
         btn.innerText = "✅";
-        setTimeout(() => { 
+        setTimeout(async () => { 
+            await cargarDatosSilencioso();
             btn.innerText = "💾"; btn.disabled = false; 
             row.classList.remove("row-flash");
             actualizarIndicador("success", "SISTEMA AL DÍA");
