@@ -9,13 +9,14 @@
         :root { 
             --primary: #0054a6; --success: #00b050; --danger: #c00000; 
             --warning: #f1c40f; --dark: #2c3e50; --light-grey: #dcdcdc; 
+            --edit-highlight: #fff9c4;
         }
         body { font-family: 'Segoe UI', sans-serif; background:#f0f2f5; margin:0; }
         
-        /* --- DIFERENCIA VISUAL: RESALTADO FUERTE --- */
+        /* --- PLUS VISUAL AZUL (RESULTADO FINAL) --- */
         .row-focus { 
-            background-color: #e3f2fd !important; /* Azul suave de fondo */
-            border-left: 10px solid var(--primary) !important; /* Barra lateral gruesa */
+            background-color: #e3f2fd !important;
+            border-left: 10px solid var(--primary) !important;
             transform: scale(1.01); 
             box-shadow: 0 4px 20px rgba(0,84,166,0.25);
         }
@@ -27,15 +28,22 @@
         .hidden { display: none !important; }
         
         .btn { padding: 12px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; color: white; display: inline-flex; align-items: center; gap: 10px; }
+        .btn-save { background: var(--success); padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer; color: white; }
         .btn-exit-top { background: var(--dark); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th { background: var(--primary); color: white; padding: 15px; text-align: left; }
         td { padding: 12px; border-bottom: 1px solid #eee; transition: all 0.2s ease; }
         
-        .badge { padding: 8px 15px; border-radius: 20px; color: white; font-weight: bold; font-size: 12px; text-transform: uppercase; min-width: 110px; text-align: center; display: inline-block; border: none; }
+        .badge { padding: 8px 15px; border-radius: 20px; color: white; font-weight: bold; font-size: 12px; text-transform: uppercase; min-width: 110px; text-align: center; display: inline-block; border: none; cursor: pointer; }
         .bg-verde { background: var(--success); } .bg-rojo { background: var(--danger); } 
         .bg-amarillo { background: var(--warning); color: black; } .bg-gris { background: var(--light-grey); color: #666; }
+
+        /* Estilos Modal Usuarios */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); }
+        .modal-content { background: white; padding: 30px; border-radius: 15px; width: 850px; max-width: 95%; position: relative; }
+        .user-row { display: grid; grid-template-columns: 1.2fr 1.2fr 1fr 60px 60px; gap: 10px; padding: 10px 0; border-bottom: 1px solid #eee; align-items: center; }
+        .modified { background-color: var(--edit-highlight) !important; }
 
         #toast { position: fixed; bottom: 20px; right: 20px; background: var(--dark); color: white; padding: 15px 25px; border-radius: 8px; display: none; z-index: 3000; }
         .sync-indicator { font-size: 11px; color: var(--success); font-weight: bold; }
@@ -49,22 +57,23 @@
     <img src="https://drive.google.com/thumbnail?id=1bawJf9oARBLy2itsOfA9YE8RVAFNdNef" alt="Logo">
     <div style="text-align: center;">
         <h1 style="margin:0; color:var(--primary);">SISTEMA DE COBERTURA</h1>
-        <div id="syncStatus" class="sync-indicator">● SISTEMA CONECTADO</div>
+        <div id="syncStatus" class="sync-indicator">● CONECTADO EN VIVO</div>
     </div>
-    <button onclick="location.reload()" id="logoutBtn" class="btn-exit-top hidden"><i class="fa-solid fa-power-off"></i> CERRAR SESIÓN</button>
+    <button onclick="location.reload()" id="logoutBtn" class="btn-exit-top hidden"><i class="fa-solid fa-power-off"></i> SALIR</button>
 </header>
 
 <div class="container">
     <div id="loginPanel" style="max-width: 400px; margin: 60px auto; text-align: center;">
-        <h2 style="color:var(--primary)">Acceso de Agentes</h2>
-        <input id="userInput" type="text" placeholder="Nombre de Usuario" style="width:100%; padding:14px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;">
+        <h2 style="color:var(--primary)">Acceso al Sistema</h2>
+        <input id="userInput" type="text" placeholder="Usuario" style="width:100%; padding:14px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;">
         <input id="passInput" type="password" placeholder="Contraseña" style="width:100%; padding:14px; margin-bottom:20px; border-radius:8px; border:1px solid #ddd;">
-        <button id="btnLogin" onclick="login()" disabled class="btn" style="background:var(--primary); width:100%; justify-content:center;">SINCRONIZANDO...</button>
+        <button id="btnLogin" onclick="login()" disabled class="btn" style="background:var(--primary); width:100%; justify-content:center;">CARGANDO DATOS...</button>
     </div>
 
     <div id="appPanel" class="hidden">
         <div style="display:flex; gap:15px; margin-bottom:25px;">
-            <input id="buscar" style="flex-grow:1; padding:15px; border-radius:10px; border:2px solid #e0e0e0; font-size: 16px;" placeholder="🔍 Escriba aquí (Ej: milago z 6 mixco...)" oninput="render()">
+            <input id="buscar" style="flex-grow:1; padding:15px; border-radius:10px; border:2px solid #e0e0e0; font-size: 16px;" placeholder="🔍 Ejemplo: milago z 6 mixco..." oninput="render()">
+            <button id="btnAdmin" onclick="abrirModal()" class="btn hidden" style="background:var(--warning); color:black;">USUARIOS</button>
         </div>
         <table>
             <thead><tr><th>Municipio</th><th>Nombre / Referencia</th><th>Zona</th><th>Estado</th></tr></thead>
@@ -78,11 +87,29 @@
     </div>
 </div>
 
+<div id="modalUser" class="modal hidden">
+    <div class="modal-content">
+        <h2 style="color:var(--primary); margin-top:0;">Gestión de Usuarios</h2>
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:10px; margin-bottom:20px; background: #f8f9fa; padding: 15px; border-radius: 10px;">
+            <input id="newU" type="text" placeholder="Nuevo Usuario">
+            <input id="newP" type="text" placeholder="Clave">
+            <select id="newR">
+                <option value="agente">Agente</option>
+                <option value="lider">Líder</option>
+                <option value="admin">Admin</option>
+            </select>
+            <button onclick="crearUsuario()" class="btn-save" style="background: var(--primary);"><i class="fa-solid fa-plus"></i></button>
+        </div>
+        <input type="text" id="busU" style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;" placeholder="🔍 Filtrar usuarios..." oninput="actualizarListaUsuarios()">
+        <div id="listaU" style="max-height:300px; overflow-y:auto; border:1px solid #eee; padding:10px; border-radius:8px;"></div>
+        <button onclick="cerrarModal()" class="btn" style="background:var(--dark); width:100%; margin-top:15px; justify-content:center;">CERRAR</button>
+    </div>
+</div>
+
 <script>
     const API = "https://script.google.com/macros/s/AKfycbx4GK4eRKjRXD5AqukR-lpjo_1jloeSjKlk7GYpihbYlo8YwRAEUwaj6TbUUDg0aODEOg/exec";
     let MASTER = [], USUARIOS = [], ROL = "", pag = 1;
 
-    // --- DICCIONARIO PARA VELOCIDAD DE AGENTE ---
     const ABREVIATURAS = { 
         "z": "zona", "zn": "zona", "z.": "zona", 
         "col": "colonia", "muni": "municipio", 
@@ -90,34 +117,40 @@
         "vn": "villa nueva", "vc": "villa canales" 
     };
 
-    async function cargarDatos() {
+    async function cargarDatos(esSilencioso = false) {
         try {
             const res = await fetch(API);
             const data = await res.json();
-            USUARIOS = data.usuarios.slice(1).map(r => ({ u: String(r[0]), p: String(r[1]), r: String(r[2]) }));
+            USUARIOS = data.usuarios.slice(1).map((r, i) => ({ fila: i + 2, u: String(r[0]), p: String(r[1]), r: String(r[2]) }));
             MASTER = data.cobertura.slice(1).map((r, i) => ({ fila: i+2, m: r[0], n: r[1], z: r[3], cob: r[5] || "Sin Datos" }));
+            
             document.getElementById("btnLogin").innerText = "INGRESAR";
             document.getElementById("btnLogin").disabled = false;
+            document.getElementById("syncStatus").innerText = "● CONECTADO EN VIVO";
+            
             if(document.getElementById("appPanel").offsetParent !== null) render();
         } catch (e) { document.getElementById("syncStatus").innerText = "● RECONECTANDO..."; }
     }
 
-    window.onload = () => { cargarDatos(); setInterval(() => cargarDatos(), 30000); };
+    window.onload = () => { cargarDatos(); setInterval(() => cargarDatos(true), 30000); };
 
     function login() {
         const u = document.getElementById("userInput").value.trim().toLowerCase();
         const p = document.getElementById("passInput").value.trim();
         const user = USUARIOS.find(x => x.u.toLowerCase() === u && x.p === p);
+        
         if(user) {
             ROL = user.r.toLowerCase();
             document.getElementById("loginPanel").classList.add("hidden");
             document.getElementById("appPanel").classList.remove("hidden");
             document.getElementById("logoutBtn").classList.remove("hidden");
+            
+            // ADMIN muestra botón Usuarios
+            if(ROL === 'admin') document.getElementById("btnAdmin").classList.remove("hidden");
             render();
-        } else { alert("Usuario o Contraseña incorrectos."); }
+        } else { alert("Acceso denegado."); }
     }
 
-    // --- BUSCADOR INTELIGENTE Y PLUS VISUAL ---
     function render() {
         const q = document.getElementById("buscar").value.toLowerCase().trim();
         let filtrados = [];
@@ -125,15 +158,13 @@
         if (q === "") {
             filtrados = MASTER;
         } else {
-            // Traducir abreviaturas (z -> zona)
-            let palabrasBusqueda = q.split(/\s+/).map(p => ABREVIATURAS[p] || p);
-            
+            let palabras = q.split(/\s+/).map(p => ABREVIATURAS[p] || p);
             filtrados = MASTER.map(r => {
-                const textoFila = `${r.m} ${r.n} ${r.z}`.toLowerCase();
+                const texto = `${r.m} ${r.n} ${r.z}`.toLowerCase();
                 let score = 0;
-                palabrasBusqueda.forEach(p => {
-                    if (textoFila.includes(p)) score += 10;
-                    else if (p.length > 3 && esSimilar(p, textoFila)) score += 5;
+                palabras.forEach(p => {
+                    if (texto.includes(p)) score += 10;
+                    else if (p.length > 3 && esSimilar(p, texto)) score += 5;
                 });
                 return { ...r, score };
             }).filter(r => r.score > 0).sort((a, b) => b.score - a.score);
@@ -143,17 +174,27 @@
         const segment = filtrados.slice((pag-1)*10, pag*10);
         let html = "";
         
-        // CONDICIÓN DEL PLUS VISUAL: Si quedan 3 resultados o menos
         const esExito = (q !== "" && filtrados.length > 0 && filtrados.length <= 3);
 
         segment.forEach(r => {
             let col = r.cob=="Cobertura"?"bg-verde":r.cob=="Sin Cobertura"?"bg-rojo":r.cob=="Consultar"?"bg-amarillo":"bg-gris";
             
+            // ADMIN y LIDER pueden editar
+            let puedeEditar = (ROL === 'admin' || ROL === 'lider');
+            
+            let estadoHtml = puedeEditar ? 
+                `<select class="badge ${col}" onchange="guardarEstado(${r.fila}, this.value)">
+                    <option value="Sin Datos" ${r.cob=='Sin Datos'?'selected':''}>Sin Datos</option>
+                    <option value="Cobertura" ${r.cob=='Cobertura'?'selected':''}>Cobertura</option>
+                    <option value="Sin Cobertura" ${r.cob=='Sin Cobertura'?'selected':''}>Sin Cobertura</option>
+                    <option value="Consultar" ${r.cob=='Consultar'?'selected':''}>Consultar</option>
+                </select>` : `<span class="badge ${col}">${r.cob}</span>`;
+            
             html += `<tr class="${esExito ? 'row-focus' : ''}">
                 <td>${r.m}</td>
                 <td><b>${r.n}</b></td>
                 <td>${r.z}</td>
-                <td><span class="badge ${col}">${r.cob}</span></td>
+                <td>${estadoHtml}</td>
             </tr>`;
         });
 
@@ -163,7 +204,6 @@
         document.getElementById("btnSig").disabled = pag >= totalPags;
     }
 
-    // Compara letras para permitir errores de dedo
     function esSimilar(p, txt) {
         let coincidencias = 0;
         let pSet = new Set(p);
@@ -171,6 +211,71 @@
         return (coincidencias / p.length) > 0.85;
     }
 
+    async function guardarEstado(fila, val) {
+        showToast("Sincronizando cambio...");
+        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'updateCob', fila, valor: val }) });
+        const item = MASTER.find(x => x.fila === fila);
+        if(item) item.cob = val;
+        render();
+        showToast("Estado actualizado");
+    }
+
+    // GESTIÓN DE USUARIOS
+    async function crearUsuario() {
+        const u = document.getElementById("newU").value.trim(), p = document.getElementById("newP").value.trim(), r = document.getElementById("newR").value;
+        if(!u || !p) return alert("Faltan datos");
+        showToast("Creando usuario...");
+        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'addUser', usuario: u, clave: p, rol: r }) });
+        document.getElementById("newU").value = ""; document.getElementById("newP").value = "";
+        await cargarDatos(true);
+        actualizarListaUsuarios();
+        showToast("Usuario guardado");
+    }
+
+    async function eliminarUsuario(nombre) {
+        if(!confirm("¿Eliminar este usuario?")) return;
+        showToast("Eliminando...");
+        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'delete', usuarioNombre: nombre }) });
+        USUARIOS = USUARIOS.filter(user => user.u !== nombre);
+        actualizarListaUsuarios();
+        showToast("Usuario eliminado");
+    }
+
+    function abrirModal() { document.getElementById("modalUser").classList.remove("hidden"); actualizarListaUsuarios(); }
+    function cerrarModal() { document.getElementById("modalUser").classList.add("hidden"); }
+
+    function actualizarListaUsuarios() {
+        const bus = document.getElementById("busU").value.toLowerCase();
+        let html = "";
+        USUARIOS.filter(u => u.u.toLowerCase().includes(bus)).forEach(u => {
+            html += `<div class="user-row" id="row-${u.fila}">
+                <input type="text" id="u-${u.fila}" value="${u.u}" oninput="this.parentElement.classList.add('modified')">
+                <input type="text" id="p-${u.fila}" value="${u.p}" oninput="this.parentElement.classList.add('modified')">
+                <select id="r-${u.fila}" onchange="this.parentElement.classList.add('modified')">
+                    <option value="agente" ${u.r=='agente'?'selected':''}>Agente</option>
+                    <option value="lider" ${u.r=='lider'?'selected':''}>Líder</option>
+                    <option value="admin" ${u.r=='admin'?'selected':''}>Admin</option>
+                </select>
+                <button class="btn-save" onclick="updateUser(${u.fila})"><i class="fa-solid fa-save"></i></button>
+                <button onclick="eliminarUsuario('${u.u}')" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+            </div>`;
+        });
+        document.getElementById("listaU").innerHTML = html;
+    }
+
+    async function updateUser(fila) {
+        const u = document.getElementById(`u-${fila}`).value, p = document.getElementById(`p-${fila}`).value, r = document.getElementById(`r-${fila}`).value;
+        showToast("Actualizando datos...");
+        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'addUser', usuario: u, clave: p, rol: r }) });
+        document.getElementById(`row-${fila}`).classList.remove('modified');
+        showToast("Cambios guardados");
+    }
+
+    function showToast(m) { 
+        const t = document.getElementById("toast"); t.innerText = m; 
+        t.style.display = "block"; setTimeout(()=>t.style.display="none", 3000); 
+    }
+    
     function cambiarPag(v) { pag += v; render(); }
 </script>
 </body>
