@@ -20,7 +20,7 @@
         .container { max-width: 98%; margin: 25px auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
         .hidden { display: none !important; }
         
-        /* TABLA 6 COLUMNAS CON AJUSTE DE LÍNEA */
+        /* TABLA 6 COLUMNAS */
         .table-wrapper { overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #eee; }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         th { background: var(--primary); color: white; padding: 15px 10px; text-align: left; font-size: 13px; text-transform: uppercase; }
@@ -53,7 +53,10 @@
 
 <header class="header">
     <img src="https://drive.google.com/thumbnail?id=1bawJf9oARBLy2itsOfA9YE8RVAFNdNef" alt="Logo">
-    <h2 style="margin:0; color:var(--primary);">CONTROL DE COBERTURA</h2>
+    <div style="text-align:center;">
+        <h2 style="margin:0; color:var(--primary);">CONTROL DE COBERTURA</h2>
+        <small id="lastSync" style="color:#888;">Sincronizado</small>
+    </div>
     <button onclick="cerrarSesion()" id="logoutBtn" class="btn btn-exit hidden"><i class="fa-solid fa-power-off"></i> SALIR</button>
 </header>
 
@@ -101,23 +104,20 @@
 <div id="modalUser" class="modal hidden">
     <div class="modal-content">
         <h2 style="color:var(--primary); margin-top:0;"><i class="fa-solid fa-user-gear"></i> Gestión de Usuarios</h2>
-        
         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:10px; margin-bottom:20px; background:#f9f9f9; padding:15px; border-radius:10px;">
-            <input id="newU" type="text" placeholder="Usuario" style="padding:10px; border:1px solid #ccc; border-radius:5px;">
-            <input id="newP" type="text" placeholder="Clave" style="padding:10px; border:1px solid #ccc; border-radius:5px;">
-            <select id="newR" style="padding:10px; border:1px solid #ccc; border-radius:5px;">
+            <input id="newU" type="text" placeholder="Usuario">
+            <input id="newP" type="text" placeholder="Clave">
+            <select id="newR">
                 <option value="agente">Agente</option>
                 <option value="lider">Líder</option>
                 <option value="admin">Admin</option>
             </select>
             <button onclick="crearUsuario()" class="btn btn-primary"><i class="fa-solid fa-plus"></i></button>
         </div>
-
         <div style="position:relative; margin-bottom:10px;">
             <i class="fa-solid fa-filter" style="position:absolute; left:12px; top:13px; color:#999;"></i>
             <input id="busU" style="padding:10px 10px 10px 35px; border:1px solid #ddd; border-radius:8px; width:100%; box-sizing:border-box;" placeholder="Filtrar usuarios..." oninput="actualizarListaUsuarios()">
         </div>
-
         <div id="listaU" style="max-height:300px; overflow-y:auto; border:1px solid #eee; border-radius:8px;"></div>
         <button onclick="cerrarModal()" class="btn btn-exit" style="width:100%; margin-top:15px; justify-content:center;">CERRAR</button>
     </div>
@@ -135,6 +135,8 @@
             MASTER = data.cobertura.slice(1).map((r, i) => ({ 
                 fila: i + 2, m: r[0], n: r[1], cat: r[2], z: r[3], ref: r[4] || "", cob: r[5] || "Sin Datos" 
             }));
+            
+            document.getElementById("lastSync").innerText = "Sincronizado: " + new Date().toLocaleTimeString();
             document.getElementById("btnLogin").innerText = "INGRESAR";
             document.getElementById("btnLogin").disabled = false;
             
@@ -146,9 +148,14 @@
                     login();
                 }
             }
-            if(document.getElementById("appPanel").offsetParent !== null) render();
+            render();
         } catch (e) { console.error(e); }
     }
+
+    // SINCRONIZACIÓN ACELERADA A 15 SEGUNDOS
+    setInterval(() => {
+        if(document.getElementById("appPanel").offsetParent !== null) cargarDatos(true);
+    }, 15000);
 
     function login() {
         const u = document.getElementById("userInput").value.trim().toLowerCase();
@@ -168,7 +175,6 @@
     function render() {
         const q = document.getElementById("buscar").value.toLowerCase().trim();
         let filtrados = MASTER.filter(r => `${r.m} ${r.n} ${r.cat} ${r.z} ${r.ref}`.toLowerCase().includes(q));
-
         const totalPags = Math.ceil(filtrados.length / 10) || 1;
         const segment = filtrados.slice((pag - 1) * 10, pag * 10);
         
@@ -196,12 +202,18 @@
     }
 
     async function guardarEstado(fila, val) {
-        showToast("Sincronizando...");
-        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'updateCob', fila, valor: val }) });
+        showToast("Enviando...");
+        // Cambio local instantáneo
         const item = MASTER.find(x => x.fila === fila);
         if(item) item.cob = val;
         render();
-        showToast("✓ Guardado");
+
+        // Envío a Sheets
+        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'updateCob', fila, valor: val }) });
+        
+        // Verificación silenciosa
+        await cargarDatos(true);
+        showToast("✓ Sincronizado");
     }
 
     function actualizarListaUsuarios() {
