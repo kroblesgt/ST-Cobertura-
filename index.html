@@ -3,48 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Cobertura</title>
+    <title>Cobertura Master - Vercel</title>
     <style>
-        :root { --primary: #0054a6; --success: #00b050; --danger: #c00000; }
-        body { font-family: sans-serif; background: #f4f7f6; margin: 0; padding: 0; }
+        :root { --primary: #0054a6; --success: #00b050; --danger: #c00000; --warning: #f1c40f; }
+        body { font-family: 'Segoe UI', sans-serif; background:#f4f7f6; margin:0; }
         .header { background: white; padding: 15px 40px; border-bottom: 4px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
         .header img { height: 45px; }
-        .container { max-width: 1100px; margin: 20px auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .container { max-width: 1100px; margin: 20px auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         .hidden { display: none !important; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .search-box { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; margin-bottom: 20px; font-size: 16px; box-sizing: border-box; }
+        table { width: 100%; border-collapse: collapse; }
         th { background: var(--primary); color: white; padding: 12px; text-align: left; }
         td { padding: 12px; border-bottom: 1px solid #eee; }
-        .btn { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; }
-        .bg-success { background: var(--success); }
-        .bg-dark { background: #333; }
-        .pagination { display: flex; justify-content: center; gap: 15px; margin-top: 20px; align-items: center; }
+        .btn { padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; color: white; }
+        .btn-login { background: var(--primary); width: 100%; margin-top: 10px; }
+        .pagination { display: flex; justify-content: center; gap: 15px; margin-top: 25px; align-items: center; }
+        .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #ccc; margin-right: 5px; }
+        .dot-active { background: var(--success); }
     </style>
 </head>
 <body>
 
 <header class="header">
     <img src="https://drive.google.com/thumbnail?id=1bawJf9oARBLy2itsOfA9YE8RVAFNdNef" alt="Logo">
-    <h2 style="color:var(--primary); margin:0;">SISTEMA COBERTURA</h2>
-    <img src="https://drive.google.com/thumbnail?id=1zh0lISfhL33lIht-Iis1TtQBEeqahnJg" alt="Logo CC">
+    <div style="text-align:center">
+        <h2 style="margin:0; color:var(--primary);">COBERTURA MASTER</h2>
+        <small><span id="dot" class="status-dot"></span><span id="statText">CONECTANDO...</span></small>
+    </div>
+    <img src="https://drive.google.com/thumbnail?id=1zh0lISfhL33lIht-Iis1TtQBEeqahnJg" alt="Logo">
 </header>
 
 <div class="container">
-    <div id="loginPanel" style="text-align: center; padding: 40px 0;">
-        <h3>Acceso Seguro</h3>
-        <input id="u" type="text" placeholder="Usuario" style="width:250px; padding:10px; margin-bottom:10px;"><br>
-        <input id="p" type="password" placeholder="Contraseña" style="width:250px; padding:10px; margin-bottom:20px;"><br>
-        <button onclick="login()" class="btn" style="background:var(--primary); width:275px;">INGRESAR</button>
+    <div id="loginPanel" style="max-width: 400px; margin: 50px auto; text-align: center;">
+        <h3 style="color:var(--primary)">Acceso Seguro</h3>
+        <input id="userInput" type="text" placeholder="Usuario" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:6px;">
+        <input id="passInput" type="password" placeholder="Contraseña" style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
+        <button id="btnLogin" onclick="login()" disabled class="btn btn-login">ESPERANDO DATOS...</button>
     </div>
 
     <div id="appPanel" class="hidden">
         <div style="display:flex; gap:10px; margin-bottom:20px;">
-            <input id="buscar" placeholder="🔍 Buscar municipio o nombre..." oninput="render()" style="flex-grow:1; padding:10px;">
-            <button id="btnAdmin" onclick="toggleUsers()" class="btn" style="background:#f1c40f; color:black; display:none;">Gestionar</button>
-            <button onclick="logout()" class="btn bg-dark">Salir</button>
+            <input id="buscar" class="search-box" style="margin:0" placeholder="🔍 Buscar municipio, nombre o zona..." oninput="pag=1; render()">
+            <button id="btnAdmin" onclick="toggleAdmin()" class="btn hidden" style="background:var(--warning); color:black">Usuarios</button>
+            <button onclick="logout()" class="btn" style="background:#333">Salir</button>
         </div>
 
-        <div id="panelGestion" class="hidden" style="background:#f9f9f9; padding:15px; margin-bottom:20px; border:1px solid #ddd;">
-            <h4>Usuarios del Sistema</h4>
+        <div id="panelAdmin" class="hidden" style="background:#f9f9f9; padding:20px; border:1px solid #ddd; margin-bottom:20px; border-radius:8px;">
+            <h4 style="margin-top:0">Gestión de Usuarios</h4>
             <div id="listaU"></div>
         </div>
 
@@ -54,70 +59,104 @@
         </table>
 
         <div class="pagination">
-            <button onclick="cambiarPag(-1)" class="btn" style="background:var(--primary)">Anterior</button>
-            <span id="pageTxt" style="font-weight:bold;">Página 1</span>
-            <button onclick="cambiarPag(1)" class="btn" style="background:var(--primary)">Siguiente</button>
+            <button id="btnAnt" class="btn" style="background:var(--primary)" onclick="cambiarPag(-1)">Anterior</button>
+            <span id="pagTxt" style="font-weight:bold;">Página 1</span>
+            <button id="btnSig" class="btn" style="background:var(--primary)" onclick="cambiarPag(1)">Siguiente</button>
         </div>
     </div>
 </div>
 
 <script>
-    const API = "https://script.google.com/macros/s/AKfycbxd05IF-5W6Xu6uiV4nWmN6fpCqkQdS8ic7hCyhi0IWZ2RpNoOZzNlNOQNzqagJCvqj1g/exec";
+    // URL Actualizada con tu nuevo Apps Script
+    const API = "https://script.google.com/macros/s/AKfycbx2HvKKoGQzWBq8MQ445ZtsxVIxCek7Sbz4TdqXSQMRKf8L5vJ7ydYcKyxrv9s66mqU/exec";
+    
     let MASTER = [], USUARIOS = [], ROL = "", pag = 1;
-    const limite = 10; [cite: 2026-02-09]
+    const limite = 10;
 
     window.onload = async () => {
-        const res = await fetch(API);
-        const data = await res.json();
-        USUARIOS = data.usuarios.slice(1).map(r => ({u: r[0], p: r[1], r: r[2]}));
-        MASTER = data.cobertura.slice(1).map(r => ({m: r[0], n: r[1], c: r[2], z: r[3], cob: r[4]}));
-        
-        const cache = localStorage.getItem("sesion_cob"); [cite: 2026-02-09]
-        if(cache) login(JSON.parse(cache));
+        try {
+            const res = await fetch(API);
+            const data = await res.json();
+            
+            // Mapeo de usuarios (Asumiendo Col A: Usuario, Col B: Pass, Col C: Rol)
+            USUARIOS = data.usuarios.slice(1).map(r => ({u: String(r[0]), p: String(r[1]), r: String(r[2])}));
+            
+            // Mapeo de cobertura (Asumiendo Col A: Municipio, Col B: Nombre, Col C: Zona, Col D: Cobertura)
+            MASTER = data.cobertura.slice(1).map(r => ({m: r[0], n: r[1], z: r[2], cob: r[3]}));
+            
+            document.getElementById("btnLogin").innerText = "INGRESAR";
+            document.getElementById("btnLogin").disabled = false;
+            document.getElementById("dot").classList.add("dot-active");
+            document.getElementById("statText").innerText = "SINCRONIZADO";
+
+            const cache = localStorage.getItem("sesion_master");
+            if(cache) login(JSON.parse(cache));
+        } catch (e) {
+            console.error(e);
+            document.getElementById("statText").innerText = "ERROR DE CONEXIÓN";
+        }
     };
 
     function login(cached = null) {
-        const user = cached || USUARIOS.find(x => x.u == document.getElementById("u").value && x.p == document.getElementById("p").value);
-        if(user) {
-            ROL = user.r.toLowerCase();
-            localStorage.setItem("sesion_cob", JSON.stringify(user)); [cite: 2026-02-09]
+        const uInput = cached ? cached.u : document.getElementById("userInput").value.trim().toLowerCase();
+        const pInput = cached ? cached.p : document.getElementById("passInput").value.trim();
+        const found = USUARIOS.find(x => x.u.toLowerCase() === uInput && x.p === pInput);
+
+        if(found) {
+            ROL = found.r.toLowerCase();
+            localStorage.setItem("sesion_master", JSON.stringify(found));
             document.getElementById("loginPanel").classList.add("hidden");
             document.getElementById("appPanel").classList.remove("hidden");
-            if(ROL === 'admin') document.getElementById("btnAdmin").style.display = "block"; [cite: 2026-02-09]
+            if(ROL === 'admin') document.getElementById("btnAdmin").classList.remove("hidden");
             render();
-        } else if(!cached) alert("Error de acceso");
+        } else if(!cached) alert("Credenciales incorrectas");
     }
 
     function render() {
         const q = document.getElementById("buscar").value.toLowerCase();
-        const filtrados = MASTER.filter(x => x.n.toLowerCase().includes(q) || x.m.toLowerCase().includes(q));
-        const inicio = (pag - 1) * limite; [cite: 2026-02-09]
-        const segment = filtrados.slice(inicio, inicio + limite); [cite: 2026-02-09]
+        const filtrados = MASTER.filter(x => Object.values(x).join(" ").toLowerCase().includes(q));
+        const inicio = (pag - 1) * limite;
+        const segment = filtrados.slice(inicio, inicio + limite);
         
         let html = "";
         segment.forEach(r => {
             html += `<tr><td>${r.m}</td><td><b>${r.n}</b></td><td>${r.z}</td><td>${r.cob}</td></tr>`;
         });
+        
         document.getElementById("cuerpo").innerHTML = html;
-        document.getElementById("pageTxt").innerText = `Pág ${pag}`;
+        document.getElementById("pagTxt").innerText = `Página ${pag} de ${Math.ceil(filtrados.length/limite) || 1}`;
+        document.getElementById("btnAnt").disabled = pag === 1;
+        document.getElementById("btnSig").disabled = (inicio + limite) >= filtrados.length;
     }
 
     function cambiarPag(v) { pag += v; render(); }
-    function logout() { localStorage.removeItem("sesion_cob"); location.reload(); } [cite: 2026-02-09]
+    function logout() { localStorage.removeItem("sesion_master"); location.reload(); }
 
-    function toggleUsers() { [cite: 2026-02-09]
-        const p = document.getElementById("panelGestion");
+    function toggleAdmin() {
+        const p = document.getElementById("panelAdmin");
         p.classList.toggle("hidden");
-        let h = "<ul>";
-        USUARIOS.forEach(u => h += `<li>${u.u} (${u.r}) <button onclick="eliminar('${u.u}')" style="color:red">x</button></li>`);
-        document.getElementById("listaU").innerHTML = h + "</ul>";
+        if(!p.classList.contains("hidden")) {
+            let h = "<table style='width:100%; border:1px solid #ddd'><tr><th>Usuario</th><th>Rol</th><th>Acción</th></tr>";
+            USUARIOS.forEach(u => {
+                h += `<tr><td>${u.u}</td><td>${u.r}</td><td><button onclick="eliminarU('${u.u}')" style="color:red; border:none; background:none; cursor:pointer">Eliminar</button></td></tr>`;
+            });
+            document.getElementById("listaU").innerHTML = h + "</table>";
+        }
     }
 
-    async function eliminar(u) { [cite: 2026-02-09]
-        if(confirm("¿Eliminar usuario?")) {
-            await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'delete', usuarioNombre: u }) });
-            USUARIOS = USUARIOS.filter(x => x.u !== u);
-            toggleUsers(); toggleUsers();
+    async function eliminarU(nombre) {
+        if(confirm(`¿Eliminar al usuario ${nombre}?`)) {
+            try {
+                await fetch(API, { 
+                    method: 'POST', 
+                    mode: 'no-cors', // Necesario para Google Apps Script en algunos entornos
+                    body: JSON.stringify({ action: 'delete', usuarioNombre: nombre }) 
+                });
+                USUARIOS = USUARIOS.filter(x => x.u !== nombre);
+                toggleAdmin(); toggleAdmin();
+            } catch (e) {
+                alert("Error al intentar eliminar");
+            }
         }
     }
 </script>
