@@ -13,59 +13,56 @@
             --warning: #f1c40f; 
             --dark: #2c3e50; 
             --light-grey: #dcdcdc; 
+            --edit-highlight: #fff9c4; 
         }
         body { font-family: 'Segoe UI', sans-serif; background:#f0f2f5; margin:0; }
         
-        /* Header Mejorado */
-        .header { background: white; padding: 10px 40px; border-bottom: 5px solid var(--primary); display: flex; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: relative; }
+        /* Header */
+        .header { background: white; padding: 10px 40px; border-bottom: 5px solid var(--primary); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .header img { height: 100px; width: auto; }
-        .header-title { flex-grow: 1; text-align: center; }
+        .header-title { text-align: center; }
         .header-title h1 { margin: 0; color: var(--primary); font-size: 26px; font-weight: 800; }
-        .header-title small { color: var(--primary); font-weight: bold; letter-spacing: 1px; }
+        .header-title small { color: var(--primary); font-weight: bold; }
 
         .container { max-width: 1250px; margin: 30px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); position: relative; }
         .hidden { display: none !important; }
 
-        /* Botón Cerrar Sesión (Esquina Superior Derecha del Header) */
-        .btn-exit-top { 
-            background: var(--dark); color: white; border: none; 
-            padding: 10px 15px; border-radius: 8px; cursor: pointer; 
-            font-size: 14px; display: flex; align-items: center; gap: 8px; 
-            transition: all 0.3s;
-        }
+        /* Botones y Toolbar */
+        .btn-exit-top { background: var(--dark); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 8px; }
         .btn-exit-top:hover { background: var(--danger); }
+        .btn { padding: 12px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; color: white; display: inline-flex; align-items: center; gap: 10px; }
+        .btn-admin { background: var(--warning); color: #000; }
+        .btn-nav { background: var(--primary); min-width: 120px; justify-content: center; }
 
-        /* Buscador y Escoba */
         .toolbar { display: flex; gap: 15px; margin-bottom: 25px; align-items: center; }
         .search-container { position: relative; flex-grow: 1; }
         .search-box { width: 100%; padding: 14px 45px 14px 14px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px; box-sizing: border-box; outline: none; }
         .clear-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--primary); font-size: 20px; display: none; }
 
-        .btn { padding: 12px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; color: white; display: inline-flex; align-items: center; gap: 10px; }
-        .btn-admin { background: var(--warning); color: #000; }
-        .btn-nav { background: var(--primary); min-width: 120px; justify-content: center; }
+        .btn-save { background: var(--success); padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer; transition: 0.2s; color: white; display: flex; align-items: center; justify-content: center; }
+        .btn-save:hover { transform: scale(1.05); }
 
-        /* Botón Cassette Mejorado */
-        .btn-save { background: var(--success); padding: 8px 15px; border-radius: 6px; border: none; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
-        .btn-save i { font-size: 22px; color: white; }
-        .btn-save:hover { transform: scale(1.1); background: #008c40; }
-
-        /* Selectores Coloreados */
-        .sel-status { padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-weight: bold; color: white; cursor: pointer; width: 150px; }
+        /* Tabla y Selectores */
+        .sel-status { padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-weight: bold; color: white; cursor: pointer; width: 160px; }
         .sel-sin-datos { background-color: var(--light-grey); color: #666 !important; }
         .sel-cobertura { background-color: var(--success); }
         .sel-sin-cobertura { background-color: var(--danger); }
         .sel-consultar { background-color: var(--warning); color: black !important; }
 
         table { width: 100%; border-collapse: collapse; }
-        th { background: var(--primary); color: white; padding: 15px; text-align: left; font-size: 13px; text-transform: uppercase; }
+        th { background: var(--primary); color: white; padding: 15px; text-align: left; font-size: 13px; }
         td { padding: 12px; border-bottom: 1px solid #eee; }
-        
         .badge { padding: 6px 12px; border-radius: 20px; color: white; font-weight: bold; font-size: 11px; text-transform: uppercase; }
-        .bg-verde { background: var(--success); }
-        .bg-rojo { background: var(--danger); }
-        .bg-amarillo { background: var(--warning); color: black; }
-        .bg-gris { background: var(--light-grey); color: #666; }
+
+        /* Modal Usuarios Mejorado */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); }
+        .modal-content { background: white; padding: 30px; border-radius: 15px; width: 700px; max-width: 95%; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+        .modal-search { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; border-left: 5px solid var(--primary); box-sizing: border-box; }
+        
+        .user-list-header { display: grid; grid-template-columns: 1.2fr 1.2fr 1fr 110px; gap: 10px; font-weight: bold; padding-bottom: 10px; border-bottom: 2px solid var(--primary); margin-bottom: 10px; font-size: 12px; }
+        .user-row { display: grid; grid-template-columns: 1.2fr 1.2fr 1fr 110px; gap: 10px; padding: 8px 0; border-bottom: 1px solid #eee; align-items: center; }
+        .user-row input, .user-row select { padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; width: 100%; box-sizing: border-box; transition: background 0.3s; }
+        .modified { background-color: var(--edit-highlight) !important; border-color: var(--warning) !important; }
 
         .pagination { display: flex; justify-content: center; gap: 20px; margin-top: 30px; align-items: center; font-weight: bold; color: var(--primary); }
     </style>
@@ -73,7 +70,7 @@
 <body>
 
 <header class="header">
-    <img src="https://drive.google.com/thumbnail?id=1bawJf9oARBLy2itsOfA9YE8RVAFNdNef" alt="Logo Distelsa">
+    <img src="https://drive.google.com/thumbnail?id=1bawJf9oARBLy2itsOfA9YE8RVAFNdNef" alt="Logo">
     <div class="header-title">
         <h1>SISTEMA DE COBERTURA</h1>
         <small id="statText">CALL CENTER - ONLINE</small>
@@ -85,10 +82,10 @@
 
 <div class="container">
     <div id="loginPanel" style="max-width: 400px; margin: 60px auto; text-align: center;">
-        <h2 style="color:var(--primary)">Acceso al Sistema</h2>
+        <h2 style="color:var(--primary)">Acceso</h2>
         <input id="userInput" type="text" placeholder="Usuario" style="width:100%; padding:14px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;">
         <input id="passInput" type="password" placeholder="Contraseña" style="width:100%; padding:14px; margin-bottom:20px; border-radius:8px; border:1px solid #ddd;">
-        <button id="btnLogin" onclick="login()" disabled class="btn" style="background:var(--primary); width:100%; justify-content:center;">CARGANDO...</button>
+        <button id="btnLogin" onclick="login()" disabled class="btn" style="background:var(--primary); width:100%; justify-content:center;">CONECTANDO...</button>
     </div>
 
     <div id="appPanel" class="hidden">
@@ -99,24 +96,41 @@
             </div>
             <button id="btnAdmin" onclick="abrirModal()" class="btn btn-admin hidden">USUARIOS</button>
         </div>
-
         <table>
-            <thead>
-                <tr>
-                    <th>Municipio</th>
-                    <th>Nombre / Referencia</th>
-                    <th>Zona</th>
-                    <th>Cobertura</th>
-                </tr>
-            </thead>
+            <thead><tr><th>Municipio</th><th>Nombre / Referencia</th><th>Zona</th><th>Estado</th></tr></thead>
             <tbody id="cuerpo"></tbody>
         </table>
-
         <div class="pagination">
             <button id="btnAnt" class="btn btn-nav" onclick="cambiarPag(-1)">ANTERIOR</button>
             <span id="pagTxt">Página 1</span>
             <button id="btnSig" class="btn btn-nav" onclick="cambiarPag(1)">SIGUIENTE</button>
         </div>
+    </div>
+</div>
+
+<div id="modalUser" class="modal hidden">
+    <div class="modal-content">
+        <h2 style="color:var(--primary); margin-top:0;">Gestión de Usuarios</h2>
+        
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:10px; margin-bottom:20px; background: #f0f4f8; padding: 15px; border-radius: 10px;">
+            <input id="newU" type="text" placeholder="Usuario">
+            <input id="newP" type="text" placeholder="Contraseña">
+            <select id="newR">
+                <option value="agente">Agente</option>
+                <option value="lider">Líder</option>
+                <option value="admin">Admin</option>
+            </select>
+            <button onclick="crearUsuario()" class="btn-save" style="background: var(--primary);"><i class="fa-solid fa-user-plus"></i></button>
+        </div>
+
+        <input type="text" id="busU" class="modal-search" placeholder="🔍 Filtrar usuarios..." oninput="actualizarListaUsuarios()">
+
+        <div class="user-list-header">
+            <span>USUARIO</span><span>CLAVE</span><span>ROL</span><span>ACCIONES</span>
+        </div>
+        <div id="listaU" style="max-height:280px; overflow-y:auto;"></div>
+        
+        <button onclick="cerrarModal()" class="btn" style="background:var(--dark); width:100%; margin-top:15px; justify-content:center;">CERRAR VENTANA</button>
     </div>
 </div>
 
@@ -131,61 +145,84 @@
         try {
             const res = await fetch(API);
             const data = await res.json();
-            USUARIOS = data.usuarios.slice(1).map(r => ({u: String(r[0]), p: String(r[1]), r: String(r[2])}));
-            MASTER = data.cobertura.slice(1).map((r, i) => ({ 
-                fila: i+2, m: r[0], n: r[1], z: r[3], cob: r[5] || "Sin Datos" 
-            }));
+            USUARIOS = data.usuarios.slice(1).map((r, i) => ({ fila: i + 2, u: String(r[0]), p: String(r[1]), r: String(r[2]) }));
+            MASTER = data.cobertura.slice(1).map((r, i) => ({ fila: i+2, m: r[0], n: r[1], z: r[3], cob: r[5] || "Sin Datos" }));
             document.getElementById("btnLogin").innerText = "INGRESAR";
             document.getElementById("btnLogin").disabled = false;
         } catch (e) { document.getElementById("statText").innerText = "ERROR DE CONEXIÓN"; }
     }
 
-    function manejarBusqueda() {
-        const val = document.getElementById("buscar").value;
-        document.getElementById("clearBtn").style.display = val.length > 0 ? "block" : "none";
-        pag = 1;
-        render();
+    function abrirModal() { document.getElementById("modalUser").classList.remove("hidden"); actualizarListaUsuarios(); }
+    function cerrarModal() { document.getElementById("modalUser").classList.add("hidden"); }
+    function markAsModified(id) { document.getElementById(id).classList.add('modified'); }
+
+    function actualizarListaUsuarios() {
+        const bus = document.getElementById("busU").value.toLowerCase();
+        let html = "";
+        USUARIOS.filter(u => u.u.toLowerCase().includes(bus) || u.r.toLowerCase().includes(bus)).forEach((u) => {
+            html += `<div class="user-row">
+                <input type="text" id="editU-${u.fila}" value="${u.u}" oninput="markAsModified('editU-${u.fila}')">
+                <input type="text" id="editP-${u.fila}" value="${u.p}" oninput="markAsModified('editP-${u.fila}')">
+                <select id="editR-${u.fila}" onchange="markAsModified('editR-${u.fila}')">
+                    <option value="agente" ${u.r=='agente'?'selected':''}>Agente</option>
+                    <option value="lider" ${u.r=='lider'?'selected':''}>Líder</option>
+                    <option value="admin" ${u.r=='admin'?'selected':''}>Admin</option>
+                </select>
+                <div style="display:flex; gap:8px;">
+                    <button class="btn-save" onclick="modificarUsuario(${u.fila})"><i class="fa-solid fa-floppy-disk"></i></button>
+                    <button onclick="eliminarUsuario('${u.u}')" style="color:var(--danger); border:none; background:none; cursor:pointer;"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+            </div>`;
+        });
+        document.getElementById("listaU").innerHTML = html;
     }
 
-    function limpiarBusqueda() {
-        document.getElementById("buscar").value = "";
-        manejarBusqueda();
+    async function modificarUsuario(fila) {
+        const u = document.getElementById(`editU-${fila}`).value;
+        const p = document.getElementById(`editP-${fila}`).value;
+        const r = document.getElementById(`editR-${fila}`).value;
+        document.getElementById("statText").innerText = "GUARDANDO...";
+        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'addUser', usuario: u, clave: p, rol: r }) });
+        ['editU-', 'editP-', 'editR-'].forEach(id => document.getElementById(id + fila).classList.remove('modified'));
+        const userIdx = USUARIOS.findIndex(x => x.fila === fila);
+        if(userIdx !== -1) USUARIOS[userIdx] = { fila, u, p, r };
+        document.getElementById("statText").innerText = "SISTEMA ONLINE";
     }
 
-    function getColorClass(val) {
-        if (val === "Cobertura") return "sel-cobertura";
-        if (val === "Sin Cobertura") return "sel-sin-cobertura";
-        if (val === "Consultar") return "sel-consultar";
-        return "sel-sin-datos";
+    async function crearUsuario() {
+        const u = document.getElementById("newU").value, p = document.getElementById("newP").value, r = document.getElementById("newR").value;
+        if(!u || !p) return;
+        document.getElementById("statText").innerText = "AÑADIENDO...";
+        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'addUser', usuario: u, clave: p, rol: r }) });
+        cargarDatos().then(actualizarListaUsuarios);
+    }
+
+    async function eliminarUsuario(nombre) {
+        if(!confirm("¿Eliminar usuario?")) return;
+        document.getElementById("statText").innerText = "ELIMINANDO...";
+        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'delete', usuarioNombre: nombre }) });
+        USUARIOS = USUARIOS.filter(x => x.u !== nombre);
+        actualizarListaUsuarios();
+        document.getElementById("statText").innerText = "SISTEMA ONLINE";
     }
 
     function render() {
         const q = document.getElementById("buscar").value.toLowerCase().split(" ");
         const filtrados = MASTER.filter(r => q.every(w => `${r.m} ${r.n} ${r.z}`.toLowerCase().includes(w)));
         const segment = filtrados.slice((pag-1)*limite, pag*limite);
-        
         let html = "";
         segment.forEach(r => {
-            const canEdit = (ROL === 'admin' || ROL === 'lider');
-            if (canEdit) {
-                html += `<tr>
-                    <td>${r.m}</td>
-                    <td><b>${r.n}</b></td>
-                    <td>${r.z}</td>
-                    <td>
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <select id="s-${r.fila}" class="sel-status ${getColorClass(r.cob)}" onchange="this.className='sel-status ' + getColorClass(this.value)">
-                                <option value="Sin Datos" ${r.cob=='Sin Datos'?'selected':''}>Sin Datos</option>
-                                <option value="Cobertura" ${r.cob=='Cobertura'?'selected':''}>Cobertura</option>
-                                <option value="Sin Cobertura" ${r.cob=='Sin Cobertura'?'selected':''}>Sin Cobertura</option>
-                                <option value="Consultar" ${r.cob=='Consultar'?'selected':''}>Consultar</option>
-                            </select>
-                            <button class="btn-save" title="Guardar" onclick="guardarEstado(${r.fila})">
-                                <i class="fa-solid fa-floppy-disk"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>`;
+            if (ROL === 'admin' || ROL === 'lider') {
+                html += `<tr><td>${r.m}</td><td><b>${r.n}</b></td><td>${r.z}</td>
+                    <td><div style="display:flex; align-items:center; gap:10px;">
+                        <select id="s-${r.fila}" class="sel-status ${getColorClass(r.cob)}" onchange="this.className='sel-status ' + getColorClass(this.value)">
+                            <option value="Sin Datos" ${r.cob=='Sin Datos'?'selected':''}>Sin Datos</option>
+                            <option value="Cobertura" ${r.cob=='Cobertura'?'selected':''}>Cobertura</option>
+                            <option value="Sin Cobertura" ${r.cob=='Sin Cobertura'?'selected':''}>Sin Cobertura</option>
+                            <option value="Consultar" ${r.cob=='Consultar'?'selected':''}>Consultar</option>
+                        </select>
+                        <button class="btn-save" onclick="guardarEstado(${r.fila})"><i class="fa-solid fa-floppy-disk"></i></button>
+                    </div></td></tr>`;
             } else {
                 let badgeCls = r.cob === "Cobertura" ? "bg-verde" : r.cob === "Sin Cobertura" ? "bg-rojo" : r.cob === "Consultar" ? "bg-amarillo" : "bg-gris";
                 html += `<tr><td>${r.m}</td><td><b>${r.n}</b></td><td>${r.z}</td><td><span class="badge ${badgeCls}">${r.cob}</span></td></tr>`;
@@ -195,17 +232,6 @@
         document.getElementById("pagTxt").innerText = `Página ${pag} de ${Math.ceil(filtrados.length/limite) || 1}`;
         document.getElementById("btnAnt").disabled = pag === 1;
         document.getElementById("btnSig").disabled = pag*limite >= filtrados.length;
-    }
-
-    async function guardarEstado(fila) {
-        const val = document.getElementById(`s-${fila}`).value;
-        const btn = event.currentTarget;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'updateCob', fila, valor: val }) });
-        const item = MASTER.find(x => x.fila === fila);
-        if(item) item.cob = val;
-        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i>';
-        render();
     }
 
     function login() {
@@ -219,9 +245,20 @@
             document.getElementById("logoutBtn").classList.remove("hidden");
             if(ROL === 'admin') document.getElementById("btnAdmin").classList.remove("hidden");
             render();
-        } else { alert("Usuario o contraseña incorrectos"); }
+        } else { alert("Datos incorrectos"); }
     }
-
+    function manejarBusqueda() { const val = document.getElementById("buscar").value; document.getElementById("clearBtn").style.display = val.length > 0 ? "block" : "none"; pag = 1; render(); }
+    function limpiarBusqueda() { document.getElementById("buscar").value = ""; manejarBusqueda(); }
+    function getColorClass(val) { return val === "Cobertura" ? "sel-cobertura" : val === "Sin Cobertura" ? "sel-sin-cobertura" : val === "Consultar" ? "sel-consultar" : "sel-sin-datos"; }
+    async function guardarEstado(fila) {
+        const val = document.getElementById(`s-${fila}`).value;
+        document.getElementById("statText").innerText = "GUARDANDO...";
+        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'updateCob', fila, valor: val }) });
+        const item = MASTER.find(x => x.fila === fila);
+        if(item) item.cob = val;
+        document.getElementById("statText").innerText = "SISTEMA ONLINE";
+        render();
+    }
     function cambiarPag(v) { pag += v; render(); }
     function logout() { location.reload(); }
 </script>
