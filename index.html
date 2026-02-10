@@ -13,14 +13,14 @@
         }
         body { font-family: 'Segoe UI', sans-serif; background:#f0f2f5; margin:0; }
         
-        /* --- PLUS VISUAL AZUL (RESULTADO FINAL) --- */
+        /* --- ESTILOS VISUALES --- */
         .row-focus { 
             background-color: #e3f2fd !important;
             border-left: 10px solid var(--primary) !important;
             transform: scale(1.01); 
             box-shadow: 0 4px 20px rgba(0,84,166,0.25);
         }
-        .row-focus td { color: var(--primary) !important; font-weight: bold; }
+        .row-focus td { color: var(--primary) !important; }
 
         .header { background: white; padding: 10px 40px; border-bottom: 5px solid var(--primary); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .header img { height: 100px; width: auto; }
@@ -33,7 +33,7 @@
 
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th { background: var(--primary); color: white; padding: 15px; text-align: left; }
-        td { padding: 12px; border-bottom: 1px solid #eee; transition: all 0.2s ease; }
+        td { padding: 12px; border-bottom: 1px solid #eee; transition: all 0.2s ease; vertical-align: middle; }
         
         .badge { padding: 8px 15px; border-radius: 20px; color: white; font-weight: bold; font-size: 12px; text-transform: uppercase; min-width: 110px; text-align: center; display: inline-block; border: none; cursor: pointer; }
         .bg-verde { background: var(--success); } .bg-rojo { background: var(--danger); } 
@@ -59,7 +59,7 @@
         <h1 style="margin:0; color:var(--primary);">SISTEMA DE COBERTURA</h1>
         <div id="syncStatus" class="sync-indicator">● CONECTADO EN VIVO</div>
     </div>
-    <button onclick="location.reload()" id="logoutBtn" class="btn-exit-top hidden"><i class="fa-solid fa-power-off"></i> SALIR</button>
+    <button onclick="cerrarSesion()" id="logoutBtn" class="btn-exit-top hidden"><i class="fa-solid fa-power-off"></i> SALIR</button>
 </header>
 
 <div class="container">
@@ -107,7 +107,9 @@
 </div>
 
 <script>
-    const API = "https://script.google.com/macros/s/AKfycbx4GK4eRKjRXD5AqukR-lpjo_1jloeSjKlk7GYpihbYlo8YwRAEUwaj6TbUUDg0aODEOg/exec";
+    // TU URL NUEVA CONECTADA:
+    const API = "https://script.google.com/macros/s/AKfycbwK1vPaD9_VXNN4K-zVoOsUz53mzC4ykMIcRwH7uRBkcsH9lPkoOSfd-YrhX8FdPyXWpQ/exec";
+    
     let MASTER = [], USUARIOS = [], ROL = "", pag = 1;
 
     const ABREVIATURAS = { 
@@ -121,13 +123,35 @@
         try {
             const res = await fetch(API);
             const data = await res.json();
+            // A=Usuario, B=Clave, C=Rol (Hojas base 0)
             USUARIOS = data.usuarios.slice(1).map((r, i) => ({ fila: i + 2, u: String(r[0]), p: String(r[1]), r: String(r[2]) }));
-            MASTER = data.cobertura.slice(1).map((r, i) => ({ fila: i+2, m: r[0], n: r[1], z: r[3], cob: r[5] || "Sin Datos" }));
+            
+            // MAPEO CORRECTO: A=m, B=n, C=cat, D=z, E=ref, F=cob
+            MASTER = data.cobertura.slice(1).map((r, i) => ({ 
+                fila: i + 2, 
+                m: r[0], 
+                n: r[1], 
+                cat: r[2],
+                z: r[3],
+                ref: r[4] || "", // Referencia
+                cob: r[5] || "Sin Datos" // Cobertura
+            }));
             
             document.getElementById("btnLogin").innerText = "INGRESAR";
             document.getElementById("btnLogin").disabled = false;
             document.getElementById("syncStatus").innerText = "● CONECTADO EN VIVO";
             
+            // AUTO LOGIN
+            if (!esSilencioso) {
+                const session = JSON.parse(localStorage.getItem("distelsa_session"));
+                if (session) {
+                    document.getElementById("userInput").value = session.u;
+                    document.getElementById("passInput").value = session.p;
+                    login(); 
+                    showToast("Sesión restaurada");
+                }
+            }
+
             if(document.getElementById("appPanel").offsetParent !== null) render();
         } catch (e) { document.getElementById("syncStatus").innerText = "● RECONECTANDO..."; }
     }
@@ -141,14 +165,20 @@
         
         if(user) {
             ROL = user.r.toLowerCase();
+            localStorage.setItem("distelsa_session", JSON.stringify({ u: u, p: p })); // GUARDAR SESIÓN
+            
             document.getElementById("loginPanel").classList.add("hidden");
             document.getElementById("appPanel").classList.remove("hidden");
             document.getElementById("logoutBtn").classList.remove("hidden");
             
-            // ADMIN muestra botón Usuarios
             if(ROL === 'admin') document.getElementById("btnAdmin").classList.remove("hidden");
             render();
         } else { alert("Acceso denegado."); }
+    }
+    
+    function cerrarSesion() {
+        localStorage.removeItem("distelsa_session");
+        location.reload();
     }
 
     function render() {
@@ -160,7 +190,7 @@
         } else {
             let palabras = q.split(/\s+/).map(p => ABREVIATURAS[p] || p);
             filtrados = MASTER.map(r => {
-                const texto = `${r.m} ${r.n} ${r.z}`.toLowerCase();
+                const texto = `${r.m} ${r.n} ${r.z} ${r.ref}`.toLowerCase();
                 let score = 0;
                 palabras.forEach(p => {
                     if (texto.includes(p)) score += 10;
@@ -171,6 +201,9 @@
         }
 
         const totalPags = Math.ceil(filtrados.length / 10) || 1;
+        if (pag > totalPags) pag = totalPags;
+        if (pag < 1) pag = 1;
+
         const segment = filtrados.slice((pag-1)*10, pag*10);
         let html = "";
         
@@ -178,8 +211,6 @@
 
         segment.forEach(r => {
             let col = r.cob=="Cobertura"?"bg-verde":r.cob=="Sin Cobertura"?"bg-rojo":r.cob=="Consultar"?"bg-amarillo":"bg-gris";
-            
-            // ADMIN y LIDER pueden editar
             let puedeEditar = (ROL === 'admin' || ROL === 'lider');
             
             let estadoHtml = puedeEditar ? 
@@ -192,7 +223,10 @@
             
             html += `<tr class="${esExito ? 'row-focus' : ''}">
                 <td>${r.m}</td>
-                <td><b>${r.n}</b></td>
+                <td>
+                    <div style="font-weight: bold; color: var(--dark);">${r.n}</div>
+                    <div style="font-size: 11px; color: #666; margin-top: 2px;">${r.ref}</div>
+                </td>
                 <td>${r.z}</td>
                 <td>${estadoHtml}</td>
             </tr>`;
