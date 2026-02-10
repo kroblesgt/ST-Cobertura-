@@ -1,44 +1,34 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
+    <base target="_top">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA COBERTURA v8.8</title>
     <style>
-        :root { 
-            --primary: #0054a6; --success: #00b050; --danger: #c00000; 
-            --warning: #f1c40f; --neutral: #95a5a6; --dark: #2d3436;
-        }
+        :root { --primary: #0054a6; --success: #00b050; --danger: #c00000; --warning: #f1c40f; --neutral: #95a5a6; --dark: #2d3436; }
         body { font-family: 'Segoe UI', sans-serif; background:#f4f7f6; margin:0; }
         .container { max-width: 1250px; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         .hidden { display: none !important; }
-        
-        /* Cabecera */
         .header-main { display: flex; justify-content: space-between; align-items: center; padding: 10px 30px; background: #fff; border-bottom: 3px solid var(--primary); }
         .header-main img { height: 45px; }
-
         .sync-indicator { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; background: var(--neutral); }
         .sync-active { background: var(--primary); animation: pulse 1s infinite; }
         .sync-success { background: var(--success); }
-
         .search-container { display: flex; gap: 10px; margin-bottom: 15px; }
-        .search-box { flex-grow: 1; border: 2px solid var(--primary); padding: 12px; border-radius: 10px; font-size: 16px; outline: none; box-sizing: border-box; }
-        
+        .search-box { flex-grow: 1; border: 2px solid var(--primary); padding: 12px; border-radius: 10px; font-size: 16px; outline: none; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
         th { background: var(--primary); color: white; padding: 12px; text-align: left; }
         td { padding: 12px; border-bottom: 1px solid #eee; }
-        
-        .btn { padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; color: white; transition: 0.3s; }
+        .btn { padding: 8px 15px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; color: white; transition: 0.3s; }
         .btn-save { background: var(--success); }
         .btn-logout { background: var(--dark); }
-
         .select-edit { padding: 5px; border-radius: 5px; border: 1px solid #ddd; font-weight: bold; cursor: pointer; }
-
-        .badge { padding: 5px 10px; border-radius: 15px; font-size: 11px; color: white; font-weight: bold; display: inline-block; }
         .bg-green { background: var(--success); }
         .bg-red { background: var(--danger); }
+        .bg-yellow { background: var(--warning); color: black !important; }
         .bg-gray { background: var(--neutral); }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        .pagination { display: flex; justify-content: center; gap: 15px; margin-top: 20px; align-items: center; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
     </style>
 </head>
 <body>
@@ -52,70 +42,68 @@
             <small id="loader">CONECTANDO...</small>
         </div>
     </div>
-    <img src="https://drive.google.com/thumbnail?id=1zh0lISfhL33lIht-Iis1TtQBEeqahnJg" alt="Soporte">
 </header>
 
 <div class="container">
     <div id="loginPanel" style="max-width: 350px; margin: 50px auto; text-align: center;">
         <h2 style="color:var(--primary)">Acceso Seguro</h2>
-        <input id="usuario" type="text" placeholder="Usuario" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ccc;"><br>
-        <input id="password" type="password" placeholder="Contraseña" style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid #ccc;"><br>
+        <input id="usuario" type="text" placeholder="Usuario" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ccc;">
+        <input id="password" type="password" placeholder="Contraseña" style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid #ccc;">
         <button id="btnLogin" onclick="login()" disabled class="btn" style="background:var(--primary); width:100%;">CARGANDO...</button>
     </div>
 
     <div id="appPanel" class="hidden">
         <div class="search-container">
-            <input id="busqueda" class="search-box" placeholder="🔍 Buscar por nombre, zona o municipio..." oninput="iniciarBusqueda()">
+            <input id="busqueda" class="search-box" placeholder="🔍 Buscar..." oninput="paginaActual=1; render()">
+            <button id="btnGestion" onclick="toggleGestion()" class="btn hidden" style="background:var(--warning); color:black">Usuarios</button>
             <button onclick="cerrarSesion()" class="btn btn-logout">Salir</button>
         </div>
+
+        <div id="panelUsuarios" class="hidden" style="background:#f9f9f9; padding:15px; border-radius:10px; margin-bottom:15px; border:1px solid #ddd;">
+            <h4>Gestión de Usuarios</h4>
+            <div id="listaUsuarios"></div>
+        </div>
+
         <div id="contador" style="font-weight:bold; margin-bottom:10px; color:#666;"></div>
-        <div style="overflow-x:auto;">
-            <table id="tabla">
-                <thead>
-                    <tr>
-                        <th>Municipio</th>
-                        <th>Nombre</th>
-                        <th>Categoría</th>
-                        <th>Zona</th>
-                        <th style="text-align:center">Estado Cobertura</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+        
+        <table id="tabla">
+            <thead>
+                <tr>
+                    <th>Municipio</th><th>Nombre</th><th>Categoría</th><th>Zona</th><th style="text-align:center">Estado Cobertura</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-cuerpo"></tbody>
+        </table>
+
+        <div class="pagination">
+            <button id="btnPrev" class="btn btn-logout" onclick="cambiarPagina(-1)">« Anterior</button>
+            <span id="infoPagina" style="font-weight:bold">Página 1</span>
+            <button id="btnNext" class="btn btn-logout" onclick="cambiarPagina(1)">Siguiente »</button>
         </div>
     </div>
 </div>
 
 <script>
-// LINK DE APPS SCRIPT ACTUALIZADO
-const API_URL = "https://script.google.com/macros/s/AKfycbxFNfnufFpREJcVhnj0FFkpnVphc9_D2sI7P6k-3jEuEEWznNCU1Ftdnr3JcAafSjxAAg/exec"; 
-
 let MASTER_DATA = [];
 let USUARIOS_DATA = [];
 let ROLE_ACTUAL = "";
+let paginaActual = 1;
+const limite = 10; 
 
-async function cargar() {
-    const dot = document.getElementById("syncDot");
-    const loader = document.getElementById("loader");
-    dot.className = "sync-indicator sync-active";
-
-    try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
+window.onload = () => {
+    google.script.run.withSuccessHandler(data => {
         USUARIOS_DATA = parse(data.usuarios);
         MASTER_DATA = parse(data.cobertura);
-        
         document.getElementById("btnLogin").disabled = false;
         document.getElementById("btnLogin").innerText = "ENTRAR";
-        dot.className = "sync-indicator sync-success";
-        loader.innerText = "SISTEMA LISTO";
-
+        document.getElementById("syncDot").className = "sync-indicator sync-success";
+        document.getElementById("loader").innerText = "SISTEMA LISTO";
+        
+        // Evita loguearse cada vez [cite: 2026-02-09]
         const cache = localStorage.getItem("session_cobertura");
         if(cache) login(JSON.parse(cache));
-    } catch (e) { 
-        loader.innerText = "ERROR DE CONEXIÓN";
-    }
-}
+    }).getDatosIniciales();
+};
 
 function parse(rows) {
     const headers = rows[0];
@@ -126,9 +114,9 @@ function parse(rows) {
     });
 }
 
-function login(cachedUser = null) {
-    const u = cachedUser ? cachedUser.usuario : document.getElementById("usuario").value.trim().toLowerCase();
-    const p = cachedUser ? cachedUser.password : document.getElementById("password").value.trim();
+function login(cached = null) {
+    const u = cached ? cached.usuario : document.getElementById("usuario").value.trim().toLowerCase();
+    const p = cached ? cached.password : document.getElementById("password").value.trim();
     const user = USUARIOS_DATA.find(x => String(x.usuario).toLowerCase() === u && String(x.password) === p);
     
     if (user) {
@@ -136,35 +124,32 @@ function login(cachedUser = null) {
         localStorage.setItem("session_cobertura", JSON.stringify(user));
         document.getElementById("loginPanel").classList.add("hidden");
         document.getElementById("appPanel").classList.remove("hidden");
-        iniciarBusqueda();
-    } else if(!cachedUser) alert("Credenciales incorrectas");
+        // El admin puede agregar, modificar y eliminar usuarios [cite: 2026-02-09]
+        if(ROLE_ACTUAL === "admin") document.getElementById("btnGestion").classList.remove("hidden");
+        render();
+    } else if(!cached) alert("Credenciales incorrectas");
 }
 
-function iniciarBusqueda() {
+function render() {
     const q = document.getElementById("busqueda").value.toLowerCase().trim();
-    const palabras = q.split(" ");
-    
-    const filtrados = MASTER_DATA.filter(r => {
-        const textoFila = Object.values(r).join(" ").toLowerCase();
-        return palabras.every(p => textoFila.includes(p));
-    });
-
-    const tb = document.querySelector("#tabla tbody");
+    const filtrados = MASTER_DATA.filter(r => Object.values(r).join(" ").toLowerCase().includes(q));
+    const inicio = (paginaActual - 1) * limite;
+    const segment = filtrados.slice(inicio, inicio + limite);
+    const tb = document.getElementById("tabla-cuerpo");
     tb.innerHTML = "";
-    document.getElementById("contador").innerText = `Mostrando 10 de ${filtrados.length} resultados`;
 
-    // Regla de negocio: Siempre mostrar los primeros 10 resultados [cite: 2026-02-09]
-    filtrados.slice(0, 10).forEach(r => {
+    segment.forEach(r => {
         const tr = document.createElement("tr");
         const color = getColor(r.Cobertura);
-        const esAdmin = (ROLE_ACTUAL === "admin"); 
+        const esEdicion = (ROLE_ACTUAL === "admin" || ROLE_ACTUAL === "lider");
         
-        let control = esAdmin ? `
+        let control = esEdicion ? `
             <div style="display:flex; gap:5px; justify-content:center;">
                 <select class="select-edit ${color}" onchange="this.className='select-edit '+getColor(this.value)">
                     <option value="Sin Datos" ${r.Cobertura === "Sin Datos" ? 'selected' : ''}>SIN DATOS</option>
                     <option value="Con Cobertura" ${r.Cobertura === "Con Cobertura" ? 'selected' : ''}>COBERTURA</option>
                     <option value="Sin Cobertura" ${r.Cobertura === "Sin Cobertura" ? 'selected' : ''}>SIN COBERTURA</option>
+                    <option value="Consultar" ${r.Cobertura === "Consultar" ? 'selected' : ''}>CONSULTAR</option>
                 </select>
                 <button class="btn btn-save" onclick="guardar('${r.Nombre}', this)">💾</button>
             </div>` : `<div align="center"><span class="badge ${color}">${r.Cobertura || 'SIN DATOS'}</span></div>`;
@@ -172,40 +157,58 @@ function iniciarBusqueda() {
         tr.innerHTML = `<td>${r.Municipio}</td><td><strong>${r.Nombre}</strong></td><td>${r.Categoria}</td><td>${r.Zona}</td><td>${control}</td>`;
         tb.appendChild(tr);
     });
+
+    document.getElementById("contador").innerText = `Mostrando ${inicio+1}-${Math.min(inicio+limite, filtrados.length)} de ${filtrados.length}`;
+    document.getElementById("infoPagina").innerText = `Página ${paginaActual}`;
+    document.getElementById("btnPrev").disabled = paginaActual === 1;
+    document.getElementById("btnNext").disabled = (inicio + limite) >= filtrados.length;
 }
 
-async function guardar(nombre, btn) {
-    const dot = document.getElementById("syncDot");
-    const sel = btn.parentElement.querySelector("select");
-    btn.innerText = "⏳"; btn.disabled = true;
-    dot.className = "sync-indicator sync-active";
-
-    try {
-        await fetch(API_URL, {
-            method: "POST", mode: "no-cors",
-            body: JSON.stringify({ accion: "update_status", nombre: nombre, estado: sel.value })
-        });
-        const item = MASTER_DATA.find(x => x.Nombre === nombre);
-        if(item) item.Cobertura = sel.value;
-        btn.innerText = "✅";
-        dot.className = "sync-indicator sync-success";
-        setTimeout(() => { btn.innerText = "💾"; btn.disabled = false; }, 1500);
-    } catch (e) { alert("Error al guardar"); btn.innerText = "💾"; btn.disabled = false; }
-}
+function cambiarPagina(d) { paginaActual += d; render(); }
 
 function getColor(v) {
     const t = String(v || "").toLowerCase();
     if (t.includes("con cobertura")) return "bg-green";
     if (t.includes("sin cobertura")) return "bg-red";
+    if (t.includes("consultar")) return "bg-yellow"; // Amarillo para estado Consultar
     return "bg-gray";
 }
 
-function cerrarSesion() { 
-    localStorage.removeItem("session_cobertura"); 
-    location.reload(); 
+function guardar(nombre, btn) {
+    const sel = btn.parentElement.querySelector("select");
+    const u = JSON.parse(localStorage.getItem("session_cobertura")).usuario;
+    btn.innerText = "⏳"; btn.disabled = true;
+    document.getElementById("syncDot").className = "sync-indicator sync-active";
+
+    google.script.run.withSuccessHandler(() => {
+        const item = MASTER_DATA.find(x => x.Nombre === nombre);
+        if(item) item.Cobertura = sel.value;
+        btn.innerText = "✅";
+        document.getElementById("syncDot").className = "sync-indicator sync-success";
+        setTimeout(() => { btn.innerText = "💾"; btn.disabled = false; }, 1000);
+    }).actualizarEstadoConHistorial(nombre, sel.value, u);
 }
 
-window.onload = cargar;
+function toggleGestion() {
+    const p = document.getElementById("panelUsuarios");
+    p.classList.toggle("hidden");
+    let h = '<table style="width:100%; background:white"><tr><th>Usuario</th><th>Rol</th><th>Acción</th></tr>';
+    USUARIOS_DATA.forEach(u => {
+        h += `<tr><td>${u.usuario}</td><td>${u.rol}</td><td><button onclick="eliminar('${u.usuario}')" class="btn bg-red" style="padding:2px 8px">X</button></td></tr>`;
+    });
+    document.getElementById("listaUsuarios").innerHTML = h + '</table>';
+}
+
+function eliminar(user) {
+    if(confirm(`¿Eliminar al usuario ${user}?`)) {
+        google.script.run.withSuccessHandler(() => {
+            USUARIOS_DATA = USUARIOS_DATA.filter(x => x.usuario !== user);
+            toggleGestion(); toggleGestion();
+        }).eliminarUsuarioBackend(user);
+    }
+}
+
+function cerrarSesion() { localStorage.removeItem("session_cobertura"); location.reload(); }
 </script>
 </body>
 </html>
