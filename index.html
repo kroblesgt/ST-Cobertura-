@@ -1,28 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEMA DE COBERTURA | DISTELSA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root { 
+            --primary: #0054a6; --success: #00b050; --danger: #c00000; 
+            --warning: #f1c40f; --dark: #2c3e50; --light-grey: #f8f9fa; 
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f0f2f5; margin:0; color: #333; }
+        
+        /* CABECERA */
+        .header { background: white; padding: 10px 40px; border-bottom: 5px solid var(--primary); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .header img { height: 80px; width: auto; }
+        
+        /* CONTENEDORES */
+        .container { max-width: 98%; margin: 25px auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        .hidden { display: none !important; }
+        
+        /* TABLA 6 COLUMNAS CON AJUSTE DE LÍNEA */
+        .table-wrapper { overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #eee; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        th { background: var(--primary); color: white; padding: 15px 10px; text-align: left; font-size: 13px; text-transform: uppercase; }
+        td { padding: 12px 10px; border-bottom: 1px solid #eee; font-size: 13px; word-wrap: break-word; overflow-wrap: break-word; white-space: normal !important; vertical-align: middle; }
+        tr:hover { background-color: #f8fbff; }
+
+        /* BOTONES */
+        .btn { padding: 12px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-admin { background: var(--warning); color: #222; }
+        .btn-exit { background: var(--dark); color: white; }
+        
+        /* BADGES ESTADO */
+        .badge { padding: 8px; border-radius: 20px; color: white; font-weight: bold; font-size: 10px; text-transform: uppercase; width: 100%; border: none; cursor: pointer; text-align: center; }
+        .bg-verde { background: var(--success); } .bg-rojo { background: var(--danger); } 
+        .bg-amarillo { background: var(--warning); color: black; } .bg-gris { background: #95a5a6; }
+
+        /* MODAL USUARIOS */
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; justify-content:center; align-items:center; z-index:2000; backdrop-filter: blur(4px); }
+        .modal-content { background:white; padding:30px; border-radius:15px; width:700px; max-width:95%; max-height: 90vh; overflow-y: auto; }
+        .user-row { display: grid; grid-template-columns: 1.5fr 1.5fr 1fr 50px; gap: 10px; padding: 12px; border-bottom: 1px solid #eee; align-items: center; }
+
+        #buscar, #busU { width: 100%; padding: 15px; border-radius: 10px; border: 2px solid #e0e0e0; font-size: 15px; box-sizing: border-box; }
+        #toast { position: fixed; bottom: 20px; right: 20px; background: var(--dark); color: white; padding: 15px 25px; border-radius: 8px; display: none; z-index: 3000; }
+    </style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<header class="header">
+    <img src="https://drive.google.com/thumbnail?id=1bawJf9oARBLy2itsOfA9YE8RVAFNdNef" alt="Logo">
+    <h2 style="margin:0; color:var(--primary);">CONTROL DE COBERTURA</h2>
+    <button onclick="cerrarSesion()" id="logoutBtn" class="btn btn-exit hidden"><i class="fa-solid fa-power-off"></i> SALIR</button>
+</header>
+
+<div class="container">
+    <div id="loginPanel" style="max-width: 380px; margin: 50px auto; text-align: center;">
+        <h2 style="color:var(--primary)">Iniciar Sesión</h2>
+        <input id="userInput" type="text" placeholder="Usuario" style="width:100%; padding:14px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;">
+        <input id="passInput" type="password" placeholder="Contraseña" style="width:100%; padding:14px; margin-bottom:20px; border-radius:8px; border:1px solid #ddd;">
+        <button id="btnLogin" onclick="login()" disabled class="btn btn-primary" style="width:100%; justify-content:center;">CONECTANDO...</button>
+    </div>
+
+    <div id="appPanel" class="hidden">
+        <div style="display:flex; gap:15px; margin-bottom:20px;">
+            <div style="position:relative; flex-grow:1;">
+                <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:15px; top:18px; color:#999;"></i>
+                <input id="buscar" style="padding-left:45px;" placeholder="Buscar en municipio, nombre, categoría, zona o referencia..." oninput="render()">
+            </div>
+            <button id="btnAdmin" onclick="abrirModal()" class="btn btn-admin hidden"><i class="fa-solid fa-users-gear"></i> USUARIOS</button>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 12%;">Municipio</th>
+                        <th style="width: 18%;">Nombre</th>
+                        <th style="width: 12%;">Categoría</th>
+                        <th style="width: 8%;">Zona</th>
+                        <th style="width: 35%;">Referencia</th>
+                        <th style="width: 15%;">Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpo"></tbody>
+            </table>
+        </div>
+
+        <div style="display:flex; justify-content:center; gap:20px; margin-top:20px; align-items:center;">
+            <button id="btnAnt" class="btn btn-primary" onclick="cambiarPag(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+            <span id="pagTxt" style="font-weight:bold;">Página 1</span>
+            <button id="btnSig" class="btn btn-primary" onclick="cambiarPag(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+    </div>
+</div>
+
 <div id="modalUser" class="modal hidden">
     <div class="modal-content">
-        <h2 style="color:var(--primary); margin-top:0;"><i class="fa-solid fa-user-shield"></i> Gestión de Usuarios</h2>
+        <h2 style="color:var(--primary); margin-top:0;"><i class="fa-solid fa-user-gear"></i> Gestión de Usuarios</h2>
         
-        <div style="display:grid; grid-template-columns: 1fr 1fr 1.2fr auto; gap:10px; margin-bottom:20px; background: #f8f9fa; padding: 15px; border-radius: 10px; border: 1px solid #eee;">
-            <input id="newU" type="text" placeholder="Nuevo Usuario" style="padding:10px; border-radius:5px; border:1px solid #ccc;">
-            <input id="newP" type="text" placeholder="Clave" style="padding:10px; border-radius:5px; border:1px solid #ccc;">
-            <select id="newR" style="padding:10px; border-radius:5px; border:1px solid #ccc;">
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:10px; margin-bottom:20px; background:#f9f9f9; padding:15px; border-radius:10px;">
+            <input id="newU" type="text" placeholder="Usuario" style="padding:10px; border:1px solid #ccc; border-radius:5px;">
+            <input id="newP" type="text" placeholder="Clave" style="padding:10px; border:1px solid #ccc; border-radius:5px;">
+            <select id="newR" style="padding:10px; border:1px solid #ccc; border-radius:5px;">
                 <option value="agente">Agente</option>
                 <option value="lider">Líder</option>
                 <option value="admin">Admin</option>
             </select>
-            <button onclick="crearUsuario()" class="btn btn-primary" style="padding:10px 20px;"><i class="fa-solid fa-plus"></i></button>
+            <button onclick="crearUsuario()" class="btn btn-primary"><i class="fa-solid fa-plus"></i></button>
         </div>
 
-        <div style="position: relative; margin-bottom: 15px;">
-            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 13px; color: #999;"></i>
-            <input type="text" id="busU" 
-                   style="width:100%; padding:10px 10px 10px 35px; border-radius:8px; border:1px solid #ddd; box-sizing: border-box;" 
-                   placeholder="Filtrar usuarios por nombre o rol..." 
-                   oninput="actualizarListaUsuarios()">
+        <div style="position:relative; margin-bottom:10px;">
+            <i class="fa-solid fa-filter" style="position:absolute; left:12px; top:13px; color:#999;"></i>
+            <input id="busU" style="padding:10px 10px 10px 35px; border:1px solid #ddd; border-radius:8px; width:100%; box-sizing:border-box;" placeholder="Filtrar usuarios..." oninput="actualizarListaUsuarios()">
         </div>
 
-        <div id="listaU" style="max-height:350px; overflow-y:auto; border:1px solid #eee; border-radius:8px; background: #fff;"></div>
-        
-        <button onclick="cerrarModal()" class="btn btn-exit" style="width:100%; margin-top:15px; justify-content:center;">CERRAR PANEL</button>
+        <div id="listaU" style="max-height:300px; overflow-y:auto; border:1px solid #eee; border-radius:8px;"></div>
+        <button onclick="cerrarModal()" class="btn btn-exit" style="width:100%; margin-top:15px; justify-content:center;">CERRAR</button>
     </div>
 </div>
+
+<script>
+    const API = "https://script.google.com/macros/s/AKfycbyDdFUGrMnZfmoAkiGgMBIPLhcEd18o5H11KQTAyPjN0xav0kNUV5ka-FeYbhsOf5pxsA/exec";
+    let MASTER = [], USUARIOS = [], ROL = "", pag = 1;
+
+    async function cargarDatos(esSilencioso = false) {
+        try {
+            const res = await fetch(API);
+            const data = await res.json();
+            USUARIOS = data.usuarios.slice(1).map(r => ({ u: String(r[0]), p: String(r[1]), r: String(r[2]) }));
+            MASTER = data.cobertura.slice(1).map((r, i) => ({ 
+                fila: i + 2, m: r[0], n: r[1], cat: r[2], z: r[3], ref: r[4] || "", cob: r[5] || "Sin Datos" 
+            }));
+            document.getElementById("btnLogin").innerText = "INGRESAR";
+            document.getElementById("btnLogin").disabled = false;
+            
+            if (!esSilencioso) {
+                const session = JSON.parse(localStorage.getItem("distelsa_session"));
+                if (session) {
+                    document.getElementById("userInput").value = session.u;
+                    document.getElementById("passInput").value = session.p;
+                    login();
+                }
+            }
+            if(document.getElementById("appPanel").offsetParent !== null) render();
+        } catch (e) { console.error(e); }
+    }
+
+    function login() {
+        const u = document.getElementById("userInput").value.trim().toLowerCase();
+        const p = document.getElementById("passInput").value.trim();
+        const user = USUARIOS.find(x => x.u.toLowerCase() === u && x.p === p);
+        if(user) {
+            ROL = user.r.toLowerCase();
+            localStorage.setItem("distelsa_session", JSON.stringify({ u: u, p: p }));
+            document.getElementById("loginPanel").classList.add("hidden");
+            document.getElementById("appPanel").classList.remove("hidden");
+            document.getElementById("logoutBtn").classList.remove("hidden");
+            if(ROL === 'admin') document.getElementById("btnAdmin").classList.remove("hidden");
+            render();
+        } else { alert("Acceso denegado"); }
+    }
+
+    function render() {
+        const q = document.getElementById("buscar").value.toLowerCase().trim();
+        let filtrados = MASTER.filter(r => `${r.m} ${r.n} ${r.cat} ${r.z} ${r.ref}`.toLowerCase().includes(q));
+
+        const totalPags = Math.ceil(filtrados.length / 10) || 1;
+        const segment = filtrados.slice((pag - 1) * 10, pag * 10);
+        
+        let html = "";
+        segment.forEach(r => {
+            let col = r.cob=="Cobertura"?"bg-verde":r.cob=="Sin Cobertura"?"bg-rojo":r.cob=="Consultar"?"bg-amarillo":"bg-gris";
+            let puedeEditar = (ROL === 'admin' || ROL === 'lider');
+            let estado = puedeEditar ? `<select class="badge ${col}" onchange="guardarEstado(${r.fila}, this.value)">
+                <option value="Sin Datos" ${r.cob=='Sin Datos'?'selected':''}>Sin Datos</option>
+                <option value="Cobertura" ${r.cob=='Cobertura'?'selected':''}>Cobertura</option>
+                <option value="Sin Cobertura" ${r.cob=='Sin Cobertura'?'selected':''}>Sin Cobertura</option>
+                <option value="Consultar" ${r.cob=='Consultar'?'selected':''}>Consultar</option>
+            </select>` : `<span class="badge ${col}">${r.cob}</span>`;
+            
+            html += `<tr>
+                <td>${r.m}</td><td style="font-weight:bold">${r.n}</td>
+                <td><small>${r.cat}</small></td><td>${r.z}</td>
+                <td style="color:#555; font-size:11px;">${r.ref}</td><td>${estado}</td>
+            </tr>`;
+        });
+        document.getElementById("cuerpo").innerHTML = html;
+        document.getElementById("pagTxt").innerText = `Página ${pag} de ${totalPags}`;
+        document.getElementById("btnAnt").disabled = pag === 1;
+        document.getElementById("btnSig").disabled = pag >= totalPags;
+    }
+
+    async function guardarEstado(fila, val) {
+        showToast("Sincronizando...");
+        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'updateCob', fila, valor: val }) });
+        const item = MASTER.find(x => x.fila === fila);
+        if(item) item.cob = val;
+        render();
+        showToast("✓ Guardado");
+    }
+
+    function actualizarListaUsuarios() {
+        const filtro = document.getElementById("busU").value.toLowerCase();
+        let html = "";
+        USUARIOS.filter(u => u.u.toLowerCase().includes(filtro)).forEach(u => {
+            html += `<div class="user-row">
+                <span><strong>${u.u}</strong></span><span>${u.p}</span>
+                <span class="badge bg-gris" style="width:auto;">${u.r}</span>
+                <button onclick="eliminarUsuario('${u.u}')" style="color:var(--danger); border:none; background:none; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+            </div>`;
+        });
+        document.getElementById("listaU").innerHTML = html;
+    }
+
+    async function crearUsuario() {
+        const u = document.getElementById("newU").value, p = document.getElementById("newP").value, r = document.getElementById("newR").value;
+        if(!u || !p) return;
+        showToast("Guardando...");
+        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'addUser', usuario: u, clave: p, rol: r }) });
+        await cargarDatos(true);
+        actualizarListaUsuarios();
+        showToast("Usuario creado");
+    }
+
+    async function eliminarUsuario(nombre) {
+        if(!confirm("¿Eliminar?")) return;
+        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'delete', usuarioNombre: nombre }) });
+        await cargarDatos(true);
+        actualizarListaUsuarios();
+    }
+
+    function abrirModal() { document.getElementById("modalUser").classList.remove("hidden"); actualizarListaUsuarios(); }
+    function cerrarModal() { document.getElementById("modalUser").classList.add("hidden"); }
+    function cambiarPag(v) { pag += v; render(); }
+    function cerrarSesion() { localStorage.removeItem("distelsa_session"); location.reload(); }
+    function showToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.style.display = "block"; setTimeout(()=>t.style.display="none", 2000); }
+    window.onload = cargarDatos;
+</script>
+</body>
+</html>
