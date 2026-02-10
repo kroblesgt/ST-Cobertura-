@@ -34,29 +34,33 @@
         .user-row { display: grid; grid-template-columns: 1.2fr 1.2fr 1fr 60px 60px; gap: 10px; padding: 10px 0; border-bottom: 1px solid #eee; align-items: center; }
         .modified { background-color: var(--edit-highlight) !important; }
 
-        /* Alerta Flotante */
         #toast { position: fixed; bottom: 20px; right: 20px; background: var(--dark); color: white; padding: 15px 25px; border-radius: 8px; display: none; z-index: 3000; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        
+        /* Indicador de Sincronización */
+        .sync-indicator { font-size: 10px; color: var(--success); display: flex; align-items: center; gap: 5px; margin-top: 5px; }
+        .dot { height: 8px; width: 8px; background-color: var(--success); border-radius: 50%; display: inline-block; animation: blink 2s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
-<div id="toast">Acción completada con éxito</div>
+<div id="toast">Acción completada</div>
 
 <header class="header">
     <img src="https://drive.google.com/thumbnail?id=1bawJf9oARBLy2itsOfA9YE8RVAFNdNef" alt="Logo">
     <div style="text-align: center;">
         <h1 style="margin:0; color:var(--primary);">SISTEMA DE COBERTURA</h1>
-        <small id="statText" style="font-weight:bold; color:var(--primary);">SISTEMA ONLINE</small>
+        <div class="sync-indicator"><span class="dot"></span> <span id="syncText">Sincronizado</span></div>
     </div>
     <button onclick="logout()" id="logoutBtn" class="btn-exit-top hidden"><i class="fa-solid fa-power-off"></i> SALIR</button>
 </header>
 
 <div class="container">
     <div id="loginPanel" style="max-width: 400px; margin: 60px auto; text-align: center;">
-        <h2 style="color:var(--primary)">Acceso</h2>
+        <h2 style="color:var(--primary)">Acceso al Sistema</h2>
         <input id="userInput" type="text" placeholder="Usuario" style="width:100%; padding:14px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;">
         <input id="passInput" type="password" placeholder="Contraseña" style="width:100%; padding:14px; margin-bottom:20px; border-radius:8px; border:1px solid #ddd;">
-        <button id="btnLogin" onclick="login()" disabled class="btn" style="background:var(--primary); width:100%; justify-content:center;">CONECTANDO...</button>
+        <button id="btnLogin" onclick="login()" disabled class="btn" style="background:var(--primary); width:100%; justify-content:center;">CARGANDO...</button>
     </div>
 
     <div id="appPanel" class="hidden">
@@ -79,48 +83,48 @@
 <div id="modalUser" class="modal hidden">
     <div class="modal-content">
         <h2 style="color:var(--primary); margin-top:0;">Gestión de Usuarios</h2>
-        
         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:10px; margin-bottom:20px; background: #f8f9fa; padding: 15px; border-radius: 10px;">
-            <input id="newU" type="text" placeholder="Nuevo Usuario" style="padding:10px; border-radius:5px; border:1px solid #ddd;">
-            <input id="newP" type="text" placeholder="Clave" style="padding:10px; border-radius:5px; border:1px solid #ddd;">
-            <select id="newR" style="padding:10px; border-radius:5px; border:1px solid #ddd;">
+            <input id="newU" type="text" placeholder="Nuevo Usuario">
+            <input id="newP" type="text" placeholder="Clave">
+            <select id="newR">
                 <option value="agente">Agente</option>
                 <option value="lider">Líder</option>
                 <option value="admin">Admin</option>
             </select>
             <button onclick="crearUsuario()" class="btn-save" style="background: var(--primary);"><i class="fa-solid fa-plus"></i></button>
         </div>
-
         <input type="text" id="busU" style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid #ddd;" placeholder="🔍 Filtrar usuarios..." oninput="actualizarListaUsuarios()">
         <div id="listaU" style="max-height:300px; overflow-y:auto; border:1px solid #eee; padding:10px; border-radius:8px;"></div>
-        <button onclick="cerrarModal()" class="btn" style="background:var(--dark); width:100%; margin-top:15px; justify-content:center;">CERRAR VENTANA</button>
+        <button onclick="cerrarModal()" class="btn" style="background:var(--dark); width:100%; margin-top:15px; justify-content:center;">CERRAR</button>
     </div>
 </div>
 
 <script>
     const API = "https://script.google.com/macros/s/AKfycbx4GK4eRKjRXD5AqukR-lpjo_1jloeSjKlk7GYpihbYlo8YwRAEUwaj6TbUUDg0aODEOg/exec";
-    let MASTER = [], USUARIOS = [], ROL = "", pag = 1;
+    let MASTER = [], USUARIOS = [], ROL = "", pag = 1, isSearching = false;
 
-    async function cargarDatosGlobales() {
+    // CARGA INICIAL Y POLLING (ACTUALIZACIÓN AUTOMÁTICA)
+    async function fetchData(isSilent = false) {
+        if(!isSilent) document.getElementById("syncText").innerText = "Sincronizando...";
         try {
             const res = await fetch(API);
             const data = await res.json();
             USUARIOS = data.usuarios.slice(1).map((r, i) => ({ fila: i + 2, u: String(r[0]), p: String(r[1]), r: String(r[2]) }));
             MASTER = data.cobertura.slice(1).map((r, i) => ({ fila: i+2, m: r[0], n: r[1], z: r[3], cob: r[5] || "Sin Datos" }));
+            
             document.getElementById("btnLogin").innerText = "INGRESAR";
             document.getElementById("btnLogin").disabled = false;
-        } catch (e) { showToast("Error de conexión", true); }
+            document.getElementById("syncText").innerText = "En Línea";
+            
+            if(document.getElementById("appPanel").offsetParent !== null) render(); 
+        } catch (e) { document.getElementById("syncText").innerText = "Error de conexión"; }
     }
 
-    window.onload = cargarDatosGlobales;
-
-    function showToast(msg, error = false) {
-        const t = document.getElementById("toast");
-        t.innerText = msg;
-        t.style.background = error ? "#c00000" : "#2c3e50";
-        t.style.display = "block";
-        setTimeout(() => { t.style.display = "none"; }, 3000);
-    }
+    window.onload = () => {
+        fetchData();
+        // Sincronizar cada 30 segundos automáticamente
+        setInterval(() => fetchData(true), 30000); 
+    };
 
     function login() {
         const u = document.getElementById("userInput").value.trim().toLowerCase();
@@ -133,7 +137,7 @@
             document.getElementById("logoutBtn").classList.remove("hidden");
             if(ROL === 'admin') document.getElementById("btnAdmin").classList.remove("hidden");
             render();
-        } else { alert("Datos incorrectos"); }
+        } else { alert("Usuario o clave incorrectos"); }
     }
 
     function render() {
@@ -142,15 +146,19 @@
         const totalPags = Math.ceil(filtrados.length / 10) || 1;
         const segment = filtrados.slice((pag-1)*10, pag*10);
         let html = "";
+
         segment.forEach(r => {
             let col = r.cob=="Cobertura"?"bg-verde":r.cob=="Sin Cobertura"?"bg-rojo":r.cob=="Consultar"?"bg-amarillo":"bg-gris";
-            let estadoHtml = (ROL==='admin' || ROL==='lider') ? 
+            let editable = (ROL==='admin' || ROL==='lider');
+            
+            let estadoHtml = editable ? 
                 `<select class="badge ${col}" onchange="guardarEstado(${r.fila}, this.value)">
                     <option value="Sin Datos" ${r.cob=='Sin Datos'?'selected':''}>Sin Datos</option>
                     <option value="Cobertura" ${r.cob=='Cobertura'?'selected':''}>Cobertura</option>
                     <option value="Sin Cobertura" ${r.cob=='Sin Cobertura'?'selected':''}>Sin Cobertura</option>
                     <option value="Consultar" ${r.cob=='Consultar'?'selected':''}>Consultar</option>
                 </select>` : `<span class="badge ${col}">${r.cob}</span>`;
+            
             html += `<tr><td>${r.m}</td><td><b>${r.n}</b></td><td>${r.z}</td><td>${estadoHtml}</td></tr>`;
         });
         document.getElementById("cuerpo").innerHTML = html;
@@ -160,13 +168,33 @@
     }
 
     async function guardarEstado(fila, val) {
-        document.getElementById("statText").innerText = "GUARDANDO...";
+        showToast("Guardando cambio...");
         await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'updateCob', fila, valor: val }) });
         const item = MASTER.find(x => x.fila === fila);
         if(item) item.cob = val;
-        document.getElementById("statText").innerText = "SISTEMA ONLINE";
-        showToast("Estado actualizado");
         render();
+        showToast("Actualizado en la nube");
+    }
+
+    // GESTIÓN DE USUARIOS LIVE
+    async function crearUsuario() {
+        const u = document.getElementById("newU").value.trim(), p = document.getElementById("newP").value.trim(), r = document.getElementById("newR").value;
+        if(!u || !p) return alert("Complete los datos");
+        showToast("Creando usuario...");
+        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'addUser', usuario: u, clave: p, rol: r }) });
+        document.getElementById("newU").value = ""; document.getElementById("newP").value = "";
+        await fetchData(true);
+        actualizarListaUsuarios();
+        showToast("Usuario creado");
+    }
+
+    async function eliminarUsuario(nombre) {
+        if(!confirm("¿Eliminar usuario?")) return;
+        showToast("Eliminando...");
+        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'delete', usuarioNombre: nombre }) });
+        USUARIOS = USUARIOS.filter(user => user.u !== nombre);
+        actualizarListaUsuarios();
+        showToast("Usuario eliminado");
     }
 
     function abrirModal() { document.getElementById("modalUser").classList.remove("hidden"); actualizarListaUsuarios(); }
@@ -177,9 +205,9 @@
         let html = "";
         USUARIOS.filter(u => u.u.toLowerCase().includes(bus)).forEach(u => {
             html += `<div class="user-row" id="row-${u.fila}">
-                <input type="text" id="u-${u.fila}" value="${u.u}" oninput="document.getElementById('row-${u.fila}').classList.add('modified')">
-                <input type="text" id="p-${u.fila}" value="${u.p}" oninput="document.getElementById('row-${u.fila}').classList.add('modified')">
-                <select id="r-${u.fila}" onchange="document.getElementById('row-${u.fila}').classList.add('modified')">
+                <input type="text" id="u-${u.fila}" value="${u.u}" oninput="this.parentElement.classList.add('modified')">
+                <input type="text" id="p-${u.fila}" value="${u.p}" oninput="this.parentElement.classList.add('modified')">
+                <select id="r-${u.fila}" onchange="this.parentElement.classList.add('modified')">
                     <option value="agente" ${u.r=='agente'?'selected':''}>Agente</option>
                     <option value="lider" ${u.r=='lider'?'selected':''}>Líder</option>
                     <option value="admin" ${u.r=='admin'?'selected':''}>Admin</option>
@@ -191,44 +219,22 @@
         document.getElementById("listaU").innerHTML = html;
     }
 
-    async function crearUsuario() {
-        const u = document.getElementById("newU").value.trim(), p = document.getElementById("newP").value.trim(), r = document.getElementById("newR").value;
-        if(!u || !p) return alert("Complete los campos");
-        document.getElementById("statText").innerText = "CREANDO...";
-        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'addUser', usuario: u, clave: p, rol: r }) });
-        
-        document.getElementById("newU").value = "";
-        document.getElementById("newP").value = "";
-        
-        // Actualización interna sin recargar
-        await cargarDatosGlobales();
-        actualizarListaUsuarios();
-        document.getElementById("statText").innerText = "SISTEMA ONLINE";
-        showToast("Usuario creado con éxito");
-    }
-
     async function updateUser(fila) {
         const u = document.getElementById(`u-${fila}`).value, p = document.getElementById(`p-${fila}`).value, r = document.getElementById(`r-${fila}`).value;
-        document.getElementById("statText").innerText = "ACTUALIZANDO...";
+        showToast("Actualizando...");
         await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'addUser', usuario: u, clave: p, rol: r }) });
         document.getElementById(`row-${fila}`).classList.remove('modified');
-        document.getElementById("statText").innerText = "SISTEMA ONLINE";
-        showToast("Usuario actualizado");
+        showToast("Cambios guardados");
     }
 
-    async function eliminarUsuario(nombre) {
-        if(!confirm("¿Eliminar usuario?")) return;
-        document.getElementById("statText").innerText = "ELIMINANDO...";
-        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'delete', usuarioNombre: nombre }) });
-        
-        USUARIOS = USUARIOS.filter(user => user.u !== nombre);
-        actualizarListaUsuarios();
-        document.getElementById("statText").innerText = "SISTEMA ONLINE";
-        showToast("Usuario eliminado");
+    function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.innerText = msg; t.style.display = "block";
+        setTimeout(() => { t.style.display = "none"; }, 3000);
     }
 
     function cambiarPag(v) { pag += v; render(); }
-    function logout() { location.reload(); } // Único lugar donde se permite recargar
+    function logout() { location.reload(); }
 </script>
 </body>
 </html>
