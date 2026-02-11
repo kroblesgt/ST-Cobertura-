@@ -3,46 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA COBERTURA | CALL CENTER</title>
+    <title>SISTEMA COBERTURA | DISTELSA MASTER</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root { --primary: #0054a6; --success: #00b050; --danger: #c00000; --warning: #f1c40f; --dark: #2c3e50; }
-        body { font-family: 'Segoe UI', sans-serif; background:#f0f2f5; margin:0; }
+        body { font-family: 'Segoe UI', sans-serif; background:#f0f2f5; margin:0; overflow-x: hidden; }
 
-        /* DESTELLO AZUL RECOMENDADO (1.5s) */
         @keyframes destello {
             0% { background-color: white; box-shadow: 0 0 0px rgba(0, 84, 166, 0); }
             50% { background-color: #eef7ff; box-shadow: inset 0 0 15px rgba(0, 84, 166, 0.4); }
             100% { background-color: #f8fbff; box-shadow: inset 0 0 5px rgba(0, 84, 166, 0.1); }
         }
-        .mejor-coincidencia { animation: destello 1.5s infinite alternate ease-in-out; border-left: 6px solid var(--primary) !important; font-weight: bold; }
+        .mejor-coincidencia { animation: destello 1.5s infinite alternate ease-in-out; border-left: 6px solid var(--primary) !important; }
 
         .header { background: white; padding: 10px 30px; border-bottom: 5px solid var(--primary); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .header img { height: 50px; }
+        .header img { height: 45px; }
 
-        .container { max-width: 98%; margin: 15px auto; background: white; padding: 20px; border-radius: 10px; }
+        .container { max-width: 98%; margin: 15px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .hidden { display: none !important; }
 
-        /* BARRA DE BÚSQUEDA TIPO CALL CENTER */
-        .search-area { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; width: 100%; }
-        .input-box { position: relative; flex: 1; }
+        /* BUSCADOR Y HERRAMIENTAS */
+        .search-area { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; flex-wrap: wrap; }
+        .input-box { position: relative; flex: 1; min-width: 300px; }
         .input-box i { position: absolute; left: 15px; top: 14px; color: #999; }
-        #buscar { width: 100%; padding: 12px 40px; border-radius: 8px; border: 2px solid #0054a6; font-size: 16px; box-sizing: border-box; }
-        .btn-clear { position: absolute; right: 10px; top: 8px; background: #eee; border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer; color: #666; }
+        #buscar { width: 100%; padding: 12px 45px; border-radius: 8px; border: 2px solid var(--primary); font-size: 16px; outline: none; box-sizing: border-box; }
+        .btn-clear { position: absolute; right: 10px; top: 8px; background: #eee; border: none; border-radius: 5px; padding: 6px 12px; cursor: pointer; color: #666; }
 
-        .btn { padding: 10px 15px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; font-size: 12px; }
-        .btn-success { background: var(--success); color: white; }
-        .btn-admin { background: var(--warning); color: #222; }
+        /* TABLA */
+        .table-container { overflow-x: auto; max-height: 60vh; border: 1px solid #eee; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th { background: var(--primary); color: white; padding: 12px; font-size: 12px; text-align: left; position: sticky; top: 0; z-index: 10; }
+        td { padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; vertical-align: middle; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { background: var(--primary); color: white; padding: 10px; font-size: 12px; text-align: left; position: sticky; top: 0; }
-        td { padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; }
+        .badge { padding: 8px; border-radius: 8px; color: white; font-weight: bold; font-size: 11px; width: 100%; border: none; cursor: pointer; text-align: center; }
+        .bg-verde { background: var(--success) !important; }
+        .bg-rojo { background: var(--danger) !important; }
+        .bg-amarillo { background: var(--warning) !important; color: black !important; }
+        .bg-gris { background: #95a5a6 !important; }
 
-        .badge { padding: 5px; border-radius: 10px; color: white; font-weight: bold; font-size: 11px; width: 100%; border: none; text-align: center; }
-        .bg-verde { background: var(--success); } .bg-rojo { background: var(--danger); } 
-        .bg-amarillo { background: var(--warning); color: black; } .bg-gris { background: #95a5a6; }
+        /* MODALES */
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; justify-content:center; align-items:center; z-index:2000; }
+        .modal-content { background:white; padding:25px; border-radius:12px; width:400px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
 
-        #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 10px 20px; border-radius: 20px; display: none; z-index: 5000; }
+        #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 12px 25px; border-radius: 30px; display: none; z-index: 5000; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -51,68 +54,98 @@
 
 <header class="header">
     <img src="https://drive.google.com/thumbnail?id=1bawJf9oARBLy2itsOfA9YE8RVAFNdNef" alt="Logo">
-    <div>
-        <h2 style="margin:0; color:var(--primary); font-size: 18px;">CONSULTA DE COBERTURA</h2>
-        <small id="lastSync" style="color: #666;">Cargando base de datos...</small>
+    <div style="text-align:center">
+        <h2 style="margin:0; color:var(--primary); font-size: 18px; letter-spacing: 1px;">CONSULTA DE COBERTURA</h2>
+        <small id="lastSync" style="color: #888;">Iniciando sistema...</small>
     </div>
-    <button onclick="cerrarSesion()" id="logoutBtn" class="btn hidden" style="background:#eee"><i class="fa-solid fa-right-from-bracket"></i> SALIR</button>
+    <button onclick="cerrarSesion()" id="logoutBtn" class="hidden" style="border:none; background:none; cursor:pointer; font-size: 22px; color:#c00000;"><i class="fa-solid fa-power-off"></i></button>
 </header>
 
 <div class="container">
-    <div id="loginPanel" style="max-width: 300px; margin: 50px auto; text-align: center;">
-        <input id="userInput" type="text" placeholder="Usuario" style="width:100%; padding:10px; margin-bottom:10px;">
-        <input id="passInput" type="password" placeholder="Contraseña" style="width:100%; padding:10px; margin-bottom:15px;">
-        <button id="btnLogin" onclick="login()" disabled class="btn" style="background:var(--primary); color:white; width:100%; justify-content:center;">INGRESAR</button>
+    <div id="loginPanel" style="max-width: 320px; margin: 60px auto; text-align: center; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+        <h3 style="color: var(--primary);">ACCESO AGENTES</h3>
+        <input id="userInput" type="text" placeholder="Usuario" style="width:100%; padding:12px; margin-bottom:12px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box;">
+        <input id="passInput" type="password" placeholder="Contraseña" style="width:100%; padding:12px; margin-bottom:18px; border:1px solid #ccc; border-radius:6px; box-sizing: border-box;">
+        <button id="btnLogin" onclick="login()" disabled style="width:100%; padding:14px; background:var(--primary); color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">INGRESAR AL PANEL</button>
     </div>
 
     <div id="appPanel" class="hidden">
         <div class="search-area">
             <div class="input-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input id="buscar" placeholder="Busque aquí (ej: milagrw z 6 mixco)" oninput="render()">
-                <button class="btn-clear" onclick="limpiarBuscador()"><i class="fa-solid fa-broom"></i> Limpiar</button>
+                <input id="buscar" placeholder="Busque por nombre, zona o municipio (ej: milagrw z6 mix)..." oninput="render()">
+                <button class="btn-clear" onclick="limpiarBuscador()"><i class="fa-solid fa-broom"></i></button>
             </div>
-            <div id="adminTools" style="display:flex; gap:5px;">
-                <button id="btnNuevaDir" onclick="abrirModalDir()" class="btn btn-success hidden"><i class="fa-solid fa-plus"></i> NUEVA</button>
-                <button id="btnAdmin" class="btn btn-admin hidden"><i class="fa-solid fa-users"></i></button>
+            <div id="adminTools" style="display:flex; gap:8px;">
+                <button id="btnNuevaDir" onclick="abrirModalDir()" class="hidden" style="background:var(--success); color:white; border:none; padding:0 15px; height:45px; border-radius:8px; cursor:pointer; font-weight:bold;">+ NUEVA</button>
+                <button id="btnAdminUsers" onclick="abrirModalUsers()" class="hidden" style="background:var(--warning); color:black; border:none; padding:0 15px; height:45px; border-radius:8px; cursor:pointer; font-weight:bold;"><i class="fa-solid fa-users-gear"></i> USUARIOS</button>
             </div>
         </div>
 
-        <div style="overflow-x: auto; max-height: 65vh;">
+        <div class="table-container">
             <table>
                 <thead>
                     <tr>
                         <th>Municipio</th>
                         <th>Nombre / Lugar</th>
-                        <th>Cat.</th>
-                        <th>Zona</th>
+                        <th>Categoría</th>
+                        <th style="text-align:center;">Zona</th>
                         <th>Referencia</th>
-                        <th style="width:120px">Estado</th>
+                        <th style="width:150px">Estado Cobertura</th>
                     </tr>
                 </thead>
                 <tbody id="cuerpo"></tbody>
             </table>
         </div>
 
-        <div style="display:flex; justify-content:center; gap:15px; margin-top:15px; align-items:center;">
-            <button class="btn" style="background:#ddd" onclick="cambiarPag(-1)"><i class="fa-solid fa-arrow-left"></i></button>
-            <span id="pagTxt" style="font-size:13px; font-weight:bold;">Página 1</span>
-            <button class="btn" style="background:#ddd" onclick="cambiarPag(1)"><i class="fa-solid fa-arrow-right"></i></button>
+        <div style="display:flex; justify-content:center; gap:20px; margin-top:15px; align-items:center;">
+            <button onclick="cambiarPag(-1)" style="padding:10px 20px; cursor:pointer; border-radius:5px; border:1px solid #ccc;">ANTERIOR</button>
+            <span id="pagTxt" style="font-weight:bold;">Página 1</span>
+            <button onclick="cambiarPag(1)" style="padding:10px 20px; cursor:pointer; border-radius:5px; border:1px solid #ccc;">SIGUIENTE</button>
         </div>
     </div>
 </div>
 
-<div id="modalDir" class="modal hidden">
-    <div style="background:white; padding:20px; border-radius:10px; width:350px; display:flex; flex-direction:column; gap:10px; box-shadow: 0 0 20px rgba(0,0,0,0.3);">
-        <h3 style="margin:0">Agregar Nueva Ubicación</h3>
-        <input id="addMuni" placeholder="Municipio">
-        <input id="addNom" placeholder="Nombre (Colonia/Aldea)">
-        <select id="addCat"><option>COLONIA</option><option>ALDEA</option><option>CASERIO</option><option>ZONA</option></select>
-        <input id="addZona" placeholder="Zona (solo número)">
-        <textarea id="addRef" placeholder="Puntos de referencia" style="height:50px"></textarea>
-        <select id="addEst"><option>Cobertura</option><option>Sin Cobertura</option><option>Consultar</option><option>Sin Datos</option></select>
-        <button onclick="guardarNuevaDireccion()" class="btn btn-success" style="justify-content:center">GUARDAR EN EXCEL</button>
-        <button onclick="cerrarModalDir()" class="btn" style="background:#eee; justify-content:center">CANCELAR</button>
+<div id="modalDir" class="modal-overlay hidden">
+    <div class="modal-content">
+        <h3 style="margin-top:0; color:var(--primary); border-bottom: 2px solid #eee; padding-bottom:10px;">Agregar Cobertura</h3>
+        <label style="font-size:12px; font-weight:bold;">Municipio:</label>
+        <input id="addMuni" style="width:100%; padding:10px; margin-bottom:10px; box-sizing:border-box;">
+        <label style="font-size:12px; font-weight:bold;">Nombre (Colonia/Caserío):</label>
+        <input id="addNom" style="width:100%; padding:10px; margin-bottom:10px; box-sizing:border-box;">
+        <label style="font-size:12px; font-weight:bold;">Categoría:</label>
+        <select id="addCat" style="width:100%; padding:10px; margin-bottom:10px;"><option>COLONIA</option><option>ALDEA</option><option>CASERIO</option><option>ZONA</option><option>KM</option></select>
+        <label style="font-size:12px; font-weight:bold;">Zona:</label>
+        <input id="addZona" type="number" style="width:100%; padding:10px; margin-bottom:10px; box-sizing:border-box;">
+        <label style="font-size:12px; font-weight:bold;">Referencias:</label>
+        <textarea id="addRef" style="width:100%; height:60px; padding:10px; margin-bottom:10px; box-sizing:border-box;"></textarea>
+        <label style="font-size:12px; font-weight:bold;">Estado Inicial:</label>
+        <select id="addEst" style="width:100%; padding:10px; margin-bottom:20px;"><option>Cobertura</option><option>Sin Cobertura</option><option>Consultar</option><option>Sin Datos</option></select>
+        <button onclick="guardarNuevaDireccion()" style="width:100%; padding:12px; background:var(--success); color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">GUARDAR REGISTRO</button>
+        <button onclick="cerrarModalDir()" style="width:100%; margin-top:8px; padding:10px; background:#eee; border:none; border-radius:6px; cursor:pointer;">CANCELAR</button>
+    </div>
+</div>
+
+<div id="modalUsers" class="modal-overlay hidden">
+    <div class="modal-content" style="width:450px;">
+        <h3 style="margin-top:0;">Gestión de Usuarios</h3>
+        <div style="background:#f8f9fa; padding:15px; border-radius:8px; margin-bottom:15px; border:1px solid #eee;">
+            <input id="uNombre" placeholder="Nuevo Usuario" style="width:100%; padding:8px; margin-bottom:8px; box-sizing:border-box;">
+            <input id="uPass" placeholder="Contraseña" style="width:100%; padding:8px; margin-bottom:8px; box-sizing:border-box;">
+            <select id="uRol" style="width:100%; padding:8px; margin-bottom:10px;">
+                <option value="agente">Agente (Solo Consulta)</option>
+                <option value="lider">Líder (Edita Cobertura)</option>
+                <option value="admin">Administrador (Control Total)</option>
+            </select>
+            <button onclick="guardarUsuario()" style="width:100%; padding:10px; background:var(--primary); color:white; border:none; border-radius:5px; cursor:pointer;">AGREGAR / ACTUALIZAR</button>
+        </div>
+        <div style="max-height: 200px; overflow-y: auto;">
+            <table style="width:100%; font-size:12px; text-align:left;">
+                <thead><tr style="border-bottom:2px solid #ddd;"><th>Usuario</th><th>Rol</th><th>Eliminar</th></tr></thead>
+                <tbody id="listaUsuarios"></tbody>
+            </table>
+        </div>
+        <button onclick="cerrarModalUsers()" style="width:100%; margin-top:15px; padding:10px; background:#eee; border:none; cursor:pointer;">CERRAR</button>
     </div>
 </div>
 
@@ -120,24 +153,22 @@
     const API = "https://script.google.com/macros/s/AKfycbwxArEj1IaeXjR7b9raMrXtDnDjIq0HH6eGmT_wxoR1QEhJ5cN--pARkOIFJe39aqY16g/exec";
     let MASTER = [], USUARIOS = [], ROL = "", pag = 1;
 
-    // ALGORITMO DE DISTANCIA LEVENSHTEIN (Para errores de escritura)
+    // ALGORITMO LEVENSHTEIN PARA ERRORES DE DEDO
     function similitud(s1, s2) {
-        s1 = s1.toLowerCase(); s2 = s2.toLowerCase();
         let m = s1.length, n = s2.length;
         let d = Array.from(Array(m + 1), () => Array(n + 1).fill(0));
         for (let i = 0; i <= m; i++) d[i][0] = i;
         for (let j = 0; j <= n; j++) d[0][j] = j;
         for (let j = 1; j <= n; j++) {
             for (let i = 1; i <= m; i++) {
-                let cost = (s1[i - 1] === s2[j - 1]) ? 0 : 1;
+                let cost = (s1[i - 1].toLowerCase() === s2[j - 1].toLowerCase()) ? 0 : 1;
                 d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
             }
         }
-        let maxLen = Math.max(m, n);
-        return maxLen === 0 ? 1 : (maxLen - d[m][n]) / maxLen;
+        return (Math.max(m, n) - d[m][n]) / Math.max(m, n);
     }
 
-    async function cargarDatos() {
+    async function cargarDatos(silencioso = false) {
         try {
             const res = await fetch(API);
             const data = await res.json();
@@ -145,11 +176,14 @@
             MASTER = data.cobertura.slice(1).map((r, i) => ({ 
                 fila: i + 2, m: String(r[0]), n: String(r[1]), cat: String(r[2]), z: String(r[3]), ref: String(r[4] || ""), cob: String(r[5] || "Sin Datos") 
             }));
-            document.getElementById("lastSync").innerText = "Base de Datos Lista: " + new Date().toLocaleTimeString();
+            document.getElementById("lastSync").innerText = "Sincronizado: " + new Date().toLocaleTimeString();
             document.getElementById("btnLogin").disabled = false;
-            if (localStorage.getItem("distelsa_session")) login();
-        } catch (e) { console.error(e); }
+            if (!silencioso) render();
+        } catch (e) { console.error("Error Sync", e); }
     }
+
+    // SINCRONIZACIÓN CADA 5 SEGUNDOS (Tiempo Real)
+    setInterval(() => { if(ROL !== "") cargarDatos(true); }, 5000);
 
     function login() {
         const u = document.getElementById("userInput").value.trim().toLowerCase() || JSON.parse(localStorage.getItem("distelsa_session"))?.u;
@@ -162,87 +196,119 @@
             document.getElementById("appPanel").classList.remove("hidden");
             document.getElementById("logoutBtn").classList.remove("hidden");
             if(ROL === 'admin' || ROL === 'lider') document.getElementById("btnNuevaDir").classList.remove("hidden");
-            if(ROL === 'admin') document.getElementById("btnAdmin").classList.remove("hidden");
+            if(ROL === 'admin') document.getElementById("btnAdminUsers").classList.remove("hidden");
             render();
-        }
+        } else { showToast("Usuario o Contraseña incorrectos"); }
     }
 
     function render() {
-        const query = document.getElementById("buscar").value.toLowerCase().trim();
-        const terminos = query.split(/\s+/).filter(t => t.length > 0);
+        let rawQuery = document.getElementById("buscar").value.toLowerCase().trim();
         
-        let filtrados = [];
-
+        // DICCIONARIO DE ABREVIATURAS
+        const abrev = [
+            { r: /\bz\s?(\d+)\b/g, v: 'zona $1' }, { r: /\bzn\s?(\d+)\b/g, v: 'zona $1' },
+            { r: /\bcol\b/g, v: 'colonia' }, { r: /\bal\b/g, v: 'aldea' }, { r: /\bgt\b/g, v: 'guatemala' },
+            { r: /\bmix\b/g, v: 'mixco' }, { r: /\bxela\b/g, v: 'quetzaltenango' }, { r: /\bkm\b/g, v: 'kilometro' },
+            { r: /\bcarr\b/g, v: 'carretera' }, { r: /\bva\b/g, v: 'villanueva' }, { r: /\bvn\b/g, v: 'villanueva' }
+        ];
+        abrev.forEach(a => { rawQuery = rawQuery.replace(a.r, a.v); });
+        const terminos = rawQuery.split(/\s+/).filter(t => t.length > 0);
+        
+        let filtrados = MASTER;
         if (terminos.length > 0) {
             filtrados = MASTER.map(r => {
-                let maxScore = 0;
-                let contenidoFila = `${r.m} ${r.n} ${r.cat} ${r.z}`.toLowerCase();
-                
-                // Calculamos qué tan bien coincide la búsqueda con la fila
-                let matches = 0;
+                let score = 0;
+                const n = r.n.toLowerCase(), z = String(r.z).toLowerCase(), m = r.m.toLowerCase();
                 terminos.forEach(t => {
-                    // Si la palabra está exacta, puntaje alto
-                    if (contenidoFila.includes(t)) {
-                        matches++;
-                    } else {
-                        // Si no, buscamos por similitud (ej: milagrw vs milagro)
-                        let palabrasFila = contenidoFila.split(/\s+/);
-                        let mejorSim = Math.max(...palabrasFila.map(pf => similitud(pf, t)));
-                        if (mejorSim > 0.7) matches += mejorSim;
-                    }
+                    if (n.includes(t)) score += 15; // P1: Nombre
+                    if (z === t || (t.includes('zona') && z === t.replace('zona','').trim())) score += 8; // P2: Zona
+                    if (m.includes(t)) score += 4; // P3: Municipio
+                    let mejorSim = Math.max(...n.split(/\s+/).map(p => similitud(p, t)));
+                    if (mejorSim > 0.8) score += (mejorSim * 10);
                 });
-                return { ...r, score: matches };
-            })
-            .filter(r => r.score >= terminos.length * 0.6) // Filtro de calidad
-            .sort((a, b) => b.score - a.score);
-        } else {
-            filtrados = MASTER;
+                return { ...r, score };
+            }).filter(r => r.score > 3).sort((a, b) => b.score - a.score);
         }
+
+        const totalPags = Math.ceil(filtrados.length / 10) || 1;
+        if(pag > totalPags) pag = 1;
 
         const segment = filtrados.slice((pag - 1) * 10, pag * 10);
         let html = "";
         segment.forEach((r, idx) => {
-            let col = r.cob=="Cobertura"?"bg-verde":r.cob=="Sin Cobertura"?"bg-rojo":r.cob=="Consultar"?"bg-amarillo":"bg-gris";
-            let destello = (query.length > 2 && idx === 0 && pag === 1) ? "mejor-coincidencia" : "";
+            const colorClass = (v) => v=="Cobertura"?"bg-verde":v=="Sin Cobertura"?"bg-rojo":v=="Consultar"?"bg-amarillo":"bg-gris";
+            let destello = (rawQuery.length > 2 && idx === 0 && pag === 1) ? "mejor-coincidencia" : "";
+            
             let stHTML = (ROL === 'admin' || ROL === 'lider') ? 
-                `<select class="badge ${col}" onchange="guardarEstado(${r.fila}, this.value)">
+                `<select class="badge ${colorClass(r.cob)}" onchange="guardarEstado(${r.fila}, this)">
                     <option value="Sin Datos" ${r.cob=='Sin Datos'?'selected':''}>Sin Datos</option>
                     <option value="Cobertura" ${r.cob=='Cobertura'?'selected':''}>Cobertura</option>
                     <option value="Sin Cobertura" ${r.cob=='Sin Cobertura'?'selected':''}>Sin Cobertura</option>
                     <option value="Consultar" ${r.cob=='Consultar'?'selected':''}>Consultar</option>
-                </select>` : `<span class="badge ${col}">${r.cob}</span>`;
+                </select>` : `<span class="badge ${colorClass(r.cob)}">${r.cob}</span>`;
 
             html += `<tr class="${destello}">
-                <td>${r.m}</td><td>${r.n}</td><td>${r.cat}</td><td>${r.z}</td>
-                <td style="font-size:11px; color: #666;">${r.ref}</td><td>${stHTML}</td>
+                <td>${r.m}</td><td style="font-weight:bold; color:var(--primary); font-size:14px;">${r.n}</td>
+                <td style="font-size:11px;">${r.cat}</td><td style="text-align:center; font-weight:bold; font-size:16px;">${r.z}</td>
+                <td style="font-size:11px; color:#555;">${r.ref}</td><td>${stHTML}</td>
             </tr>`;
         });
-        document.getElementById("cuerpo").innerHTML = html;
-        document.getElementById("pagTxt").innerText = `Página ${pag} de ${Math.ceil(filtrados.length/10) || 1}`;
+        document.getElementById("cuerpo").innerHTML = html || "<tr><td colspan='6' style='text-align:center; padding:30px;'>No se encontraron resultados</td></tr>";
+        document.getElementById("pagTxt").innerText = `Página ${pag} de ${totalPags}`;
     }
 
-    function limpiarBuscador() { document.getElementById("buscar").value = ""; render(); }
-    function abrirModalDir() { document.getElementById("modalDir").classList.remove("hidden"); }
-    function cerrarModalDir() { document.getElementById("modalDir").classList.add("hidden"); }
-    function cambiarPag(v) { pag += v; render(); }
-    function cerrarSesion() { localStorage.removeItem("distelsa_session"); location.reload(); }
-    function showToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.style.display = "block"; setTimeout(()=>t.style.display="none", 2500); }
-
-    async function guardarEstado(fila, val) {
-        showToast("Actualizando Excel...");
+    // GESTIÓN DE ESTADOS (TIEMPO REAL)
+    async function guardarEstado(fila, el) {
+        const val = el.value;
+        el.className = `badge ${val=="Cobertura"?"bg-verde":val=="Sin Cobertura"?"bg-rojo":val=="Consultar"?"bg-amarillo":"bg-gris"}`;
+        showToast("Sincronizando...");
+        const item = MASTER.find(x => x.fila === fila);
+        if(item) item.cob = val;
         await fetch(`${API}?action=updateCob&fila=${fila}&valor=${encodeURIComponent(val)}`, { method: 'POST', mode: 'no-cors' });
-        showToast("✓ Guardado correctamente");
+        showToast("✓ Guardado");
     }
 
+    // GESTIÓN DE USUARIOS (ADMIN)
+    function abrirModalUsers() {
+        document.getElementById("modalUsers").classList.remove("hidden");
+        let html = "";
+        USUARIOS.forEach(u => {
+            html += `<tr><td>${u.u}</td><td>${u.r}</td>
+            <td><button onclick="eliminarUsuario('${u.u}')" style="color:red; border:none; background:none; cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+        });
+        document.getElementById("listaUsuarios").innerHTML = html;
+    }
+
+    async function guardarUsuario() {
+        const u = document.getElementById("uNombre").value.trim().toLowerCase();
+        const p = document.getElementById("uPass").value.trim();
+        const r = document.getElementById("uRol").value;
+        if(!u || !p) return showToast("Complete los datos");
+        showToast("Guardando usuario...");
+        await fetch(`${API}?action=manageUser&user=${u}&pass=${p}&rol=${r}`, { method: 'POST', mode: 'no-cors' });
+        cerrarModalUsers();
+        cargarDatos();
+    }
+
+    async function eliminarUsuario(u) {
+        if(!confirm(`¿Eliminar al usuario ${u}?`)) return;
+        showToast("Eliminando...");
+        await fetch(`${API}?action=deleteUser&user=${u}`, { method: 'POST', mode: 'no-cors' });
+        abrirModalUsers();
+        cargarDatos();
+    }
+
+    // FUNCIONES GENERALES
     async function guardarNuevaDireccion() {
         const p = `?action=addAddress&muni=${encodeURIComponent(document.getElementById("addMuni").value)}&nom=${encodeURIComponent(document.getElementById("addNom").value)}&cat=${encodeURIComponent(document.getElementById("addCat").value)}&zona=${encodeURIComponent(document.getElementById("addZona").value)}&ref=${encodeURIComponent(document.getElementById("addRef").value)}&est=${encodeURIComponent(document.getElementById("addEst").value)}`;
+        showToast("Enviando a Excel...");
         await fetch(API + p, { method: 'POST', mode: 'no-cors' });
         cerrarModalDir();
-        showToast("✓ Nueva ubicación agregada");
-        setTimeout(cargarDatos, 1500);
+        cargarDatos();
     }
 
-    window.onload = cargarDatos;
-</script>
-</body>
-</html>
+    function showToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.style.display = "block"; setTimeout(()=>t.style.display="none", 2500); }
+    function limpiarBuscador() { document.getElementById("buscar").value = ""; render(); }
+    function cambiarPag(v) { pag += v; if(pag < 1) pag = 1; render(); }
+    function cerrarModalDir() { document.getElementById("modalDir").classList.add("hidden"); }
+    function cerrarModalUsers() {
