@@ -11,40 +11,59 @@
             --warning: #f1c40f; --dark: #2c3e50; --light-grey: #f8f9fa; 
         }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f0f2f5; margin:0; color: #333; }
-        
+
+        /* --- EFECTO DE DESTELLO AZUL PROFESIONAL (1.5s) --- */
+        @keyframes destello {
+            0% { background-color: white; box-shadow: 0 0 0px rgba(0, 84, 166, 0); }
+            50% { background-color: #eef7ff; box-shadow: inset 0 0 20px rgba(0, 84, 166, 0.25), 0 0 10px rgba(0, 84, 166, 0.2); }
+            100% { background-color: #f8fbff; box-shadow: inset 0 0 5px rgba(0, 84, 166, 0.1); }
+        }
+        .mejor-coincidencia {
+            animation: destello 1.5s infinite alternate ease-in-out;
+            border-left: 6px solid var(--primary) !important;
+            position: relative;
+            z-index: 5;
+        }
+
         /* CABECERA */
         .header { background: white; padding: 10px 40px; border-bottom: 5px solid var(--primary); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .header img { height: 80px; width: auto; }
-        
+
         /* CONTENEDORES */
         .container { max-width: 98%; margin: 25px auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
         .hidden { display: none !important; }
-        
-        /* TABLA 6 COLUMNAS */
+
+        /* BUSCADOR CON ICONO */
+        .search-container { position: relative; flex-grow: 1; }
+        .search-container i { position: absolute; left: 15px; top: 18px; color: #999; }
+        #buscar { width: 100%; padding: 15px 15px 15px 45px; border-radius: 10px; border: 2px solid #e0e0e0; font-size: 15px; box-sizing: border-box; outline: none; }
+        #buscar:focus { border-color: var(--primary); }
+
+        /* TABLA Y FILAS */
         .table-wrapper { overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #eee; }
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         th { background: var(--primary); color: white; padding: 15px 10px; text-align: left; font-size: 13px; text-transform: uppercase; }
-        td { padding: 12px 10px; border-bottom: 1px solid #eee; font-size: 13px; word-wrap: break-word; overflow-wrap: break-word; white-space: normal !important; vertical-align: middle; }
-        tr:hover { background-color: #f8fbff; }
+        td { padding: 12px 10px; border-bottom: 1px solid #eee; font-size: 13px; word-wrap: break-word; vertical-align: middle; }
 
         /* BOTONES */
-        .btn { padding: 12px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .btn { padding: 12px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 8px; transition: 0.3s; font-size: 13px; }
         .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
         .btn-admin { background: var(--warning); color: #222; }
         .btn-exit { background: var(--dark); color: white; }
-        
+
         /* BADGES ESTADO */
         .badge { padding: 8px; border-radius: 20px; color: white; font-weight: bold; font-size: 10px; text-transform: uppercase; width: 100%; border: none; cursor: pointer; text-align: center; }
         .bg-verde { background: var(--success); } .bg-rojo { background: var(--danger); } 
         .bg-amarillo { background: var(--warning); color: black; } .bg-gris { background: #95a5a6; }
 
-        /* MODAL USUARIOS */
+        /* FORMULARIOS EN MODAL */
         .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; justify-content:center; align-items:center; z-index:2000; backdrop-filter: blur(4px); }
-        .modal-content { background:white; padding:30px; border-radius:15px; width:700px; max-width:95%; max-height: 90vh; overflow-y: auto; }
-        .user-row { display: grid; grid-template-columns: 1.5fr 1.5fr 1fr 50px; gap: 10px; padding: 12px; border-bottom: 1px solid #eee; align-items: center; }
-
-        #buscar, #busU { width: 100%; padding: 15px; border-radius: 10px; border: 2px solid #e0e0e0; font-size: 15px; box-sizing: border-box; }
-        #toast { position: fixed; bottom: 20px; right: 20px; background: var(--dark); color: white; padding: 15px 25px; border-radius: 8px; display: none; z-index: 3000; }
+        .modal-content { background:white; padding:30px; border-radius:15px; width:500px; max-width:90%; max-height: 90vh; overflow-y: auto; }
+        .form-group { margin-bottom: 12px; display: flex; flex-direction: column; gap: 5px; }
+        .form-group input, .form-group select, .form-group textarea { padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-family: inherit; }
+        
+        #toast { position: fixed; bottom: 20px; right: 20px; background: var(--dark); color: white; padding: 15px 25px; border-radius: 8px; display: none; z-index: 3000; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
@@ -55,26 +74,27 @@
     <img src="https://drive.google.com/thumbnail?id=1bawJf9oARBLy2itsOfA9YE8RVAFNdNef" alt="Logo">
     <div style="text-align:center;">
         <h2 style="margin:0; color:var(--primary);">CONTROL DE COBERTURA</h2>
-        <small id="lastSync" style="color:#888;">Sincronizado</small>
+        <small id="lastSync" style="color:#888;">Iniciando...</small>
     </div>
     <button onclick="cerrarSesion()" id="logoutBtn" class="btn btn-exit hidden"><i class="fa-solid fa-power-off"></i> SALIR</button>
 </header>
 
 <div class="container">
     <div id="loginPanel" style="max-width: 380px; margin: 50px auto; text-align: center;">
-        <h2 style="color:var(--primary)">Iniciar Sesión</h2>
+        <h2 style="color:var(--primary)">Acceso al Sistema</h2>
         <input id="userInput" type="text" placeholder="Usuario" style="width:100%; padding:14px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;">
         <input id="passInput" type="password" placeholder="Contraseña" style="width:100%; padding:14px; margin-bottom:20px; border-radius:8px; border:1px solid #ddd;">
         <button id="btnLogin" onclick="login()" disabled class="btn btn-primary" style="width:100%; justify-content:center;">CONECTANDO...</button>
     </div>
 
     <div id="appPanel" class="hidden">
-        <div style="display:flex; gap:15px; margin-bottom:20px;">
-            <div style="position:relative; flex-grow:1;">
-                <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:15px; top:18px; color:#999;"></i>
-                <input id="buscar" style="padding-left:45px;" placeholder="Buscar en municipio, nombre, categoría, zona o referencia..." oninput="render()">
+        <div style="display:flex; gap:15px; margin-bottom:20px; flex-wrap: wrap;">
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="buscar" placeholder="Busca colonia, municipio, zona... (ej: milagrw)" oninput="render()">
             </div>
-            <button id="btnAdmin" onclick="abrirModal()" class="btn btn-admin hidden"><i class="fa-solid fa-users-gear"></i> USUARIOS</button>
+            <button id="btnNuevaDir" onclick="abrirModalDir()" class="btn btn-success hidden"><i class="fa-solid fa-location-dot"></i> + NUEVA</button>
+            <button id="btnAdmin" onclick="abrirModalAdmin()" class="btn btn-admin hidden"><i class="fa-solid fa-users-gear"></i> USUARIOS</button>
         </div>
 
         <div class="table-wrapper">
@@ -101,32 +121,58 @@
     </div>
 </div>
 
-<div id="modalUser" class="modal hidden">
+<div id="modalDir" class="modal hidden">
     <div class="modal-content">
-        <h2 style="color:var(--primary); margin-top:0;"><i class="fa-solid fa-user-gear"></i> Gestión de Usuarios</h2>
-        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:10px; margin-bottom:20px; background:#f9f9f9; padding:15px; border-radius:10px;">
-            <input id="newU" type="text" placeholder="Usuario">
-            <input id="newP" type="text" placeholder="Clave">
-            <select id="newR">
-                <option value="agente">Agente</option>
-                <option value="lider">Líder</option>
-                <option value="admin">Admin</option>
+        <h2 style="color:var(--primary); margin-top:0;"><i class="fa-solid fa-map-pin"></i> Nueva Cobertura</h2>
+        <div class="form-group">
+            <input id="addMuni" type="text" placeholder="Municipio (Ej: Mixco)">
+            <input id="addNom" type="text" placeholder="Nombre (Ej: El Milagro)">
+            <select id="addCat">
+                <option>COLONIA</option><option>ALDEA</option><option>CIUDAD</option><option>CASERIO</option><option>ZONA</option>
             </select>
-            <button onclick="crearUsuario()" class="btn btn-primary"><i class="fa-solid fa-plus"></i></button>
+            <input id="addZona" type="text" placeholder="Zona (Ej: 6)">
+            <textarea id="addRef" placeholder="Referencia o detalles adicionales..."></textarea>
+            <select id="addEst">
+                <option>Sin Datos</option><option>Cobertura</option><option>Sin Cobertura</option><option>Consultar</option>
+            </select>
+            <button onclick="guardarNuevaDireccion()" class="btn btn-primary" style="justify-content:center;">GUARDAR EN HOJA</button>
+            <button onclick="cerrarModalDir()" class="btn btn-exit" style="justify-content:center;">CANCELAR</button>
         </div>
-        <div style="position:relative; margin-bottom:10px;">
-            <i class="fa-solid fa-filter" style="position:absolute; left:12px; top:13px; color:#999;"></i>
-            <input id="busU" style="padding:10px 10px 10px 35px; border:1px solid #ddd; border-radius:8px; width:100%; box-sizing:border-box;" placeholder="Filtrar usuarios..." oninput="actualizarListaUsuarios()">
-        </div>
-        <div id="listaU" style="max-height:300px; overflow-y:auto; border:1px solid #eee; border-radius:8px;"></div>
-        <button onclick="cerrarModal()" class="btn btn-exit" style="width:100%; margin-top:15px; justify-content:center;">CERRAR</button>
     </div>
 </div>
 
 <script>
-    const API = "https://script.google.com/macros/s/AKfycbyDdFUGrMnZfmoAkiGgMBIPLhcEd18o5H11KQTAyPjN0xav0kNUV5ka-FeYbhsOf5pxsA/exec";
+    // URL PROPORCIONADA POR EL USUARIO
+    const API = "https://script.google.com/macros/s/AKfycbwxArEj1IaeXjR7b9raMrXtDnDjIq0HH6eGmT_wxoR1QEhJ5cN--pARkOIFJe39aqY16g/exec";
     let MASTER = [], USUARIOS = [], ROL = "", pag = 1;
 
+    // LÓGICA DE SIMILITUD (FUZZY SEARCH)
+    function similitud(s1, s2) {
+        let longer = s1.length < s2.length ? s2 : s1;
+        let shorter = s1.length < s2.length ? s1 : s2;
+        if (longer.length === 0) return 1.0;
+        return (longer.length - editDistance(longer, shorter)) / parseFloat(longer.length);
+    }
+    function editDistance(s1, s2) {
+        s1 = s1.toLowerCase(); s2 = s2.toLowerCase();
+        let costs = [];
+        for (let i = 0; i <= s1.length; i++) {
+            let lastValue = i;
+            for (let j = 0; j <= s2.length; j++) {
+                if (i == 0) costs[j] = j;
+                else if (j > 0) {
+                    let newValue = costs[j - 1];
+                    if (s1.charAt(i - 1) != s2.charAt(j - 1))
+                        newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                    costs[j - 1] = lastValue; lastValue = newValue;
+                }
+            }
+            if (i > 0) costs[s2.length] = lastValue;
+        }
+        return costs[s2.length];
+    }
+
+    // CARGA DE DATOS
     async function cargarDatos(esSilencioso = false) {
         try {
             const res = await fetch(API);
@@ -135,11 +181,11 @@
             MASTER = data.cobertura.slice(1).map((r, i) => ({ 
                 fila: i + 2, m: r[0], n: r[1], cat: r[2], z: r[3], ref: r[4] || "", cob: r[5] || "Sin Datos" 
             }));
-            
             document.getElementById("lastSync").innerText = "Sincronizado: " + new Date().toLocaleTimeString();
             document.getElementById("btnLogin").innerText = "INGRESAR";
             document.getElementById("btnLogin").disabled = false;
             
+            // Persistencia de sesión
             if (!esSilencioso) {
                 const session = JSON.parse(localStorage.getItem("distelsa_session"));
                 if (session) {
@@ -152,47 +198,59 @@
         } catch (e) { console.error(e); }
     }
 
-    // SINCRONIZACIÓN ACELERADA A 15 SEGUNDOS
-    setInterval(() => {
-        if(document.getElementById("appPanel").offsetParent !== null) cargarDatos(true);
-    }, 15000);
-
     function login() {
         const u = document.getElementById("userInput").value.trim().toLowerCase();
         const p = document.getElementById("passInput").value.trim();
         const user = USUARIOS.find(x => x.u.toLowerCase() === u && x.p === p);
         if(user) {
             ROL = user.r.toLowerCase();
-            localStorage.setItem("distelsa_session", JSON.stringify({ u: u, p: p }));
+            localStorage.setItem("distelsa_session", JSON.stringify({ u, p }));
             document.getElementById("loginPanel").classList.add("hidden");
             document.getElementById("appPanel").classList.remove("hidden");
             document.getElementById("logoutBtn").classList.remove("hidden");
+            // Control de permisos
+            if(ROL === 'admin' || ROL === 'lider') document.getElementById("btnNuevaDir").classList.remove("hidden");
             if(ROL === 'admin') document.getElementById("btnAdmin").classList.remove("hidden");
             render();
-        } else { alert("Acceso denegado"); }
+        } else { alert("Usuario o Contraseña incorrectos"); }
     }
 
+    // RENDERIZADO CON BÚSQUEDA DIFUSA Y DESTELLO
     function render() {
-        const q = document.getElementById("buscar").value.toLowerCase().trim();
-        let filtrados = MASTER.filter(r => `${r.m} ${r.n} ${r.cat} ${r.z} ${r.ref}`.toLowerCase().includes(q));
+        const query = document.getElementById("buscar").value.toLowerCase().trim();
+        let filtrados = [];
+
+        if(query.length > 2) {
+            filtrados = MASTER.map(r => {
+                const texto = `${r.m} ${r.n} ${r.cat} ${r.z} ${r.ref}`.toLowerCase().split(/\s+/);
+                const score = Math.max(...texto.map(p => similitud(p, query)));
+                return { ...r, score };
+            }).filter(r => r.score > 0.6).sort((a, b) => b.score - a.score);
+        } else {
+            filtrados = MASTER;
+        }
+
         const totalPags = Math.ceil(filtrados.length / 10) || 1;
         const segment = filtrados.slice((pag - 1) * 10, pag * 10);
-        
+
         let html = "";
-        segment.forEach(r => {
+        segment.forEach((r, idx) => {
             let col = r.cob=="Cobertura"?"bg-verde":r.cob=="Sin Cobertura"?"bg-rojo":r.cob=="Consultar"?"bg-amarillo":"bg-gris";
             let puedeEditar = (ROL === 'admin' || ROL === 'lider');
-            let estado = puedeEditar ? `<select class="badge ${col}" onchange="guardarEstado(${r.fila}, this.value)">
+            // Aplicar destello al mejor resultado de la búsqueda
+            let destello = (query.length > 2 && idx === 0 && pag === 1) ? "mejor-coincidencia" : "";
+
+            let estadoHTML = puedeEditar ? `<select class="badge ${col}" onchange="guardarEstado(${r.fila}, this.value)">
                 <option value="Sin Datos" ${r.cob=='Sin Datos'?'selected':''}>Sin Datos</option>
                 <option value="Cobertura" ${r.cob=='Cobertura'?'selected':''}>Cobertura</option>
                 <option value="Sin Cobertura" ${r.cob=='Sin Cobertura'?'selected':''}>Sin Cobertura</option>
                 <option value="Consultar" ${r.cob=='Consultar'?'selected':''}>Consultar</option>
             </select>` : `<span class="badge ${col}">${r.cob}</span>`;
-            
-            html += `<tr>
+
+            html += `<tr class="${destello}">
                 <td>${r.m}</td><td style="font-weight:bold">${r.n}</td>
-                <td><small>${r.cat}</small></td><td>${r.z}</td>
-                <td style="color:#555; font-size:11px;">${r.ref}</td><td>${estado}</td>
+                <td>${r.cat}</td><td>${r.z}</td>
+                <td style="font-size:11px;color:#666;">${r.ref}</td><td>${estadoHTML}</td>
             </tr>`;
         });
         document.getElementById("cuerpo").innerHTML = html;
@@ -201,56 +259,40 @@
         document.getElementById("btnSig").disabled = pag >= totalPags;
     }
 
+    // ACCIONES HACIA GOOGLE SHEETS
     async function guardarEstado(fila, val) {
-        showToast("Enviando...");
-        // Cambio local instantáneo
-        const item = MASTER.find(x => x.fila === fila);
-        if(item) item.cob = val;
-        render();
+        showToast("Sincronizando...");
+        await fetch(`${API}?action=updateCob&fila=${fila}&valor=${encodeURIComponent(val)}`, { method: 'POST', mode: 'no-cors' });
+        showToast("✓ Estado Guardado");
+    }
 
-        // Envío a Sheets
-        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'updateCob', fila, valor: val }) });
+    async function guardarNuevaDireccion() {
+        const muni = document.getElementById("addMuni").value;
+        const nom = document.getElementById("addNom").value;
+        if(!muni || !nom) return alert("Municipio y Nombre son obligatorios");
         
-        // Verificación silenciosa
-        await cargarDatos(true);
-        showToast("✓ Sincronizado");
+        showToast("Agregando...");
+        const p = `?action=addAddress&muni=${encodeURIComponent(muni)}&nom=${encodeURIComponent(nom)}&cat=${encodeURIComponent(document.getElementById("addCat").value)}&zona=${encodeURIComponent(document.getElementById("addZona").value)}&ref=${encodeURIComponent(document.getElementById("addRef").value)}&est=${encodeURIComponent(document.getElementById("addEst").value)}`;
+        
+        await fetch(API + p, { method: 'POST', mode: 'no-cors' });
+        cerrarModalDir();
+        showToast("✓ Dirección agregada");
+        
+        // Limpiar campos
+        document.getElementById("addMuni").value = "";
+        document.getElementById("addNom").value = "";
+        document.getElementById("addRef").value = "";
+        
+        setTimeout(() => cargarDatos(true), 1500);
     }
 
-    function actualizarListaUsuarios() {
-        const filtro = document.getElementById("busU").value.toLowerCase();
-        let html = "";
-        USUARIOS.filter(u => u.u.toLowerCase().includes(filtro)).forEach(u => {
-            html += `<div class="user-row">
-                <span><strong>${u.u}</strong></span><span>${u.p}</span>
-                <span class="badge bg-gris" style="width:auto;">${u.r}</span>
-                <button onclick="eliminarUsuario('${u.u}')" style="color:var(--danger); border:none; background:none; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
-            </div>`;
-        });
-        document.getElementById("listaU").innerHTML = html;
-    }
-
-    async function crearUsuario() {
-        const u = document.getElementById("newU").value, p = document.getElementById("newP").value, r = document.getElementById("newR").value;
-        if(!u || !p) return;
-        showToast("Guardando...");
-        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'addUser', usuario: u, clave: p, rol: r }) });
-        await cargarDatos(true);
-        actualizarListaUsuarios();
-        showToast("Usuario creado");
-    }
-
-    async function eliminarUsuario(nombre) {
-        if(!confirm("¿Eliminar?")) return;
-        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'delete', usuarioNombre: nombre }) });
-        await cargarDatos(true);
-        actualizarListaUsuarios();
-    }
-
-    function abrirModal() { document.getElementById("modalUser").classList.remove("hidden"); actualizarListaUsuarios(); }
-    function cerrarModal() { document.getElementById("modalUser").classList.add("hidden"); }
+    // UTILIDADES
+    function showToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.style.display = "block"; setTimeout(()=>t.style.display="none", 2500); }
+    function abrirModalDir() { document.getElementById("modalDir").classList.remove("hidden"); }
+    function cerrarModalDir() { document.getElementById("modalDir").classList.add("hidden"); }
     function cambiarPag(v) { pag += v; render(); }
     function cerrarSesion() { localStorage.removeItem("distelsa_session"); location.reload(); }
-    function showToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.style.display = "block"; setTimeout(()=>t.style.display="none", 2000); }
+    
     window.onload = cargarDatos;
 </script>
 </body>
