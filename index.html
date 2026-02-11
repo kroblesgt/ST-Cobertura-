@@ -9,7 +9,6 @@
         :root { --primary: #0054a6; --success: #00b050; --danger: #c00000; --warning: #f1c40f; --dark: #2c3e50; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; }
         
-        /* --- ESTILOS DEL HEADER (LOGOS) RESTAURADOS --- */
         .header { 
             background: white; 
             padding: 15px 40px; 
@@ -24,11 +23,9 @@
         .header-title h1 { margin: 0; color: var(--primary); font-size: 28px; }
         .sync-status { color: var(--success); font-weight: bold; font-size: 13px; }
 
-        /* --- ESTILOS DEL CONTENEDOR PRINCIPAL --- */
         .container { max-width: 1500px; margin: 30px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.08); }
         .hidden { display: none !important; }
         
-        /* --- ESTILOS DE TABLA Y CONTROLES --- */
         table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
         th { background: var(--primary); color: white; padding: 15px; text-align: left; }
         td { padding: 12px; border-bottom: 1px solid #eee; vertical-align: middle; }
@@ -36,20 +33,19 @@
         table input { width: 90%; }
         
         .badge { padding: 8px 12px; border-radius: 30px; color: white; font-weight: bold; border: none; cursor: pointer; text-align: center; width: 100%; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .badge:disabled { cursor: default; opacity: 1; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
         .bg-verde { background: var(--success); } .bg-rojo { background: var(--danger); } 
         .bg-amarillo { background: var(--warning); color: black; } .bg-gris { background: #95a5a6; }
         .modified { background-color: #fff9c4 !important; border: 1px solid #f1c40f !important;}
         
         .btn { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; color: white; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; }
-        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
         
         #toast { position: fixed; bottom: 30px; right: 30px; background: var(--dark); color: white; padding: 15px 30px; border-radius: 10px; display: none; z-index: 10000; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         
-        /* --- ESTILOS LOGIN CENTRADO --- */
         .login-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 40vh; }
         .login-input { width: 320px; padding: 15px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; background: #f9f9f9; }
         
-        /* MODAL */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 5000; backdrop-filter: blur(3px); }
         .modal-content { background: white; padding: 40px; border-radius: 15px; width: 700px; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
     </style>
@@ -141,9 +137,6 @@
 </div>
 
 <script>
-    // ==================================================================
-    // PEGA TU URL DE GOOGLE APPS SCRIPT AQUÍ ABAJO
-    // ==================================================================
     const API = "https://script.google.com/macros/s/AKfycbwmTfmup17LLU6Fr6jPEXAEN0lazdiPDsffK4MwD2vSguIRq25511fS8bX2m6jnDEblmQ/exec"; 
     
     let MASTER = [], USUARIOS = [], ROL = "", pag = 1;
@@ -160,14 +153,12 @@
             
             document.getElementById("btnLogin").innerText = "INGRESAR";
             document.getElementById("syncStatus").innerText = "● CONECTADO EN VIVO";
-            document.getElementById("syncStatus").style.color = "var(--success)";
             
             if(ROL) render(); else if(!silencioso) checkSession();
         } catch (e) { 
-            showToast("Error de conexión con Google Sheets");
+            showToast("Error de conexión");
             document.getElementById("syncStatus").innerText = "● DESCONECTADO";
             document.getElementById("syncStatus").style.color = "var(--danger)";
-            document.getElementById("btnLogin").innerText = "Reintentar";
         }
     }
 
@@ -198,16 +189,15 @@
     function render() {
         const q = document.getElementById("buscar").value.toLowerCase();
         const filt = MASTER.filter(r => `${r.m} ${r.n} ${r.c} ${r.z} ${r.ref} ${r.cob}`.toLowerCase().includes(q));
-        
         const totalPags = Math.ceil(filt.length / 10) || 1;
-        if(pag > totalPags) pag = totalPags > 0 ? totalPags : 1;
-
         const segment = filt.slice((pag-1)*10, pag*10); 
         
         let html = "";
         segment.forEach(r => {
             const col = r.cob=="Cobertura"?"bg-verde":r.cob=="Sin Cobertura"?"bg-rojo":r.cob=="Consultar"?"bg-amarillo":"bg-gris";
+            // Validación de Rol para habilitar edición
             const canEdit = (ROL === 'admin' || ROL === 'lider');
+            
             html += `<tr id="row-${r.fila}">
                 <td>${canEdit ? `<input id="m-${r.fila}" value="${r.m}" oninput="marcar(${r.fila})">` : r.m}</td>
                 <td>${canEdit ? `<input id="n-${r.fila}" value="${r.n}" style="font-weight:bold;" oninput="marcar(${r.fila})">` : `<b>${r.n}</b>`}</td>
@@ -216,21 +206,21 @@
                 <td>${canEdit ? `<input id="ref-${r.fila}" value="${r.ref}" oninput="marcar(${r.fila})">` : r.ref}</td>
                 <td>
                     <div style="display:flex; gap:8px; justify-content:center;">
-                        <select id="s-${r.fila}" class="badge ${col}" onchange="marcar(${r.fila})">
+                        <select id="s-${r.fila}" class="badge ${col}" onchange="marcar(${r.fila})" ${!canEdit ? 'disabled' : ''}>
                             <option value="Sin Datos" ${r.cob=='Sin Datos'?'selected':''}>Sin Datos</option>
                             <option value="Cobertura" ${r.cob=='Cobertura'?'selected':''}>Cobertura</option>
                             <option value="Sin Cobertura" ${r.cob=='Sin Cobertura'?'selected':''}>Sin Cobertura</option>
                             <option value="Consultar" ${r.cob=='Consultar'?'selected':''}>Consultar</option>
                         </select>
                         ${canEdit ? `
-                            <button onclick="guardarTodo(${r.fila})" class="btn" style="background:var(--primary); padding:8px 12px;" title="Guardar Cambios"><i class="fa-solid fa-floppy-disk"></i></button>
-                            <button onclick="eliminarCob(${r.fila}, '${r.n}')" class="btn" style="background:var(--danger); padding:8px 12px;" title="Eliminar Registro"><i class="fa-solid fa-trash-can"></i></button>
+                            <button onclick="guardarTodo(${r.fila})" class="btn" style="background:var(--primary); padding:8px 12px;"><i class="fa-solid fa-floppy-disk"></i></button>
+                            <button onclick="eliminarCob(${r.fila}, '${r.n}')" class="btn" style="background:var(--danger); padding:8px 12px;"><i class="fa-solid fa-trash-can"></i></button>
                         ` : ''}
                     </div>
                 </td>
             </tr>`;
         });
-        document.getElementById("cuerpo").innerHTML = html || '<tr><td colspan="6" style="text-align:center; padding:20px;">No se encontraron resultados</td></tr>';
+        document.getElementById("cuerpo").innerHTML = html || '<tr><td colspan="6" style="text-align:center;">No hay resultados</td></tr>';
         document.getElementById("pagTxt").innerText = `Página ${pag} de ${totalPags}`;
         document.getElementById("btnAnt").disabled = pag <= 1;
         document.getElementById("btnSig").disabled = pag >= totalPags;
@@ -250,7 +240,7 @@
         await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(body) });
         Object.assign(MASTER.find(x => x.fila === fila), { m: body.m, n: body.n, c: body.c, z: body.z, ref: body.ref, cob: body.val });
         document.getElementById(`row-${fila}`).classList.remove('modified');
-        render(); showToast("¡Cambios guardados!");
+        render(); showToast("Guardado");
     }
 
     async function crearCobertura() {
@@ -261,21 +251,19 @@
             ref: document.getElementById("newRef").value, val: document.getElementById("newEst").value
         };
         if(!d.m || !d.n) return alert("Municipio y Nombre son obligatorios");
-        
-        showToast("Guardando registro...");
+        showToast("Guardando...");
         await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(d) });
-        
         ["newMuni","newNom","newCat","newZona","newRef"].forEach(id => document.getElementById(id).value = "");
         await cargarDatos(true);
-        showToast("¡Registro agregado exitosamente!");
+        showToast("Agregado exitosamente");
     }
 
     async function eliminarCob(fila, n) {
-        if(!confirm(`⚠️ ¿Eliminar permanentemente: "${n}"? Esta acción no se puede deshacer.`)) return;
+        if(!confirm(`¿Eliminar permanentemente: "${n}"?`)) return;
         showToast("Eliminando...");
         await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'deleteCob', fila }) });
         MASTER = MASTER.filter(x => x.fila !== fila);
-        render(); showToast("Registro eliminado");
+        render(); showToast("Eliminado");
     }
 
     function exportarExcel() {
@@ -286,7 +274,7 @@
         const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = `Reporte_Cobertura_${new Date().toISOString().slice(0,10)}.csv`;
+        link.download = `Reporte_Cobertura.csv`;
         link.click();
     }
 
@@ -301,7 +289,7 @@
         let html = "";
         USUARIOS.forEach(u => {
             html += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #eee; align-items:center;">
-                <div><i class="fa-solid fa-user" style="color:var(--primary); margin-right:10px;"></i> <b>${u.u}</b> <span class="badge bg-gris" style="width:auto; margin-left:10px;">${u.r}</span></div>
+                <div><b>${u.u}</b> <span class="badge bg-gris" style="width:auto; margin-left:10px;">${u.r}</span></div>
                 <button onclick="eliminarUser('${u.u}')" class="btn" style="background:var(--danger); padding:8px 12px;"><i class="fa-solid fa-trash-can"></i></button>
             </div>`;
         });
@@ -310,18 +298,15 @@
 
     async function guardarUser() {
         const usuario = document.getElementById("uN").value, clave = document.getElementById("uP").value, rol = document.getElementById("uR").value;
-        if(!usuario || !clave) return alert("Faltan datos de usuario");
-        showToast("Guardando usuario...");
+        if(!usuario || !clave) return alert("Faltan datos");
         await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'addUser', usuario, clave, rol }) });
-        document.getElementById("uN").value = ""; document.getElementById("uP").value = "";
-        await cargarDatos(true); renderUsers(); showToast("Usuario guardado");
+        await cargarDatos(true); renderUsers();
     }
 
     async function eliminarUser(u) {
         if(!confirm(`¿Eliminar al usuario ${u}?`)) return;
-        showToast("Eliminando usuario...");
         await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'delete', usuarioNombre: u }) });
-        await cargarDatos(true); renderUsers(); showToast("Usuario eliminado");
+        await cargarDatos(true); renderUsers();
     }
 
     window.onload = cargarDatos;
