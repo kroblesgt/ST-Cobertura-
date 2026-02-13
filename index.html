@@ -152,7 +152,7 @@
 
     function checkSession() {
         const s = localStorage.getItem("distelsa_auth");
-        if(s) { const d = JSON.parse(s); const u = USUARIOS.find(x => x.u === d.u && x.p === d.p); if(u) authOk(u.r); }
+        if(s) { const d = JSON.parse(s); const u = USUARIOS.find(x => x.u.toLowerCase() === d.u.toLowerCase() && x.p === d.p); if(u) authOk(u.r); }
     }
 
     function login() {
