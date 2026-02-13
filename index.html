@@ -21,7 +21,7 @@
         .header img { height: 70px; width: auto; }
         .header-title { text-align: center; }
         .header-title h1 { margin: 0; color: var(--primary); font-size: 28px; }
-        .sync-status { color: var(--success); font-weight: bold; font-size: 13px; }
+        .sync-status { color: var(--success); font-weight: bold; font-size: 13px; transition: color 0.3s;}
 
         .container { max-width: 1500px; margin: 30px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.08); }
         .hidden { display: none !important; }
@@ -58,7 +58,7 @@
     <img src="https://drive.google.com/thumbnail?id=1bawJf9oARBLy2itsOfA9YE8RVAFNdNef" alt="Logo Distelsa">
     <div class="header-title">
         <h1>SISTEMA DE COBERTURA</h1>
-        <div id="syncStatus" class="sync-status">● CONECTADO EN VIVO</div>
+        <div id="syncStatus" class="sync-status">● CONECTANDO...</div>
     </div>
     <div style="width: 70px;"></div>
 </header>
@@ -123,13 +123,14 @@
     <div class="modal-content">
         <h2 style="color:var(--primary); margin-top:0;">Gestión de Usuarios</h2>
         <div style="background:#f0f4f8; padding:20px; border-radius:10px; margin-bottom:20px;">
-            <h4 style="margin:0 0 15px 0; color:#666;">Agregar / Editar Usuario</h4>
+            <h4 style="margin:0 0 15px 0; color:#666;">Agregar / Modificar Usuario</h4>
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:10px;">
                 <input id="uN" placeholder="Usuario">
                 <input id="uP" placeholder="Contraseña">
                 <select id="uR"><option value="Agente">Agente</option><option value="Lider">Lider</option><option value="Admin">Admin</option></select>
-                <button onclick="guardarUser()" class="btn" style="background:var(--success); padding:10px 15px;"><i class="fa-solid fa-plus"></i></button>
+                <button onclick="guardarUser()" class="btn" style="background:var(--success); padding:10px 15px;"><i class="fa-solid fa-floppy-disk"></i></button>
             </div>
+            <small id="userEditHint" style="display:none; color:var(--warning); font-weight:bold; margin-top:10px;">Modificando usuario actual. Deja la clave en blanco si no deseas cambiarla.</small>
         </div>
         <div id="listaU" style="max-height: 400px; overflow-y: auto;"></div>
         <button onclick="cerrarModal()" class="btn" style="background:var(--dark); width:100%; margin-top:25px; padding: 15px;">CERRAR VENTANA</button>
@@ -137,7 +138,7 @@
 </div>
 
 <script>
-    const API = "https://script.google.com/macros/s/AKfycbzxYlu5_-0Z7kk_dSEe-snz9bCk3bUbaISxLDcyc_SegGyqCa94j6GOT4VFEkh1Ih6Nxg/exec"; 
+    const API = "https://script.google.com/macros/s/AKfycbwIE0dTw7UZwrlVrjn05lZMTFdThE_cGWGhplutZ2gB9YgKk7zraJwFjutvt08KHBrc7A/exec"; 
     
     let MASTER = [], USUARIOS = [], ROL = "", pag = 1;
 
@@ -153,11 +154,19 @@
             
             document.getElementById("btnLogin").innerText = "INGRESAR";
             document.getElementById("syncStatus").innerText = "● CONECTADO EN VIVO";
+            document.getElementById("syncStatus").style.color = "var(--success)";
             
-            if(ROL) render(); else if(!silencioso) checkSession();
+            if(ROL) {
+                // Solo renderiza si nadie está editando una fila en este momento
+                if (!document.querySelector('.modified')) {
+                    render(); 
+                }
+            } else if(!silencioso) {
+                checkSession();
+            }
         } catch (e) { 
-            showToast("Error de conexión");
-            document.getElementById("syncStatus").innerText = "● DESCONECTADO";
+            if(!silencioso) showToast("Error de conexión");
+            document.getElementById("syncStatus").innerText = "● DESCONECTADO (Reconectando...)";
             document.getElementById("syncStatus").style.color = "var(--danger)";
         }
     }
@@ -169,7 +178,7 @@
 
     function login() {
         const u = document.getElementById("userInput").value.trim(), p = document.getElementById("passInput").value.trim();
-        const user = USUARIOS.find(x => x.u === u && x.p === p);
+        const user = USUARIOS.find(x => x.u.toLowerCase() === u.toLowerCase() && x.p === p);
         if(user) { localStorage.setItem("distelsa_auth", JSON.stringify({u, p})); authOk(user.r); } 
         else alert("Credenciales incorrectas");
     }
@@ -195,7 +204,6 @@
         let html = "";
         segment.forEach(r => {
             const col = r.cob=="Cobertura"?"bg-verde":r.cob=="Sin Cobertura"?"bg-rojo":r.cob=="Consultar"?"bg-amarillo":"bg-gris";
-            // Validación de Rol para habilitar edición
             const canEdit = (ROL === 'admin' || ROL === 'lider');
             
             html += `<tr id="row-${r.fila}">
@@ -213,8 +221,8 @@
                             <option value="Consultar" ${r.cob=='Consultar'?'selected':''}>Consultar</option>
                         </select>
                         ${canEdit ? `
-                            <button onclick="guardarTodo(${r.fila})" class="btn" style="background:var(--primary); padding:8px 12px;"><i class="fa-solid fa-floppy-disk"></i></button>
-                            <button onclick="eliminarCob(${r.fila}, '${r.n}')" class="btn" style="background:var(--danger); padding:8px 12px;"><i class="fa-solid fa-trash-can"></i></button>
+                            <button onclick="guardarTodo(${r.fila})" class="btn" style="background:var(--primary); padding:8px 12px;" title="Guardar"><i class="fa-solid fa-floppy-disk"></i></button>
+                            <button onclick="eliminarCob(${r.fila}, '${r.n}')" class="btn" style="background:var(--danger); padding:8px 12px;" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
                         ` : ''}
                     </div>
                 </td>
@@ -226,21 +234,35 @@
         document.getElementById("btnSig").disabled = pag >= totalPags;
     }
 
-    async function guardarTodo(fila) {
-        const body = {
-            action: 'updateFullCob', fila,
-            m: document.getElementById(`m-${fila}`).value,
-            n: document.getElementById(`n-${fila}`).value,
-            c: document.getElementById(`c-${fila}`).value,
-            z: document.getElementById(`z-${fila}`).value,
-            ref: document.getElementById(`ref-${fila}`).value,
-            val: document.getElementById(`s-${fila}`).value
-        };
-        showToast("Sincronizando...");
-        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(body) });
-        Object.assign(MASTER.find(x => x.fila === fila), { m: body.m, n: body.n, c: body.c, z: body.z, ref: body.ref, cob: body.val });
-        document.getElementById(`row-${fila}`).classList.remove('modified');
-        render(); showToast("Guardado");
+    function guardarTodo(fila) {
+        const m = document.getElementById(`m-${fila}`).value;
+        const n = document.getElementById(`n-${fila}`).value;
+        const c = document.getElementById(`c-${fila}`).value;
+        const z = document.getElementById(`z-${fila}`).value;
+        const ref = document.getElementById(`ref-${fila}`).value;
+        const val = document.getElementById(`s-${fila}`).value;
+        
+        showToast("Guardando...");
+        
+        // Actualización Optimista local
+        const registro = MASTER.find(x => x.fila === fila);
+        if (registro) Object.assign(registro, { m, n, c, z, ref, cob: val });
+        
+        const row = document.getElementById(`row-${fila}`);
+        if (row) {
+            row.classList.remove('modified');
+            const select = document.getElementById(`s-${fila}`);
+            select.className = "badge"; 
+            if (val === "Cobertura") select.classList.add("bg-verde");
+            else if (val === "Sin Cobertura") select.classList.add("bg-rojo");
+            else if (val === "Consultar") select.classList.add("bg-amarillo");
+            else select.classList.add("bg-gris");
+        }
+        
+        // Enviar a Google en segundo plano
+        fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'updateFullCob', fila, m, n, c, z, ref, val }) })
+            .then(() => showToast("Guardado en la base de datos"))
+            .catch(() => showToast("Error al sincronizar"));
     }
 
     async function crearCobertura() {
@@ -258,12 +280,15 @@
         showToast("Agregado exitosamente");
     }
 
-    async function eliminarCob(fila, n) {
+    function eliminarCob(fila, n) {
         if(!confirm(`¿Eliminar permanentemente: "${n}"?`)) return;
         showToast("Eliminando...");
-        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'deleteCob', fila }) });
+        fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'deleteCob', fila }) });
+        
         MASTER = MASTER.filter(x => x.fila !== fila);
-        render(); showToast("Eliminado");
+        if(MASTER.slice((pag-1)*10, pag*10).length === 0 && pag > 1) pag--; // Ajustar página si se vacía
+        render(); 
+        showToast("Eliminado");
     }
 
     function exportarExcel() {
@@ -282,7 +307,13 @@
     function cambiarPag(v) { pag += v; render(); }
     function showToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.style.display="block"; setTimeout(()=>t.style.display="none", 3000); }
     function logout() { localStorage.removeItem("distelsa_auth"); location.reload(); }
-    function abrirModal() { document.getElementById("modalUser").classList.remove("hidden"); renderUsers(); }
+    
+    function abrirModal() { 
+        document.getElementById("modalUser").classList.remove("hidden"); 
+        resetFormUser();
+        renderUsers(); 
+    }
+    
     function cerrarModal() { document.getElementById("modalUser").classList.add("hidden"); }
 
     function renderUsers() {
@@ -290,27 +321,75 @@
         USUARIOS.forEach(u => {
             html += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #eee; align-items:center;">
                 <div><b>${u.u}</b> <span class="badge bg-gris" style="width:auto; margin-left:10px;">${u.r}</span></div>
-                <button onclick="eliminarUser('${u.u}')" class="btn" style="background:var(--danger); padding:8px 12px;"><i class="fa-solid fa-trash-can"></i></button>
+                <div>
+                    <button onclick="editarUser('${u.u}', '${u.r}')" class="btn" style="background:var(--warning); color:black; padding:8px 12px; margin-right:5px; display:inline-block;" title="Modificar"><i class="fa-solid fa-pen"></i></button>
+                    <button onclick="eliminarUser('${u.u}')" class="btn" style="background:var(--danger); padding:8px 12px; display:inline-block;" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
             </div>`;
         });
         document.getElementById("listaU").innerHTML = html;
     }
 
-    async function guardarUser() {
-        const usuario = document.getElementById("uN").value, clave = document.getElementById("uP").value, rol = document.getElementById("uR").value;
-        if(!usuario || !clave) return alert("Faltan datos");
-        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'addUser', usuario, clave, rol }) });
-        await cargarDatos(true); renderUsers();
+    function editarUser(usuario, rolActual) {
+        document.getElementById("uN").value = usuario;
+        document.getElementById("uR").value = rolActual;
+        document.getElementById("uN").disabled = true; 
+        document.getElementById("uP").placeholder = "Nueva contraseña (opcional)";
+        document.getElementById("userEditHint").style.display = "block";
     }
 
-    async function eliminarUser(u) {
+    function resetFormUser() {
+        document.getElementById("uN").value = "";
+        document.getElementById("uN").disabled = false;
+        document.getElementById("uP").value = "";
+        document.getElementById("uP").placeholder = "Contraseña";
+        document.getElementById("uR").value = "Agente";
+        document.getElementById("userEditHint").style.display = "none";
+    }
+
+    async function guardarUser() {
+        const usuario = document.getElementById("uN").value.trim();
+        const claveInput = document.getElementById("uP").value.trim();
+        const rol = document.getElementById("uR").value;
+
+        if(!usuario) return alert("El nombre de usuario es obligatorio");
+
+        const userExistente = USUARIOS.find(u => u.u.toLowerCase() === usuario.toLowerCase());
+        const claveFinal = claveInput || (userExistente ? userExistente.p : "");
+        
+        if(!claveFinal && !userExistente) return alert("Falta la contraseña para el nuevo usuario");
+
+        showToast("Guardando usuario...");
+        
+        fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'addUser', usuario: usuario, clave: claveFinal, rol: rol }) });
+
+        if (userExistente) {
+            userExistente.p = claveFinal;
+            userExistente.r = rol;
+        } else {
+            USUARIOS.push({u: usuario, p: claveFinal, r: rol});
+        }
+
+        resetFormUser();
+        renderUsers();
+        showToast("Usuario guardado/modificado");
+    }
+
+    function eliminarUser(u) {
         if(!confirm(`¿Eliminar al usuario ${u}?`)) return;
-        await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'delete', usuarioNombre: u }) });
-        await cargarDatos(true); renderUsers();
+        fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'delete', usuarioNombre: u }) });
+        USUARIOS = USUARIOS.filter(x => x.u !== u);
+        renderUsers();
+        showToast("Usuario eliminado");
     }
 
     window.onload = cargarDatos;
+
+    // Sincronización en segundo plano cada 10 segundos
+    setInterval(() => {
+        if (ROL) cargarDatos(true); 
+    }, 10000);
+
 </script>
 </body>
 </html>
-
