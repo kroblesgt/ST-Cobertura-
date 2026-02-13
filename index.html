@@ -10,12 +10,18 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; }
         
         .header { 
-            background: white; padding: 15px 40px; border-bottom: 4px solid var(--primary); 
-            display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: white; 
+            padding: 15px 40px; 
+            border-bottom: 4px solid var(--primary); 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         .header img { height: 70px; width: auto; }
+        .header-title { text-align: center; }
         .header-title h1 { margin: 0; color: var(--primary); font-size: 28px; }
-        .sync-status { color: var(--success); font-weight: bold; font-size: 13px; }
+        .sync-status { color: var(--success); font-weight: bold; font-size: 13px; transition: color 0.3s;}
 
         .container { max-width: 1500px; margin: 30px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.08); }
         .hidden { display: none !important; }
@@ -26,7 +32,8 @@
         input, select { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
         table input { width: 90%; }
         
-        .badge { padding: 8px 12px; border-radius: 30px; color: white; font-weight: bold; border: none; cursor: pointer; text-align: center; width: 100%; font-size: 12px; }
+        .badge { padding: 8px 12px; border-radius: 30px; color: white; font-weight: bold; border: none; cursor: pointer; text-align: center; width: 100%; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .badge:disabled { cursor: default; opacity: 1; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
         .bg-verde { background: var(--success); } .bg-rojo { background: var(--danger); } 
         .bg-amarillo { background: var(--warning); color: black; } .bg-gris { background: #95a5a6; }
         .modified { background-color: #fff9c4 !important; border: 1px solid #f1c40f !important;}
@@ -40,7 +47,7 @@
         .login-input { width: 320px; padding: 15px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; background: #f9f9f9; }
         
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 5000; backdrop-filter: blur(3px); }
-        .modal-content { background: white; padding: 40px; border-radius: 15px; width: 700px; max-height: 85vh; overflow-y: auto; }
+        .modal-content { background: white; padding: 40px; border-radius: 15px; width: 700px; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
@@ -48,7 +55,7 @@
 <div id="toast"></div>
 
 <header class="header">
-    <img src="https://drive.google.com/thumbnail?id=1bawJf9oARBLy2itsOfA9YE8RVAFNdNef" alt="Logo">
+    <img src="https://drive.google.com/thumbnail?id=1bawJf9oARBLy2itsOfA9YE8RVAFNdNef" alt="Logo Distelsa">
     <div class="header-title">
         <h1>SISTEMA DE COBERTURA</h1>
         <div id="syncStatus" class="sync-status">● CONECTANDO...</div>
@@ -61,41 +68,43 @@
         <h2 style="color:var(--primary); margin-bottom: 30px;">Acceso al Sistema</h2>
         <input id="userInput" placeholder="Usuario" class="login-input">
         <input id="passInput" type="password" placeholder="Contraseña" class="login-input">
-        <button id="btnLogin" onclick="login()" class="btn" style="background:var(--primary); width: 350px;">INGRESAR</button>
+        <button id="btnLogin" onclick="login()" class="btn" style="background:var(--primary); width: 350px; font-size: 16px;">INGRESAR</button>
     </div>
 
     <div id="appPanel" class="hidden">
-        <div id="panelNuevo" class="hidden" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:15px; background:#f0f4f8; padding:25px; border-radius:12px; margin-bottom:30px;">
-            <input id="newMuni" placeholder="Municipio">
-            <input id="newNom" placeholder="Nombre">
-            <input id="newCat" placeholder="Categoría">
-            <input id="newZona" placeholder="Zona">
-            <input id="newRef" placeholder="Referencia">
-            <select id="newEst">
-                <option value="Sin Datos">Sin Datos</option>
-                <option value="Cobertura">Cobertura</option>
-                <option value="Sin Cobertura">Sin Cobertura</option>
-                <option value="Consultar">Consultar</option>
-            </select>
-            <button onclick="crearCobertura()" class="btn" style="background:var(--success); grid-column: span 3;">+ AGREGAR UBICACIÓN</button>
+        <div id="panelNuevo" class="hidden" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:15px; background:#f0f4f8; padding:25px; border-radius:12px; margin-bottom:30px; border: 1px solid #e1e5eb;">
+            <div><label style="font-weight:bold; font-size:12px; color:#666;">MUNICIPIO</label><input id="newMuni" style="width:100%"></div>
+            <div><label style="font-weight:bold; font-size:12px; color:#666;">NOMBRE</label><input id="newNom" style="width:100%"></div>
+            <div><label style="font-weight:bold; font-size:12px; color:#666;">CATEGORÍA</label><input id="newCat" style="width:100%"></div>
+            <div><label style="font-weight:bold; font-size:12px; color:#666;">ZONA</label><input id="newZona" style="width:100%"></div>
+            <div><label style="font-weight:bold; font-size:12px; color:#666;">REFERENCIA</label><input id="newRef" style="width:100%"></div>
+            <div><label style="font-weight:bold; font-size:12px; color:#666;">ESTADO INICIAL</label>
+                <select id="newEst" style="width:100%; padding:11px;">
+                    <option value="Sin Datos">Sin Datos</option>
+                    <option value="Cobertura">Cobertura</option>
+                    <option value="Sin Cobertura">Sin Cobertura</option>
+                    <option value="Consultar">Consultar</option>
+                </select>
+            </div>
+            <button onclick="crearCobertura()" class="btn" style="background:var(--success); grid-column: span 3; font-size:15px;">+ AGREGAR NUEVA UBICACIÓN</button>
         </div>
 
         <div style="display:flex; gap:15px; margin-bottom:25px; align-items: center; background: #f8f9fa; padding: 15px; border-radius: 10px;">
-            <i class="fa-solid fa-search"></i>
-            <input id="buscar" placeholder="Búsqueda inteligente (Ej: col el milagr z 6 misco)..." oninput="pag=1; render()" style="flex-grow:1; border:none; background:transparent; outline:none; font-size:16px;">
+            <i class="fa-solid fa-search" style="color:#888"></i>
+            <input id="buscar" placeholder="Buscar por municipio, nombre, zona..." oninput="pag=1; render()" style="flex-grow:1; padding:12px; font-size:16px; border:none; background: transparent; outline: none;">
             <button id="btnExport" onclick="exportarExcel()" class="btn hidden" style="background:#217346;"><i class="fa-solid fa-file-excel"></i> Exportar</button>
             <button id="btnAdmin" onclick="abrirModal()" class="btn hidden" style="background:var(--warning); color:black;"><i class="fa-solid fa-users-gear"></i> Usuarios</button>
-            <button onclick="logout()" class="btn" style="background:var(--dark);">Salir</button>
+            <button onclick="logout()" class="btn" style="background:var(--dark);"><i class="fa-solid fa-right-from-bracket"></i> Salir</button>
         </div>
 
-        <table>
+        <table style="box-shadow: 0 2px 15px rgba(0,0,0,0.05); border-radius: 8px; overflow: hidden;">
             <thead>
                 <tr>
-                    <th>Municipio</th>
-                    <th>Nombre</th>
-                    <th>Categoría</th>
-                    <th>Zona</th>
-                    <th>Referencia</th>
+                    <th style="width:12%">Municipio</th>
+                    <th style="width:18%">Nombre</th>
+                    <th style="width:10%">Categoría</th>
+                    <th style="width:8%">Zona</th>
+                    <th style="width:20%">Referencia</th>
                     <th style="width:220px; text-align:center;">Estado / Acciones</th>
                 </tr>
             </thead>
@@ -103,83 +112,92 @@
         </table>
 
         <div style="text-align:center; margin-top:30px; display:flex; justify-content:center; align-items:center; gap:25px;">
-            <button id="btnAnt" onclick="cambiarPag(-1)" class="btn" style="background:var(--primary);">Anterior</button>
-            <span id="pagTxt" style="font-weight:bold; font-size:16px;">Página 1</span>
-            <button id="btnSig" onclick="cambiarPag(1)" class="btn" style="background:var(--primary);">Siguiente</button>
+            <button id="btnAnt" onclick="cambiarPag(-1)" class="btn" style="background:var(--primary); padding: 10px 25px;">Anterior</button>
+            <span id="pagTxt" style="font-weight:bold; font-size:16px; color:var(--dark);">Página 1</span>
+            <button id="btnSig" onclick="cambiarPag(1)" class="btn" style="background:var(--primary); padding: 10px 25px;">Siguiente</button>
         </div>
     </div>
 </div>
 
 <div id="modalUser" class="modal hidden">
     <div class="modal-content">
-        <h2>Gestión de Usuarios</h2>
+        <h2 style="color:var(--primary); margin-top:0;">Gestión de Usuarios</h2>
         <div style="background:#f0f4f8; padding:20px; border-radius:10px; margin-bottom:20px;">
+            <h4 style="margin:0 0 15px 0; color:#666;">Agregar / Modificar Usuario</h4>
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:10px;">
                 <input id="uN" placeholder="Usuario">
                 <input id="uP" placeholder="Contraseña">
                 <select id="uR"><option value="Agente">Agente</option><option value="Lider">Lider</option><option value="Admin">Admin</option></select>
-                <button onclick="guardarUser()" class="btn" style="background:var(--success);"><i class="fa-solid fa-save"></i></button>
+                <button onclick="guardarUser()" class="btn" style="background:var(--success); padding:10px 15px;"><i class="fa-solid fa-floppy-disk"></i></button>
             </div>
-            <small id="userEditHint" style="display:none; color:var(--primary); margin-top:5px;">Editando usuario. Clave en blanco para no cambiar.</small>
+            <small id="userEditHint" style="display:none; color:var(--warning); font-weight:bold; margin-top:10px;">Modificando usuario actual. Deja la clave en blanco si no deseas cambiarla.</small>
         </div>
-        <div id="listaU"></div>
-        <button onclick="cerrarModal()" class="btn" style="background:var(--dark); width:100%; margin-top:20px;">CERRAR</button>
+        <div id="listaU" style="max-height: 400px; overflow-y: auto;"></div>
+        <button onclick="cerrarModal()" class="btn" style="background:var(--dark); width:100%; margin-top:25px; padding: 15px;">CERRAR VENTANA</button>
     </div>
 </div>
 
 <script>
-    const API = "https://script.google.com/macros/s/AKfycbzl-VPv3NE0zn0DKZND1lS6Q8LbuSiO3-TRIqtV2ddQYjyw2Jftfnd2Q8XBBKAuu8B3/exec"; 
+    const API = "https://script.google.com/macros/s/AKfycbwIE0dTw7UZwrlVrjn05lZMTFdThE_cGWGhplutZ2gB9YgKk7zraJwFjutvt08KHBrc7A/exec"; 
+    
     let MASTER = [], USUARIOS = [], ROL = "", pag = 1;
-
-    // --- LÓGICA DE BÚSQUEDA INTELIGENTE ---
-    function limpiarTexto(t) {
-        return String(t).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/mixco/g, "misco");
-    }
 
     async function cargarDatos(silencioso = false) {
         try {
+            if(!silencioso) document.getElementById("btnLogin").innerText = "Conectando...";
             const res = await fetch(API);
             const data = await res.json();
             USUARIOS = data.usuarios.slice(1).map(r => ({ u: String(r[0]), p: String(r[1]), r: String(r[2]) }));
             MASTER = data.cobertura.slice(1).map((r, i) => ({ 
                 fila: i + 2, m: r[0], n: r[1], c: r[2], z: r[3], ref: r[4], cob: r[5] || "Sin Datos" 
             }));
+            
+            document.getElementById("btnLogin").innerText = "INGRESAR";
             document.getElementById("syncStatus").innerText = "● CONECTADO EN VIVO";
-            if(ROL && !document.querySelector('.modified')) render(); 
-            else if(!silencioso) checkSession();
-        } catch (e) { document.getElementById("syncStatus").innerText = "● RECONECTANDO..."; }
+            document.getElementById("syncStatus").style.color = "var(--success)";
+            
+            if(ROL) {
+                // Solo renderiza si nadie está editando una fila en este momento
+                if (!document.querySelector('.modified')) {
+                    render(); 
+                }
+            } else if(!silencioso) {
+                checkSession();
+            }
+        } catch (e) { 
+            if(!silencioso) showToast("Error de conexión");
+            document.getElementById("syncStatus").innerText = "● DESCONECTADO (Reconectando...)";
+            document.getElementById("syncStatus").style.color = "var(--danger)";
+        }
     }
 
     function checkSession() {
         const s = localStorage.getItem("distelsa_auth");
-        if(s) { const d = JSON.parse(s); const u = USUARIOS.find(x => x.u.toLowerCase() === d.u.toLowerCase() && x.p === d.p); if(u) authOk(u.r); }
+        if(s) { const d = JSON.parse(s); const u = USUARIOS.find(x => x.u === d.u && x.p === d.p); if(u) authOk(u.r); }
     }
 
     function login() {
         const u = document.getElementById("userInput").value.trim(), p = document.getElementById("passInput").value.trim();
         const user = USUARIOS.find(x => x.u.toLowerCase() === u.toLowerCase() && x.p === p);
-        if(user) { localStorage.setItem("distelsa_auth", JSON.stringify({u, p})); authOk(user.r); } else alert("Error de acceso");
+        if(user) { localStorage.setItem("distelsa_auth", JSON.stringify({u, p})); authOk(user.r); } 
+        else alert("Credenciales incorrectas");
     }
 
     function authOk(rol) {
         ROL = rol.toLowerCase();
         document.getElementById("loginPanel").classList.add("hidden");
         document.getElementById("appPanel").classList.remove("hidden");
-        if(ROL === 'admin' || ROL === 'lider') document.getElementById("panelNuevo").classList.remove("hidden");
-        if(ROL === 'admin' || ROL === 'lider') document.getElementById("btnExport").classList.remove("hidden");
+        if(ROL === 'admin' || ROL === 'lider') {
+            document.getElementById("panelNuevo").classList.remove("hidden");
+            document.getElementById("btnExport").classList.remove("hidden");
+        }
         if(ROL === 'admin') document.getElementById("btnAdmin").classList.remove("hidden");
         render();
     }
 
     function render() {
-        const qLimpio = limpiarTexto(document.getElementById("buscar").value);
-        const terminos = qLimpio.split(" ").filter(t => t.trim() !== "");
-        
-        const filt = MASTER.filter(r => {
-            const textoFila = limpiarTexto(`${r.m} ${r.n} ${r.c} ${r.z} ${r.ref} ${r.cob}`);
-            return terminos.every(t => textoFila.includes(t));
-        });
-
+        const q = document.getElementById("buscar").value.toLowerCase();
+        const filt = MASTER.filter(r => `${r.m} ${r.n} ${r.c} ${r.z} ${r.ref} ${r.cob}`.toLowerCase().includes(q));
         const totalPags = Math.ceil(filt.length / 10) || 1;
         const segment = filt.slice((pag-1)*10, pag*10); 
         
@@ -187,45 +205,64 @@
         segment.forEach(r => {
             const col = r.cob=="Cobertura"?"bg-verde":r.cob=="Sin Cobertura"?"bg-rojo":r.cob=="Consultar"?"bg-amarillo":"bg-gris";
             const canEdit = (ROL === 'admin' || ROL === 'lider');
+            
             html += `<tr id="row-${r.fila}">
                 <td>${canEdit ? `<input id="m-${r.fila}" value="${r.m}" oninput="marcar(${r.fila})">` : r.m}</td>
-                <td>${canEdit ? `<input id="n-${r.fila}" value="${r.n}" style="font-weight:bold" oninput="marcar(${r.fila})">` : r.n}</td>
+                <td>${canEdit ? `<input id="n-${r.fila}" value="${r.n}" style="font-weight:bold;" oninput="marcar(${r.fila})">` : `<b>${r.n}</b>`}</td>
                 <td>${canEdit ? `<input id="c-${r.fila}" value="${r.c}" oninput="marcar(${r.fila})">` : r.c}</td>
                 <td>${canEdit ? `<input id="z-${r.fila}" value="${r.z}" oninput="marcar(${r.fila})">` : r.z}</td>
                 <td>${canEdit ? `<input id="ref-${r.fila}" value="${r.ref}" oninput="marcar(${r.fila})">` : r.ref}</td>
                 <td>
-                    <div style="display:flex; gap:5px;">
-                        <select id="s-${r.fila}" class="badge ${col}" onchange="marcar(${r.fila})" ${!canEdit?'disabled':''}>
+                    <div style="display:flex; gap:8px; justify-content:center;">
+                        <select id="s-${r.fila}" class="badge ${col}" onchange="marcar(${r.fila})" ${!canEdit ? 'disabled' : ''}>
                             <option value="Sin Datos" ${r.cob=='Sin Datos'?'selected':''}>Sin Datos</option>
                             <option value="Cobertura" ${r.cob=='Cobertura'?'selected':''}>Cobertura</option>
                             <option value="Sin Cobertura" ${r.cob=='Sin Cobertura'?'selected':''}>Sin Cobertura</option>
                             <option value="Consultar" ${r.cob=='Consultar'?'selected':''}>Consultar</option>
                         </select>
-                        ${canEdit ? `<button onclick="guardarTodo(${r.fila})" class="btn" style="background:var(--primary); padding:8px"><i class="fa-solid fa-save"></i></button>` : ''}
-                        ${ROL === 'admin' ? `<button onclick="eliminarCob(${r.fila},'${r.n}')" class="btn" style="background:var(--danger); padding:8px"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        ${canEdit ? `
+                            <button onclick="guardarTodo(${r.fila})" class="btn" style="background:var(--primary); padding:8px 12px;" title="Guardar"><i class="fa-solid fa-floppy-disk"></i></button>
+                            <button onclick="eliminarCob(${r.fila}, '${r.n}')" class="btn" style="background:var(--danger); padding:8px 12px;" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+                        ` : ''}
                     </div>
                 </td>
             </tr>`;
         });
-        document.getElementById("cuerpo").innerHTML = html || '<tr><td colspan="6" style="text-align:center">No hay resultados</td></tr>';
+        document.getElementById("cuerpo").innerHTML = html || '<tr><td colspan="6" style="text-align:center;">No hay resultados</td></tr>';
         document.getElementById("pagTxt").innerText = `Página ${pag} de ${totalPags}`;
         document.getElementById("btnAnt").disabled = pag <= 1;
         document.getElementById("btnSig").disabled = pag >= totalPags;
     }
 
     function guardarTodo(fila) {
-        const data = {
-            action: 'updateFullCob', fila,
-            m: document.getElementById(`m-${fila}`).value, n: document.getElementById(`n-${fila}`).value,
-            c: document.getElementById(`c-${fila}`).value, z: document.getElementById(`z-${fila}`).value,
-            ref: document.getElementById(`ref-${fila}`).value, val: document.getElementById(`s-${fila}`).value
-        };
-        showToast("Sincronizando...");
-        document.getElementById(`row-${fila}`).classList.remove('modified');
-        fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-        const reg = MASTER.find(x => x.fila === fila);
-        if(reg) Object.assign(reg, {m:data.m, n:data.n, c:data.c, z:data.z, ref:data.ref, cob:data.val});
-        render();
+        const m = document.getElementById(`m-${fila}`).value;
+        const n = document.getElementById(`n-${fila}`).value;
+        const c = document.getElementById(`c-${fila}`).value;
+        const z = document.getElementById(`z-${fila}`).value;
+        const ref = document.getElementById(`ref-${fila}`).value;
+        const val = document.getElementById(`s-${fila}`).value;
+        
+        showToast("Guardando...");
+        
+        // Actualización Optimista local
+        const registro = MASTER.find(x => x.fila === fila);
+        if (registro) Object.assign(registro, { m, n, c, z, ref, cob: val });
+        
+        const row = document.getElementById(`row-${fila}`);
+        if (row) {
+            row.classList.remove('modified');
+            const select = document.getElementById(`s-${fila}`);
+            select.className = "badge"; 
+            if (val === "Cobertura") select.classList.add("bg-verde");
+            else if (val === "Sin Cobertura") select.classList.add("bg-rojo");
+            else if (val === "Consultar") select.classList.add("bg-amarillo");
+            else select.classList.add("bg-gris");
+        }
+        
+        // Enviar a Google en segundo plano
+        fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'updateFullCob', fila, m, n, c, z, ref, val }) })
+            .then(() => showToast("Guardado en la base de datos"))
+            .catch(() => showToast("Error al sincronizar"));
     }
 
     async function crearCobertura() {
@@ -235,25 +272,28 @@
             c: document.getElementById("newCat").value, z: document.getElementById("newZona").value,
             ref: document.getElementById("newRef").value, val: document.getElementById("newEst").value
         };
+        if(!d.m || !d.n) return alert("Municipio y Nombre son obligatorios");
+        showToast("Guardando...");
         await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(d) });
-        cargarDatos(true);
-        showToast("Agregado");
+        ["newMuni","newNom","newCat","newZona","newRef"].forEach(id => document.getElementById(id).value = "");
+        await cargarDatos(true);
+        showToast("Agregado exitosamente");
     }
 
     function eliminarCob(fila, n) {
-        if(!confirm(`¿Eliminar ${n}?`)) return;
+        if(!confirm(`¿Eliminar permanentemente: "${n}"?`)) return;
+        showToast("Eliminando...");
         fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'deleteCob', fila }) });
+        
         MASTER = MASTER.filter(x => x.fila !== fila);
-        render();
+        if(MASTER.slice((pag-1)*10, pag*10).length === 0 && pag > 1) pag--; // Ajustar página si se vacía
+        render(); 
+        showToast("Eliminado");
     }
 
     function exportarExcel() {
-        const qLimpio = limpiarTexto(document.getElementById("buscar").value);
-        const terminos = qLimpio.split(" ").filter(t => t.trim() !== "");
-        const filt = MASTER.filter(r => {
-            const textoFila = limpiarTexto(`${r.m} ${r.n} ${r.c} ${r.z} ${r.ref} ${r.cob}`);
-            return terminos.every(t => textoFila.includes(t));
-        });
+        const q = document.getElementById("buscar").value.toLowerCase();
+        const filt = MASTER.filter(r => `${r.m} ${r.n} ${r.c} ${r.z} ${r.ref} ${r.cob}`.toLowerCase().includes(q));
         let csv = "Municipio,Nombre,Categoria,Zona,Referencia,Estado\n";
         filt.forEach(r => csv += `"${r.m}","${r.n}","${r.c}","${r.z}","${r.ref}","${r.cob}"\n`);
         const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
@@ -263,51 +303,93 @@
         link.click();
     }
 
-    function abrirModal() { document.getElementById("modalUser").classList.remove("hidden"); resetUserForm(); renderUsers(); }
-    function cerrarModal() { document.getElementById("modalUser").classList.add("hidden"); }
-    function resetUserForm() { document.getElementById("uN").value=""; document.getElementById("uN").disabled=false; document.getElementById("uP").value=""; document.getElementById("userEditHint").style.display="none"; }
-    
-    function renderUsers() {
-        let h = "";
-        USUARIOS.forEach(u => h += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;">
-            <span><b>${u.u}</b> (${u.r})</span>
-            <div>
-                <button onclick="editarUser('${u.u}','${u.r}')" class="btn" style="background:var(--warning); color:black; display:inline-block; padding:5px 10px;"><i class="fa-solid fa-pen"></i></button>
-                <button onclick="eliminarUser('${u.u}')" class="btn" style="background:var(--danger); display:inline-block; padding:5px 10px;"><i class="fa-solid fa-trash"></i></button>
-            </div>
-        </div>`);
-        document.getElementById("listaU").innerHTML = h;
-    }
-
-    function editarUser(u, r) {
-        document.getElementById("uN").value = u; document.getElementById("uN").disabled = true;
-        document.getElementById("uR").value = r; document.getElementById("userEditHint").style.display = "block";
-    }
-
-    async function guardarUser() {
-        const u = document.getElementById("uN").value, p = document.getElementById("uP").value, r = document.getElementById("uR").value;
-        const ex = USUARIOS.find(x => x.u === u);
-        const clave = p || (ex ? ex.p : "");
-        if(!u || !clave) return alert("Datos incompletos");
-        fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'addUser', usuario: u, clave, rol: r }) });
-        if(ex) { ex.p = clave; ex.r = r; } else USUARIOS.push({u, p:clave, r});
-        resetUserForm(); renderUsers(); showToast("Usuario actualizado");
-    }
-
-    function eliminarUser(u) {
-        if(!confirm(`¿Eliminar a ${u}?`)) return;
-        fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'delete', usuarioNombre: u }) });
-        USUARIOS = USUARIOS.filter(x => x.u !== u);
-        renderUsers();
-    }
-
     function marcar(f) { document.getElementById(`row-${f}`).classList.add('modified'); }
     function cambiarPag(v) { pag += v; render(); }
     function showToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.style.display="block"; setTimeout(()=>t.style.display="none", 3000); }
     function logout() { localStorage.removeItem("distelsa_auth"); location.reload(); }
+    
+    function abrirModal() { 
+        document.getElementById("modalUser").classList.remove("hidden"); 
+        resetFormUser();
+        renderUsers(); 
+    }
+    
+    function cerrarModal() { document.getElementById("modalUser").classList.add("hidden"); }
+
+    function renderUsers() {
+        let html = "";
+        USUARIOS.forEach(u => {
+            html += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #eee; align-items:center;">
+                <div><b>${u.u}</b> <span class="badge bg-gris" style="width:auto; margin-left:10px;">${u.r}</span></div>
+                <div>
+                    <button onclick="editarUser('${u.u}', '${u.r}')" class="btn" style="background:var(--warning); color:black; padding:8px 12px; margin-right:5px; display:inline-block;" title="Modificar"><i class="fa-solid fa-pen"></i></button>
+                    <button onclick="eliminarUser('${u.u}')" class="btn" style="background:var(--danger); padding:8px 12px; display:inline-block;" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+            </div>`;
+        });
+        document.getElementById("listaU").innerHTML = html;
+    }
+
+    function editarUser(usuario, rolActual) {
+        document.getElementById("uN").value = usuario;
+        document.getElementById("uR").value = rolActual;
+        document.getElementById("uN").disabled = true; 
+        document.getElementById("uP").placeholder = "Nueva contraseña (opcional)";
+        document.getElementById("userEditHint").style.display = "block";
+    }
+
+    function resetFormUser() {
+        document.getElementById("uN").value = "";
+        document.getElementById("uN").disabled = false;
+        document.getElementById("uP").value = "";
+        document.getElementById("uP").placeholder = "Contraseña";
+        document.getElementById("uR").value = "Agente";
+        document.getElementById("userEditHint").style.display = "none";
+    }
+
+    async function guardarUser() {
+        const usuario = document.getElementById("uN").value.trim();
+        const claveInput = document.getElementById("uP").value.trim();
+        const rol = document.getElementById("uR").value;
+
+        if(!usuario) return alert("El nombre de usuario es obligatorio");
+
+        const userExistente = USUARIOS.find(u => u.u.toLowerCase() === usuario.toLowerCase());
+        const claveFinal = claveInput || (userExistente ? userExistente.p : "");
+        
+        if(!claveFinal && !userExistente) return alert("Falta la contraseña para el nuevo usuario");
+
+        showToast("Guardando usuario...");
+        
+        fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'addUser', usuario: usuario, clave: claveFinal, rol: rol }) });
+
+        if (userExistente) {
+            userExistente.p = claveFinal;
+            userExistente.r = rol;
+        } else {
+            USUARIOS.push({u: usuario, p: claveFinal, r: rol});
+        }
+
+        resetFormUser();
+        renderUsers();
+        showToast("Usuario guardado/modificado");
+    }
+
+    function eliminarUser(u) {
+        if(!confirm(`¿Eliminar al usuario ${u}?`)) return;
+        fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'delete', usuarioNombre: u }) });
+        USUARIOS = USUARIOS.filter(x => x.u !== u);
+        renderUsers();
+        showToast("Usuario eliminado");
+    }
 
     window.onload = cargarDatos;
-    setInterval(() => { if(ROL) cargarDatos(true); }, 15000);
+
+    // Sincronización en segundo plano cada 10 segundos
+    setInterval(() => {
+        if (ROL) cargarDatos(true); 
+    }, 10000);
+
 </script>
 </body>
 </html>
