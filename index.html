@@ -8,83 +8,81 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root { --p: #003399; --s: #28a745; --d: #dc3545; --w: #ffc107; --g: #95a5a6; --bg: #f4f7f9; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; }
         .hidden { display: none !important; }
         
-        /* Header */
         header { background: white; border-bottom: 5px solid var(--p); padding: 10px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .logo { font-weight: 900; color: var(--p); font-size: 26px; letter-spacing: -1px; }
+        .logo { font-weight: 900; color: var(--p); font-size: 26px; letter-spacing: -1px; text-transform: uppercase; }
 
         .container { max-width: 1400px; margin: 20px auto; padding: 0 20px; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); position: relative; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 
-        /* Tabla */
+        /* Online Status Badge */
+        .online-badge { background: #eef2ff; color: var(--p); padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; border: 1px solid #cdd9f7; position: relative; cursor: pointer; }
+        .online-list { display: none; position: absolute; top: 110%; right: 0; background: white; border: 1px solid #ddd; width: 180px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 100; border-radius: 6px; padding: 10px; }
+        .online-badge:hover .online-list { display: block; }
+
         table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
         th { background: #f8f9fa; padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6; color: #555; }
         td { padding: 10px; border-bottom: 1px solid #eee; }
         
-        /* Botones */
         .btn { padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; font-size: 13px; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .btn-p { background: var(--p); color: white; }
         .btn-s { background: var(--s); color: white; }
         .btn-d { background: var(--d); color: white; }
         .btn-export { background: #1d6f42; color: white; }
 
-        /* Colores Cobertura */
-        .badge { padding: 5px 8px; border-radius: 4px; color: white; font-size: 11px; font-weight: bold; text-transform: uppercase; border: none; }
+        /* Colores Solicitados */
+        .badge { padding: 5px 8px; border-radius: 4px; color: white; font-size: 11px; font-weight: bold; text-transform: uppercase; border: none; width: 100%; }
         .bg-cob { background: var(--s); }      /* Verde */
         .bg-nocob { background: var(--d); }    /* Rojo */
         .bg-cons { background: var(--w); color: black; } /* Amarillo */
         .bg-null { background: var(--g); }     /* Gris */
         
-        /* Modales */
-        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; justify-content:center; align-items:center; z-index: 1000; }
-        .modal-box { background: white; padding: 25px; border-radius: 8px; width: 90%; max-width: 800px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-
         input, select { padding: 8px; border: 1px solid #ddd; border-radius: 4px; outline: none; }
-        input:focus { border-color: var(--p); }
-        .search-bar { flex-grow: 1; border: 2px solid #eee; font-size: 16px; padding: 12px; }
-
-        /* Spinner */
-        #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 3px; background: var(--p); z-index: 2000; animation: loading 2s infinite linear; }
-        @keyframes loading { 0% { left: -40%; width: 40%; } 100% { left: 100%; width: 40%; } }
+        .search-bar { flex-grow: 1; border: 2px solid #eee; font-size: 16px; padding: 10px; }
+        
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; justify-content:center; align-items:center; z-index: 1000; }
+        .modal-box { background: white; padding: 25px; border-radius: 8px; width: 90%; max-width: 800px; max-height: 80vh; overflow-y: auto; }
     </style>
 </head>
 <body>
 
-<div id="loader"></div>
-
 <header>
     <div style="display:flex; align-items:center; gap:20px;">
         <div class="logo">DISTELSA</div>
-        <div style="width:1.5px; height:30px; background:#ddd;"></div>
-        <h2 style="margin:0; font-size:16px; color:#666; letter-spacing: 1px;">COBERTURA 2026</h2>
+        <div style="width:1.5px; height:25px; background:#ddd;"></div>
+        <h2 style="margin:0; font-size:15px; color:#777; letter-spacing: 1px;">COBERTURA</h2>
     </div>
-    <div id="navRight" class="hidden" style="display:flex; align-items:center; gap:20px;">
+    
+    <div id="navRight" class="hidden" style="display:flex; align-items:center; gap:15px;">
+        <div class="online-badge" id="onlineWidget">
+            <i class="fa-solid fa-circle" style="color:var(--s); font-size:9px;"></i> 
+            <span id="onlineCount">0</span> En Línea
+            <div id="onlineNames" class="online-list"></div>
+        </div>
         <span id="userName" style="font-weight:bold; color:var(--p);"></span>
         <button onclick="logout()" class="btn" style="color:var(--d); border:1px solid var(--d); background:none;"><i class="fa-solid fa-power-off"></i></button>
     </div>
 </header>
 
-<div id="loginBox" class="container" style="max-width: 380px; margin-top: 15vh;">
-    <div class="card" style="text-align: center; border-top: 5px solid var(--p);">
-        <h3 style="color:var(--p); margin-bottom:20px;">Acceso al Sistema</h3>
+<div id="loginBox" class="container" style="max-width: 360px; margin-top: 15vh;">
+    <div class="card" style="text-align: center; border-top: 4px solid var(--p);">
+        <h3 style="color:var(--p)">Acceso al Portal</h3>
         <input type="text" id="user" placeholder="Usuario" style="width:90%; margin-bottom:10px;">
         <input type="password" id="pass" placeholder="Contraseña" style="width:90%; margin-bottom:20px;">
-        <button onclick="login()" id="btnLogin" class="btn btn-p" style="width:95%; justify-content:center; padding:12px;">INGRESAR</button>
+        <button onclick="login()" class="btn btn-p" style="width:95%; justify-content:center;">ENTRAR</button>
     </div>
 </div>
 
 <div id="app" class="container hidden">
     <div class="card">
-        <div style="display:flex; justify-content:space-between; gap:10px; margin-bottom:20px; flex-wrap: wrap;">
-            <input type="text" id="search" class="search-bar" placeholder="🔍 Buscar por municipio, lugar o zona..." onkeyup="pag=1; render()">
-            
-            <div style="display:flex; gap:10px;">
-                <button id="btnExcel" onclick="exportarExcel()" class="btn btn-export hidden" title="Exportar Excel"><i class="fa-solid fa-file-excel"></i></button>
-                <button id="btnHist" onclick="toggleModal('modalHist', true)" class="btn btn-p hidden" title="Ver Historial"><i class="fa-solid fa-clock-rotate-left"></i></button>
-                <button id="btnUsers" onclick="toggleModal('modalUsers', true)" class="btn btn-s hidden" title="Gestión Usuarios"><i class="fa-solid fa-users-cog"></i></button>
+        <div style="display:flex; justify-content:space-between; gap:10px; margin-bottom:20px;">
+            <input type="text" id="search" class="search-bar" placeholder="🔍 Buscar municipio o lugar..." onkeyup="pag=1; render()">
+            <div style="display:flex; gap:8px;">
+                <button id="btnExcel" onclick="exportarExcel()" class="btn btn-export hidden" title="Exportar"><i class="fa-solid fa-file-excel"></i></button>
+                <button id="btnHist" onclick="toggleModal('modalHist', true)" class="btn btn-p hidden" title="Auditoría"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                <button id="btnUsers" onclick="toggleModal('modalUsers', true)" class="btn btn-s hidden" title="Usuarios"><i class="fa-solid fa-user-gear"></i></button>
             </div>
         </div>
 
@@ -106,7 +104,7 @@
 
         <div style="text-align:center; margin-top:20px; display:flex; justify-content:center; align-items:center; gap:15px;">
             <button onclick="changePag(-1)" id="btnPrev" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button>
-            <span id="pagInfo" style="font-weight:bold; color:#666; min-width: 120px;">Página 1</span>
+            <span id="pagInfo" style="font-weight:bold; color:#666;">Página 1</span>
             <button onclick="changePag(1)" id="btnNext" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
     </div>
@@ -119,14 +117,10 @@
             <button onclick="toggleModal('modalUsers', false)" class="btn btn-d">X</button>
         </div>
         <div style="background:#f8f9fa; padding:15px; border-radius:5px; margin-bottom:15px; display:flex; gap:5px;">
-            <input id="unN" placeholder="Usuario" style="width:30%;">
-            <input id="unP" placeholder="Contraseña" style="width:30%;">
-            <select id="unR" style="width:30%;">
-                <option value="agente">Agente (Solo ver)</option>
-                <option value="lider">Líder (Editar/Excel)</option>
-                <option value="admin">Administrador (Todo)</option>
-            </select>
-            <button onclick="manageUser('add')" class="btn btn-s">AGREGAR</button>
+            <input id="unN" placeholder="Nombre" style="width:30%;">
+            <input id="unP" placeholder="Clave" style="width:30%;">
+            <select id="unR" style="width:30%;"><option value="agente">Agente</option><option value="lider">Líder</option><option value="admin">Admin</option></select>
+            <button onclick="manageUser('add')" class="btn btn-s">Añadir</button>
         </div>
         <div id="listUsers"></div>
     </div>
@@ -135,102 +129,85 @@
 <div id="modalHist" class="modal-overlay hidden">
     <div class="modal-box">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h3 style="margin:0; color:var(--p);">Auditoría de Cambios (Últimos 100)</h3>
+            <h3 style="margin:0; color:var(--p);">Historial de Cambios</h3>
             <button onclick="toggleModal('modalHist', false)" class="btn btn-d">X</button>
         </div>
-        <table>
-            <thead><tr><th>Fecha/Hora</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead>
-            <tbody id="histBody" style="font-size:12px;"></tbody>
-        </table>
+        <div id="histContent" style="font-size:12px;"></div>
     </div>
 </div>
 
 <script>
-    // --- CONFIGURACIÓN ---
-    const API_URL = "https://script.google.com/macros/s/AKfycbwHlpPu0Pn_NPCKIXPwH0GyElWUvoeajwpIcMIB9qwPsiV8jeE9mSmrEbMevEthngSv4A/exec"; 
-    let DATA = { cob: [], logs: [], users: [], tokens: {} };
+    const API_URL = "https://script.google.com/macros/s/AKfycbxQwzjO5hwj0ObxkJIK8jTWuOANGLO90sApgtIzWIm88pZheecy9EuO9lwNkPKXkvscww/exec"; 
+    let DATA = { cob: [], logs: [], users: [], tokens: {}, online: [] };
     let SES = { u: "", r: "", tk: "" };
     let pag = 1;
 
-    // --- CARGA INICIAL ---
     async function fetchData() {
-        showLoading(true);
         try {
             const res = await fetch(API_URL);
             const json = await res.json();
             
-            // Validación Sesión Única
-            if (SES.u && json.tokens[SES.u] !== SES.tk) {
-                alert("SESIÓN CERRADA: Se ha detectado un inicio de sesión en otro navegador.");
-                logout();
-                return;
+            if (SES.u && json.tokens[SES.u.toLowerCase()] !== SES.tk) {
+                alert("Sesión cerrada: Acceso desde otro dispositivo.");
+                logout(); return;
             }
 
             DATA.cob = json.cobertura.slice(1).map((r,i) => ({f:i+2, m:r[0], n:r[1], c:r[2]||"G", z:r[3], ref:r[4], val:r[5]||"Sin Datos"}));
             DATA.logs = json.historial;
             DATA.users = json.usuariosList;
+            DATA.online = json.onlineList;
+
+            // Actualizar Widget Online
+            document.getElementById("onlineCount").innerText = DATA.online.length;
+            if(SES.r === 'admin') {
+                document.getElementById("onlineNames").innerHTML = "<b>Activos:</b><hr>" + DATA.online.map(u => `<div>• ${u}</div>`).join('');
+            } else {
+                document.getElementById("onlineNames").innerHTML = "<i>Solo visible para Admin</i>";
+            }
+
             if(SES.u) render();
-        } catch (e) { console.error("Error cargando datos"); }
-        showLoading(false);
+        } catch(e) { console.warn("Error de red"); }
     }
 
-    // --- AUTENTICACIÓN ---
     async function login() {
         const u = document.getElementById("user").value, p = document.getElementById("pass").value;
-        if(!u || !p) return alert("Ingrese usuario y clave");
-        
-        showLoading(true);
-        const btn = document.getElementById("btnLogin");
-        btn.disabled = true;
-
-        try {
-            const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({action:'login', u, p}) });
-            const rj = await res.json();
-            if(rj.status === 'ok') {
-                SES = { u, r: rj.rol, tk: rj.token };
-                localStorage.setItem("distelsa_ses_2026", JSON.stringify(SES));
-                start();
-            } else alert("Credenciales incorrectas.");
-        } catch (e) { alert("Error de conexión con el servidor."); }
-        
-        btn.disabled = false;
-        showLoading(false);
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({action:'login', u, p}) });
+        const rj = await res.json();
+        if(rj.status === 'ok') {
+            SES = { u, r: rj.rol, tk: rj.token };
+            localStorage.setItem("distelsa_v2", JSON.stringify(SES));
+            start();
+        } else alert("Datos incorrectos");
     }
 
     function start() {
-        const storage = localStorage.getItem("distelsa_ses_2026");
+        const storage = localStorage.getItem("distelsa_v2");
         if(storage) {
             SES = JSON.parse(storage);
             document.getElementById("loginBox").classList.add("hidden");
             document.getElementById("app").classList.remove("hidden");
             document.getElementById("navRight").classList.remove("hidden");
-            document.getElementById("userName").innerText = `Hola, ${SES.u.toUpperCase()}`;
+            document.getElementById("userName").innerText = SES.u.toUpperCase();
             
-            const isAdmin = SES.r === 'admin';
-            const isLider = SES.r === 'lider';
-
-            if(isAdmin || isLider) {
+            if(SES.r === 'admin' || SES.r === 'lider') {
                 document.querySelectorAll(".adm-col").forEach(e => e.classList.remove("hidden"));
                 document.getElementById("btnExcel").classList.remove("hidden");
             }
-            if(isAdmin) {
+            if(SES.r === 'admin') {
                 document.getElementById("btnHist").classList.remove("hidden");
                 document.getElementById("btnUsers").classList.remove("hidden");
             }
             fetchData();
-            // Ciclo de actualización y latido
             setInterval(() => {
-                if(SES.u) fetch(API_URL, { method:'POST', body: JSON.stringify({action:'heartbeat', u: SES.u}) });
+                fetch(API_URL, { method:'POST', body: JSON.stringify({action:'heartbeat', u: SES.u}) });
                 fetchData();
-            }, 45000);
+            }, 30000);
         }
     }
 
-    // --- RENDERIZADO ---
     function render() {
         const q = document.getElementById("search").value.toLowerCase();
         const filtered = DATA.cob.filter(r => `${r.m} ${r.n} ${r.z} ${r.ref}`.toLowerCase().includes(q));
-        
         const totalPags = Math.ceil(filtered.length/10) || 1;
         const slice = filtered.slice((pag-1)*10, pag*10);
         const tbody = document.getElementById("tbody");
@@ -242,12 +219,12 @@
             const cls = r.val=='Cobertura'?'bg-cob':r.val=='Sin Cobertura'?'bg-nocob':r.val=='Consultar'?'bg-cons':'bg-null';
             tbody.innerHTML += `
                 <tr>
-                    <td>${canEdit ? `<input id="m-${r.f}" value="${r.m}" style="width:120px">` : r.m}</td>
-                    <td>${canEdit ? `<input id="n-${r.f}" value="${r.n}" style="font-weight:bold; width:180px">` : `<b>${r.n}</b>`}</td>
-                    <td>${canEdit ? `<input id="z-${r.f}" value="${r.z}" style="width:40px; text-align:center">` : r.z}</td>
-                    <td>${canEdit ? `<input id="r-${r.f}" value="${r.ref}" style="width:180px">` : r.ref}</td>
+                    <td>${canEdit ? `<input id="m-${r.f}" value="${r.m}">` : r.m}</td>
+                    <td>${canEdit ? `<input id="n-${r.f}" value="${r.n}" style="font-weight:bold">` : `<b>${r.n}</b>`}</td>
+                    <td>${canEdit ? `<input id="z-${r.f}" value="${r.z}" style="width:40px">` : r.z}</td>
+                    <td>${canEdit ? `<input id="r-${r.f}" value="${r.ref}">` : r.ref}</td>
                     <td>
-                        <select id="v-${r.f}" class="badge ${cls}" ${!canEdit?'disabled':''} onchange="updateBadgeColor(this)">
+                        <select id="v-${r.f}" class="badge ${cls}" ${!canEdit?'disabled':''} onchange="this.className='badge '+ (this.value=='Cobertura'?'bg-cob':this.value=='Sin Cobertura'?'bg-nocob':this.value=='Consultar'?'bg-cons':'bg-null')">
                             <option value="Sin Datos" ${r.val=='Sin Datos'?'selected':''}>Sin Datos</option>
                             <option value="Cobertura" ${r.val=='Cobertura'?'selected':''}>Cobertura</option>
                             <option value="Sin Cobertura" ${r.val=='Sin Cobertura'?'selected':''}>Sin Cobertura</option>
@@ -255,88 +232,55 @@
                         </select>
                     </td>
                     <td class="adm-col ${canEdit?'':'hidden'}">
-                        <button onclick="save(${r.f})" class="btn btn-s" title="Guardar"><i class="fa-solid fa-save"></i></button>
+                        <button onclick="save(${r.f})" class="btn btn-s"><i class="fa-solid fa-save"></i></button>
                     </td>
                 </tr>`;
         });
-        
         document.getElementById("pagInfo").innerText = `Página ${pag} de ${totalPags}`;
         document.getElementById("btnPrev").disabled = pag === 1;
         document.getElementById("btnNext").disabled = pag >= totalPags;
     }
 
-    // --- ACCIONES ---
     async function save(f) {
-        showLoading(true);
         const d = {
             action:'update', fila: f, userLog: SES.u,
-            m: document.getElementById(`m-${f}`).value,
-            n: document.getElementById(`n-${f}`).value,
-            z: document.getElementById(`z-${f}`).value,
-            ref: document.getElementById(`r-${f}`).value,
-            val: document.getElementById(`v-${f}`).value,
-            c: "General"
+            m: document.getElementById(`m-${f}`).value, n: document.getElementById(`n-${f}`).value,
+            z: document.getElementById(`z-${f}`).value, ref: document.getElementById(`r-${f}`).value,
+            val: document.getElementById(`v-${f}`).value
         };
-        try {
-            await fetch(API_URL, { method:'POST', mode:'no-cors', body: JSON.stringify(d) });
-            // Actualización local rápida para feedback
-            const item = DATA.cob.find(x => x.f === f);
-            if(item) Object.assign(item, d);
-            render();
-        } catch(e) { alert("Error al guardar."); }
-        showLoading(false);
+        await fetch(API_URL, { method:'POST', mode:'no-cors', body: JSON.stringify(d) });
+        alert("Actualizado"); fetchData();
+    }
+
+    async function manageUser(type, name) {
+        const u = name || document.getElementById("unN").value, p = document.getElementById("unP").value, r = document.getElementById("unR").value;
+        await fetch(API_URL, { method:'POST', body: JSON.stringify({action:'manageUser', type, u, p, r, userLog: SES.u}) });
+        fetchData(); toggleModal('modalUsers', false);
+    }
+
+    function toggleModal(id, show) {
+        document.getElementById(id).classList.toggle("hidden", !show);
+        if(id === 'modalUsers' && show) {
+            document.getElementById("listUsers").innerHTML = DATA.users.map(u => `
+                <div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #eee;">
+                    <span>${u[0]} (${u[2]})</span>
+                    <button onclick="manageUser('del','${u[0]}')" style="color:red; border:none; background:none; cursor:pointer;">Eliminar</button>
+                </div>`).join('');
+        }
+        if(id === 'modalHist' && show) {
+            document.getElementById("histContent").innerHTML = `<table><thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead><tbody>` + 
+                DATA.logs.map(l => `<tr><td>${new Date(l[0]).toLocaleString()}</td><td>${l[1]}</td><td>${l[2]}</td><td>${l[3]}</td></tr>`).join('') + `</tbody></table>`;
+        }
     }
 
     function exportarExcel() {
-        const wb = XLSX.utils.book_new();
-        const wsData = DATA.cob.map(r => ({ Municipio: r.m, Lugar: r.n, Zona: r.z, Referencia: r.ref, Estado: r.val }));
-        const ws = XLSX.utils.json_to_sheet(wsData);
-        XLSX.utils.book_append_sheet(wb, ws, "Cobertura");
+        const ws = XLSX.utils.json_to_sheet(DATA.cob.map(r => ({ Municipio: r.m, Lugar: r.n, Zona: r.z, Referencia: r.ref, Estado: r.val })));
+        const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Cobertura");
         XLSX.writeFile(wb, "Cobertura_Distelsa_2026.xlsx");
     }
 
-    // --- GESTIÓN ADMIN ---
-    async function manageUser(type, name) {
-        const u = name || document.getElementById("unN").value, p = document.getElementById("unP").value, r = document.getElementById("unR").value;
-        if(!u && type==='add') return;
-        showLoading(true);
-        await fetch(API_URL, { method:'POST', body: JSON.stringify({action:'manageUser', type, u, p, r, userLog: SES.u}) });
-        fetchData();
-        if(type==='add') { document.getElementById("unN").value=""; document.getElementById("unP").value=""; }
-        else toggleModal('modalUsers', false);
-    }
-
-    // --- UI UTILS ---
-    function toggleModal(id, show) {
-        document.getElementById(id).classList.toggle("hidden", !show);
-        if(show && id === 'modalUsers') {
-            document.getElementById("listUsers").innerHTML = DATA.users.map(u => `
-                <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;">
-                    <span><b>${u[0]}</b> - Rol: ${u[2]}</span>
-                    <button onclick="manageUser('del','${u[0]}')" class="btn btn-d" style="padding:2px 8px;">Eliminar</button>
-                </div>`).join('');
-        }
-        if(show && id === 'modalHist') {
-            document.getElementById("histBody").innerHTML = DATA.logs.map(l => `
-                <tr>
-                    <td>${new Date(l[0]).toLocaleString()}</td>
-                    <td><b>${l[1]}</b></td>
-                    <td><span class="badge bg-null">${l[2]}</span></td>
-                    <td>${l[3]}</td>
-                </tr>`).join('');
-        }
-    }
-
-    function updateBadgeColor(sel) {
-        const v = sel.value;
-        sel.className = "badge " + (v=='Cobertura'?'bg-cob':v=='Sin Cobertura'?'bg-nocob':v=='Consultar'?'bg-cons':'bg-null');
-    }
-
-    function showLoading(s) { document.getElementById("loader").style.display = s ? "block" : "none"; }
-    function changePag(v) { pag += v; render(); }
+    function changePag(v) { pag = Math.max(1, pag + v); render(); }
     function logout() { localStorage.clear(); location.reload(); }
-    
-    // Iniciar
     start();
 </script>
 </body>
