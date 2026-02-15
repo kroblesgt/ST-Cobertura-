@@ -1,354 +1,463 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DISTELSA PRO V3.1</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <style>
-        :root { --p: #003399; --s: #27ae60; --d: #c0392b; --w: #f39c12; --g: #7f8c8d; --bg: #f8f9fa; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; color: #333; }
-        .hidden { display: none !important; }
-        
-        /* HEADER PREMIUM */
-        header { background: #fff; border-bottom: 4px solid var(--p); padding: 10px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); sticky; top:0; z-index:100; }
-        .logo { font-weight: 800; font-size: 24px; color: var(--p); letter-spacing: -1px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Distelsa Coverage PRO</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root { --blue: #003399; --green: #27ae60; --red: #c0392b; --yellow: #f1c40f; --gray: #ecf0f1; --dark: #2c3e50; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; margin: 0; color: #333; }
+  .hidden { display: none !important; }
+  
+  /* HEADER */
+  header { background: white; border-bottom: 4px solid var(--blue); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+  .logo { font-size: 22px; font-weight: 900; color: var(--blue); letter-spacing: -1px; }
 
-        .container { max-width: 1450px; margin: 25px auto; padding: 0 20px; }
-        .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+  /* LOGIN */
+  .login-wrap { display: flex; height: 100vh; justify-content: center; align-items: center; background: #e9ecef; }
+  .login-card { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 320px; text-align: center; }
+  .inp { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+  
+  /* BOTONES */
+  .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-p { background: var(--blue); }
+  .btn-s { background: var(--green); }
+  .btn-d { background: var(--red); }
+  .btn:disabled { background: #95a5a6; cursor: not-allowed; }
 
-        /* TABLA Y ESTADOS */
-        .table-container { overflow-x: auto; margin-top: 20px; border-radius: 8px; border: 1px solid #eee; }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th { background: #f1f4f9; padding: 15px; text-align: left; color: #555; text-transform: uppercase; font-size: 12px; }
-        td { padding: 12px; border-bottom: 1px solid #f2f2f2; }
-        
-        .badge { padding: 6px 12px; border-radius: 20px; color: white; font-weight: 700; font-size: 11px; text-transform: uppercase; border: none; width: 100%; text-align: center; display: block; }
-        .bg-cob { background: var(--s) !important; }
-        .bg-nocob { background: var(--d) !important; }
-        .bg-cons { background: var(--w) !important; color: #000; }
-        .bg-null { background: var(--g) !important; }
+  /* TABLA PRINCIPAL */
+  .container { max-width: 1400px; margin: 20px auto; padding: 0 20px; }
+  .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+  
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; table-layout: fixed; }
+  th { text-align: left; padding: 12px; background: #f8f9fa; border-bottom: 2px solid #ddd; color: #555; }
+  td { padding: 8px 12px; border-bottom: 1px solid #eee; vertical-align: middle; }
+  
+  /* Inputs de Edición en Tabla */
+  .edit-inp { width: 100%; border: 1px solid transparent; background: transparent; padding: 5px; font-family: inherit; }
+  .edit-inp:focus { border-color: var(--blue); background: white; }
 
-        /* BOTONES */
-        .btn { padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
-        .btn-p { background: var(--p); color: white; }
-        .btn-s { background: var(--s); color: white; }
-        .btn-d { background: var(--d); color: white; }
-        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  /* ESTADOS (BADGES) */
+  .badge { padding: 6px 10px; border-radius: 15px; font-weight: bold; font-size: 11px; text-transform: uppercase; color: white; display: inline-block; text-align: center; width: 100px; }
+  .bg-cob { background: var(--green); }
+  .bg-no { background: var(--red); }
+  .bg-con { background: var(--yellow); color: #333; }
+  .bg-null { background: #95a5a6; }
 
-        /* WIDGET ONLINE */
-        .online-box { background: #eef2ff; color: var(--p); padding: 8px 15px; border-radius: 25px; font-weight: bold; font-size: 13px; border: 1px solid #d0d9f0; position: relative; cursor: help; }
-        .online-dot { width: 8px; height: 8px; background: var(--s); border-radius: 50%; display: inline-block; margin-right: 5px; animation: pulse 2s infinite; }
-        .online-list { display: none; position: absolute; top: 110%; right: 0; background: white; border: 1px solid #ddd; width: 180px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 100; border-radius: 8px; padding: 12px; }
-        .online-box:hover .online-list { display: block; }
+  /* SELECTOR DE ESTADO (SOLO ADMIN/LIDER) */
+  .state-sel { border: 1px solid #ddd; padding: 5px; border-radius: 15px; width: 100%; font-weight: bold; }
 
-        /* MODALES */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 700px; max-height: 85vh; overflow-y: auto; position: relative; }
-        
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
-        input, select { padding: 12px; border: 1px solid #ddd; border-radius: 8px; width: 100%; box-sizing: border-box; }
-        
-        /* HISTORIAL COLORES */
-        .h-badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; color: white; }
-        .h-crear { background: var(--s); }
-        .h-editar { background: var(--p); }
-        .h-eliminar { background: var(--d); }
+  /* MODAL */
+  .modal-bg { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 999; }
+  .modal { background: white; padding: 25px; border-radius: 8px; width: 90%; max-width: 650px; max-height: 90vh; overflow-y: auto; }
+  
+  /* PAGINACION */
+  .pag-ctrl { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 15px; }
 
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-    </style>
+</style>
 </head>
 <body>
 
-<header>
-    <div style="display:flex; align-items:center; gap:20px;">
-        <span class="logo">DISTELSA</span>
-        <div style="width:2px; height:25px; background:#eee;"></div>
-        <span style="font-size:12px; color:#999; font-weight:bold; letter-spacing:1px;">COBERTURA PRO V3.1</span>
-    </div>
-    
-    <div id="navTools" class="hidden" style="display:flex; align-items:center; gap:20px;">
-        <div class="online-box">
-            <div class="online-dot"></div> <span id="onCount">0</span> Conectados
-            <div id="onList" class="online-list"></div>
-        </div>
-        <div style="text-align:right">
-            <div id="uDisplay" style="font-weight:bold; color:var(--p);">USUARIO</div>
-            <div id="rDisplay" style="font-size:10px; color:#777; text-transform:uppercase;">ROL</div>
-        </div>
-        <button onclick="logout()" class="btn btn-d" style="padding:8px;"><i class="fa-solid fa-power-off"></i></button>
-    </div>
-</header>
-
-<div id="loginBox" class="container" style="max-width: 400px; margin-top: 10vh;">
-    <div class="card" style="text-align: center;">
-        <h2 style="color:var(--p);">Iniciar Sesión</h2>
-        <p style="font-size:13px; color:#888;">Acceso restringido para personal autorizado</p>
-        <div style="margin-top:20px;">
-            <input type="text" id="user" placeholder="Usuario" style="margin-bottom:12px;">
-            <input type="password" id="pass" placeholder="Contraseña" style="margin-bottom:20px;">
-            <button onclick="login()" class="btn btn-p" style="width:100%; justify-content:center; padding:15px;">INGRESAR</button>
-        </div>
-    </div>
+<div id="vLogin" class="login-wrap">
+  <div class="login-card">
+    <h2 style="color:var(--blue)">DISTELSA PRO</h2>
+    <input id="uLog" class="inp" placeholder="Usuario">
+    <input id="pLog" type="password" class="inp" placeholder="Contraseña">
+    <button id="btnEntrar" onclick="doLogin()" class="btn btn-p" style="width:100%; margin-top:10px;">INGRESAR</button>
+  </div>
 </div>
 
-<div id="app" class="container hidden">
+<div id="vApp" class="hidden">
+  <header>
+    <div class="logo">DISTELSA</div>
+    <div style="display:flex; align-items:center; gap:15px;">
+      <div style="text-align:right;">
+        <div id="dispUser" style="font-weight:bold; font-size:14px;">User</div>
+        <div id="dispRol" style="font-size:11px; color:#777; text-transform:uppercase;">Rol</div>
+      </div>
+      <button onclick="logout()" class="btn btn-d" style="padding:5px 10px;"><i class="fa-solid fa-power-off"></i></button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
+      <input id="search" class="inp" style="flex:1; margin:0;" placeholder="Buscar..." onkeyup="renderTable(true)">
+      <button id="btnAdd" onclick="openModalAdd()" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i> Nuevo</button>
+      <button id="btnExp" onclick="exportExcel()" class="btn btn-p hidden" style="background:#217346"><i class="fa-solid fa-file-excel"></i> Exportar</button>
+      <button id="btnHis" onclick="openHist()" class="btn btn-p hidden"><i class="fa-solid fa-clock-rotate-left"></i> Historial</button>
+      <button id="btnUsr" onclick="openUsers()" class="btn btn-p hidden" style="background:#34495e"><i class="fa-solid fa-users-gear"></i></button>
+    </div>
+
     <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:15px; margin-bottom:20px;">
-            <div style="position:relative; flex-grow:1;">
-                <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:15px; top:15px; color:#aaa;"></i>
-                <input type="text" id="search" placeholder="Buscar por municipio, nombre o referencia..." style="padding-left:45px;" onkeyup="resetPag(); render()">
-            </div>
-            <div style="display:flex; gap:10px;">
-                <button id="btnAdd" onclick="toggleModal('modalAdd', true)" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i> NUEVO</button>
-                <button id="btnExcel" onclick="exportarExcel()" class="btn btn-p hidden" style="background:#1d6f42;"><i class="fa-solid fa-file-excel"></i> EXPORTAR</button>
-                <button id="btnHist" onclick="toggleModal('modalHist', true)" class="btn btn-p hidden"><i class="fa-solid fa-clock-rotate-left"></i> HISTORIAL</button>
-                <button id="btnUsers" onclick="toggleModal('modalUsers', true)" class="btn btn-p hidden" style="background:#444;"><i class="fa-solid fa-user-gear"></i></button>
-            </div>
-        </div>
-
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th width="15%">Municipio</th>
-                        <th width="20%">Nombre</th>
-                        <th width="15%">Categoría</th>
-                        <th width="5%">Zona</th>
-                        <th width="25%">Referencia</th>
-                        <th width="15%">Cobertura</th>
-                        <th class="adm-cell hidden" width="5%"></th>
-                    </tr>
-                </thead>
-                <tbody id="tbody"></tbody>
-            </table>
-        </div>
-
-        <div style="display:flex; justify-content:center; align-items:center; gap:20px; margin-top:25px;">
-            <button onclick="changePag(-1)" id="btnPrev" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button>
-            <span id="pagInfo" style="font-weight:bold; color:var(--p);">Página 1</span>
-            <button onclick="changePag(1)" id="btnNext" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button>
-        </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th width="15%">Municipio</th>
+              <th width="20%">Nombre</th>
+              <th width="15%">Categoría</th>
+              <th width="8%">Zona</th>
+              <th width="22%">Referencia</th>
+              <th width="15%">Cobertura</th>
+              <th width="5%" class="adm-col hidden"></th>
+            </tr>
+          </thead>
+          <tbody id="tbBody"></tbody>
+        </table>
+      </div>
+      <div class="pag-ctrl">
+        <button onclick="chPage(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button>
+        <span id="pgLbl">1</span>
+        <button onclick="chPage(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
     </div>
+  </div>
 </div>
 
-<div id="modalAdd" class="modal-overlay hidden">
-    <div class="modal-content">
-        <h3 style="color:var(--p); margin-top:0;">Nueva Ubicación de Cobertura</h3>
-        <div class="form-grid">
-            <div><label>Municipio</label><input id="nM"></div>
-            <div><label>Nombre</label><input id="nN"></div>
-            <div><label>Categoría</label><input id="nC" placeholder="Ej: Fibra, GPON, etc."></div>
-            <div><label>Zona</label><input id="nZ"></div>
-            <div style="grid-column: span 2;"><label>Referencia</label><input id="nR"></div>
-            <div style="grid-column: span 2;">
-                <label>Estado de Cobertura</label>
-                <select id="nCob">
-                    <option value="Cobertura">Cobertura</option>
-                    <option value="Sin Cobertura">Sin Cobertura</option>
-                    <option value="Consultar">Consultar</option>
-                    <option value="Sin Datos">Sin Datos</option>
-                </select>
-            </div>
-        </div>
-        <div style="margin-top:25px; display:flex; justify-content:flex-end; gap:10px;">
-            <button onclick="toggleModal('modalAdd', false)" class="btn btn-d">Cancelar</button>
-            <button onclick="addCoverage()" class="btn btn-s">Guardar Registro</button>
-        </div>
+<div id="mAdd" class="modal-bg hidden">
+  <div class="modal">
+    <h3 style="color:var(--blue)">Nueva Ubicación</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+      <input id="nM" class="inp" placeholder="Municipio">
+      <input id="nN" class="inp" placeholder="Nombre Lugar">
+      <input id="nC" class="inp" placeholder="Categoría">
+      <input id="nZ" class="inp" placeholder="Zona">
+      <input id="nR" class="inp" style="grid-column:span 2" placeholder="Referencia">
+      <select id="nCob" class="inp" style="grid-column:span 2">
+        <option value="Cobertura">Cobertura</option>
+        <option value="Sin Cobertura">Sin Cobertura</option>
+        <option value="Consultar">Consultar</option>
+      </select>
     </div>
+    <div style="margin-top:20px; text-align:right;">
+      <button onclick="closeModal('mAdd')" class="btn btn-d">Cancelar</button>
+      <button onclick="saveCob('new')" class="btn btn-s">Guardar</button>
+    </div>
+  </div>
 </div>
 
-<div id="modalHist" class="modal-overlay hidden">
-    <div class="modal-content" style="max-width:850px;">
-        <h3 style="color:var(--p);">Auditoría de Actividad</h3>
-        <div class="table-container" style="max-height:400px; overflow-y:auto;">
-            <table>
-                <thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead>
-                <tbody id="hBody"></tbody>
-            </table>
-        </div>
-        <button onclick="toggleModal('modalHist', false)" class="btn btn-p" style="margin-top:15px; width:100%; justify-content:center;">Cerrar</button>
+<div id="mUsr" class="modal-bg hidden">
+  <div class="modal">
+    <h3 style="color:var(--blue)">Administrar Usuarios</h3>
+    
+    <div style="background:#f1f1f1; padding:15px; border-radius:8px; margin-bottom:15px; display:flex; gap:5px; align-items:center;">
+      <input id="uName" class="inp" placeholder="Usuario" style="margin:0;">
+      <input id="uPass" class="inp" placeholder="Clave" style="margin:0;">
+      <select id="uRol" class="inp" style="margin:0; width:100px;">
+        <option value="agente">Agente</option>
+        <option value="lider">Lider</option>
+        <option value="admin">Admin</option>
+      </select>
+      <button id="btnUserAction" onclick="userAction()" class="btn btn-s"><i class="fa-solid fa-plus"></i></button>
+      <button onclick="resetUserForm()" class="btn btn-d" style="padding:10px;"><i class="fa-solid fa-xmark"></i></button>
     </div>
+
+    <input id="searchUsr" class="inp" placeholder="Buscar usuario..." onkeyup="renderUsers(true)">
+    <div style="max-height:300px; overflow-y:auto;">
+      <table style="margin-top:0;">
+        <thead><tr><th>Usuario</th><th>Rol</th><th>Acciones</th></tr></thead>
+        <tbody id="tbUsr"></tbody>
+      </table>
+    </div>
+    <div class="pag-ctrl">
+        <button onclick="chPageUsr(-1)" class="btn btn-p btn-sm"><i class="fa-solid fa-chevron-left"></i></button>
+        <span id="pgLblUsr">1</span>
+        <button onclick="chPageUsr(1)" class="btn btn-p btn-sm"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+
+    <div style="margin-top:15px; text-align:right;">
+      <button onclick="closeModal('mUsr')" class="btn btn-d">Cerrar</button>
+    </div>
+  </div>
 </div>
 
-<div id="modalUsers" class="modal-overlay hidden">
-    <div class="modal-content">
-        <h3 style="color:var(--p);">Administración de Usuarios</h3>
-        <div style="display:flex; gap:5px; margin-bottom:15px;">
-            <input id="uN" placeholder="Usuario">
-            <input id="uP" placeholder="Clave">
-            <select id="uR"><option value="agente">Agente</option><option value="lider">Líder</option><option value="admin">Admin</option></select>
-            <button onclick="manageUser('add')" class="btn btn-s"><i class="fa-solid fa-plus"></i></button>
-        </div>
-        <div id="uList" style="border-top:1px solid #eee;"></div>
-        <button onclick="toggleModal('modalUsers', false)" class="btn btn-d" style="margin-top:15px; width:100%; justify-content:center;">Cerrar</button>
+<div id="mHis" class="modal-bg hidden">
+  <div class="modal" style="max-width:800px;">
+    <h3>Historial Reciente</h3>
+    <div style="max-height:400px; overflow-y:auto;">
+      <table id="tbHis"></table>
     </div>
+    <button onclick="closeModal('mHis')" class="btn btn-d" style="margin-top:15px;">Cerrar</button>
+  </div>
 </div>
 
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwkQ4J8EzuhtKzCHHi-BjHAUCc-S2SenPJdscB-Fvw1FuR-cP-K_2rVdImqK2cuqXbi6g/exec"; 
-    let DATA = { cob: [], logs: [], users: [], online: [], tokens: {} };
-    let SES = { u: "", r: "", tk: "" };
-    let pag = 1;
+/** * CONFIGURACION:
+ * Pega abajo la URL de tu Web App
+ */
+const API = "https://script.google.com/macros/s/AKfycbyFLy1Q7Xo1_3w5dmr_ws9vszQvLY0dIsOpEpBiIFodWLN1dQGJVr_XZ2T9yJ1Jmj8GoQ/exec";
 
-    async function fetchData() {
-        try {
-            const res = await fetch(API_URL);
-            const json = await res.json();
-            if (SES.u && json.tokens[SES.u.toLowerCase()] !== SES.tk) { logout(); return; }
-            
-            // Mapeo 6 columnas: Municipio | Nombre | Categoria | Zona | Referencia | Cobertura
-            DATA.cob = json.cobertura.slice(1).map((r, i) => ({
-                f: i + 2, m: r[0], n: r[1], c: r[2], z: r[3], r: r[4], cob: r[5] || "Sin Datos"
-            }));
-            DATA.users = json.usuariosList;
-            DATA.logs = json.historial;
-            DATA.online = json.onlineList;
-            
-            updateWidgets();
-            if(SES.u) render();
-        } catch(e) { console.warn("Sincronizando..."); }
+let DATA = { cob: [], usr: [], his: [] };
+let SES = { u: null, r: null, t: null };
+let PG = 1, PG_USR = 1;
+let EDIT_USER_MODE = false;
+
+// INICIO
+window.onload = () => {
+  const saved = localStorage.getItem('dist_v5');
+  if(saved) {
+    SES = JSON.parse(saved);
+    initApp();
+  }
+}
+
+async function doLogin() {
+  const u = document.getElementById('uLog').value;
+  const p = document.getElementById('pLog').value;
+  const btn = document.getElementById('btnEntrar');
+  
+  if(!u || !p) return;
+
+  // UX: Evitar doble click
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Entrando...';
+
+  try {
+    const res = await fetch(API, {method:'POST', body:JSON.stringify({action:'login', u, p})});
+    const json = await res.json();
+    
+    if(json.status === 'ok') {
+      SES = { u: u, r: json.rol, t: json.token };
+      localStorage.setItem('dist_v5', JSON.stringify(SES));
+      initApp();
+    } else {
+      alert(json.message);
+      btn.disabled = false;
+      btn.innerHTML = 'INGRESAR';
+    }
+  } catch(e) {
+    alert("Error de conexión");
+    btn.disabled = false;
+    btn.innerHTML = 'INGRESAR';
+  }
+}
+
+function initApp() {
+  document.getElementById('vLogin').classList.add('hidden');
+  document.getElementById('vApp').classList.remove('hidden');
+  document.getElementById('dispUser').innerText = SES.u;
+  document.getElementById('dispRol').innerText = SES.r;
+
+  // Permisos UI
+  if(SES.r === 'admin' || SES.r === 'lider') {
+    document.getElementById('btnAdd').classList.remove('hidden');
+    document.getElementById('btnExp').classList.remove('hidden');
+  }
+  if(SES.r === 'admin') {
+    document.getElementById('btnHis').classList.remove('hidden');
+    document.getElementById('btnUsr').classList.remove('hidden');
+  }
+
+  loadData();
+  // Heartbeat
+  setInterval(() => {
+    fetch(API, {method:'POST', body:JSON.stringify({action:'heartbeat', u:SES.u})});
+    loadData();
+  }, 20000);
+}
+
+async function loadData() {
+  try {
+    const r = await fetch(API);
+    const j = await r.json();
+    if(j.status === 'success') {
+      // Indexamos para poder editar
+      DATA.cob = j.cobertura.map((x,i)=>({i, m:x[0], n:x[1], c:x[2], z:x[3], r:x[4], s:x[5]}));
+      DATA.usr = j.usuarios;
+      DATA.his = j.historial;
+      renderTable();
+    }
+  } catch(e) { console.log("Sync error"); }
+}
+
+// RENDER TABLA PRINCIPAL
+function renderTable(reset = false) {
+  if(reset) PG = 1;
+  const q = document.getElementById('search').value.toLowerCase();
+  const filt = DATA.cob.filter(x => `${x.m} ${x.n} ${x.z}`.toLowerCase().includes(q));
+  
+  const pages = Math.ceil(filt.length / 10) || 1;
+  if(PG > pages) PG = pages;
+  document.getElementById('pgLbl').innerText = `${PG} / ${pages}`;
+
+  const slice = filt.slice((PG-1)*10, PG*10);
+  const tb = document.getElementById('tbBody');
+  tb.innerHTML = '';
+
+  const canEdit = (SES.r === 'admin' || SES.r === 'lider');
+  
+  // Mostramos cabecera accion si tiene permiso
+  document.querySelectorAll('.adm-col').forEach(e => e.classList.toggle('hidden', !canEdit));
+
+  slice.forEach(x => {
+    // Determinar color
+    let cls = 'bg-null';
+    if(x.s=='Cobertura') cls='bg-cob';
+    else if(x.s=='Sin Cobertura') cls='bg-no';
+    else if(x.s=='Consultar') cls='bg-con';
+
+    // HTML del Estado (Badge vs Select)
+    let statusHTML = '';
+    if(canEdit) {
+      statusHTML = `
+        <select id="sel_${x.i}" class="state-sel" style="background:${cls==='bg-cob'?'#27ae60':cls==='bg-no'?'#c0392b':cls==='bg-con'?'#f1c40f':'#ecf0f1'}; color:${cls==='bg-con'?'#333':'white'}" onchange="this.style.background = this.value=='Cobertura'?'#27ae60':this.value=='Sin Cobertura'?'#c0392b':this.value=='Consultar'?'#f1c40f':'#ecf0f1'">
+          <option value="Sin Datos">Sin Datos</option>
+          <option value="Cobertura" ${x.s=='Cobertura'?'selected':''}>Cobertura</option>
+          <option value="Sin Cobertura" ${x.s=='Sin Cobertura'?'selected':''}>Sin Cobertura</option>
+          <option value="Consultar" ${x.s=='Consultar'?'selected':''}>Consultar</option>
+        </select>`;
+    } else {
+      // AGENTE: Solo texto con color full (NO OPACO)
+      statusHTML = `<span class="badge ${cls}" style="width:100%">${x.s}</span>`;
     }
 
-    function updateWidgets() {
-        document.getElementById("onCount").innerText = DATA.online.length;
-        document.getElementById("onList").innerHTML = (SES.r==='admin') ? 
-            "<b>Usuarios Activos:</b><hr>" + DATA.online.map(u => `<div style='padding:3px 0'>• ${u}</div>`).join('') : "<i>Privilegio de Admin</i>";
+    // Campos
+    const htmlM = canEdit ? `<input id="m_${x.i}" value="${x.m}" class="edit-inp">` : x.m;
+    const htmlN = canEdit ? `<input id="n_${x.i}" value="${x.n}" class="edit-inp" style="font-weight:bold">` : `<b>${x.n}</b>`;
+    const htmlC = canEdit ? `<input id="c_${x.i}" value="${x.c}" class="edit-inp">` : x.c;
+    const htmlZ = canEdit ? `<input id="z_${x.i}" value="${x.z}" class="edit-inp">` : x.z;
+    const htmlR = canEdit ? `<input id="r_${x.i}" value="${x.r}" class="edit-inp">` : x.r;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${htmlM}</td><td>${htmlN}</td><td>${htmlC}</td><td>${htmlZ}</td><td>${htmlR}</td><td>${statusHTML}</td>`;
+    
+    if(canEdit) {
+      const tdAct = document.createElement('td');
+      tdAct.innerHTML = `<button onclick="saveCob('upd', ${x.i})" class="btn btn-p" style="padding:5px"><i class="fa-solid fa-save"></i></button>`;
+      tr.appendChild(tdAct);
     }
+    tb.appendChild(tr);
+  });
+}
 
-    async function login() {
-        const u = document.getElementById("user").value, p = document.getElementById("pass").value;
-        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({action:'login', u, p}) });
-        const rj = await res.json();
-        if(rj.status === 'ok') {
-            SES = { u, r: rj.rol, tk: rj.token };
-            localStorage.setItem("dist_v31", JSON.stringify(SES));
-            start();
-        } else alert("Credenciales Incorrectas");
-    }
+// LOGICA USUARIOS (Paginacion + Busqueda + Edit)
+function renderUsers(reset = false) {
+  if(reset) PG_USR = 1;
+  const q = document.getElementById('searchUsr').value.toLowerCase();
+  const filt = DATA.usr.filter(u => u[0].toLowerCase().includes(q)); // u[0] es username
+  
+  const pages = Math.ceil(filt.length / 10) || 1;
+  if(PG_USR > pages) PG_USR = pages;
+  document.getElementById('pgLblUsr').innerText = `${PG_USR} / ${pages}`;
 
-    function start() {
-        const storage = localStorage.getItem("dist_v31");
-        if(storage) {
-            SES = JSON.parse(storage);
-            document.getElementById("loginBox").classList.add("hidden");
-            document.getElementById("app").classList.remove("hidden");
-            document.getElementById("navTools").classList.remove("hidden");
-            document.getElementById("uDisplay").innerText = SES.u.toUpperCase();
-            document.getElementById("rDisplay").innerText = SES.r;
-            
-            const isAL = (SES.r==='admin' || SES.r==='lider');
-            if(isAL) {
-                document.querySelectorAll(".adm-cell").forEach(e => e.classList.remove("hidden"));
-                document.getElementById("btnExcel").classList.remove("hidden");
-                document.getElementById("btnAdd").classList.remove("hidden");
-            }
-            if(SES.r==='admin') {
-                document.getElementById("btnHist").classList.remove("hidden");
-                document.getElementById("btnUsers").classList.remove("hidden");
-            }
-            fetchData();
-            setInterval(() => {
-                fetch(API_URL, { method:'POST', body: JSON.stringify({action:'heartbeat', u: SES.u}) });
-                fetchData();
-            }, 30000);
-        }
-    }
+  const slice = filt.slice((PG_USR-1)*10, PG_USR*10);
+  const tb = document.getElementById('tbUsr');
+  tb.innerHTML = '';
 
-    function render() {
-        const q = document.getElementById("search").value.toLowerCase();
-        const filtered = DATA.cob.filter(r => `${r.m} ${r.n} ${r.c} ${r.r}`.toLowerCase().includes(q));
-        const totalPags = Math.ceil(filtered.length / 10) || 1;
-        const slice = filtered.slice((pag-1)*10, pag*10);
-        const tbody = document.getElementById("tbody");
-        tbody.innerHTML = "";
-        
-        const canEdit = (SES.r==='admin' || SES.r==='lider');
+  slice.forEach(u => {
+    // u = [user, pass, rol, date, token]
+    tb.innerHTML += `
+      <tr>
+        <td><b>${u[0]}</b></td>
+        <td><span style="font-size:10px; background:#eee; padding:2px 5px; border-radius:4px">${u[2]}</span></td>
+        <td>
+          <button onclick="preEditUser('${u[0]}', '${u[1]}', '${u[2]}')" class="btn btn-p" style="padding:4px 8px"><i class="fa-solid fa-pencil"></i></button>
+          <button onclick="sendUser('del', '${u[0]}')" class="btn btn-d" style="padding:4px 8px"><i class="fa-solid fa-trash"></i></button>
+        </td>
+      </tr>`;
+  });
+}
 
-        slice.forEach(r => {
-            const cls = r.cob=='Cobertura'?'bg-cob':r.cob=='Sin Cobertura'?'bg-nocob':r.cob=='Consultar'?'bg-cons':'bg-null';
-            tbody.innerHTML += `
-                <tr>
-                    <td>${canEdit ? `<input id="m-${r.f}" value="${r.m}">` : r.m}</td>
-                    <td>${canEdit ? `<input id="n-${r.f}" value="${r.n}" style="font-weight:bold">` : `<b>${r.n}</b>`}</td>
-                    <td>${canEdit ? `<input id="c-${r.f}" value="${r.c}">` : r.c}</td>
-                    <td>${canEdit ? `<input id="z-${r.f}" value="${r.z}" style="text-align:center">` : r.z}</td>
-                    <td>${canEdit ? `<input id="r-${r.f}" value="${r.r}">` : r.r}</td>
-                    <td>
-                        <select id="v-${r.f}" class="badge ${cls}" ${!canEdit?'disabled':''} onchange="this.className='badge '+ (this.value=='Cobertura'?'bg-cob':this.value=='Sin Cobertura'?'bg-nocob':this.value=='Consultar'?'bg-cons':'bg-null')">
-                            <option value="Sin Datos" ${r.cob=='Sin Datos'?'selected':''}>Sin Datos</option>
-                            <option value="Cobertura" ${r.cob=='Cobertura'?'selected':''}>Cobertura</option>
-                            <option value="Sin Cobertura" ${r.cob=='Sin Cobertura'?'selected':''}>Sin Cobertura</option>
-                            <option value="Consultar" ${r.cob=='Consultar'?'selected':''}>Consultar</option>
-                        </select>
-                    </td>
-                    <td class="adm-cell ${canEdit?'':'hidden'}">
-                        <button onclick="save(${r.f})" class="btn btn-p" style="padding:5px 10px"><i class="fa-solid fa-save"></i></button>
-                    </td>
-                </tr>`;
-        });
-        document.getElementById("pagInfo").innerText = `Página ${pag} de ${totalPags}`;
-    }
+function preEditUser(name, pass, rol) {
+  EDIT_USER_MODE = true;
+  document.getElementById('uName').value = name;
+  document.getElementById('uName').disabled = true; // No cambiar nombre al editar
+  document.getElementById('uPass').value = pass;
+  document.getElementById('uRol').value = rol;
+  
+  const btn = document.getElementById('btnUserAction');
+  btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+  btn.className = 'btn btn-p'; // Azul para update
+}
 
-    async function save(f) {
-        const d = {
-            action:'update', fila: f, userLog: SES.u,
-            m: document.getElementById(`m-${f}`).value, n: document.getElementById(`n-${f}`).value,
-            c: document.getElementById(`c-${f}`).value, z: document.getElementById(`z-${f}`).value, 
-            r: document.getElementById(`r-${f}`).value, cob: document.getElementById(`v-${f}`).value
-        };
-        await fetch(API_URL, { method:'POST', mode:'no-cors', body: JSON.stringify(d) });
-        alert("¡Actualizado!"); fetchData();
-    }
+function resetUserForm() {
+  EDIT_USER_MODE = false;
+  document.getElementById('uName').value = '';
+  document.getElementById('uName').disabled = false;
+  document.getElementById('uPass').value = '';
+  document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-plus"></i>';
+  document.getElementById('btnUserAction').className = 'btn btn-s'; // Verde para nuevo
+}
 
-    async function addCoverage() {
-        const d = {
-            action:'addCoverage', userLog: SES.u,
-            m: document.getElementById("nM").value, n: document.getElementById("nN").value,
-            c: document.getElementById("nC").value, z: document.getElementById("nZ").value,
-            r: document.getElementById("nR").value, cob: document.getElementById("nCob").value
-        };
-        if(!d.m || !d.n) return alert("Municipio y Nombre son obligatorios");
-        await fetch(API_URL, { method:'POST', mode:'no-cors', body: JSON.stringify(d) });
-        toggleModal('modalAdd', false);
-        alert("Agregado exitosamente"); fetchData();
-    }
+async function userAction() {
+  const u = document.getElementById('uName').value;
+  const p = document.getElementById('uPass').value;
+  const r = document.getElementById('uRol').value;
+  if(!u || !p) return alert("Datos incompletos");
 
-    function toggleModal(id, show) {
-        document.getElementById(id).classList.toggle("hidden", !show);
-        if(id === 'modalUsers' && show) {
-            document.getElementById("uList").innerHTML = DATA.users.map(u => `
-                <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;">
-                    <span><b>${u[0]}</b> (${u[2]})</span>
-                    <button onclick="manageUser('del','${u[0]}')" class="btn btn-d" style="padding:4px 8px; font-size:10px;">Eliminar</button>
-                </div>`).join('');
-        }
-        if(id === 'modalHist' && show) {
-            document.getElementById("hBody").innerHTML = DATA.logs.map(l => {
-                let badge = l[2]==='CREAR'?'h-crear':l[2]==='EDITAR'?'h-editar':'h-eliminar';
-                return `<tr><td>${new Date(l[0]).toLocaleString()}</td><td><b>${l[1]}</b></td><td><span class="h-badge ${badge}">${l[2]}</span></td><td>${l[3]}</td></tr>`;
-            }).join('');
-        }
-    }
+  const type = EDIT_USER_MODE ? 'edit' : 'add';
+  await sendUser(type, u, p, r);
+  resetUserForm();
+}
 
-    async function manageUser(type, name) {
-        const u = name || document.getElementById("uN").value, p = document.getElementById("uP").value, r = document.getElementById("uR").value;
-        await fetch(API_URL, { method:'POST', body: JSON.stringify({action:'manageUser', type, u, p, r, userLog: SES.u}) });
-        fetchData(); toggleModal('modalUsers', false);
-    }
+async function sendUser(type, u, p, r) {
+  await fetch(API, {method:'POST', body:JSON.stringify({
+    action:'manageUser', type, u, p, r, userLog: SES.u
+  })});
+  loadData(); // Recargar para ver cambios
+  setTimeout(() => { 
+    renderUsers(); 
+    if(type==='del') alert("Eliminado");
+  }, 1000);
+}
 
-    function exportarExcel() {
-        const ws = XLSX.utils.json_to_sheet(DATA.cob.map(r => ({ Municipio: r.m, Nombre: r.n, Categoria: r.c, Zona: r.z, Referencia: r.r, Cobertura: r.cob })));
-        const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Cobertura");
-        XLSX.writeFile(wb, "Reporte_Distelsa_2026.xlsx");
-    }
+// LOGICA COBERTURA
+async function saveCob(type, idx) {
+  const data = { action: 'saveCob', type, userLog: SES.u };
+  
+  if(type === 'new') {
+    data.m = document.getElementById('nM').value;
+    data.n = document.getElementById('nN').value;
+    data.c = document.getElementById('nC').value;
+    data.z = document.getElementById('nZ').value;
+    data.r = document.getElementById('nR').value;
+    data.cob = document.getElementById('nCob').value;
+    if(!data.m || !data.n) return alert("Falta Municipio o Nombre");
+  } else {
+    // Update
+    data.idx = idx;
+    data.m = document.getElementById(`m_${idx}`).value;
+    data.n = document.getElementById(`n_${idx}`).value;
+    data.c = document.getElementById(`c_${idx}`).value;
+    data.z = document.getElementById(`z_${idx}`).value;
+    data.r = document.getElementById(`r_${idx}`).value;
+    
+    // Obtener valor del select o mantener el actual
+    const sel = document.getElementById(`sel_${idx}`);
+    data.cob = sel ? sel.value : DATA.cob[idx].s;
+  }
 
-    function changePag(v) { pag = Math.max(1, pag + v); render(); }
-    function resetPag() { pag = 1; }
-    function logout() { localStorage.clear(); location.reload(); }
-    start();
+  await fetch(API, {method:'POST', mode:'no-cors', body:JSON.stringify(data)});
+  
+  if(type==='new') closeModal('mAdd');
+  loadData();
+  alert("Guardado Correctamente");
+}
+
+// UTILIDADES
+function chPage(d) { PG += d; renderTable(); }
+function chPageUsr(d) { PG_USR += d; renderUsers(); }
+function logout() { localStorage.removeItem('dist_v5'); location.reload(); }
+function exportExcel() {
+  const ws = XLSX.utils.json_to_sheet(DATA.cob);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Cobertura");
+  XLSX.writeFile(wb, "Reporte.xlsx");
+}
+
+// MODALES
+function openModalAdd() { document.getElementById('mAdd').classList.remove('hidden'); }
+function openUsers() { document.getElementById('mUsr').classList.remove('hidden'); renderUsers(true); }
+function openHist() {
+  document.getElementById('mHis').classList.remove('hidden');
+  document.getElementById('tbHis').innerHTML = 
+    `<thead><tr><th>Fecha</th><th>User</th><th>Acción</th><th>Detalle</th></tr></thead>` +
+    DATA.his.map(h => `<tr><td>${new Date(h[0]).toLocaleString()}</td><td>${h[1]}</td><td>${h[2]}</td><td>${h[3]}</td></tr>`).join('');
+}
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
 </script>
 </body>
 </html>
-
