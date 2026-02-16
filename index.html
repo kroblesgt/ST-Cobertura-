@@ -461,4 +461,89 @@ function renderUserList() {
     container.innerHTML += `
       <div class="user-row">
         <div>
-          <strong style="color:var(-
+          <strong style="color:var(--blue)">${u.u}</strong> 
+          ${isOnline ? '<span class="badge" style="background:#d1e7dd; color:#198754; width:auto; padding:2px 8px; display:inline;">ONLINE</span>' : ''}
+          <div style="font-size:11px; color:#666; margin-top:2px;">Rol: ${u.r}</div>
+        </div>
+        <div>
+          <button onclick="editUser('${u.u}','${u.p}','${u.r}')" class="btn btn-p" style="padding:5px 8px"><i class="fa-solid fa-pencil"></i></button>
+          <button onclick="sendUserReq('del','${u.u}')" class="btn btn-d" style="padding:5px 8px"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </div>`;
+  });
+
+  document.getElementById('userPageLabel').innerHTML = `
+    <button onclick="if(USER_PAGE>1){USER_PAGE--; renderUserList()}" class="btn btn-p" style="padding:2px 8px"><</button> 
+    Pág ${USER_PAGE} de ${totalP} 
+    <button onclick="if(USER_PAGE<${totalP}){USER_PAGE++; renderUserList()}" class="btn btn-p" style="padding:2px 8px">></button>`;
+}
+
+async function sendUserReq(type, u, p, r) {
+  if(type === 'del' && !confirm(`¿Eliminar al usuario ${u}?`)) return;
+  
+  const body = { action: 'manageUser', type, u, p, r, userLog: SESION.u };
+  const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(body) });
+  const json = await res.json();
+  
+  if(json.status === 'ok') {
+    clearUserForm();
+    await loadData(); // Recargar DB
+    renderUserList(); // Refrescar lista
+    alert(type === 'del' ? "Usuario eliminado" : "Usuario guardado");
+  } else {
+    alert(json.msg);
+  }
+}
+
+function submitUser() {
+  const u = document.getElementById('uUser').value;
+  const p = document.getElementById('uPass').value;
+  const r = document.getElementById('uRol').value;
+  if(!u || !p) return alert("Usuario y contraseña requeridos");
+  sendUserReq(EDITING_USER ? 'edit' : 'add', u, p, r);
+}
+
+function editUser(u, p, r) {
+  EDITING_USER = true;
+  document.getElementById('uUser').value = u;
+  document.getElementById('uUser').disabled = true;
+  document.getElementById('uPass').value = p;
+  document.getElementById('uRol').value = r;
+  
+  const btn = document.getElementById('btnUserAction');
+  btn.className = 'btn btn-p'; btn.innerHTML = '<i class="fa-solid fa-save"></i>';
+}
+
+function clearUserForm() {
+  EDITING_USER = false;
+  document.getElementById('uUser').value = '';
+  document.getElementById('uUser').disabled = false;
+  document.getElementById('uPass').value = '';
+  document.getElementById('uRol').value = 'agente';
+  
+  const btn = document.getElementById('btnUserAction');
+  btn.className = 'btn btn-s'; btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+}
+
+// 8. UTILS
+function changePage(d) { PAGE += d; renderTable(); }
+function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+function openUsers() { openModal('modalUsr'); renderUserList(); }
+function openHistory() {
+  openModal('modalHis');
+  document.getElementById('tableHistory').innerHTML = `
+    <thead><tr style="background:#eee"><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead>
+    <tbody>${DB.history.map(h => `<tr><td>${new Date(h[0]).toLocaleString()}</td><td>${h[1]}</td><td>${h[2]}</td><td>${h[3]}</td></tr>`).join('')}</tbody>`;
+}
+function updateOnline() {
+  document.getElementById('onlineCount').innerText = DB.online.length;
+  document.getElementById('onlineList').innerHTML = DB.online.length > 0 
+    ? DB.online.map(u => `<div class="online-item"><i class="fa-solid fa-user"></i> ${u}</div>`).join('')
+    : '<div style="padding:5px; color:#999">Nadie conectado</div>';
+}
+function logout() { localStorage.removeItem('distelsa_pro_v5'); location.reload(); }
+
+</script>
+</body>
+</html>
