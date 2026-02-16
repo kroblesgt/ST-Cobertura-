@@ -3,55 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grupo Distelsa | Cobertura</title>
+<title>Grupo Distelsa | Sistema de Cobertura</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 <style>
-  :root { --blue: #002855; --light-blue: #0056b3; --green: #28a745; --red: #dc3545; --bg: #f4f6f8; }
-  body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; color: #333; }
+  :root { 
+    --blue: #002855; 
+    --light-blue: #0056b3; 
+    --green: #217346; /* Verde Excel */
+    --red: #dc3545; 
+    --bg: #f4f6f8; 
+  }
+  body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: var(--bg); margin: 0; color: #333; }
   .hidden { display: none !important; }
 
   /* HEADER */
-  header { background: white; height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 3px solid var(--blue); }
+  header { background: white; height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 3px solid var(--blue); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
   .logo { font-size: 20px; font-weight: 800; color: var(--blue); display: flex; align-items: center; gap: 10px; }
-  .user-info { text-align: right; font-size: 13px; }
+  .user-info { text-align: right; font-size: 13px; line-height: 1.2; }
 
   /* LOGIN */
-  .login-wrapper { height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #e9ecef, #fff); }
+  .login-wrapper { height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #e9ecef 0%, #ffffff 100%); }
   .login-box { background: white; padding: 40px; width: 320px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 5px solid var(--blue); text-align: center; }
-  .inp { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box; }
+  .inp { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+  .inp:focus { border-color: var(--light-blue); outline: none; }
   
-  /* APP */
+  /* CONTENEDOR APP */
   .container { max-width: 1300px; margin: 20px auto; padding: 0 20px; }
   .card { background: white; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; }
-  
-  /* BOTONES */
-  .btn { border: none; padding: 10px 15px; border-radius: 4px; font-weight: 600; cursor: pointer; color: white; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; }
-  .btn-p { background: var(--blue); } .btn-s { background: var(--green); } .btn-d { background: var(--red); }
-  
+
+  /* HERRAMIENTAS Y BOTONES */
+  .tools { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+  .search-wrap { flex: 1; position: relative; }
+  .search-wrap i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #adb5bd; }
+  .search-inp { width: 100%; padding: 12px 12px 12px 35px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; }
+
+  .btn { border: none; padding: 10px 15px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: white; }
+  .btn-p { background: var(--blue); } /* Primario */
+  .btn-s { background: #28a745; } /* Success (Verde claro) */
+  .btn-x { background: var(--green); } /* Excel (Verde oscuro) */
+  .btn-d { background: var(--red); } /* Danger */
+  .btn:hover { opacity: 0.9; }
+
   /* TABLA */
   table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
-  th { text-align: left; padding: 12px; background: #f8f9fa; border-bottom: 2px solid #e9ecef; }
-  td { padding: 10px 12px; border-bottom: 1px solid #f1f3f5; }
-  .badge { padding: 5px 10px; border-radius: 4px; color: white; font-weight: bold; font-size: 11px; text-transform: uppercase; display: inline-block; width: 100px; text-align: center; }
-  
-  /* UTILS */
-  .tools { display: flex; gap: 10px; margin-bottom: 15px; }
-  .search-wrap { flex: 1; position: relative; }
-  .search-wrap i { position: absolute; left: 12px; top: 12px; color: #adb5bd; }
-  .search-inp { width: 100%; padding: 10px 10px 10px 35px; border: 1px solid #ced4da; border-radius: 4px; }
-  
-  /* MODAL */
-  .modal-backdrop { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(2px); }
-  .modal { background: white; width: 600px; padding: 25px; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+  th { text-align: left; padding: 12px 15px; background: #f8f9fa; color: #495057; border-bottom: 2px solid #e9ecef; }
+  td { padding: 10px 15px; border-bottom: 1px solid #f1f3f5; vertical-align: middle; }
+  tr:hover td { background-color: #f8f9fa; }
+
+  /* BADGES */
+  .badge { display: block; padding: 6px 0; text-align: center; border-radius: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; color: white; width: 110px; }
   
   /* ONLINE MONITOR */
-  .online-indicator { font-size: 11px; color: var(--green); background: #e8f8f5; padding: 5px 12px; border-radius: 20px; border: 1px solid #d1f2eb; cursor: pointer; position: relative; font-weight: bold; }
-  .online-list-popup { display: none; position: absolute; top: 30px; right: 0; background: white; border: 1px solid #ddd; width: 180px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 10px; border-radius: 6px; z-index: 10; }
+  .online-indicator { font-size: 11px; color: #28a745; font-weight: bold; margin-right: 15px; background: #e8f8f5; padding: 6px 12px; border-radius: 20px; border: 1px solid #d1f2eb; cursor: pointer; position: relative; }
+  .online-list-popup { display: none; position: absolute; top: 120%; right: 0; background: white; border: 1px solid #ddd; width: 200px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 6px; padding: 10px; z-index: 100; color: #333; font-weight: normal; }
   .online-indicator:hover .online-list-popup { display: block; }
+  .online-item { padding: 4px 0; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 6px; }
 
-  /* USER LIST ITEMS */
-  .user-row { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee; }
+  /* MODALES */
+  .modal-backdrop { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(2px); }
+  .modal { background: white; width: 95%; max-width: 700px; padding: 25px; border-radius: 8px; box-shadow: 0 15px 50px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
+  
+  /* LISTA USUARIOS */
+  .user-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
   .user-row:hover { background: #f8f9fa; }
 </style>
 </head>
@@ -59,10 +74,11 @@
 
 <div id="viewLogin" class="login-wrapper">
   <div class="login-box">
-    <h3 style="color:var(--blue);">GRUPO DISTELSA</h3>
+    <h3 style="color:var(--blue); margin-top:0;">GRUPO DISTELSA</h3>
+    <p style="font-size:12px; color:#6c757d; margin-bottom:20px;">ACCESO AL SISTEMA</p>
     <input id="txtUser" class="inp" placeholder="Usuario">
     <input id="txtPass" type="password" class="inp" placeholder="Contraseña">
-    <button onclick="login()" class="btn btn-p" style="width:100%; justify-content:center; margin-top:10px;">INGRESAR</button>
+    <button id="btnLogin" onclick="login()" class="btn btn-p" style="width:100%; justify-content: center; margin-top: 15px; height: 45px;">INGRESAR</button>
   </div>
 </div>
 
@@ -70,16 +86,17 @@
   <header>
     <div class="logo"><i class="fa-solid fa-satellite-dish"></i> GRUPO DISTELSA</div>
     <div style="display: flex; align-items: center; gap: 15px;">
+      
       <div id="onlineMonitor" class="hidden online-indicator">
-        <i class="fa-solid fa-circle" style="font-size:8px;"></i> Online: <span id="onlineCount">0</span>
-        <div id="onlineList" class="online-list-popup"></div>
+        <i class="fa-solid fa-circle" style="font-size: 8px;"></i> Online: <span id="onlineCount">0</span>
+        <div id="onlineList" class="online-list-popup">Cargando...</div>
       </div>
 
       <div class="user-info">
-        <div id="lblUser" style="font-weight:bold;">User</div>
-        <div id="lblRol" style="font-size:11px; color:#666;">Rol</div>
+        <div id="lblUser" style="font-weight: bold;">Usuario</div>
+        <div id="lblRol" style="color: #6c757d; text-transform: uppercase; font-size: 11px;">Rol</div>
       </div>
-      <button onclick="logout()" class="btn btn-d"><i class="fa-solid fa-power-off"></i></button>
+      <button onclick="logout()" class="btn btn-d" title="Salir"><i class="fa-solid fa-power-off"></i></button>
     </div>
   </header>
 
@@ -87,295 +104,361 @@
     <div class="tools">
       <div class="search-wrap">
         <i class="fa-solid fa-search"></i>
-        <input id="searchBox" class="search-inp" placeholder="Buscar..." onkeyup="renderTable(true)">
+        <input id="searchBox" class="search-inp" placeholder="Buscar ubicación, zona o referencia..." onkeyup="renderTable(true)">
       </div>
-      <button id="btnAdd" onclick="openModal('modalAdd')" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i></button>
-      <button id="btnUsr" onclick="openUsers()" class="btn btn-p hidden" style="background:#333"><i class="fa-solid fa-users-gear"></i></button>
-      <button id="btnHis" onclick="openHistory()" class="btn btn-p hidden"><i class="fa-solid fa-clock"></i></button>
+      
+      <button id="btnAdd" onclick="openModal('modalAdd')" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i> Nueva Cobertura</button>
+      <button id="btnExp" onclick="exportToExcel()" class="btn btn-x hidden"><i class="fa-solid fa-file-excel"></i> Excel</button>
+      
+      <button id="btnHis" onclick="openHistory()" class="btn btn-p hidden"><i class="fa-solid fa-clock-rotate-left"></i> Historial</button>
+      <button id="btnUsr" onclick="openUsers()" class="btn btn-p hidden" style="background:#343a40"><i class="fa-solid fa-users-gear"></i> Usuarios</button>
     </div>
 
     <div class="card">
-      <div style="overflow-x:auto;">
+      <div style="overflow-x: auto;">
         <table>
           <thead>
-            <tr><th>Municipio</th><th>Nombre</th><th>Categoría</th><th>Zona</th><th>Ref</th><th>Estado</th><th class="col-action hidden"></th></tr>
+            <tr>
+              <th width="12%">Municipio</th>
+              <th width="20%">Nombre</th>
+              <th width="12%">Categoría</th>
+              <th width="8%">Zona</th>
+              <th width="25%">Referencia</th>
+              <th width="15%">Estado</th>
+              <th width="8%" class="col-action hidden">Editar</th>
+            </tr>
           </thead>
           <tbody id="tableBody"></tbody>
         </table>
       </div>
-      <div style="padding:15px; text-align:center;">
-        <button onclick="changePage(-1)" class="btn btn-p"><</button> 
-        <span id="pageLabel" style="margin:0 15px; font-weight:bold;"></span> 
-        <button onclick="changePage(1)" class="btn btn-p">></button>
+      
+      <div style="padding: 15px; display: flex; justify-content: center; align-items: center; gap: 20px;">
+        <button onclick="changePage(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button>
+        <span id="pageLabel" style="font-weight: bold; font-size: 13px;">1 / 1</span>
+        <button onclick="changePage(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button>
       </div>
+    </div>
+  </div>
+</div>
+
+<div id="modalAdd" class="modal-backdrop hidden">
+  <div class="modal">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+      <h3 style="margin:0; color:var(--blue)">Nueva Ubicación</h3>
+      <button onclick="closeModal('modalAdd')" class="btn btn-d"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+      <input id="newMun" class="inp" placeholder="Municipio (Ej: Guatemala)">
+      <input id="newNom" class="inp" placeholder="Nombre del Lugar">
+      <input id="newCat" class="inp" placeholder="Categoría (Ej: Condominio)">
+      <input id="newZon" class="inp" placeholder="Zona (Número)">
+      <input id="newRef" class="inp" style="grid-column: span 2;" placeholder="Referencia detallada">
+      <select id="newCob" class="inp" style="grid-column: span 2;">
+        <option value="Cobertura">Cobertura</option>
+        <option value="Sin Cobertura">Sin Cobertura</option>
+        <option value="Consultar">Consultar</option>
+      </select>
+    </div>
+    <div style="margin-top: 20px; text-align: right;">
+      <button onclick="saveNewLocation()" class="btn btn-s" style="width: 100%;">Guardar Registro</button>
     </div>
   </div>
 </div>
 
 <div id="modalUsr" class="modal-backdrop hidden">
   <div class="modal">
-    <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-      <h3>Gestión de Usuarios</h3>
-      <button onclick="closeModal('modalUsr')" class="btn btn-d">X</button>
+    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+      <h3 style="margin:0">Administración de Usuarios</h3>
+      <button onclick="closeModal('modalUsr')" class="btn btn-d"><i class="fa-solid fa-times"></i></button>
     </div>
     
-    <div style="display:flex; gap:5px; margin-bottom:15px; background:#f8f9fa; padding:10px; border-radius:4px;">
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; display: flex; gap: 10px; margin-bottom: 15px; align-items: center;">
       <input id="uUser" class="inp" placeholder="Usuario" style="margin:0">
       <input id="uPass" class="inp" placeholder="Clave" style="margin:0">
-      <select id="uRol" class="inp" style="margin:0; width:100px;">
+      <select id="uRol" class="inp" style="margin:0; width: 120px;">
         <option value="agente">Agente</option>
         <option value="lider">Lider</option>
         <option value="admin">Admin</option>
       </select>
-      <button id="btnUserAction" onclick="submitUser()" class="btn btn-s">+</button>
+      <button id="btnUserAction" onclick="submitUser()" class="btn btn-s"><i class="fa-solid fa-plus"></i></button>
       <button onclick="clearUserForm()" class="btn btn-d"><i class="fa-solid fa-eraser"></i></button>
     </div>
 
-    <input id="searchUserBox" class="inp" placeholder="Filtrar usuarios..." onkeyup="renderUserList()">
+    <input id="searchUserBox" class="inp" placeholder="Buscar usuario..." onkeyup="renderUserList()">
     
-    <div id="userListContainer" style="height:300px; overflow-y:auto; border:1px solid #eee;">
-      </div>
-    <div style="text-align:center; margin-top:5px; font-size:12px; font-weight:bold;" id="userPageLabel"></div>
+    <div id="userListContainer" style="max-height: 300px; overflow-y: auto; border: 1px solid #eee;"></div>
+    
+    <div style="text-align: center; margin-top: 10px; font-weight:bold; font-size:12px;" id="userPageLabel"></div>
   </div>
 </div>
 
-<div id="modalAdd" class="modal-backdrop hidden">
-  <div class="modal">
-    <h3>Nueva Ubicación</h3>
-    <input id="newMun" class="inp" placeholder="Municipio">
-    <input id="newNom" class="inp" placeholder="Nombre">
-    <input id="newCat" class="inp" placeholder="Categoria">
-    <input id="newZon" class="inp" placeholder="Zona">
-    <input id="newRef" class="inp" placeholder="Referencia">
-    <select id="newCob" class="inp"><option>Cobertura</option><option>Sin Cobertura</option><option>Consultar</option></select>
-    <button onclick="saveLocation('new')" class="btn btn-s" style="margin-top:10px; width:100%">Guardar</button>
-    <button onclick="closeModal('modalAdd')" class="btn btn-d" style="margin-top:5px; width:100%">Cancelar</button>
-  </div>
-</div>
 <div id="modalHis" class="modal-backdrop hidden">
-  <div class="modal" style="width:700px">
-    <div style="display:flex; justify-content:space-between;"><h3>Historial</h3><button onclick="closeModal('modalHis')" class="btn btn-d">X</button></div>
-    <div style="max-height:400px; overflow:auto;"><table id="tableHistory"></table></div>
+  <div class="modal" style="max-width: 800px;">
+    <div style="display: flex; justify-content: space-between;">
+      <h3>Historial de Cambios</h3>
+      <button onclick="closeModal('modalHis')" class="btn btn-d"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div style="max-height: 400px; overflow-y: auto;">
+      <table id="tableHistory"></table>
+    </div>
   </div>
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzgwqYa0w78POuTHgvZ4rafYTx0LRjo1_O--8P3Ta4PKECc8J1wobXCVoPtJnfzErSH/exec"; // REEMPLAZA ESTO
+// ================= CONFIGURACIÓN =================
+const API_URL = "https://script.google.com/macros/s/AKfycbzgwqYa0w78POuTHgvZ4rafYTx0LRjo1_O--8P3Ta4PKECc8J1wobXCVoPtJnfzErSH/exec"; 
+
 let DB = { cob: [], users: [], history: [], online: [] };
 let SESION = { u: null, r: null, t: null };
-let PAGE = 1; let USER_PAGE = 1;
+let PAGE = 1; 
+let USER_PAGE = 1;
 let EDITING_USER = false;
 
 window.onload = () => {
-  const s = localStorage.getItem('distelsa_v53');
-  if(s) { SESION = JSON.parse(s); startApp(); }
+  const saved = localStorage.getItem('distelsa_pro_v5');
+  if(saved) { SESION = JSON.parse(saved); startApp(); }
 };
 
+// 1. LOGIN
 async function login() {
-  const u = document.getElementById('txtUser').value, p = document.getElementById('txtPass').value;
-  if(!u||!p) return alert("Datos incompletos");
+  const u = document.getElementById('txtUser').value.trim();
+  const p = document.getElementById('txtPass').value.trim();
+  const btn = document.getElementById('btnLogin');
+
+  if(!u || !p) return alert("Ingrese usuario y contraseña");
   
-  const res = await fetch(API_URL, { method:'POST', body:JSON.stringify({action:'login', u, p}) });
-  const d = await res.json();
-  if(d.status === 'ok') {
-    SESION = { u:u, r:d.rol, t:d.token };
-    localStorage.setItem('distelsa_v53', JSON.stringify(SESION));
-    startApp();
-  } else alert(d.msg);
+  btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Entrando...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'login', u, p }) });
+    const d = await res.json();
+    
+    if(d.status === 'ok') {
+      SESION = { u: u, r: d.rol, t: d.token };
+      localStorage.setItem('distelsa_pro_v5', JSON.stringify(SESION));
+      startApp();
+    } else {
+      alert(d.msg || "Credenciales incorrectas");
+    }
+  } catch(e) { alert("Error de conexión"); }
+  
+  btn.innerHTML = 'INGRESAR';
+  btn.disabled = false;
 }
 
+// 2. INICIO Y PERMISOS
 function startApp() {
   document.getElementById('viewLogin').classList.add('hidden');
   document.getElementById('viewApp').classList.remove('hidden');
+  
   document.getElementById('lblUser').innerText = SESION.u;
   document.getElementById('lblRol').innerText = SESION.r;
 
-  if(SESION.r === 'admin' || SESION.r === 'lider') {
-    document.getElementById('btnAdd').classList.remove('hidden');
-    document.querySelectorAll('.col-action').forEach(e => e.classList.remove('hidden'));
+  // Lógica de Permisos (Admin y Lider)
+  const isLiderOrAdmin = (SESION.r === 'admin' || SESION.r === 'lider');
+  const isAdmin = (SESION.r === 'admin');
+
+  if(isLiderOrAdmin) {
+    document.getElementById('btnAdd').classList.remove('hidden'); // Botón Nuevo
+    document.getElementById('btnExp').classList.remove('hidden'); // Botón Excel
+    document.querySelectorAll('.col-action').forEach(e => e.classList.remove('hidden')); // Columna Editar
   }
-  if(SESION.r === 'admin') {
-    document.getElementById('btnUsr').classList.remove('hidden');
+
+  if(isAdmin) {
     document.getElementById('btnHis').classList.remove('hidden');
+    document.getElementById('btnUsr').classList.remove('hidden');
     document.getElementById('onlineMonitor').classList.remove('hidden');
   }
+
   loadData();
-  setInterval(heartbeat, 15000);
+  setInterval(heartbeat, 20000);
 }
 
+// 3. SINCRONIZACIÓN
 async function loadData() {
   try {
     const res = await fetch(API_URL);
     const json = await res.json();
     if(json.status === 'success') {
-      DB = { 
-        cob: json.data.map((r,i)=>({i, m:r[0], n:r[1], c:r[2], z:r[3], r:r[4], s:r[5]})),
-        users: json.users,
-        history: json.history,
-        online: json.online
-      };
+      // Mapeo seguro
+      DB.cob = json.data.map((r, i) => ({ i, m:r[0], n:r[1], c:r[2], z:r[3], r:r[4], s:r[5] }));
+      DB.users = json.users;
+      DB.history = json.history;
+      DB.online = json.online;
+      
       renderTable();
       updateOnline();
-      // Si el modal de usuarios está abierto, refrescarlo
       if(!document.getElementById('modalUsr').classList.contains('hidden')) renderUserList();
     }
-  } catch(e) { console.error(e); }
+  } catch(e) { console.error("Error sync", e); }
 }
 
 async function heartbeat() {
-  const res = await fetch(API_URL, { method:'POST', body:JSON.stringify({action:'heartbeat', u:SESION.u, t:SESION.t}) });
-  const d = await res.json();
-  if(d.status === 'force_logout') { logout(); alert("Sesión duplicada detectada"); }
-  else loadData();
+  try {
+    const res = await fetch(API_URL, { method:'POST', body:JSON.stringify({action:'heartbeat', u:SESION.u, t:SESION.t}) });
+    const d = await res.json();
+    if(d.status === 'force_logout') { logout(); alert("Sesión iniciada en otro dispositivo."); }
+    else loadData();
+  } catch(e) {}
 }
 
-// RENDER TABLA Y BUSCADOR INTELIGENTE
-function renderTable(reset=false) {
-  if(reset) PAGE=1;
+// 4. TABLA PRINCIPAL
+function renderTable(reset = false) {
+  if(reset) PAGE = 1;
   const q = document.getElementById('searchBox').value.toLowerCase();
-  const res = DB.cob.filter(r => (r.m+' '+r.n+' '+r.z).toLowerCase().includes(q)); // Busqueda simple rapida
   
-  const start = (PAGE-1)*10;
-  const pageData = res.slice(start, start+10);
-  const tb = document.getElementById('tableBody');
-  tb.innerHTML = '';
+  // Filtro simple pero efectivo
+  const filtered = DB.cob.filter(item => 
+    (String(item.m) + " " + String(item.n) + " " + String(item.z) + " " + String(item.r)).toLowerCase().includes(q)
+  );
+
+  const totalPages = Math.ceil(filtered.length / 10) || 1;
+  if(PAGE > totalPages) PAGE = totalPages;
+  document.getElementById('pageLabel').innerText = `${PAGE} / ${totalPages}`;
+
+  const start = (PAGE - 1) * 10;
+  const chunk = filtered.slice(start, start + 10);
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
 
   const canEdit = (SESION.r === 'admin' || SESION.r === 'lider');
 
-  pageData.forEach(r => {
-    let bg = r.s==='Cobertura'?'#28a745':(r.s==='Sin Cobertura'?'#dc3545':'#ffc107');
-    let sel = `<span class="badge" style="background:${bg}">${r.s}</span>`;
+  chunk.forEach(row => {
+    let bg = '#6c757d';
+    if(row.s === 'Cobertura') bg = '#28a745';
+    else if(row.s === 'Sin Cobertura') bg = '#dc3545';
+    else if(row.s === 'Consultar') bg = '#ffc107';
+
+    // Renderizado condicional del selector
+    let statusHtml = `<span class="badge" style="background:${bg}; color:${row.s==='Consultar'?'black':'white'}">${row.s}</span>`;
     
     if(canEdit) {
-      sel = `<select id="st_${r.i}" onchange="this.style.background=this.options[this.selectedIndex].style.background" style="background:${bg}; color:${r.s=='Consultar'?'#000':'#fff'}; font-weight:bold; border-radius:4px; padding:5px; border:none;">
-        <option style="background:#28a745;color:#fff" ${r.s=='Cobertura'?'selected':''}>Cobertura</option>
-        <option style="background:#dc3545;color:#fff" ${r.s=='Sin Cobertura'?'selected':''}>Sin Cobertura</option>
-        <option style="background:#ffc107;color:#000" ${r.s=='Consultar'?'selected':''}>Consultar</option>
+      statusHtml = `
+      <select id="st_${row.i}" onchange="updateRowColor(this)" style="background:${bg}; color:${row.s==='Consultar'?'black':'white'}; border:none; padding:5px; border-radius:4px; font-weight:bold; cursor:pointer;">
+        <option value="Cobertura" style="background:#28a745; color:white" ${row.s==='Cobertura'?'selected':''}>Cobertura</option>
+        <option value="Sin Cobertura" style="background:#dc3545; color:white" ${row.s==='Sin Cobertura'?'selected':''}>Sin Cobertura</option>
+        <option value="Consultar" style="background:#ffc107; color:black" ${row.s==='Consultar'?'selected':''}>Consultar</option>
       </select>`;
     }
 
-    tb.innerHTML += `<tr>
-      <td>${r.m}</td><td><b>${r.n}</b></td><td>${r.c}</td><td>${r.z}</td><td>${r.r}</td><td>${sel}</td>
-      <td class="${canEdit?'':'hidden'}"><button onclick="saveCob(${r.i})" class="btn btn-p" style="padding:5px"><i class="fa-solid fa-save"></i></button></td>
-    </tr>`;
+    tbody.innerHTML += `
+      <tr>
+        <td>${row.m}</td>
+        <td><b>${row.n}</b></td>
+        <td>${row.c}</td>
+        <td>${row.z}</td>
+        <td>${row.r}</td>
+        <td>${statusHtml}</td>
+        <td class="col-action ${canEdit?'':'hidden'}">
+          <button onclick="saveEdit(${row.i})" class="btn btn-p" style="padding:5px 10px" title="Guardar cambios"><i class="fa-solid fa-save"></i></button>
+        </td>
+      </tr>
+    `;
   });
-  document.getElementById('pageLabel').innerText = `${PAGE} / ${Math.ceil(res.length/10)||1}`;
 }
 
-// *** GESTIÓN DE USUARIOS CORREGIDA ***
-function openUsers() {
-  document.getElementById('modalUsr').classList.remove('hidden');
-  document.getElementById('searchUserBox').value = ''; // Limpiar buscador
-  USER_PAGE = 1;
-  renderUserList();
+function updateRowColor(select) {
+  const val = select.value;
+  if(val==='Cobertura') { select.style.background='#28a745'; select.style.color='white'; }
+  else if(val==='Sin Cobertura') { select.style.background='#dc3545'; select.style.color='white'; }
+  else { select.style.background='#ffc107'; select.style.color='black'; }
 }
 
-function renderUserList() {
-  const container = document.getElementById('userListContainer');
-  const q = document.getElementById('searchUserBox').value.toLowerCase();
+// 5. FUNCIONES DE GUARDADO (NUEVO Y EDITAR)
+async function saveNewLocation() {
+  const m = document.getElementById('newMun').value;
+  const n = document.getElementById('newNom').value;
+  const c = document.getElementById('newCat').value;
+  const z = document.getElementById('newZon').value;
+  const r = document.getElementById('newRef').value;
+  const cob = document.getElementById('newCob').value;
+
+  if(!m || !n) return alert("Municipio y Nombre son obligatorios");
+
+  const btn = document.querySelector('#modalAdd .btn-s');
+  btn.disabled = true; btn.innerText = "Guardando...";
+
+  await fetch(API_URL, {
+    method: 'POST', mode: 'no-cors',
+    body: JSON.stringify({ action: 'saveCob', type: 'new', m, n, c, z, r, cob, userLog: SESION.u })
+  });
+
+  alert("Registro agregado con éxito");
+  closeModal('modalAdd');
+  loadData();
   
-  // Verificación de seguridad
-  if (!DB.users || DB.users.length === 0) {
-    container.innerHTML = '<div style="padding:20px; text-align:center; color:#777;">Cargando usuarios o lista vacía...</div>';
+  // Limpiar campos
+  document.getElementById('newMun').value = '';
+  document.getElementById('newNom').value = '';
+  document.getElementById('newCat').value = '';
+  document.getElementById('newZon').value = '';
+  document.getElementById('newRef').value = '';
+  btn.disabled = false; btn.innerText = "Guardar Registro";
+}
+
+async function saveEdit(idx) {
+  const item = DB.cob.find(x => x.i === idx);
+  const newStatus = document.getElementById(`st_${idx}`).value;
+  
+  // Guardamos solo el cambio de estado (o puedes habilitar inputs para editar todo si quieres)
+  await fetch(API_URL, {
+    method: 'POST', mode: 'no-cors',
+    body: JSON.stringify({ 
+      action: 'saveCob', type: 'edit', idx: idx, 
+      m: item.m, n: item.n, c: item.c, z: item.z, r: item.r, cob: newStatus, userLog: SESION.u 
+    })
+  });
+  
+  alert("Cambio actualizado");
+  loadData();
+}
+
+// 6. EXPORTAR A EXCEL (Solo Admin/Lider)
+function exportToExcel() {
+  if(!DB.cob || DB.cob.length === 0) return alert("No hay datos para exportar");
+  
+  // Crear hoja limpia
+  const dataToExport = DB.cob.map(r => ({
+    "Municipio": r.m,
+    "Nombre": r.n,
+    "Categoría": r.c,
+    "Zona": r.z,
+    "Referencia": r.r,
+    "Cobertura": r.s
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(dataToExport);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Cobertura Distelsa");
+  XLSX.writeFile(wb, "Reporte_Cobertura_Distelsa.xlsx");
+}
+
+// 7. GESTIÓN DE USUARIOS
+function renderUserList() {
+  const q = document.getElementById('searchUserBox').value.toLowerCase();
+  const container = document.getElementById('userListContainer');
+  
+  if(!DB.users || DB.users.length === 0) {
+    container.innerHTML = '<p style="text-align:center;color:#666">Cargando...</p>'; 
     return;
   }
 
-  // Filtrado Seguro
   const filtered = DB.users.filter(u => String(u.u).toLowerCase().includes(q));
-
+  
   // Paginación
-  const start = (USER_PAGE-1)*10;
-  const chunk = filtered.slice(start, start+10);
+  const totalP = Math.ceil(filtered.length / 10) || 1;
+  if(USER_PAGE > totalP) USER_PAGE = totalP;
+  
+  const start = (USER_PAGE - 1) * 10;
+  const chunk = filtered.slice(start, start + 10);
   
   container.innerHTML = '';
-
-  if(chunk.length === 0) {
-    container.innerHTML = '<div style="padding:20px; text-align:center; color:#777;">No se encontraron usuarios.</div>';
-  }
+  if(chunk.length === 0) container.innerHTML = '<p style="text-align:center;color:#666">No hay usuarios</p>';
 
   chunk.forEach(u => {
     const isOnline = DB.online.includes(u.u);
     container.innerHTML += `
       <div class="user-row">
         <div>
-          <strong style="color:var(--blue)">${u.u}</strong> 
-          ${isOnline ? '<span style="font-size:9px; background:#d1e7dd; color:green; padding:2px 6px; border-radius:10px;">ONLINE</span>' : ''}
-          <div style="font-size:11px; color:#666">${u.r}</div>
-        </div>
-        <div>
-          <button onclick="editUser('${u.u}','${u.p}','${u.r}')" class="btn btn-p" style="padding:4px 8px"><i class="fa-solid fa-pencil"></i></button>
-          <button onclick="sendUserReq('del','${u.u}')" class="btn btn-d" style="padding:4px 8px"><i class="fa-solid fa-trash"></i></button>
-        </div>
-      </div>
-    `;
-  });
-  
-  const totalP = Math.ceil(filtered.length/10) || 1;
-  document.getElementById('userPageLabel').innerHTML = 
-    `<button onclick="if(USER_PAGE>1){USER_PAGE--; renderUserList()}" class="btn btn-p" style="padding:2px 8px"><</button> 
-     Pag ${USER_PAGE} de ${totalP} 
-     <button onclick="if(USER_PAGE<${totalP}){USER_PAGE++; renderUserList()}" class="btn btn-p" style="padding:2px 8px">></button>`;
-}
-
-async function sendUserReq(type, u, p, r) {
-  if(type==='del' && !confirm('¿Eliminar?')) return;
-  const res = await fetch(API_URL, {method:'POST', body:JSON.stringify({action:'manageUser', type, u, p, r, userLog:SESION.u})});
-  const json = await res.json();
-  if(json.status === 'ok') { 
-    clearUserForm(); 
-    loadData(); 
-    alert('OK'); 
-  } else alert(json.msg);
-}
-
-function submitUser() {
-  const u = document.getElementById('uUser').value;
-  const p = document.getElementById('uPass').value;
-  const r = document.getElementById('uRol').value;
-  sendUserReq(EDITING_USER?'edit':'add', u, p, r);
-}
-
-function editUser(u, p, r) {
-  EDITING_USER = true;
-  document.getElementById('uUser').value = u;
-  document.getElementById('uUser').disabled = true;
-  document.getElementById('uPass').value = p;
-  document.getElementById('uRol').value = r;
-  document.getElementById('btnUserAction').className = 'btn btn-p';
-  document.getElementById('btnUserAction').innerText = 'Save';
-}
-
-function clearUserForm() {
-  EDITING_USER = false;
-  document.getElementById('uUser').value = '';
-  document.getElementById('uUser').disabled = false;
-  document.getElementById('uPass').value = '';
-  document.getElementById('btnUserAction').className = 'btn btn-s';
-  document.getElementById('btnUserAction').innerText = '+';
-}
-
-// COBERTURA & UTILS
-async function saveCob(i) {
-  const s = document.getElementById('st_'+i).value;
-  // lógica de guardar simplificada para brevedad
-  const r = DB.cob.find(x=>x.i===i);
-  await fetch(API_URL, {method:'POST', mode:'no-cors', body:JSON.stringify({
-    action:'saveCob', type:'edit', idx:i, m:r.m, n:r.n, c:r.c, z:r.z, r:r.r, cob:s, userLog:SESION.u
-  })});
-  loadData(); alert("Guardado");
-}
-async function saveLocation(type) { /* Misma lógica que versiones anteriores */ alert("Función de crear activa"); }
-function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
-function openHistory(){ 
-  document.getElementById('modalHis').classList.remove('hidden'); 
-  document.getElementById('tableHistory').innerHTML = DB.history.map(h=>`<tr><td>${new Date(h[0]).toLocaleString()}</td><td>${h[1]}</td><td>${h[2]}</td><td>${h[3]}</td></tr>`).join('');
-}
-function logout(){ localStorage.removeItem('distelsa_v53'); location.reload(); }
-function updateOnline() {
-  document.getElementById('onlineCount').innerText = DB.online.length;
-  document.getElementById('onlineList').innerHTML = DB.online.map(u => `<div>- ${u}</div>`).join('') || 'Nadie';
-}
-function changePage(d){ PAGE+=d; renderTable(); }
-</script>
-</body>
-</html>
+          <strong style="color:var(-
