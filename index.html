@@ -119,7 +119,7 @@
     <div class="tools">
       <div class="search-wrap">
         <i class="fa-solid fa-search"></i>
-        <input id="searchBox" class="search-inp" placeholder="Buscar nombre, zona, municipio..." onkeyup="window.renderTable(true)">
+        <input id="searchBox" class="search-inp" placeholder="Buscar colinas, milagro z6, mixco..." onkeyup="window.renderTable(true)">
       </div>
       <div class="action-btns">
         <button id="btnAdd" onclick="window.openModal('modalAdd')" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i> Nuevo</button>
@@ -289,8 +289,10 @@
     document.getElementById('viewApp').classList.remove('hidden');
     document.getElementById('lblUser').innerText = SESION.u;
     document.getElementById('lblRol').innerText = SESION.r;
+    
     const isAdmin = (SESION.r === 'admin');
     const isAgente = (SESION.r === 'agente'); 
+    
     if(isAdmin) {
       document.getElementById('btnAdd').classList.remove('hidden');
       document.getElementById('btnImpCob').classList.remove('hidden');
@@ -300,6 +302,7 @@
       document.getElementById('btnAdd').classList.remove('hidden');
       document.getElementById('btnExp').classList.remove('hidden');
     }
+    
     document.getElementById('onlineMonitor').classList.remove('hidden');
     window.listenToUsers(); 
     setInterval(window.updateOnlineUI, 5000);
@@ -346,18 +349,78 @@
     });
   }
 
+  // NUEVO CEREBRO DE BÚSQUEDA INTELIGENTE
   window.renderTable = function(reset = false) {
     if (reset) PAGE = 1;
-    const q = document.getElementById('searchBox').value.toLowerCase().trim();
+    const rawQ = document.getElementById('searchBox').value;
+
+    // Normalizador: quita acentos y deja solo alfanuméricos
+    const norm = (s) => String(s||"").toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9 ]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    // Reemplazos de call center: "z 11" o "z11" -> "zona 11"
+    let q = norm(rawQ);
+    q = q.replace(/\bz\s+(\d+)\b/g, "zona $1");
+    q = q.replace(/\bz(\d+)\b/g, "zona $1");
+    q = q.replace(/\bz\b/g, "zona");
+    q = q.replace(/\bcol\b/g, "colonia");
+
+    // Stop words para ignorar conectores que rompen la búsqueda
+    const stopWords = ['de', 'la', 'las', 'los', 'el', 'en', 'y'];
+    const terms = q.split(" ").filter(t => t.length > 0 && !stopWords.includes(t));
+
     let filtered = DB.cob;
-    if (q) filtered = DB.cob.filter(r => `${r.n} ${r.m} ${r.z}`.toLowerCase().includes(q));
-    
+
+    if (terms.length > 0) {
+      filtered = DB.cob.map(row => {
+        let score = 0; let matchedAllTokens = true;
+
+        const nStr = norm(row.n);
+        const mStr = norm(row.m);
+        const rStr = norm(row.r);
+        const cStr = norm(row.c);
+
+        // Fuerza a que la columna de Zona incluya la palabra "zona"
+        // Así, si el Excel solo dice "11", internamente se lee "zona 11"
+        let zRaw = norm(row.z);
+        if (zRaw.match(/^\d+$/)) zRaw = "zona " + zRaw; 
+        else if (zRaw.match(/^z\s*\d+$/)) zRaw = zRaw.replace(/z\s*/, "zona ");
+
+        const fullStr = `${nStr} ${zRaw} ${mStr} ${rStr} ${cStr}`;
+
+        terms.forEach(term => {
+          // Tolerancia a plurales (colina / colinas)
+          let termNoS = term.endsWith('s') ? term.slice(0, -1) : term;
+
+          if (!fullStr.includes(term) && !fullStr.includes(termNoS)) {
+            matchedAllTokens = false;
+          } else {
+            if (nStr.includes(term)) score += 10;
+            else if (zRaw.includes(term)) score += 5;
+            else if (mStr.includes(term)) score += 3;
+            else score += 1;
+          }
+        });
+        return { ...row, score, matchedAllTokens };
+      }).filter(r => r.matchedAllTokens).sort((a, b) => b.score - a.score);
+    }
+
     const totalPages = Math.ceil(filtered.length / 10) || 1;
+    if (PAGE > totalPages) PAGE = totalPages;
     document.getElementById('pageLabel').innerText = `${PAGE} / ${totalPages}`;
+    
     const chunk = filtered.slice((PAGE - 1) * 10, PAGE * 10);
     const tbody = document.getElementById('tableBody');
-    tbody.innerHTML = '';
     
+    if (chunk.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px; color:#6c757d; font-style: italic;">No se encontraron resultados para "${rawQ}".</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = '';
     const isAdmin = (SESION.r === 'admin');
     const canEdit = (SESION.r === 'admin' || SESION.r === 'agente');
 
@@ -365,24 +428,35 @@
       let bg = row.s === 'Cobertura' ? '#28a745' : row.s === 'Sin Cobertura' ? '#dc3545' : row.s === 'Consultar' ? '#ffc107' : '#6c757d';
       let color = row.s === 'Consultar' ? 'black' : 'white';
 
-      let statusAction = canEdit ? `
-        <div style="display: flex; gap: 5px;">
-          <select onchange="window.saveStatus('${row.id}', this)" style="background:${bg}; color:${color}; border:none; padding:8px 5px; border-radius:4px; font-weight:bold; cursor:pointer; width:100%;">
-            <option value="Cobertura" ${row.s==='Cobertura'?'selected':''}>Cobertura</option>
-            <option value="Sin Cobertura" ${row.s==='Sin Cobertura'?'selected':''}>Sin Cobertura</option>
-            <option value="Consultar" ${row.s==='Consultar'?'selected':''}>Consultar</option>
-            <option value="Sin Datos" ${row.s==='Sin Datos'?'selected':''}>Sin Datos</option>
-          </select>
-          ${isAdmin ? `<button onclick="window.editLocation('${row.id}')" class="btn btn-p" style="padding: 8px 10px;"><i class="fa-solid fa-pencil"></i></button>
-                       <button onclick="window.deleteLocation('${row.id}')" class="btn btn-d" style="padding: 8px 10px;"><i class="fa-solid fa-trash"></i></button>` : ''}
-        </div>` : `<span class="badge" style="background:${bg}; color:${color}">${row.s || "Sin Datos"}</span>`;
+      let statusAction = "";
+      if (canEdit) {
+        let selectHtml = `
+          <select onchange="window.saveStatus('${row.id}', this)" style="flex: 1; background:${bg}; color:${color}; border:none; padding:8px 5px; border-radius:4px; font-weight:bold; cursor:pointer; width:100%; outline:none;">
+            <option value="Cobertura" style="background:#28a745; color:white" ${row.s==='Cobertura'?'selected':''}>Cobertura</option>
+            <option value="Sin Cobertura" style="background:#dc3545; color:white" ${row.s==='Sin Cobertura'?'selected':''}>Sin Cobertura</option>
+            <option value="Consultar" style="background:#ffc107; color:black" ${row.s==='Consultar'?'selected':''}>Consultar</option>
+            <option value="Sin Datos" style="background:#6c757d; color:white" ${row.s==='Sin Datos' || !row.s ? 'selected':''}>Sin Datos</option>
+          </select>`;
+
+        if (isAdmin) {
+          statusAction = `<div style="display: flex; gap: 5px; align-items: center;">
+                            ${selectHtml}
+                            <button onclick="window.editLocation('${row.id}')" class="btn btn-p" style="padding: 8px 10px;" title="Editar"><i class="fa-solid fa-pencil"></i></button>
+                            <button onclick="window.deleteLocation('${row.id}')" class="btn btn-d" style="padding: 8px 10px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                          </div>`;
+        } else {
+          statusAction = selectHtml;
+        }
+      } else {
+        statusAction = `<span class="badge" style="background:${bg}; color:${color}; width: 100%; box-sizing: border-box; padding: 8px 0;">${row.s || "Sin Datos"}</span>`;
+      }
 
       tbody.innerHTML += `<tr><td>${row.m}</td><td><b>${row.n}</b></td><td>${row.c}</td><td>${row.z}</td><td>${row.r}</td><td>${statusAction}</td></tr>`;
     });
   };
 
   window.saveStatus = async (id, sel) => {
-    try { await updateDoc(doc(db, "coberturas", id), { s: sel.value }); } catch(e) { alert("Error"); }
+    try { await updateDoc(doc(db, "coberturas", id), { s: sel.value }); } catch(e) { alert("Error al actualizar"); }
   };
 
   window.editLocation = async (id) => {
@@ -400,17 +474,18 @@
 
   window.saveLocation = async () => {
     const data = { m: document.getElementById('newMun').value, n: document.getElementById('newNom').value, c: document.getElementById('newCat').value, z: document.getElementById('newZon').value, r: document.getElementById('newRef').value, s: document.getElementById('newCob').value };
-    if(!data.m || !data.n) return alert("Faltan datos");
+    if(!data.m || !data.n) return alert("Faltan datos obligatorios");
     try {
       if(EDITING_LOCATION_ID) await updateDoc(doc(db, "coberturas", EDITING_LOCATION_ID), data);
       else await addDoc(collection(db, "coberturas"), data);
       window.closeModal('modalAdd');
-      EDITING_LOCATION_ID = null;
-    } catch(e) { alert("Error"); }
+    } catch(e) { alert("Error al guardar"); }
   };
 
   window.deleteLocation = async (id) => {
-    if(confirm("¿Eliminar?")) await deleteDoc(doc(db, "coberturas", id));
+    if(confirm("¿Seguro que deseas eliminar esta ubicación permanentemente?")) {
+      await deleteDoc(doc(db, "coberturas", id));
+    }
   };
 
   window.openModal = id => document.getElementById(id).classList.remove('hidden');
@@ -423,10 +498,9 @@
     }
   };
   window.changePage = d => { PAGE += d; window.renderTable(); };
-  window.logout = window.logout;
+  
   window.openUsers = () => { window.openModal('modalUsr'); window.renderUserList(); };
   
-  // (Funciones de Import/Export y Usuarios se mantienen igual a la versión anterior)
   window.handleImportCob = function(e) {
     const file = e.target.files[0];
     if(!file) return;
@@ -469,6 +543,92 @@
       } catch(err) { alert("Error"); }
     };
     reader.readAsBinaryString(file);
+  };
+
+  // Mantiene la lógica original de Usuarios para no perder cambios.
+  window.submitUser = async function() {
+    const u = document.getElementById('uUser').value, p = document.getElementById('uPass').value, r = document.getElementById('uRol').value;
+    if(!u || (!p && r !== 'invitado')) return alert("Datos incompletos"); 
+    try {
+      if(EDITING_USER_ID) await updateDoc(doc(db, "usuarios", EDITING_USER_ID), { u, p, r });
+      else await addDoc(collection(db, "usuarios"), { u, p, r });
+      window.clearUserForm();
+    } catch(e) { alert("Error al guardar"); }
+  };
+
+  window.editUser = function(id, u, p, r) {
+    EDITING_USER_ID = id; document.getElementById('uUser').value = u; document.getElementById('uPass').value = p; document.getElementById('uRol').value = r;
+    document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-save"></i>';
+  };
+
+  window.clearUserForm = function() {
+    EDITING_USER_ID = null; document.getElementById('uUser').value = ''; document.getElementById('uPass').value = ''; document.getElementById('uRol').value = 'agente';
+    document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-plus"></i>';
+  };
+
+  window.deleteUser = async function(id) {
+    if(!confirm("¿Eliminar usuario definitivamente?")) return;
+    await deleteDoc(doc(db, "usuarios", id));
+  };
+
+  window.handleImportUsr = function(e) {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = async (evt) => {
+      const data = evt.target.result;
+      const workbook = XLSX.read(data, {type: 'binary'});
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json(sheet);
+
+      if(!confirm(`¿Importar ${json.length} usuarios?`)) return;
+
+      try {
+        const colRef = collection(db, "usuarios");
+        for (let i = 0; i < json.length; i += 400) {
+          const batch = writeBatch(db);
+          const chunk = json.slice(i, i + 400);
+          chunk.forEach(row => {
+            const keys = Object.keys(row);
+            const getVal = (possibleNames) => {
+              for(let k of keys) {
+                if(possibleNames.includes(k.toLowerCase().trim())) return String(row[k] || "");
+              }
+              return "";
+            };
+
+            let usr = getVal(["usuario", "usr"]).trim();
+            let pwd = getVal(["contraseña", "password", "clave"]).trim();
+            let r = getVal(["rol", "role"]).trim().toLowerCase();
+            
+            if(r === 'lider') r = 'agente';
+            
+            if (usr !== "") {
+               batch.set(doc(colRef), { u: usr, p: pwd, r: r || "invitado" });
+            }
+          });
+          await batch.commit();
+        }
+        alert("¡Usuarios importados!"); e.target.value = "";
+      } catch(err) { alert("Error importando usuarios."); }
+    };
+    reader.readAsBinaryString(file);
+  };
+
+  window.exportToExcel = function() {
+    if(!DB.cob.length) return alert("Sin datos");
+    const ws = XLSX.utils.json_to_sheet(DB.cob.map(r => ({ "Municipio":r.m, "Nombre":r.n, "Categoria":r.c, "Zona":r.z, "Referencia":r.r, "Estado":r.s || "Sin Datos" })));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Datos");
+    XLSX.writeFile(wb, "Cobertura_Distelsa.xlsx");
+  };
+
+  window.exportUsersToExcel = function() {
+    if(!DB_USERS.length) return alert("No hay usuarios.");
+    const ws = XLSX.utils.json_to_sheet(DB_USERS.map(u => ({ "Usuario": u.u, "Contraseña": u.p, "Rol": u.r })));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Usuarios");
+    XLSX.writeFile(wb, "Usuarios_Distelsa.xlsx");
   };
 
 </script>
