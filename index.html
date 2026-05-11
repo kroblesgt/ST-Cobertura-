@@ -67,15 +67,13 @@
   .user-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
   .user-row:hover { background: #f8f9fa; }
 
-  /* =========================================
-     DISEÑO RESPONSIVO (MÓVILES Y TABLETS)
-     ========================================= */
+  /* DISEÑO RESPONSIVO (MÓVILES Y TABLETS) */
   @media (max-width: 768px) {
     header { padding: 0 15px; }
     .logo { font-size: 16px; }
-    .user-info { display: none; } /* Oculta Usuario/Rol para dar espacio al logo y botón de salir */
+    .user-info { display: none; } 
     .online-indicator { margin-right: 5px; padding: 6px 8px; }
-    .hide-mobile { display: none; } /* Oculta texto secundario como "Online:" */
+    .hide-mobile { display: none; } 
 
     .container { padding: 0 10px; margin-top: 10px; }
     
@@ -84,10 +82,8 @@
     .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
     .action-btns .btn { width: 100%; }
     
-    /* Obliga a la tabla a hacer scroll horizontal */
     .table-responsive { border: 1px solid #eee; border-radius: 4px; }
     
-    /* Formularios en Móvil (1 columna en vez de 2) */
     .form-grid { grid-template-columns: 1fr; gap: 10px; }
     .span-2 { grid-column: span 1; }
     
@@ -160,8 +156,8 @@
               <th width="25%">Nombre</th>
               <th width="12%">Categoría</th>
               <th width="10%">Zona</th>
-              <th width="23%">Referencia</th>
-              <th width="15%">Estado</th>
+              <th width="20%">Referencia</th>
+              <th width="18%">Estado</th>
             </tr>
           </thead>
           <tbody id="tableBody"></tbody>
@@ -176,7 +172,6 @@
   </div>
 </div>
 
-<!-- Modal Nueva Ubicación -->
 <div id="modalAdd" class="modal-backdrop hidden">
   <div class="modal">
     <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
@@ -202,7 +197,6 @@
   </div>
 </div>
 
-<!-- Modal Usuarios -->
 <div id="modalUsr" class="modal-backdrop hidden">
   <div class="modal">
     <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
@@ -215,7 +209,6 @@
       <button onclick="window.exportUsersToExcel()" class="btn btn-x"><i class="fa-solid fa-file-export"></i> Exportar</button>
     </div>
 
-    <!-- Formulario Crear/Editar Usuario -->
     <div class="form-inline">
       <input id="uUser" class="inp" placeholder="Usuario">
       <input id="uPass" class="inp" placeholder="Clave">
@@ -230,7 +223,6 @@
       </div>
     </div>
 
-    <!-- BUSCADOR DE USUARIOS -->
     <div class="search-wrap" style="margin-bottom: 10px;">
       <i class="fa-solid fa-search"></i>
       <input id="searchUserBox" class="search-inp" placeholder="Buscar por nombre o rol..." onkeyup="window.renderUserList()">
@@ -240,7 +232,6 @@
   </div>
 </div>
 
-<!-- FIREBASE SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, addDoc, deleteDoc, query, where, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -342,11 +333,14 @@
     const isAgente = (SESION.r === 'agente' || SESION.r === 'lider'); 
 
     if(isAdmin) {
+      // ADMIN: Todo habilitado
       document.getElementById('btnAdd').classList.remove('hidden');
       document.getElementById('btnImpCob').classList.remove('hidden');
       document.getElementById('btnExp').classList.remove('hidden');
       document.getElementById('btnUsr').classList.remove('hidden');
     } else if (isAgente) {
+      // AGENTE: Puede agregar ubicaciones y exportar, pero NO importar excel ni ver usuarios
+      document.getElementById('btnAdd').classList.remove('hidden');
       document.getElementById('btnExp').classList.remove('hidden');
     }
     
@@ -455,7 +449,9 @@
     }
 
     tbody.innerHTML = '';
+    
     const canEdit = (SESION.r === 'admin' || SESION.r === 'agente' || SESION.r === 'lider');
+    const canDelete = (SESION.r === 'admin'); // Solo Admin puede eliminar direcciones
 
     chunk.forEach(row => {
       let bg = '#6c757d'; let colorTexto = 'white';
@@ -466,15 +462,27 @@
       let statusHtml = "";
       
       if (canEdit) {
-        statusHtml = `
-        <select onchange="window.saveEdit('${row.id}', this)" style="background:${bg}; color:${colorTexto}; border:none; padding:8px 5px; border-radius:4px; font-weight:bold; cursor:pointer; width:100%; outline:none;">
+        let selectHtml = `
+        <select onchange="window.saveEdit('${row.id}', this)" style="flex: 1; background:${bg}; color:${colorTexto}; border:none; padding:8px 5px; border-radius:4px; font-weight:bold; cursor:pointer; width:100%; outline:none;">
           <option value="Cobertura" style="background:#28a745; color:white" ${row.s==='Cobertura'?'selected':''}>Cobertura</option>
           <option value="Sin Cobertura" style="background:#dc3545; color:white" ${row.s==='Sin Cobertura'?'selected':''}>Sin Cobertura</option>
           <option value="Consultar" style="background:#ffc107; color:black" ${row.s==='Consultar'?'selected':''}>Consultar</option>
           <option value="Sin Datos" style="background:#6c757d; color:white" ${row.s==='Sin Datos' || !row.s ? 'selected':''}>Sin Datos</option>
         </select>`;
+
+        if (canDelete) {
+          // Admin ve el Dropdown + Botón de Eliminar
+          statusHtml = `<div style="display: flex; gap: 5px; align-items: center;">
+                          ${selectHtml}
+                          <button onclick="window.deleteLocation('${row.id}')" class="btn btn-d" style="padding: 8px 10px;" title="Eliminar Ubicación"><i class="fa-solid fa-trash"></i></button>
+                        </div>`;
+        } else {
+          // Agente solo ve el Dropdown
+          statusHtml = selectHtml;
+        }
       } else {
-        statusHtml = `<span class="badge" style="background:${bg}; color:${colorTexto}; box-sizing: border-box; padding: 8px 0;">${row.s || "Sin Datos"}</span>`;
+        // Invitado ve la etiqueta estática
+        statusHtml = `<span class="badge" style="background:${bg}; color:${colorTexto}; width: 100%; box-sizing: border-box; padding: 8px 0;">${row.s || "Sin Datos"}</span>`;
       }
 
       tbody.innerHTML += `
@@ -505,13 +513,31 @@
 
   window.saveNewLocation = async function() {
     const m = document.getElementById('newMun').value, n = document.getElementById('newNom').value;
-    if(!m || !n) return alert("Faltan datos");
+    if(!m || !n) return alert("Faltan datos obligatorios (Municipio y Nombre)");
     try {
       await addDoc(collection(db, "coberturas"), {
         m, n, c: document.getElementById('newCat').value, z: document.getElementById('newZon').value, r: document.getElementById('newRef').value, s: document.getElementById('newCob').value
       });
       alert("Guardado exitosamente"); window.closeModal('modalAdd');
+      
+      // Limpiar formulario
+      document.getElementById('newMun').value = '';
+      document.getElementById('newNom').value = '';
+      document.getElementById('newCat').value = '';
+      document.getElementById('newZon').value = '';
+      document.getElementById('newRef').value = '';
+      document.getElementById('newCob').value = 'Cobertura';
+      
     } catch (e) { alert("Error al guardar"); }
+  };
+
+  window.deleteLocation = async function(id) {
+    if(!confirm("¿Estás seguro de eliminar esta ubicación definitivamente? Esta acción no se puede deshacer.")) return;
+    try {
+      await deleteDoc(doc(db, "coberturas", id));
+    } catch(e) {
+      alert("Error al eliminar la ubicación.");
+    }
   };
 
   window.handleImportCob = function(e) {
