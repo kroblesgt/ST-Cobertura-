@@ -66,6 +66,14 @@
   
   .user-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
 
+  /* PUSH NOTIFICATIONS (TOAST) */
+  .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+  .toast { background: white; border-left: 5px solid var(--red); box-shadow: 0 4px 15px rgba(0,0,0,0.2); padding: 15px 20px; border-radius: 4px; display: flex; align-items: center; gap: 12px; font-size: 14px; color: #333; animation: slideUp 0.3s ease-out forwards; min-width: 250px; }
+  .toast i { font-size: 20px; color: var(--red); }
+  .toast-fade { animation: fadeOut 0.3s ease-in forwards; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(20px); } }
+
   @media (max-width: 768px) {
     header { padding: 0 15px; }
     .logo { font-size: 16px; }
@@ -75,6 +83,7 @@
     .action-btns { display: grid; grid-template-columns: 1fr 1fr; }
     .form-grid { grid-template-columns: 1fr; }
     .span-2 { grid-column: span 1; }
+    .toast-container { bottom: 10px; right: 10px; left: 10px; }
   }
 </style>
 </head>
@@ -118,7 +127,13 @@
 <div id="viewApp" class="hidden">
   <header>
     <div class="logo"><i class="fa-solid fa-location-dot"></i> <span class="hide-mobile">ST</span> DISTELSA</div>
-    <div style="display: flex; align-items: center; gap: 10px;">
+    <div style="display: flex; align-items: center; gap: 15px;">
+      
+      <div id="notifBell" class="hidden" style="position: relative; cursor: pointer; color: var(--blue); font-size: 20px; margin-right: 5px;" onclick="window.openUsers()" title="Ver solicitudes pendientes">
+        <i class="fa-solid fa-bell"></i>
+        <span id="notifBadge" class="hidden" style="position: absolute; top: -5px; right: -8px; background: var(--red); color: white; border-radius: 50%; font-size: 10px; width: 18px; height: 18px; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 2px solid white;">0</span>
+      </div>
+
       <div id="onlineMonitor" class="hidden online-indicator">
         <i class="fa-solid fa-circle" style="font-size: 8px;"></i> <span class="hide-mobile">Online:</span> <span id="onlineCount" style="margin-left:3px;">0</span>
         <div id="onlineList" class="online-list-popup">Cargando...</div>
@@ -227,6 +242,8 @@
   </div>
 </div>
 
+<div id="toastContainer" class="toast-container"></div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, addDoc, deleteDoc, query, where, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -250,6 +267,10 @@
   let EDITING_USER_ID = null;
   let EDITING_LOCATION_ID = null;
   let heartbeatInterval;
+  
+  // Variables para notificaciones
+  let isFirstUserLoad = true;
+  let knownPendingIds = new Set();
 
   window.onload = () => {
     const saved = localStorage.getItem('distelsa_pro_fb');
@@ -361,6 +382,7 @@
       document.getElementById('btnImpCob').classList.remove('hidden');
       document.getElementById('btnExp').classList.remove('hidden');
       document.getElementById('btnUsr').classList.remove('hidden');
+      document.getElementById('notifBell').classList.remove('hidden'); // Muestra la campana
     } else if (isAgente) {
       document.getElementById('btnAdd').classList.remove('hidden');
       document.getElementById('btnExp').classList.remove('hidden');
@@ -390,12 +412,56 @@
     localStorage.removeItem('distelsa_pro_fb'); location.reload(); 
   };
 
+  // SISTEMA DE ESCUCHA DE USUARIOS Y NOTIFICACIONES
   window.listenToUsers = function() {
     onSnapshot(collection(db, "usuarios"), (snapshot) => {
       DB_USERS = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      
+      if (SESION.r === 'admin') {
+        let currentPending = DB_USERS.filter(u => u.r === 'pendiente');
+        let badge = document.getElementById('notifBadge');
+        
+        // Actualiza el número en la campanita
+        if (currentPending.length > 0) {
+            badge.innerText = currentPending.length;
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+
+        // Si NO es la primera vez que carga, revisa si hay alguien nuevo para lanzar el Toast
+        if (!isFirstUserLoad) {
+            currentPending.forEach(u => {
+                if (!knownPendingIds.has(u.id)) {
+                    window.showToast(`Nueva solicitud pendiente de <b>${u.u}</b>. <u style="cursor:pointer; color:var(--blue)" onclick="window.openUsers()">Revisar</u>`);
+                }
+            });
+        }
+        
+        // Actualiza la lista de conocidos
+        knownPendingIds = new Set(currentPending.map(u => u.id));
+      }
+
+      isFirstUserLoad = false;
       window.updateOnlineUI();
       if(!document.getElementById('modalUsr').classList.contains('hidden') && !EDITING_USER_ID) window.renderUserList();
     });
+  };
+
+  // FUNCIÓN PARA CREAR EL PUSH UP (TOAST)
+  window.showToast = function(message) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<i class="fa-solid fa-bell"></i> <div>${message}</div>`;
+    
+    container.appendChild(toast);
+    
+    // Se elimina automáticamente después de 6 segundos
+    setTimeout(() => {
+        toast.classList.add('toast-fade');
+        setTimeout(() => toast.remove(), 300);
+    }, 6000);
   };
 
   window.updateOnlineUI = function() {
