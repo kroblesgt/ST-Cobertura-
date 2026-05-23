@@ -129,7 +129,7 @@
     <div class="logo"><i class="fa-solid fa-location-dot"></i> <span class="hide-mobile">ST</span> DISTELSA</div>
     <div style="display: flex; align-items: center; gap: 15px;">
       
-      <div id="notifBell" class="hidden" style="position: relative; cursor: pointer; color: var(--blue); font-size: 20px; margin-right: 5px;" onclick="window.openUsers()" title="Ver solicitudes pendientes">
+      <div id="notifBell" class="hidden" style="position: relative; cursor: pointer; color: var(--blue); font-size: 20px; margin-right: 5px;" onclick="window.openPendingUsers()" title="Ver solicitudes pendientes">
         <i class="fa-solid fa-bell"></i>
         <span id="notifBadge" class="hidden" style="position: absolute; top: -5px; right: -8px; background: var(--red); color: white; border-radius: 50%; font-size: 10px; width: 18px; height: 18px; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 2px solid white;">0</span>
       </div>
@@ -382,7 +382,7 @@
       document.getElementById('btnImpCob').classList.remove('hidden');
       document.getElementById('btnExp').classList.remove('hidden');
       document.getElementById('btnUsr').classList.remove('hidden');
-      document.getElementById('notifBell').classList.remove('hidden'); // Muestra la campana
+      document.getElementById('notifBell').classList.remove('hidden'); 
     } else if (isAgente) {
       document.getElementById('btnAdd').classList.remove('hidden');
       document.getElementById('btnExp').classList.remove('hidden');
@@ -412,7 +412,6 @@
     localStorage.removeItem('distelsa_pro_fb'); location.reload(); 
   };
 
-  // SISTEMA DE ESCUCHA DE USUARIOS Y NOTIFICACIONES
   window.listenToUsers = function() {
     onSnapshot(collection(db, "usuarios"), (snapshot) => {
       DB_USERS = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -421,7 +420,6 @@
         let currentPending = DB_USERS.filter(u => u.r === 'pendiente');
         let badge = document.getElementById('notifBadge');
         
-        // Actualiza el número en la campanita
         if (currentPending.length > 0) {
             badge.innerText = currentPending.length;
             badge.classList.remove('hidden');
@@ -429,16 +427,14 @@
             badge.classList.add('hidden');
         }
 
-        // Si NO es la primera vez que carga, revisa si hay alguien nuevo para lanzar el Toast
         if (!isFirstUserLoad) {
             currentPending.forEach(u => {
                 if (!knownPendingIds.has(u.id)) {
-                    window.showToast(`Nueva solicitud pendiente de <b>${u.u}</b>. <u style="cursor:pointer; color:var(--blue)" onclick="window.openUsers()">Revisar</u>`);
+                    // El Toast ahora también usa el atajo directo
+                    window.showToast(`Nueva solicitud de <b>${u.u}</b>. <u style="cursor:pointer; color:var(--blue)" onclick="window.openPendingUsers()">Aprobar</u>`);
                 }
             });
         }
-        
-        // Actualiza la lista de conocidos
         knownPendingIds = new Set(currentPending.map(u => u.id));
       }
 
@@ -448,7 +444,6 @@
     });
   };
 
-  // FUNCIÓN PARA CREAR EL PUSH UP (TOAST)
   window.showToast = function(message) {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
@@ -456,8 +451,6 @@
     toast.innerHTML = `<i class="fa-solid fa-bell"></i> <div>${message}</div>`;
     
     container.appendChild(toast);
-    
-    // Se elimina automáticamente después de 6 segundos
     setTimeout(() => {
         toast.classList.add('toast-fade');
         setTimeout(() => toast.remove(), 300);
@@ -614,6 +607,13 @@
   window.changePage = d => { PAGE += d; window.renderTable(); };
   window.openUsers = () => { window.openModal('modalUsr'); window.renderUserList(); };
 
+  // NUEVA FUNCIÓN: ATAJO PARA VER SOLO PENDIENTES
+  window.openPendingUsers = () => {
+    window.openModal('modalUsr');
+    document.getElementById('searchUserBox').value = 'pendiente';
+    window.renderUserList();
+  };
+
   window.renderUserList = function() {
     const c = document.getElementById('userListContainer');
     const now = Date.now();
@@ -626,6 +626,13 @@
         (u.r && u.r.toLowerCase().includes(q))
       );
     }
+    
+    // ORDENAMIENTO INTELIGENTE: Los pendientes siempre van primero.
+    filteredUsers.sort((a, b) => {
+      if (a.r === 'pendiente' && b.r !== 'pendiente') return -1;
+      if (a.r !== 'pendiente' && b.r === 'pendiente') return 1;
+      return (a.u || "").localeCompare(b.u || ""); // El resto se ordena alfabéticamente
+    });
     
     c.innerHTML = filteredUsers.map(u => {
       const isOnline = u.lastActive && (now - u.lastActive < 190000);
