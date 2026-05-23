@@ -17,7 +17,7 @@
   .logo { font-size: 20px; font-weight: 800; color: var(--blue); display: flex; align-items: center; gap: 10px; white-space: nowrap; }
   .user-info { text-align: right; font-size: 13px; line-height: 1.2; }
 
-  /* LOGIN */
+  /* LOGIN & REGISTER */
   .login-wrapper { height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #e9ecef 0%, #ffffff 100%); padding: 15px; box-sizing: border-box; }
   .login-box { background: white; padding: 40px; width: 100%; max-width: 320px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 5px solid var(--blue); text-align: center; box-sizing: border-box;}
   .inp { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
@@ -84,18 +84,34 @@
 <input type="file" id="fileImportUsr" accept=".xlsx, .xls" class="hidden" onchange="window.handleImportUsr(event)">
 
 <div id="viewLogin" class="login-wrapper">
-  <div class="login-box">
+  <div id="boxLogin" class="login-box">
     <h3 style="color:var(--blue); margin-top:0;">ST GRUPO DISTELSA</h3>
     <p style="font-size:12px; color:#6c757d; margin-bottom:20px;">ACCESO AL SISTEMA</p>
     <input id="txtUser" class="inp" placeholder="Usuario">
     <input id="txtPass" type="password" class="inp" placeholder="Contraseña">
     <button id="btnLogin" onclick="window.login()" class="btn btn-p" style="width:100%; height: 45px;">INGRESAR</button>
     
+    <p style="font-size: 13px; margin: 15px 0 0 0;">
+      ¿No tienes cuenta? <a href="#" onclick="window.toggleAuthBoxes(true)" style="color: var(--light-blue); font-weight: bold; text-decoration: none;">Regístrate aquí</a>
+    </p>
+
     <hr style="border: 0; border-top: 1px solid #e9ecef; margin: 20px 0;">
     
     <button onclick="window.loginInvitado()" class="btn btn-o" style="width:100%; height: 40px; background: #6c757d;">
       <i class="fa-solid fa-user-clock"></i> Entrar como Invitado
     </button>
+  </div>
+
+  <div id="boxRegister" class="login-box hidden">
+    <h3 style="color:var(--blue); margin-top:0;">SOLICITAR ACCESO</h3>
+    <p style="font-size:12px; color:#6c757d; margin-bottom:20px;">CREA TU PROPUESTA DE USUARIO</p>
+    <input id="regUser" class="inp" placeholder="Elige tu Usuario">
+    <input id="regPass" type="password" class="inp" placeholder="Elige tu Contraseña">
+    <button id="btnRegister" onclick="window.registerAccount()" class="btn btn-s" style="width:100%; height: 45px;">ENVIAR SOLICITUD</button>
+    
+    <p style="font-size: 13px; margin: 20px 0 0 0;">
+      <a href="#" onclick="window.toggleAuthBoxes(false)" style="color: var(--gray); text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> Volver al Login</a>
+    </p>
   </div>
 </div>
 
@@ -182,7 +198,7 @@
 <div id="modalUsr" class="modal-backdrop hidden">
   <div class="modal">
     <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-      <h3 style="margin:0">Usuarios</h3>
+      <h3 style="margin:0">Usuarios y Autorizaciones</h3>
       <button onclick="window.closeModal('modalUsr')" class="btn btn-d"><i class="fa-solid fa-times"></i></button>
     </div>
     <div class="action-btns" style="margin-bottom: 15px; justify-content: flex-end;">
@@ -196,6 +212,7 @@
         <option value="agente">Agente</option>
         <option value="invitado">Invitado</option>
         <option value="admin">Admin</option>
+        <option value="pendiente">Pendiente (Bloqueado)</option>
       </select>
       <div style="display: flex; gap: 10px; width: 100%;">
         <button id="btnUserAction" onclick="window.submitUser()" class="btn btn-s" style="flex: 1;"><i class="fa-solid fa-plus"></i></button>
@@ -204,7 +221,7 @@
     </div>
     <div class="search-wrap" style="margin-bottom: 10px;">
       <i class="fa-solid fa-search"></i>
-      <input id="searchUserBox" class="search-inp" placeholder="Buscar por nombre o rol..." onkeyup="window.renderUserList()">
+      <input id="searchUserBox" class="search-inp" placeholder="Buscar por nombre o rol (ej: pendiente)..." onkeyup="window.renderUserList()">
     </div>
     <div id="userListContainer" style="max-height: 250px; overflow-y: auto; border: 1px solid #eee; border-radius: 4px;"></div>
   </div>
@@ -239,6 +256,45 @@
     if(saved) { SESION = JSON.parse(saved); window.startApp(); }
   };
 
+  window.toggleAuthBoxes = function(showRegister) {
+    if(showRegister) {
+      document.getElementById('boxLogin').classList.add('hidden');
+      document.getElementById('boxRegister').classList.remove('hidden');
+    } else {
+      document.getElementById('boxRegister').classList.add('hidden');
+      document.getElementById('boxLogin').classList.remove('hidden');
+    }
+  };
+
+  window.registerAccount = async function() {
+    const u = document.getElementById('regUser').value.trim();
+    const p = document.getElementById('regPass').value.trim();
+    const btn = document.getElementById('btnRegister');
+
+    if(!u || !p) return alert("Por favor complete todos los campos.");
+    btn.innerText = 'Enviando...'; btn.disabled = true;
+
+    try {
+      const q = query(collection(db, "usuarios"), where("u", "==", u));
+      const snap = await getDocs(q);
+
+      if(!snap.empty) {
+        alert("Ese nombre de usuario ya está solicitado o en uso. Elige otro.");
+        btn.innerText = 'ENVIAR SOLICITUD'; btn.disabled = false;
+        return;
+      }
+
+      await addDoc(collection(db, "usuarios"), { u, p, r: "pendiente", lastActive: 0, token: null });
+      alert("¡Solicitud enviada con éxito! Solicita la aprobación de tu Team Leader o Administrador para ingresar.");
+      
+      document.getElementById('regUser').value = '';
+      document.getElementById('regPass').value = '';
+      window.toggleAuthBoxes(false);
+
+    } catch(e) { alert("Error al procesar la solicitud."); }
+    btn.innerText = 'ENVIAR SOLICITUD'; btn.disabled = false;
+  };
+
   window.login = async function() {
     const u = document.getElementById('txtUser').value.trim();
     const p = document.getElementById('txtPass').value.trim();
@@ -251,6 +307,13 @@
       if (!querySnapshot.empty) {
         const userDoc = querySnapshot.docs[0];
         const userData = userDoc.data();
+        
+        if(userData.r === 'pendiente') {
+          alert("Tu cuenta aún está en estado PENDIENTE de aprobación por el Administrador.");
+          btn.innerText = 'INGRESAR'; btn.disabled = false;
+          return;
+        }
+
         const newToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
         let rolAsignado = userData.r === 'lider' ? 'agente' : userData.r;
         SESION = { id: userDoc.id, u: userData.u, r: rolAsignado, t: newToken };
@@ -337,7 +400,7 @@
 
   window.updateOnlineUI = function() {
     const now = Date.now();
-    let onlineUsers = DB_USERS.filter(u => u.lastActive && (now - u.lastActive < 190000)).map(u => u.u);
+    let onlineUsers = DB_USERS.filter(u => u.lastActive && (now - u.lastActive < 190000) && u.r !== 'pendiente').map(u => u.u);
     document.getElementById('onlineCount').innerText = onlineUsers.length;
     document.getElementById('onlineList').innerHTML = onlineUsers.map(u => `<div class="online-item"><i class="fa-solid fa-user" style="color:#28a745"></i> ${u}</div>`).join('') || 'Nadie conectado';
   };
@@ -349,26 +412,22 @@
     });
   }
 
-  // NUEVO CEREBRO DE BÚSQUEDA INTELIGENTE
   window.renderTable = function(reset = false) {
     if (reset) PAGE = 1;
     const rawQ = document.getElementById('searchBox').value;
 
-    // Normalizador: quita acentos y deja solo alfanuméricos
     const norm = (s) => String(s||"").toLowerCase()
       .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
       .replace(/[^a-z0-9 ]/g, " ")
       .replace(/\s+/g, " ")
       .trim();
 
-    // Reemplazos de call center: "z 11" o "z11" -> "zona 11"
     let q = norm(rawQ);
     q = q.replace(/\bz\s+(\d+)\b/g, "zona $1");
     q = q.replace(/\bz(\d+)\b/g, "zona $1");
     q = q.replace(/\bz\b/g, "zona");
     q = q.replace(/\bcol\b/g, "colonia");
 
-    // Stop words para ignorar conectores que rompen la búsqueda
     const stopWords = ['de', 'la', 'las', 'los', 'el', 'en', 'y'];
     const terms = q.split(" ").filter(t => t.length > 0 && !stopWords.includes(t));
 
@@ -377,14 +436,11 @@
     if (terms.length > 0) {
       filtered = DB.cob.map(row => {
         let score = 0; let matchedAllTokens = true;
-
         const nStr = norm(row.n);
         const mStr = norm(row.m);
         const rStr = norm(row.r);
         const cStr = norm(row.c);
 
-        // Fuerza a que la columna de Zona incluya la palabra "zona"
-        // Así, si el Excel solo dice "11", internamente se lee "zona 11"
         let zRaw = norm(row.z);
         if (zRaw.match(/^\d+$/)) zRaw = "zona " + zRaw; 
         else if (zRaw.match(/^z\s*\d+$/)) zRaw = zRaw.replace(/z\s*/, "zona ");
@@ -392,12 +448,9 @@
         const fullStr = `${nStr} ${zRaw} ${mStr} ${rStr} ${cStr}`;
 
         terms.forEach(term => {
-          // Tolerancia a plurales (colina / colinas)
           let termNoS = term.endsWith('s') ? term.slice(0, -1) : term;
-
-          if (!fullStr.includes(term) && !fullStr.includes(termNoS)) {
-            matchedAllTokens = false;
-          } else {
+          if (!fullStr.includes(term) && !fullStr.includes(termNoS)) { matchedAllTokens = false; } 
+          else {
             if (nStr.includes(term)) score += 10;
             else if (zRaw.includes(term)) score += 5;
             else if (mStr.includes(term)) score += 3;
@@ -444,13 +497,10 @@
                             <button onclick="window.editLocation('${row.id}')" class="btn btn-p" style="padding: 8px 10px;" title="Editar"><i class="fa-solid fa-pencil"></i></button>
                             <button onclick="window.deleteLocation('${row.id}')" class="btn btn-d" style="padding: 8px 10px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
                           </div>`;
-        } else {
-          statusAction = selectHtml;
-        }
+        } else { statusAction = selectHtml; }
       } else {
         statusAction = `<span class="badge" style="background:${bg}; color:${color}; width: 100%; box-sizing: border-box; padding: 8px 0;">${row.s || "Sin Datos"}</span>`;
       }
-
       tbody.innerHTML += `<tr><td>${row.m}</td><td><b>${row.n}</b></td><td>${row.c}</td><td>${row.z}</td><td>${row.r}</td><td>${statusAction}</td></tr>`;
     });
   };
@@ -483,9 +533,7 @@
   };
 
   window.deleteLocation = async (id) => {
-    if(confirm("¿Seguro que deseas eliminar esta ubicación permanentemente?")) {
-      await deleteDoc(doc(db, "coberturas", id));
-    }
+    if(confirm("¿Seguro que deseas eliminar esta ubicación permanentemente?")) { await deleteDoc(doc(db, "coberturas", id)); }
   };
 
   window.openModal = id => document.getElementById(id).classList.remove('hidden');
@@ -498,12 +546,67 @@
     }
   };
   window.changePage = d => { PAGE += d; window.renderTable(); };
-  
   window.openUsers = () => { window.openModal('modalUsr'); window.renderUserList(); };
-  
+
+  window.renderUserList = function() {
+    const c = document.getElementById('userListContainer');
+    const now = Date.now();
+    const q = document.getElementById('searchUserBox') ? document.getElementById('searchUserBox').value.toLowerCase().trim() : '';
+    
+    let filteredUsers = DB_USERS;
+    if (q) {
+      filteredUsers = DB_USERS.filter(u => 
+        (u.u && u.u.toLowerCase().includes(q)) || 
+        (u.r && u.r.toLowerCase().includes(q))
+      );
+    }
+    
+    c.innerHTML = filteredUsers.map(u => {
+      const isOnline = u.lastActive && (now - u.lastActive < 190000);
+      const isPendiente = u.r === 'pendiente';
+      
+      let bgRow = isPendiente ? 'background: #fff3cd; border-left: 5px solid #ffc107;' : '';
+      let badgeHTML = isOnline ? '<span class="badge" style="display:inline;padding:2px 5px;background:#d1e7dd;color:#0f5132; margin-left:5px;">ON</span>' : '';
+      if(isPendiente) badgeHTML += '<span class="badge" style="display:inline;padding:2px 5px;background:#dc3545;color:white; margin-left:5px; font-size:10px;">ESPERANDO REVISIÓN</span>';
+      
+      return `
+      <div class="user-row" style="${bgRow}">
+        <div><b>${u.u}</b> ${badgeHTML} <br><small style="text-transform:uppercase; font-weight:bold; color: ${isPendiente?'#856404':'#6c757d'}">${u.r}</small></div>
+        <div>
+          <button onclick="window.editUser('${u.id}','${u.u}','${u.p}','${u.r}')" class="btn btn-p" style="padding:4px" title="Modificar / Autorizar"><i class="fa-solid fa-pencil"></i></button>
+          <button onclick="window.deleteUser('${u.id}')" class="btn btn-d" style="padding:4px"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </div>`;
+    }).join('') || `<p align="center" style="padding:15px; color:#6c757d;">No se encontraron usuarios</p>`;
+  };
+
+  window.submitUser = async function() {
+    const u = document.getElementById('uUser').value, p = document.getElementById('uPass').value, r = document.getElementById('uRol').value;
+    if(!u || (!p && r !== 'invitado' && r !== 'pendiente')) return alert("Datos incompletos"); 
+    try {
+      if(EDITING_USER_ID) await updateDoc(doc(db, "usuarios", EDITING_USER_ID), { u, p, r });
+      else await addDoc(collection(db, "usuarios"), { u, p, r });
+      window.clearUserForm();
+    } catch(e) { alert("Error al guardar"); }
+  };
+
+  window.editUser = function(id, u, p, r) {
+    EDITING_USER_ID = id; document.getElementById('uUser').value = u; document.getElementById('uPass').value = p; document.getElementById('uRol').value = r;
+    document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-save"></i>';
+  };
+
+  window.clearUserForm = function() {
+    EDITING_USER_ID = null; document.getElementById('uUser').value = ''; document.getElementById('uPass').value = ''; document.getElementById('uRol').value = 'agente';
+    document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-plus"></i>';
+  };
+
+  window.deleteUser = async function(id) {
+    if(!confirm("¿Eliminar usuario definitivamente?")) return;
+    await deleteDoc(doc(db, "usuarios", id));
+  };
+
   window.handleImportCob = function(e) {
-    const file = e.target.files[0];
-    if(!file) return;
+    const file = e.target.files[0]; if(!file) return;
     const reader = new FileReader();
     reader.onload = async (evt) => {
       const data = evt.target.result;
@@ -529,12 +632,7 @@
             else if (rawS.includes("consultar")) s = "Consultar";
 
             batch.set(doc(colRef), { 
-                m: getVal(["municipio", "mun"]).trim(), 
-                n: getVal(["nombre", "colonia", "nom"]).trim(), 
-                c: getVal(["categoria", "categoría", "cat"]).trim(), 
-                z: getVal(["zona", "z"]).trim(), 
-                r: getVal(["referencia", "ref"]).trim(), 
-                s: s 
+                m: getVal(["municipio", "mun"]).trim(), n: getVal(["nombre", "colonia", "nom"]).trim(), c: getVal(["categoria", "categoría", "cat"]).trim(), z: getVal(["zona", "z"]).trim(), r: getVal(["referencia", "ref"]).trim(), s: s 
             });
           });
           await batch.commit();
@@ -545,44 +643,15 @@
     reader.readAsBinaryString(file);
   };
 
-  // Mantiene la lógica original de Usuarios para no perder cambios.
-  window.submitUser = async function() {
-    const u = document.getElementById('uUser').value, p = document.getElementById('uPass').value, r = document.getElementById('uRol').value;
-    if(!u || (!p && r !== 'invitado')) return alert("Datos incompletos"); 
-    try {
-      if(EDITING_USER_ID) await updateDoc(doc(db, "usuarios", EDITING_USER_ID), { u, p, r });
-      else await addDoc(collection(db, "usuarios"), { u, p, r });
-      window.clearUserForm();
-    } catch(e) { alert("Error al guardar"); }
-  };
-
-  window.editUser = function(id, u, p, r) {
-    EDITING_USER_ID = id; document.getElementById('uUser').value = u; document.getElementById('uPass').value = p; document.getElementById('uRol').value = r;
-    document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-save"></i>';
-  };
-
-  window.clearUserForm = function() {
-    EDITING_USER_ID = null; document.getElementById('uUser').value = ''; document.getElementById('uPass').value = ''; document.getElementById('uRol').value = 'agente';
-    document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-plus"></i>';
-  };
-
-  window.deleteUser = async function(id) {
-    if(!confirm("¿Eliminar usuario definitivamente?")) return;
-    await deleteDoc(doc(db, "usuarios", id));
-  };
-
   window.handleImportUsr = function(e) {
-    const file = e.target.files[0];
-    if(!file) return;
+    const file = e.target.files[0]; if(!file) return;
     const reader = new FileReader();
     reader.onload = async (evt) => {
       const data = evt.target.result;
       const workbook = XLSX.read(data, {type: 'binary'});
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
       const json = XLSX.utils.sheet_to_json(sheet);
-
       if(!confirm(`¿Importar ${json.length} usuarios?`)) return;
-
       try {
         const colRef = collection(db, "usuarios");
         for (let i = 0; i < json.length; i += 400) {
@@ -591,26 +660,19 @@
           chunk.forEach(row => {
             const keys = Object.keys(row);
             const getVal = (possibleNames) => {
-              for(let k of keys) {
-                if(possibleNames.includes(k.toLowerCase().trim())) return String(row[k] || "");
-              }
+              for(let k of keys) if(possibleNames.includes(k.toLowerCase().trim())) return String(row[k] || "");
               return "";
             };
-
             let usr = getVal(["usuario", "usr"]).trim();
             let pwd = getVal(["contraseña", "password", "clave"]).trim();
             let r = getVal(["rol", "role"]).trim().toLowerCase();
-            
             if(r === 'lider') r = 'agente';
-            
-            if (usr !== "") {
-               batch.set(doc(colRef), { u: usr, p: pwd, r: r || "invitado" });
-            }
+            if (usr !== "") batch.set(doc(colRef), { u: usr, p: pwd, r: r || "invitado" });
           });
           await batch.commit();
         }
         alert("¡Usuarios importados!"); e.target.value = "";
-      } catch(err) { alert("Error importando usuarios."); }
+      } catch(err) { alert("Error"); }
     };
     reader.readAsBinaryString(file);
   };
@@ -630,7 +692,6 @@
     XLSX.utils.book_append_sheet(wb, ws, "Usuarios");
     XLSX.writeFile(wb, "Usuarios_Distelsa.xlsx");
   };
-
 </script>
 </body>
 </html>
