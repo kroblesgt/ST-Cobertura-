@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>ST Grupo Distelsa | Sistema de Cobertura</title>
+<title>Cobertura ST - Call Center</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -14,12 +14,12 @@
 
   /* HEADER */
   header { background: white; height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 3px solid var(--blue); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-  .logo { font-size: 20px; font-weight: 800; color: var(--blue); display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+  .logo { font-size: 18px; font-weight: 800; color: var(--blue); display: flex; align-items: center; gap: 10px; white-space: nowrap; }
   .user-info { text-align: right; font-size: 13px; line-height: 1.2; }
 
   /* LOGIN & REGISTER */
   .login-wrapper { height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #e9ecef 0%, #ffffff 100%); padding: 15px; box-sizing: border-box; }
-  .login-box { background: white; padding: 40px; width: 100%; max-width: 320px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 5px solid var(--blue); text-align: center; box-sizing: border-box;}
+  .login-box { background: white; padding: 40px; width: 100%; max-width: 340px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 5px solid var(--blue); text-align: center; box-sizing: border-box;}
   .inp { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
   .inp:focus { border-color: var(--light-blue); outline: none; }
   
@@ -76,7 +76,7 @@
 
   @media (max-width: 768px) {
     header { padding: 0 15px; }
-    .logo { font-size: 16px; }
+    .logo { font-size: 15px; }
     .user-info { display: none; } 
     .container { padding: 0 10px; margin-top: 10px; }
     .tools { flex-direction: column; align-items: stretch; }
@@ -94,7 +94,7 @@
 
 <div id="viewLogin" class="login-wrapper">
   <div id="boxLogin" class="login-box">
-    <h3 style="color:var(--blue); margin-top:0;">ST GRUPO DISTELSA</h3>
+    <h3 style="color:var(--blue); margin-top:0;">COBERTURA ST - CALL CENTER</h3>
     <p style="font-size:12px; color:#6c757d; margin-bottom:20px;">ACCESO AL SISTEMA</p>
     <input id="txtUser" class="inp" placeholder="Usuario">
     <input id="txtPass" type="password" class="inp" placeholder="Contraseña">
@@ -126,7 +126,7 @@
 
 <div id="viewApp" class="hidden">
   <header>
-    <div class="logo"><i class="fa-solid fa-location-dot"></i> <span class="hide-mobile">ST</span> DISTELSA</div>
+    <div class="logo"><i class="fa-solid fa-location-dot"></i> <span class="hide-mobile">Cobertura ST</span></div>
     <div style="display: flex; align-items: center; gap: 15px;">
       
       <div id="notifBell" class="hidden" style="position: relative; cursor: pointer; color: var(--blue); font-size: 20px; margin-right: 5px;" onclick="window.openPendingUsers()" title="Ver solicitudes pendientes">
@@ -305,8 +305,8 @@
         return;
       }
 
-      await addDoc(collection(db, "usuarios"), { u, p, r: "pendiente", lastActive: 0, token: null });
-      alert("¡Solicitud enviada con éxito! Solicita la aprobación de tu Team Leader o Administrador para ingresar.");
+      await addDoc(collection(db, "usuarios"), { u, p, r: "pendiente", lastActive: 0, token: null, createdAt: Date.now() });
+      alert("¡Solicitud enviada con éxito! Solicita la aprobación de tu Administrador para ingresar.");
       
       document.getElementById('regUser').value = '';
       document.getElementById('regPass').value = '';
@@ -351,15 +351,27 @@
     if(!nombre || nombre.trim() === "") return;
     const uName = "Invitado - " + nombre.trim();
     const newToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
+    const now = Date.now();
+    
     try {
       const q = query(collection(db, "usuarios"), where("u", "==", uName));
       const querySnapshot = await getDocs(q);
       let docId;
       if (!querySnapshot.empty) {
-        docId = querySnapshot.docs[0].id;
-        await updateDoc(doc(db, "usuarios", docId), { token: newToken, lastActive: Date.now(), r: "invitado" });
+        const userDoc = querySnapshot.docs[0];
+        const userData = userDoc.data();
+        
+        // Verificación de vigencia de 24 horas (en milisegundos)
+        const vigencia = 24 * 60 * 60 * 1000;
+        if (userData.createdAt && (now - userData.createdAt > vigencia)) {
+          alert("Tu acceso de invitado ha expirado (24 horas).");
+          return;
+        }
+        
+        docId = userDoc.id;
+        await updateDoc(doc(db, "usuarios", docId), { token: newToken, lastActive: now, r: "invitado" });
       } else {
-        const docRef = await addDoc(collection(db, "usuarios"), { u: uName, p: "", r: "invitado", token: newToken, lastActive: Date.now() });
+        const docRef = await addDoc(collection(db, "usuarios"), { u: uName, p: "", r: "invitado", token: newToken, lastActive: now, createdAt: now });
         docId = docRef.id;
       }
       SESION = { id: docId, u: uName, r: "invitado", t: newToken };
@@ -369,6 +381,19 @@
   };
 
   window.startApp = function() {
+    // Validación de vigencia invitado al abrir la app
+    if (SESION.r === 'invitado') {
+      const userObj = DB_USERS.find(u => u.id === SESION.id);
+      if (userObj && userObj.createdAt) {
+        const vigencia = 24 * 60 * 60 * 1000;
+        if (Date.now() - userObj.createdAt > vigencia) {
+          alert("Tu sesión de invitado ha expirado.");
+          window.logout();
+          return;
+        }
+      }
+    }
+
     document.getElementById('viewLogin').classList.add('hidden');
     document.getElementById('viewApp').classList.remove('hidden');
     document.getElementById('lblUser').innerText = SESION.u;
@@ -430,7 +455,6 @@
         if (!isFirstUserLoad) {
             currentPending.forEach(u => {
                 if (!knownPendingIds.has(u.id)) {
-                    // El Toast ahora también usa el atajo directo
                     window.showToast(`Nueva solicitud de <b>${u.u}</b>. <u style="cursor:pointer; color:var(--blue)" onclick="window.openPendingUsers()">Aprobar</u>`);
                 }
             });
@@ -607,7 +631,6 @@
   window.changePage = d => { PAGE += d; window.renderTable(); };
   window.openUsers = () => { window.openModal('modalUsr'); window.renderUserList(); };
 
-  // NUEVA FUNCIÓN: ATAJO PARA VER SOLO PENDIENTES
   window.openPendingUsers = () => {
     window.openModal('modalUsr');
     document.getElementById('searchUserBox').value = 'pendiente';
@@ -627,11 +650,11 @@
       );
     }
     
-    // ORDENAMIENTO INTELIGENTE: Los pendientes siempre van primero.
+    // ORDENAMIENTO: Pendientes primero
     filteredUsers.sort((a, b) => {
       if (a.r === 'pendiente' && b.r !== 'pendiente') return -1;
       if (a.r !== 'pendiente' && b.r === 'pendiente') return 1;
-      return (a.u || "").localeCompare(b.u || ""); // El resto se ordena alfabéticamente
+      return (a.u || "").localeCompare(b.u || ""); 
     });
     
     c.innerHTML = filteredUsers.map(u => {
@@ -658,7 +681,7 @@
     if(!u || (!p && r !== 'invitado' && r !== 'pendiente')) return alert("Datos incompletos"); 
     try {
       if(EDITING_USER_ID) await updateDoc(doc(db, "usuarios", EDITING_USER_ID), { u, p, r });
-      else await addDoc(collection(db, "usuarios"), { u, p, r });
+      else await addDoc(collection(db, "usuarios"), { u, p, r, createdAt: Date.now() });
       window.clearUserForm();
     } catch(e) { alert("Error al guardar"); }
   };
@@ -740,7 +763,7 @@
             let pwd = getVal(["contraseña", "password", "clave"]).trim();
             let r = getVal(["rol", "role"]).trim().toLowerCase();
             if(r === 'lider') r = 'agente';
-            if (usr !== "") batch.set(doc(colRef), { u: usr, p: pwd, r: r || "invitado" });
+            if (usr !== "") batch.set(doc(colRef), { u: usr, p: pwd, r: r || "invitado", createdAt: Date.now() });
           });
           await batch.commit();
         }
