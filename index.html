@@ -12,78 +12,100 @@
   body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: var(--bg); margin: 0; color: #333; }
   .hidden { display: none !important; }
 
-  /* HEADER */
-  header { background: white; height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 3px solid var(--blue); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+  /* HEADER & TABS */
+  header { background: white; height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid #e9ecef; }
   .logo { font-size: 18px; font-weight: 800; color: var(--blue); display: flex; align-items: center; gap: 10px; white-space: nowrap; }
   .user-info { text-align: right; font-size: 13px; line-height: 1.2; }
+  
+  .nav-tabs { background: white; display: flex; padding: 0 30px; border-bottom: 3px solid var(--blue); box-shadow: 0 2px 10px rgba(0,0,0,0.05); gap: 20px; overflow-x: auto; scrollbar-width: none;}
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .tab-btn { padding: 12px 15px; font-weight: 600; font-size: 14px; color: var(--gray); cursor: pointer; border-bottom: 3px solid transparent; transition: 0.2s; display: flex; align-items: center; gap: 8px; white-space: nowrap;}
+  .tab-btn:hover { color: var(--blue); }
+  .tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
 
-  /* LOGIN & REGISTER */
+  /* LOGIN */
   .login-wrapper { height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #e9ecef 0%, #ffffff 100%); padding: 15px; box-sizing: border-box; }
   .login-box { background: white; padding: 40px; width: 100%; max-width: 340px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 5px solid var(--blue); text-align: center; box-sizing: border-box;}
   .inp { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
   .inp:focus { border-color: var(--light-blue); outline: none; }
   
-  /* APP */
+  /* APP TOOLS */
   .container { max-width: 1300px; margin: 20px auto; padding: 0 20px; }
-  .card { background: white; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; }
+  .card { background: white; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 20px;}
   .tools { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; justify-content: space-between; align-items: center; }
   .search-wrap { flex: 1; position: relative; min-width: 250px; }
   .search-wrap i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #adb5bd; }
   .search-inp { width: 100%; padding: 12px 12px 12px 35px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; box-sizing: border-box; }
   .action-btns { display: flex; gap: 10px; flex-wrap: wrap; }
-
   .btn { border: none; padding: 10px 15px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: white; }
-  .btn-p { background: var(--blue); } 
-  .btn-s { background: #28a745; } 
-  .btn-x { background: var(--green); } 
-  .btn-d { background: var(--red); } 
-  .btn-o { background: #fd7e14; }
+  .btn-p { background: var(--blue); } .btn-s { background: #28a745; } .btn-x { background: var(--green); } .btn-d { background: var(--red); } .btn-o { background: #fd7e14; }
   .btn:hover { opacity: 0.9; }
 
-  /* TABLA */
+  /* TABLAS */
   .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; min-width: 900px; }
   th { text-align: left; padding: 12px 15px; background: #f8f9fa; color: #495057; border-bottom: 2px solid #e9ecef; }
   td { padding: 10px 15px; border-bottom: 1px solid #f1f3f5; vertical-align: middle; word-wrap: break-word; }
   tr:hover td { background-color: #f8f9fa; }
-
   .badge { display: block; padding: 6px 0; text-align: center; border-radius: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; color: white; width: 100%; }
+  .badge-tag { display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; color: #333; background: #e9ecef; }
+
+  /* DIRECTORIO CARDS */
+  .enc-category-title { font-size: 16px; color: var(--blue); border-bottom: 2px solid #ced4da; padding-bottom: 8px; margin: 30px 0 15px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 10px;}
+  .enc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+  .enc-card { background: white; border-radius: 8px; border: 1px solid #e9ecef; box-shadow: 0 4px 6px rgba(0,0,0,0.02); overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s; }
+  .enc-card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.08); border-color: #ced4da; }
+  .enc-header { padding: 15px; background: #f8f9fa; border-bottom: 1px solid #f1f3f5; display: flex; justify-content: space-between; align-items: flex-start; }
+  .enc-avatar { width: 45px; height: 45px; min-width: 45px; border-radius: 50%; background: linear-gradient(135deg, var(--blue) 0%, var(--light-blue) 100%); color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; margin-right: 15px;}
+  .enc-info { flex: 1; }
+  .enc-name { font-weight: 800; font-size: 16px; color: var(--blue); margin-bottom: 3px; line-height: 1.1;}
+  .enc-role { font-size: 12px; color: #495057; font-weight: 600; line-height: 1.3; }
+  .enc-body { padding: 15px; font-size: 13px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .enc-contact { display: flex; justify-content: space-between; align-items: center; color: #495057; text-decoration: none; padding: 8px 10px; background: #f8f9fa; border-radius: 6px; border: 1px solid #f1f3f5; transition: 0.2s; cursor: pointer; user-select: none;}
+  .enc-contact:hover { background: #e9ecef; color: var(--blue); border-color: #ced4da;}
+  .enc-contact-icon { width: 20px; color: var(--light-blue); text-align: center; }
+  .enc-copy-btn { color: var(--gray); font-size: 13px; background: white; padding: 3px 8px; border-radius: 4px; border: 1px solid #ced4da; transition: 0.2s; }
+  .enc-contact:hover .enc-copy-btn { background: var(--blue); color: white; border-color: var(--blue); }
+  .enc-footer { padding: 10px 15px; border-top: 1px solid #f1f3f5; display: flex; justify-content: flex-end; gap: 8px; background: white;}
   
-  /* ONLINE MONITOR */
+  /* ONLINE & NOTIF */
   .online-indicator { font-size: 11px; color: #28a745; font-weight: bold; margin-right: 15px; background: #e8f8f5; padding: 6px 12px; border-radius: 20px; border: 1px solid #d1f2eb; cursor: pointer; position: relative; display: flex; align-items: center; gap: 5px;}
   .online-list-popup { display: none; position: absolute; top: 120%; right: 0; background: white; border: 1px solid #ddd; width: 200px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 6px; padding: 10px; z-index: 100; color: #333; font-weight: normal; max-height: 250px; overflow-y: auto;}
   .online-indicator:hover .online-list-popup { display: block; }
   .online-item { padding: 6px 0; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 8px; font-size: 12px;}
-
-  /* MODALS & FORMS */
-  .modal-backdrop { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(2px); padding: 15px; box-sizing: border-box;}
-  .modal { background: white; width: 100%; max-width: 700px; padding: 25px; border-radius: 8px; box-shadow: 0 15px 50px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; box-sizing: border-box; }
-  
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-  .span-2 { grid-column: span 2; }
-  
-  .form-inline { background: #f8f9fa; padding: 15px; border-radius: 6px; display: flex; gap: 10px; margin-bottom: 15px; align-items: center; }
-  
-  .user-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
-
-  /* PUSH NOTIFICATIONS (TOAST) */
   .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
   .toast { background: white; border-left: 5px solid var(--red); box-shadow: 0 4px 15px rgba(0,0,0,0.2); padding: 15px 20px; border-radius: 4px; display: flex; align-items: center; gap: 12px; font-size: 14px; color: #333; animation: slideUp 0.3s ease-out forwards; min-width: 250px; }
+  .toast.success { border-left-color: var(--green); } .toast.success i { color: var(--green); }
   .toast i { font-size: 20px; color: var(--red); }
   .toast-fade { animation: fadeOut 0.3s ease-in forwards; }
   @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(20px); } }
 
+  /* MODALS & FORMS */
+  .modal-backdrop { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(2px); padding: 15px; box-sizing: border-box;}
+  .modal { background: white; width: 100%; max-width: 700px; padding: 25px; border-radius: 8px; box-shadow: 0 15px 50px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; box-sizing: border-box; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; } .span-2 { grid-column: span 2; }
+  .form-inline { background: #f8f9fa; padding: 15px; border-radius: 6px; display: flex; gap: 10px; margin-bottom: 15px; align-items: center; }
+  .user-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
+
+  /* DASHBOARD DE AJUSTES */
+  .ajs-layout { display: flex; gap: 20px; align-items: flex-start; }
+  .ajs-sidebar { width: 250px; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 15px 0; flex-shrink: 0;}
+  .ajs-menu-btn { padding: 15px 20px; display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: none; border: none; font-size: 14px; font-weight: 600; color: #495057; cursor: pointer; transition: 0.2s; border-left: 3px solid transparent;}
+  .ajs-menu-btn:hover { background: #f8f9fa; color: var(--blue); }
+  .ajs-menu-btn.active { background: #e8f0fe; color: var(--blue); border-left-color: var(--blue); }
+  .ajs-content { flex: 1; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 25px; min-width: 0;}
+  .perm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-top: 10px; background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #e9ecef;}
+  .perm-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #333;}
+  .perm-item input { cursor: pointer; width: 16px; height: 16px; accent-color: var(--blue);}
+  .mod-list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; background: #f8f9fa; border-radius: 4px; margin-bottom: 8px;}
+
   @media (max-width: 768px) {
-    header { padding: 0 15px; }
-    .logo { font-size: 15px; }
-    .user-info { display: none; } 
-    .container { padding: 0 10px; margin-top: 10px; }
-    .tools { flex-direction: column; align-items: stretch; }
-    .action-btns { display: grid; grid-template-columns: 1fr 1fr; }
-    .form-grid { grid-template-columns: 1fr; }
-    .span-2 { grid-column: span 1; }
+    header { padding: 0 15px; } .nav-tabs { padding: 0 15px; } .logo { font-size: 15px; } .user-info { display: none; } 
+    .container { padding: 0 10px; margin-top: 10px; } .tools { flex-direction: column; align-items: stretch; }
+    .action-btns { display: grid; grid-template-columns: 1fr 1fr; } .form-grid { grid-template-columns: 1fr; } .span-2 { grid-column: span 1; }
     .toast-container { bottom: 10px; right: 10px; left: 10px; }
+    .ajs-layout { flex-direction: column; } .ajs-sidebar { width: 100%; }
   }
 </style>
 </head>
@@ -91,6 +113,9 @@
 
 <input type="file" id="fileImportCob" accept=".xlsx, .xls" class="hidden" onchange="window.handleImportCob(event)">
 <input type="file" id="fileImportUsr" accept=".xlsx, .xls" class="hidden" onchange="window.handleImportUsr(event)">
+<input type="file" id="fileImportTec" accept=".xlsx, .xls" class="hidden" onchange="window.handleImportTec(event)">
+<input type="file" id="fileImportEnc" accept=".xlsx, .xls" class="hidden" onchange="window.handleImportEnc(event)">
+<input type="file" id="fileImportDyn" accept=".xlsx, .xls" class="hidden" onchange="window.handleImportDyn(event)">
 
 <div id="viewLogin" class="login-wrapper">
   <div id="boxLogin" class="login-box">
@@ -99,28 +124,16 @@
     <input id="txtUser" class="inp" placeholder="Usuario">
     <input id="txtPass" type="password" class="inp" placeholder="Contraseña">
     <button id="btnLogin" onclick="window.login()" class="btn btn-p" style="width:100%; height: 45px;">INGRESAR</button>
-    
-    <p style="font-size: 13px; margin: 15px 0 0 0;">
-      ¿No tienes cuenta? <a href="#" onclick="window.toggleAuthBoxes(true)" style="color: var(--light-blue); font-weight: bold; text-decoration: none;">Regístrate aquí</a>
-    </p>
-
+    <p style="font-size: 13px; margin: 15px 0 0 0;">¿No tienes cuenta? <a href="#" onclick="window.toggleAuthBoxes(true)" style="color: var(--light-blue); font-weight: bold; text-decoration: none;">Regístrate aquí</a></p>
     <hr style="border: 0; border-top: 1px solid #e9ecef; margin: 20px 0;">
-    
-    <button onclick="window.loginInvitado()" class="btn btn-o" style="width:100%; height: 40px; background: #6c757d;">
-      <i class="fa-solid fa-user-clock"></i> Entrar como Invitado
-    </button>
+    <button onclick="window.loginInvitado()" class="btn btn-o" style="width:100%; height: 40px; background: #6c757d;"><i class="fa-solid fa-user-clock"></i> Entrar como Invitado</button>
   </div>
-
   <div id="boxRegister" class="login-box hidden">
     <h3 style="color:var(--blue); margin-top:0;">SOLICITAR ACCESO</h3>
-    <p style="font-size:12px; color:#6c757d; margin-bottom:20px;">CREA TU PROPUESTA DE USUARIO</p>
     <input id="regUser" class="inp" placeholder="Elige tu Usuario">
     <input id="regPass" type="password" class="inp" placeholder="Elige tu Contraseña">
     <button id="btnRegister" onclick="window.registerAccount()" class="btn btn-s" style="width:100%; height: 45px;">ENVIAR SOLICITUD</button>
-    
-    <p style="font-size: 13px; margin: 20px 0 0 0;">
-      <a href="#" onclick="window.toggleAuthBoxes(false)" style="color: var(--gray); text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> Volver al Login</a>
-    </p>
+    <p style="font-size: 13px; margin: 20px 0 0 0;"><a href="#" onclick="window.toggleAuthBoxes(false)" style="color: var(--gray); text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> Volver al Login</a></p>
   </div>
 </div>
 
@@ -128,12 +141,10 @@
   <header>
     <div class="logo"><i class="fa-solid fa-location-dot"></i> <span class="hide-mobile">Cobertura ST</span></div>
     <div style="display: flex; align-items: center; gap: 15px;">
-      
-      <div id="notifBell" class="hidden" style="position: relative; cursor: pointer; color: var(--blue); font-size: 20px; margin-right: 5px;" onclick="window.openPendingUsers()" title="Ver solicitudes pendientes">
+      <div id="notifBell" class="hidden" style="position: relative; cursor: pointer; color: var(--blue); font-size: 20px; margin-right: 5px;" onclick="window.openPendingUsers()">
         <i class="fa-solid fa-bell"></i>
         <span id="notifBadge" class="hidden" style="position: absolute; top: -5px; right: -8px; background: var(--red); color: white; border-radius: 50%; font-size: 10px; width: 18px; height: 18px; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 2px solid white;">0</span>
       </div>
-
       <div id="onlineMonitor" class="hidden online-indicator">
         <i class="fa-solid fa-circle" style="font-size: 8px;"></i> <span class="hide-mobile">Online:</span> <span id="onlineCount" style="margin-left:3px;">0</span>
         <div id="onlineList" class="online-list-popup">Cargando...</div>
@@ -145,100 +156,193 @@
       <button onclick="window.logout()" class="btn btn-d" title="Salir" style="padding: 8px 12px;"><i class="fa-solid fa-power-off"></i></button>
     </div>
   </header>
+  
+  <div class="nav-tabs" id="mainTabsContainer">
+    <div id="tabCob" class="tab-btn active" onclick="window.switchModule('cob')"><i class="fa-solid fa-map-location-dot"></i> Cobertura</div>
+    <div id="tabTec" class="tab-btn" onclick="window.switchModule('tec')"><i class="fa-solid fa-screwdriver-wrench"></i> Técnicos</div>
+    <div id="tabEnc" class="tab-btn" onclick="window.switchModule('enc')"><i class="fa-regular fa-address-card"></i> Directorio Domicilio</div>
+    <div id="tabAjs" class="tab-btn hidden" onclick="window.switchModule('ajs')" style="margin-left: auto; color:#343a40;"><i class="fa-solid fa-gear"></i> Ajustes</div>
+  </div>
 
   <div class="container">
-    <div class="tools">
-      <div class="search-wrap">
-        <i class="fa-solid fa-search"></i>
-        <input id="searchBox" class="search-inp" placeholder="Buscar colinas, milagro z6, mixco..." onkeyup="window.renderTable(true)">
-      </div>
-      <div class="action-btns">
-        <button id="btnAdd" onclick="window.openModal('modalAdd')" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i> Nuevo</button>
-        <button id="btnImpCob" onclick="document.getElementById('fileImportCob').click()" class="btn btn-o hidden"><i class="fa-solid fa-file-import"></i> Importar</button>
-        <button id="btnExp" onclick="window.exportToExcel()" class="btn btn-x hidden"><i class="fa-solid fa-file-excel"></i> Exportar</button>
-        <button id="btnUsr" onclick="window.openUsers()" class="btn btn-p hidden" style="background:#343a40"><i class="fa-solid fa-users-gear"></i> Usuarios</button>
-      </div>
+      
+    <div id="moduloCobertura">
+        <div class="tools">
+          <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchBox" class="search-inp" placeholder="Buscar colinas, milagro z6..." onkeyup="window.renderTable(true)"></div>
+          <div class="action-btns">
+            <button id="btnAdd" onclick="window.openModal('modalAdd')" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i> Nuevo</button>
+            <button id="btnImpCob" onclick="document.getElementById('fileImportCob').click()" class="btn btn-o hidden"><i class="fa-solid fa-file-import"></i> Importar</button>
+            <button id="btnExp" onclick="window.exportToExcel()" class="btn btn-x hidden"><i class="fa-solid fa-file-excel"></i> Exportar</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-responsive">
+            <table>
+              <thead><tr><th width="15%">Municipio</th><th width="20%">Nombre</th><th width="12%">Categoría</th><th width="8%">Zona</th><th width="22%">Referencia</th><th width="23%">Estado / Acción</th></tr></thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+          <div style="padding: 15px; display: flex; justify-content: center; align-items: center; gap: 20px;">
+            <button onclick="window.changePage(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabel" style="font-weight: bold; font-size: 13px;">1 / 1</span><button onclick="window.changePage(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+        </div>
     </div>
 
-    <div class="card">
-      <div class="table-responsive">
-        <table>
-          <thead>
-            <tr>
-              <th width="15%">Municipio</th>
-              <th width="20%">Nombre</th>
-              <th width="12%">Categoría</th>
-              <th width="8%">Zona</th>
-              <th width="22%">Referencia</th>
-              <th width="23%">Estado / Acción</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody"></tbody>
-        </table>
-      </div>
-      <div style="padding: 15px; display: flex; justify-content: center; align-items: center; gap: 20px;">
-        <button onclick="window.changePage(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button>
-        <span id="pageLabel" style="font-weight: bold; font-size: 13px;">1 / 1</span>
-        <button onclick="window.changePage(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button>
-      </div>
+    <div id="moduloTecnicos" class="hidden">
+        <div class="tools">
+          <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchTecBox" class="search-inp" placeholder="Buscar técnico, placa, DPI..." onkeyup="window.renderTecnicosTable(true)"></div>
+          <div class="action-btns">
+            <button id="btnAddTec" onclick="window.openModal('modalAddTec')" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i> Nuevo</button>
+            <button id="btnImpTec" onclick="document.getElementById('fileImportTec').click()" class="btn btn-o hidden"><i class="fa-solid fa-file-import"></i> Importar</button>
+            <button id="btnExpTec" onclick="window.exportTecnicosToExcel()" class="btn btn-x hidden"><i class="fa-solid fa-file-excel"></i> Exportar</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-responsive">
+            <table>
+              <thead><tr><th width="20%">Técnico</th><th width="15%">Teléfonos</th><th width="20%">Área</th><th width="15%">DPI</th><th width="15%">Placa</th><th width="15%">Acciones</th></tr></thead>
+              <tbody id="tableTecnicosBody"></tbody>
+            </table>
+          </div>
+          <div style="padding: 15px; display: flex; justify-content: center; align-items: center; gap: 20px;">
+            <button onclick="window.changePageTec(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabelTec" style="font-weight: bold; font-size: 13px;">1 / 1</span><button onclick="window.changePageTec(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+        </div>
     </div>
+    
+    <div id="moduloEncargados" class="hidden">
+        <div class="tools">
+          <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchEncBox" class="search-inp" placeholder="Buscar por nombre, área o correo..." onkeyup="window.renderEncargadosTable(true)"></div>
+          <div class="action-btns">
+            <button id="btnAddEnc" onclick="window.openModal('modalAddEnc')" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i> Nuevo</button>
+            <button id="btnImpEnc" onclick="document.getElementById('fileImportEnc').click()" class="btn btn-o hidden"><i class="fa-solid fa-file-import"></i> Importar</button>
+            <button id="btnExpEnc" onclick="window.exportEncargadosToExcel()" class="btn btn-x hidden"><i class="fa-solid fa-file-excel"></i> Exportar</button>
+          </div>
+        </div>
+        <div id="gridEncargadosContainer"></div>
+        <div style="padding: 20px 15px; display: flex; justify-content: center; align-items: center; gap: 20px; clear:both;">
+          <button onclick="window.changePageEnc(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabelEnc" style="font-weight: bold; font-size: 13px; background: white; padding: 5px 15px; border-radius: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">1 / 1</span><button onclick="window.changePageEnc(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+    </div>
+
+    <div id="moduloDinamico" class="hidden">
+        <div class="tools">
+          <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchDynBox" class="search-inp" placeholder="Buscar en este módulo..." onkeyup="window.renderDynData(true)"></div>
+          <div class="action-btns">
+            <button id="btnAddDyn" onclick="window.openModalDyn()" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i> Nuevo Registro</button>
+            <button id="btnImpDyn" onclick="document.getElementById('fileImportDyn').click()" class="btn btn-o hidden"><i class="fa-solid fa-file-import"></i> Importar</button>
+            <button id="btnExpDyn" onclick="window.exportDynToExcel()" class="btn btn-x hidden"><i class="fa-solid fa-file-excel"></i> Exportar</button>
+          </div>
+        </div>
+        <div id="dynContentContainer"></div>
+        <div style="padding: 15px; display: flex; justify-content: center; align-items: center; gap: 20px;">
+          <button onclick="window.changePageDyn(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabelDyn" style="font-weight: bold; font-size: 13px;">1 / 1</span><button onclick="window.changePageDyn(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+    </div>
+
+    <div id="moduloAjustes" class="hidden">
+        <div class="ajs-layout">
+            <div class="ajs-sidebar">
+                <button id="menuAjsUsr" class="ajs-menu-btn active" onclick="window.showAjsView('usr')"><i class="fa-solid fa-users" style="width:20px;"></i> Accesos y Usuarios</button>
+                <button id="menuAjsRol" class="ajs-menu-btn" onclick="window.showAjsView('rol')"><i class="fa-solid fa-user-shield" style="width:20px;"></i> Roles y Permisos</button>
+                <button id="menuAjsMod" class="ajs-menu-btn" onclick="window.showAjsView('mod')"><i class="fa-solid fa-layer-group" style="width:20px;"></i> Creador de Módulos</button>
+            </div>
+
+            <div class="ajs-content">
+                
+                <div id="ajsViewUsr">
+                    <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-users"></i> Gestión de Accesos</h3>
+                    <div class="action-btns" style="margin-bottom: 15px; justify-content: flex-end;"><button onclick="document.getElementById('fileImportUsr').click()" class="btn btn-o"><i class="fa-solid fa-file-import"></i> Importar CSV</button><button onclick="window.exportUsersToExcel()" class="btn btn-x"><i class="fa-solid fa-file-export"></i> Exportar Excel</button></div>
+                    <div class="form-inline"><input id="uUser" class="inp" placeholder="Usuario"><input id="uPass" class="inp" placeholder="Clave">
+                      <select id="uRol" class="inp">
+                        <option value="agente">Agente (Default)</option><option value="invitado">Invitado (Lector)</option><option value="admin">Administrador (Total)</option><option value="pendiente">Pendiente (Bloqueado)</option>
+                        </select>
+                      <div style="display: flex; gap: 10px; width: 100%;"><button id="btnUserAction" onclick="window.submitUser()" class="btn btn-s" style="flex: 1;"><i class="fa-solid fa-plus"></i></button><button onclick="window.clearUserForm()" class="btn btn-d" style="flex: 1;"><i class="fa-solid fa-eraser"></i></button></div>
+                    </div>
+                    <div class="search-wrap" style="margin-bottom: 10px;"><i class="fa-solid fa-search"></i><input id="searchUserBox" class="search-inp" placeholder="Buscar usuario o rol (ej: pendiente)..." onkeyup="window.renderUserList()"></div>
+                    <div id="userListContainer" style="max-height: 350px; overflow-y: auto; border: 1px solid #eee; border-radius: 4px;"></div>
+                </div>
+
+                <div id="ajsViewRol" class="hidden">
+                    <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-user-shield"></i> Roles Personalizados</h3>
+                    <p style="font-size:13px; color:var(--gray);">Crea roles a la medida (Ej. Auditor, Supervisor) y define a qué partes del sistema tienen acceso.</p>
+                    
+                    <div style="background:#f8f9fa; padding:15px; border-radius:6px; border:1px solid #e9ecef; margin-bottom:20px;">
+                        <input id="rolName" class="inp" placeholder="Nombre del nuevo Rol (Ej: Mesa de Control)">
+                        
+                        <h4 style="margin: 15px 0 5px; font-size:14px; color:var(--blue);">Permisos Generales</h4>
+                        <div class="perm-grid">
+                            <label class="perm-item"><input type="checkbox" id="p_cob_view" checked> Ver Cobertura</label>
+                            <label class="perm-item"><input type="checkbox" id="p_cob_edit"> Editar Cobertura</label>
+                            <label class="perm-item"><input type="checkbox" id="p_cob_exp"> Exportar/Importar Cob</label>
+
+                            <label class="perm-item"><input type="checkbox" id="p_tec_view" checked> Ver Técnicos</label>
+                            <label class="perm-item"><input type="checkbox" id="p_tec_edit"> Editar Técnicos</label>
+                            <label class="perm-item"><input type="checkbox" id="p_tec_exp"> Exportar/Importar Tec</label>
+
+                            <label class="perm-item"><input type="checkbox" id="p_enc_view" checked> Ver Directorio</label>
+                            <label class="perm-item"><input type="checkbox" id="p_enc_edit"> Editar Directorio</label>
+                            <label class="perm-item"><input type="checkbox" id="p_enc_exp"> Exportar/Importar Dir</label>
+
+                            <label class="perm-item"><input type="checkbox" id="p_dyn_view" checked> Ver Mods. Creados</label>
+                            <label class="perm-item"><input type="checkbox" id="p_dyn_edit"> Editar Mods. Creados</label>
+                            <label class="perm-item"><input type="checkbox" id="p_dyn_exp"> Exportar Mods. Creados</label>
+                        </div>
+                        <div style="text-align:right; margin-top:15px;"><button id="btnRoleAction" onclick="window.saveRole()" class="btn btn-s">Guardar Rol</button></div>
+                    </div>
+
+                    <h4 style="color:var(--blue);">Roles Creados</h4>
+                    <div id="rolesListContainer"></div>
+                </div>
+
+                <div id="ajsViewMod" class="hidden">
+                    <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-layer-group"></i> Creador de Módulos</h3>
+                    <p style="font-size:13px; color:var(--gray);">Agrega nuevas pestañas al sistema. Define el nombre, diseño y columnas.</p>
+                    
+                    <div class="form-grid" style="background:#f8f9fa; padding:15px; border-radius:6px; margin-bottom:20px; border:1px solid #e9ecef;">
+                        <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Nombre del Módulo</label><input id="confModName" class="inp" placeholder="Ej: Proveedores, Inventario..."></div>
+                        <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Tipo de Diseño (Vista)</label>
+                            <select id="confModVista" class="inp"><option value="tabla">Vista Tabla (Registros e Inventarios)</option><option value="directorio">Vista Directorio (Tarjetas de Contactos)</option></select>
+                        </div>
+                        <div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">Columnas (Separadas por COMA)</label><input id="confModCols" class="inp" placeholder="Ej: Nombre, Teléfono, Correo, Departamento"><small style="color:var(--gray);">*Si eliges Directorio, la 1ra columna será el Título de la tarjeta, la 2da el subtítulo, y el resto campos a copiar.</small></div>
+                        <div class="span-2" style="text-align:right;"><button onclick="window.crearModuloDinamico()" class="btn btn-s"><i class="fa-solid fa-layer-group"></i> Generar Módulo</button></div>
+                    </div>
+                    <h4 style="color:var(--blue);">Módulos Creados</h4>
+                    <div id="listaModulosCreados"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
   </div>
 </div>
 
 <div id="modalAdd" class="modal-backdrop hidden">
-  <div class="modal">
-    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-      <h3 id="modalTitle" style="margin:0; color:var(--blue)">Nueva Ubicación</h3>
-      <button onclick="window.closeModal('modalAdd')" class="btn btn-d"><i class="fa-solid fa-times"></i></button>
-    </div>
-    <div class="form-grid">
-      <input id="newMun" class="inp" placeholder="Municipio">
-      <input id="newNom" class="inp" placeholder="Nombre">
-      <input id="newCat" class="inp" placeholder="Categoría">
-      <input id="newZon" class="inp" placeholder="Zona">
-      <input id="newRef" class="inp span-2" placeholder="Referencia">
-      <select id="newCob" class="inp span-2">
-        <option value="Cobertura">Cobertura (Verde)</option>
-        <option value="Sin Cobertura">Sin Cobertura (Rojo)</option>
-        <option value="Consultar">Consultar (Amarillo)</option>
-        <option value="Sin Datos">Sin Datos (Gris)</option>
-      </select>
-    </div>
-    <div style="margin-top: 20px; text-align: right;">
-      <button id="btnSaveLoc" onclick="window.saveLocation()" class="btn btn-s" style="width: 100%;">Guardar</button>
-    </div>
-  </div>
+  <div class="modal"><div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><h3 id="modalTitle" style="margin:0; color:var(--blue)">Nueva Ubicación</h3><button onclick="window.closeModal('modalAdd')" class="btn btn-d"><i class="fa-solid fa-times"></i></button></div>
+    <div class="form-grid"><input id="newMun" class="inp" placeholder="Municipio"><input id="newNom" class="inp" placeholder="Nombre"><input id="newCat" class="inp" placeholder="Categoría"><input id="newZon" class="inp" placeholder="Zona"><input id="newRef" class="inp span-2" placeholder="Referencia">
+      <select id="newCob" class="inp span-2"><option value="Cobertura">Cobertura (Verde)</option><option value="Sin Cobertura">Sin Cobertura (Rojo)</option><option value="Consultar">Consultar (Amarillo)</option><option value="Sin Datos">Sin Datos (Gris)</option></select>
+    </div><div style="margin-top: 20px; text-align: right;"><button onclick="window.saveLocation()" class="btn btn-s" style="width: 100%;">Guardar</button></div></div>
 </div>
 
-<div id="modalUsr" class="modal-backdrop hidden">
-  <div class="modal">
-    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-      <h3 style="margin:0">Usuarios y Autorizaciones</h3>
-      <button onclick="window.closeModal('modalUsr')" class="btn btn-d"><i class="fa-solid fa-times"></i></button>
-    </div>
-    <div class="action-btns" style="margin-bottom: 15px; justify-content: flex-end;">
-      <button onclick="document.getElementById('fileImportUsr').click()" class="btn btn-o"><i class="fa-solid fa-file-import"></i> Importar</button>
-      <button onclick="window.exportUsersToExcel()" class="btn btn-x"><i class="fa-solid fa-file-export"></i> Exportar</button>
-    </div>
-    <div class="form-inline">
-      <input id="uUser" class="inp" placeholder="Usuario">
-      <input id="uPass" class="inp" placeholder="Clave">
-      <select id="uRol" class="inp">
-        <option value="agente">Agente</option>
-        <option value="invitado">Invitado</option>
-        <option value="admin">Admin</option>
-        <option value="pendiente">Pendiente (Bloqueado)</option>
-      </select>
-      <div style="display: flex; gap: 10px; width: 100%;">
-        <button id="btnUserAction" onclick="window.submitUser()" class="btn btn-s" style="flex: 1;"><i class="fa-solid fa-plus"></i></button>
-        <button onclick="window.clearUserForm()" class="btn btn-d" style="flex: 1;"><i class="fa-solid fa-eraser"></i></button>
-      </div>
-    </div>
-    <div class="search-wrap" style="margin-bottom: 10px;">
-      <i class="fa-solid fa-search"></i>
-      <input id="searchUserBox" class="search-inp" placeholder="Buscar por nombre o rol (ej: pendiente)..." onkeyup="window.renderUserList()">
-    </div>
-    <div id="userListContainer" style="max-height: 250px; overflow-y: auto; border: 1px solid #eee; border-radius: 4px;"></div>
+<div id="modalAddTec" class="modal-backdrop hidden">
+  <div class="modal"><div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><h3 id="modalTitleTec" style="margin:0; color:var(--blue)">Ficha de Técnico</h3><button onclick="window.closeModal('modalAddTec')" class="btn btn-d"><i class="fa-solid fa-times"></i></button></div>
+    <div class="form-grid"><input id="tecNom" class="inp span-2" placeholder="Nombre del Técnico"><input id="tecTel1" class="inp" placeholder="Teléfono 1"><input id="tecTel2" class="inp" placeholder="Teléfono 2 (Opcional)"><input id="tecArea" class="inp span-2" placeholder="Área asignada"><input id="tecDPI" class="inp" placeholder="DPI"><input id="tecPlaca" class="inp" placeholder="Placa de Vehículo"></div>
+    <div style="margin-top: 20px; text-align: right;"><button onclick="window.saveTecnico()" class="btn btn-s" style="width: 100%;">Guardar Técnico</button></div></div>
+</div>
+
+<div id="modalAddEnc" class="modal-backdrop hidden">
+  <div class="modal"><div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><h3 id="modalTitleEnc" style="margin:0; color:var(--blue)">Contacto de Directorio</h3><button onclick="window.closeModal('modalAddEnc')" class="btn btn-d"><i class="fa-solid fa-times"></i></button></div>
+    <div class="form-grid">
+      <select id="encCat" class="inp span-2"><option value="Rutas domicilio">Rutas domicilio</option><option value="Encargadas de marca">Encargadas de marca</option><option value="Team Leaders">Team Leaders</option><option value="Cambios y facturaciones">Cambios y facturaciones</option><option value="Otro">Otro</option></select>
+      <input id="encNom" class="inp span-2" placeholder="Nombre completo"><input id="encTel" class="inp" placeholder="Número Telefónico"><input id="encCor" class="inp" placeholder="Correo electrónico"><input id="encPuesto" class="inp span-2" placeholder="Puesto / Marcas / Responsabilidad">
+    </div><div style="margin-top: 20px; text-align: right;"><button onclick="window.saveEncargado()" class="btn btn-s" style="width: 100%;">Guardar Contacto</button></div></div>
+</div>
+
+<div id="modalDyn" class="modal-backdrop hidden">
+  <div class="modal"><div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><h3 id="modalTitleDyn" style="margin:0; color:var(--blue)">Registro</h3><button onclick="window.closeModal('modalDyn')" class="btn btn-d"><i class="fa-solid fa-times"></i></button></div>
+    <div id="formGridDyn" class="form-grid"></div> 
+    <div style="margin-top: 20px; text-align: right;"><button onclick="window.saveDynRecord()" class="btn btn-s" style="width: 100%;">Guardar Registro</button></div>
   </div>
 </div>
 
@@ -248,546 +352,468 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, addDoc, deleteDoc, query, where, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBsFKRDAYoCjGlr-np2Cqtjb-SIOLznPzY",
-    authDomain: "coberturast-ab44c.firebaseapp.com",
-    projectId: "coberturast-ab44c",
-    storageBucket: "coberturast-ab44c.firebasestorage.app",
-    messagingSenderId: "762980124389",
-    appId: "1:762980124389:web:9d7a8b1ed7c7f259fbb60c"
+  const firebaseConfig = { apiKey: "AIzaSyBsFKRDAYoCjGlr-np2Cqtjb-SIOLznPzY", authDomain: "coberturast-ab44c.firebaseapp.com", projectId: "coberturast-ab44c", storageBucket: "coberturast-ab44c.firebasestorage.app", messagingSenderId: "762980124389", appId: "1:762980124389:web:9d7a8b1ed7c7f259fbb60c" };
+  const app = initializeApp(firebaseConfig); const db = getFirestore(app);
+
+  let DB = { cob: [], tec: [], enc: [], configModulos: [], dynData: [], roles: [] };
+  let DB_USERS = []; let SESION = { id: null, u: null, r: null, t: null };
+  let PAGE = 1, PAGE_TEC = 1, PAGE_ENC = 1, PAGE_DYN = 1; let ITEMS_PER_PAGE_ENC = 16;
+  let EDITING_USER_ID = null, EDITING_LOCATION_ID = null, EDITING_TEC_ID = null, EDITING_ENC_ID = null, EDITING_DYN_ID = null, EDITING_ROLE_ID = null;
+  let CURRENT_MODULE = 'cob'; let CURRENT_DYN_CONFIG = null;
+  let isFirstUserLoad = true; let knownPendingIds = new Set(); let heartbeatInterval;
+
+  window.onload = () => { const saved = localStorage.getItem('distelsa_pro_fb'); if(saved) { SESION = JSON.parse(saved); window.startApp(); } };
+
+  // ================= SISTEMA DE PERMISOS =================
+  window.hasPerm = function(perm) {
+      if(SESION.r === 'admin') return true;
+      if(SESION.r === 'pendiente') return false;
+      
+      if(SESION.r === 'agente') {
+          const def = ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp'];
+          return def.includes(perm);
+      }
+      if(SESION.r === 'invitado') {
+          const def = ['cob_view', 'tec_view', 'enc_view', 'dyn_view'];
+          return def.includes(perm);
+      }
+      
+      const rolData = DB.roles.find(r => r.nombre === SESION.r);
+      if(rolData && rolData.perms) return rolData.perms.includes(perm);
+      
+      return false;
   };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  window.applyPermissionsToUI = function() {
+      // Pestañas
+      document.getElementById('tabCob').classList.toggle('hidden', !window.hasPerm('cob_view'));
+      document.getElementById('tabTec').classList.toggle('hidden', !window.hasPerm('tec_view'));
+      document.getElementById('tabEnc').classList.toggle('hidden', !window.hasPerm('enc_view'));
+      document.querySelectorAll('.tab-dyn').forEach(t => t.classList.toggle('hidden', !window.hasPerm('dyn_view')));
+      document.getElementById('tabAjs').classList.toggle('hidden', SESION.r !== 'admin');
+      document.getElementById('notifBell').classList.toggle('hidden', SESION.r !== 'admin');
 
-  let DB = { cob: [] };
-  let DB_USERS = [];
-  let SESION = { id: null, u: null, r: null, t: null };
-  let PAGE = 1; 
-  let EDITING_USER_ID = null;
-  let EDITING_LOCATION_ID = null;
-  let heartbeatInterval;
-  
-  // Variables para notificaciones
-  let isFirstUserLoad = true;
-  let knownPendingIds = new Set();
+      // Botones Cobertura
+      if(document.getElementById('btnAdd')) document.getElementById('btnAdd').classList.toggle('hidden', !window.hasPerm('cob_edit'));
+      if(document.getElementById('btnExp')) document.getElementById('btnExp').classList.toggle('hidden', !window.hasPerm('cob_exp'));
+      if(document.getElementById('btnImpCob')) document.getElementById('btnImpCob').classList.toggle('hidden', !window.hasPerm('cob_exp'));
+      
+      // Botones Tecnicos
+      if(document.getElementById('btnAddTec')) document.getElementById('btnAddTec').classList.toggle('hidden', !window.hasPerm('tec_edit'));
+      if(document.getElementById('btnExpTec')) document.getElementById('btnExpTec').classList.toggle('hidden', !window.hasPerm('tec_exp'));
+      if(document.getElementById('btnImpTec')) document.getElementById('btnImpTec').classList.toggle('hidden', !window.hasPerm('tec_exp'));
+      
+      // Botones Encargados
+      if(document.getElementById('btnAddEnc')) document.getElementById('btnAddEnc').classList.toggle('hidden', !window.hasPerm('enc_edit'));
+      if(document.getElementById('btnExpEnc')) document.getElementById('btnExpEnc').classList.toggle('hidden', !window.hasPerm('enc_exp'));
+      if(document.getElementById('btnImpEnc')) document.getElementById('btnImpEnc').classList.toggle('hidden', !window.hasPerm('enc_exp'));
 
-  window.onload = () => {
-    const saved = localStorage.getItem('distelsa_pro_fb');
-    if(saved) { SESION = JSON.parse(saved); window.startApp(); }
+      // Botones Dinámicos
+      if(document.getElementById('btnAddDyn')) document.getElementById('btnAddDyn').classList.toggle('hidden', !window.hasPerm('dyn_edit'));
+      if(document.getElementById('btnExpDyn')) document.getElementById('btnExpDyn').classList.toggle('hidden', !window.hasPerm('dyn_exp'));
+      if(document.getElementById('btnImpDyn')) document.getElementById('btnImpDyn').classList.toggle('hidden', !window.hasPerm('dyn_exp'));
   };
 
-  window.toggleAuthBoxes = function(showRegister) {
-    if(showRegister) {
-      document.getElementById('boxLogin').classList.add('hidden');
-      document.getElementById('boxRegister').classList.remove('hidden');
-    } else {
-      document.getElementById('boxRegister').classList.add('hidden');
-      document.getElementById('boxLogin').classList.remove('hidden');
+  // ================= PORTAPAPELES (COPIAR) =================
+  window.copyToClip = function(text) {
+      if(!text) return;
+      navigator.clipboard.writeText(text).then(() => { window.showToastSuccess(`Copiado: <b>${text}</b>`); }).catch(err => alert("Error al copiar"));
+  };
+  window.showToastSuccess = function(msg) {
+    const c = document.getElementById('toastContainer'); const t = document.createElement('div'); t.className = 'toast success'; 
+    t.innerHTML = `<i class="fa-solid fa-circle-check"></i> <div>${msg}</div>`; c.appendChild(t); setTimeout(() => { t.classList.add('toast-fade'); setTimeout(() => t.remove(), 300); }, 4000); 
+  };
+  window.showToast = (msg) => { 
+    const c = document.getElementById('toastContainer'); const t = document.createElement('div'); t.className = 'toast'; 
+    t.innerHTML = `<i class="fa-solid fa-bell"></i> <div>${msg}</div>`; c.appendChild(t); setTimeout(() => { t.classList.add('toast-fade'); setTimeout(() => t.remove(), 300); }, 6000); 
+  };
+
+  // ================= PESTAÑAS Y RUTEO =================
+  window.switchModule = function(mod) {
+    CURRENT_MODULE = mod; PAGE_DYN = 1;
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    let activeTab = document.getElementById(mod.startsWith('dyn_') ? 'tab_' + mod : 'tab' + mod.charAt(0).toUpperCase() + mod.slice(1));
+    if(activeTab) activeTab.classList.add('active');
+    
+    ['moduloCobertura', 'moduloTecnicos', 'moduloEncargados', 'moduloAjustes', 'moduloDinamico'].forEach(id => { document.getElementById(id).classList.add('hidden'); });
+
+    if(mod === 'cob') { document.getElementById('moduloCobertura').classList.remove('hidden'); window.renderTable(); }
+    else if(mod === 'tec') { document.getElementById('moduloTecnicos').classList.remove('hidden'); window.renderTecnicosTable(); }
+    else if(mod === 'enc') { document.getElementById('moduloEncargados').classList.remove('hidden'); window.renderEncargadosTable(); }
+    else if(mod === 'ajs') { document.getElementById('moduloAjustes').classList.remove('hidden'); window.showAjsView('usr'); }
+    else if(mod.startsWith('dyn_')) {
+        document.getElementById('moduloDinamico').classList.remove('hidden');
+        CURRENT_DYN_CONFIG = DB.configModulos.find(m => m.id === mod.replace('dyn_', ''));
+        window.renderDynData();
     }
   };
 
+  window.showAjsView = function(view) {
+      document.querySelectorAll('.ajs-menu-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('menuAjs' + view.charAt(0).toUpperCase() + view.slice(1)).classList.add('active');
+      document.getElementById('ajsViewUsr').classList.add('hidden');
+      document.getElementById('ajsViewRol').classList.add('hidden');
+      document.getElementById('ajsViewMod').classList.add('hidden');
+      document.getElementById('ajsView' + view.charAt(0).toUpperCase() + view.slice(1)).classList.remove('hidden');
+      if(view === 'usr') window.renderUserList();
+      if(view === 'rol') window.renderRolesList();
+      if(view === 'mod') window.renderListaModulos();
+  };
+
+  window.toggleAuthBoxes = (s) => { document.getElementById('boxLogin').classList.toggle('hidden', s); document.getElementById('boxRegister').classList.toggle('hidden', !s); };
+
+  // ================= AUTH =================
   window.registerAccount = async function() {
-    const u = document.getElementById('regUser').value.trim();
-    const p = document.getElementById('regPass').value.trim();
-    const btn = document.getElementById('btnRegister');
-
-    if(!u || !p) return alert("Por favor complete todos los campos.");
-    btn.innerText = 'Enviando...'; btn.disabled = true;
-
+    const u = document.getElementById('regUser').value.trim(), p = document.getElementById('regPass').value.trim(); const btn = document.getElementById('btnRegister');
+    if(!u || !p) return alert("Completa todos los campos."); btn.innerText = 'Enviando...'; btn.disabled = true;
     try {
-      const q = query(collection(db, "usuarios"), where("u", "==", u));
-      const snap = await getDocs(q);
-
-      if(!snap.empty) {
-        alert("Ese nombre de usuario ya está solicitado o en uso. Elige otro.");
-        btn.innerText = 'ENVIAR SOLICITUD'; btn.disabled = false;
-        return;
-      }
-
+      const q = query(collection(db, "usuarios"), where("u", "==", u)); const snap = await getDocs(q);
+      if(!snap.empty) { alert("Usuario en uso."); btn.innerText = 'ENVIAR SOLICITUD'; btn.disabled = false; return; }
       await addDoc(collection(db, "usuarios"), { u, p, r: "pendiente", lastActive: 0, token: null, createdAt: Date.now() });
-      alert("¡Solicitud enviada con éxito! Solicita la aprobación de tu Administrador para ingresar.");
-      
-      document.getElementById('regUser').value = '';
-      document.getElementById('regPass').value = '';
-      window.toggleAuthBoxes(false);
-
-    } catch(e) { alert("Error al procesar la solicitud."); }
-    btn.innerText = 'ENVIAR SOLICITUD'; btn.disabled = false;
+      alert("¡Solicitud enviada!"); window.toggleAuthBoxes(false);
+    } catch(e) { alert("Error"); } btn.innerText = 'ENVIAR SOLICITUD'; btn.disabled = false;
   };
-
   window.login = async function() {
-    const u = document.getElementById('txtUser').value.trim();
-    const p = document.getElementById('txtPass').value.trim();
-    const btn = document.getElementById('btnLogin');
-    if(!u || !p) return alert("Ingrese datos");
-    btn.innerText = 'Cargando...'; btn.disabled = true;
+    const u = document.getElementById('txtUser').value.trim(), p = document.getElementById('txtPass').value.trim(); const btn = document.getElementById('btnLogin');
+    if(!u || !p) return alert("Ingrese datos"); btn.innerText = 'Cargando...'; btn.disabled = true;
     try {
-      const q = query(collection(db, "usuarios"), where("u", "==", u), where("p", "==", p));
-      const querySnapshot = await getDocs(q);
-      if (!querySnapshot.empty) {
-        const userDoc = querySnapshot.docs[0];
-        const userData = userDoc.data();
-        
-        if(userData.r === 'pendiente') {
-          alert("Tu cuenta aún está en estado PENDIENTE de aprobación por el Administrador.");
-          btn.innerText = 'INGRESAR'; btn.disabled = false;
-          return;
-        }
-
-        const newToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
-        let rolAsignado = userData.r === 'lider' ? 'agente' : userData.r;
-        SESION = { id: userDoc.id, u: userData.u, r: rolAsignado, t: newToken };
+      const q = query(collection(db, "usuarios"), where("u", "==", u), where("p", "==", p)); const snap = await getDocs(q);
+      if (!snap.empty) {
+        const uDoc = snap.docs[0]; const uData = uDoc.data();
+        if(uData.r === 'pendiente') { alert("Cuenta PENDIENTE."); btn.innerText = 'INGRESAR'; btn.disabled = false; return; }
+        const token = Math.random().toString(36).substring(2) + Date.now().toString(36);
+        let rolFinal = uData.r === 'lider' ? 'agente' : uData.r;
+        SESION = { id: uDoc.id, u: uData.u, r: rolFinal, t: token };
         localStorage.setItem('distelsa_pro_fb', JSON.stringify(SESION));
-        await updateDoc(doc(db, "usuarios", userDoc.id), { token: newToken, lastActive: Date.now(), r: rolAsignado });
-        window.startApp();
-      } else alert("Usuario o contraseña incorrectos");
-    } catch(e) { alert("Error de conexión a Firebase."); }
-    btn.innerText = 'INGRESAR'; btn.disabled = false;
+        await updateDoc(doc(db, "usuarios", uDoc.id), { token: token, lastActive: Date.now(), r: rolFinal }); window.startApp();
+      } else alert("Datos incorrectos");
+    } catch(e) { alert("Error"); } btn.innerText = 'INGRESAR'; btn.disabled = false;
   };
-
   window.loginInvitado = async function() {
-    const nombre = prompt("Ingresa tu nombre:");
-    if(!nombre || nombre.trim() === "") return;
-    const uName = "Invitado - " + nombre.trim();
-    const newToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
-    const now = Date.now();
-    
+    const nombre = prompt("Ingresa tu nombre:"); if(!nombre || nombre.trim() === "") return;
+    const uName = "Invitado - " + nombre.trim(); const token = Math.random().toString(36).substring(2) + Date.now().toString(36); const now = Date.now();
     try {
-      const q = query(collection(db, "usuarios"), where("u", "==", uName));
-      const querySnapshot = await getDocs(q);
-      let docId;
-      if (!querySnapshot.empty) {
-        const userDoc = querySnapshot.docs[0];
-        const userData = userDoc.data();
-        
-        // Verificación de vigencia de 24 horas (en milisegundos)
-        const vigencia = 24 * 60 * 60 * 1000;
-        if (userData.createdAt && (now - userData.createdAt > vigencia)) {
-          alert("Tu acceso de invitado ha expirado (24 horas).");
-          return;
-        }
-        
-        docId = userDoc.id;
-        await updateDoc(doc(db, "usuarios", docId), { token: newToken, lastActive: now, r: "invitado" });
-      } else {
-        const docRef = await addDoc(collection(db, "usuarios"), { u: uName, p: "", r: "invitado", token: newToken, lastActive: now, createdAt: now });
-        docId = docRef.id;
-      }
-      SESION = { id: docId, u: uName, r: "invitado", t: newToken };
-      localStorage.setItem('distelsa_pro_fb', JSON.stringify(SESION));
-      window.startApp();
-    } catch(e) { alert("Error al ingresar."); }
+      const q = query(collection(db, "usuarios"), where("u", "==", uName)); const snap = await getDocs(q); let docId;
+      if (!snap.empty) {
+        const uData = snap.docs[0].data(); if (uData.createdAt && (now - uData.createdAt > 86400000)) { alert("Acceso expirado (24h)."); return; }
+        docId = snap.docs[0].id; await updateDoc(doc(db, "usuarios", docId), { token: token, lastActive: now, r: "invitado" });
+      } else { const docRef = await addDoc(collection(db, "usuarios"), { u: uName, p: "", r: "invitado", token: token, lastActive: now, createdAt: now }); docId = docRef.id; }
+      SESION = { id: docId, u: uName, r: "invitado", t: token }; localStorage.setItem('distelsa_pro_fb', JSON.stringify(SESION)); window.startApp();
+    } catch(e) { alert("Error"); }
   };
 
   window.startApp = function() {
-    // Validación de vigencia invitado al abrir la app
-    if (SESION.r === 'invitado') {
-      const userObj = DB_USERS.find(u => u.id === SESION.id);
-      if (userObj && userObj.createdAt) {
-        const vigencia = 24 * 60 * 60 * 1000;
-        if (Date.now() - userObj.createdAt > vigencia) {
-          alert("Tu sesión de invitado ha expirado.");
-          window.logout();
-          return;
-        }
-      }
-    }
-
-    document.getElementById('viewLogin').classList.add('hidden');
-    document.getElementById('viewApp').classList.remove('hidden');
-    document.getElementById('lblUser').innerText = SESION.u;
-    document.getElementById('lblRol').innerText = SESION.r;
-    
-    const isAdmin = (SESION.r === 'admin');
-    const isAgente = (SESION.r === 'agente'); 
-    
-    if(isAdmin) {
-      document.getElementById('btnAdd').classList.remove('hidden');
-      document.getElementById('btnImpCob').classList.remove('hidden');
-      document.getElementById('btnExp').classList.remove('hidden');
-      document.getElementById('btnUsr').classList.remove('hidden');
-      document.getElementById('notifBell').classList.remove('hidden'); 
-    } else if (isAgente) {
-      document.getElementById('btnAdd').classList.remove('hidden');
-      document.getElementById('btnExp').classList.remove('hidden');
-    }
+    if (SESION.r === 'invitado') { const userObj = DB_USERS.find(u => u.id === SESION.id); if (userObj && userObj.createdAt && (Date.now() - userObj.createdAt > 86400000)) { alert("Sesión expirada."); window.logout(); return; } }
+    document.getElementById('viewLogin').classList.add('hidden'); document.getElementById('viewApp').classList.remove('hidden');
+    document.getElementById('lblUser').innerText = SESION.u; document.getElementById('lblRol').innerText = SESION.r;
     
     document.getElementById('onlineMonitor').classList.remove('hidden');
-    window.listenToUsers(); 
-    setInterval(window.updateOnlineUI, 5000);
-    listenToCoberturas();
-    window.heartbeat();
-    heartbeatInterval = setInterval(window.heartbeat, 180000);
+    window.listenToRoles(); 
+    window.listenToUsers(); setInterval(window.updateOnlineUI, 5000);
+    listenToCoberturas(); listenToTecnicos(); listenToEncargados(); listenToConfigModulos(); listenToDynData();
+    window.heartbeat(); heartbeatInterval = setInterval(window.heartbeat, 180000);
   };
 
-  window.heartbeat = async function() {
-    if(!SESION.id) return;
-    try {
-      const userDoc = await getDoc(doc(db, "usuarios", SESION.id));
-      if(userDoc.exists()) {
-        if(userDoc.data().token !== SESION.t) { alert("Sesión duplicada."); window.logout(false); return; }
-        await updateDoc(doc(db, "usuarios", SESION.id), { lastActive: Date.now() });
-      }
-    } catch(e) {}
-  };
+  window.heartbeat = async () => { if(SESION.id) { try { await updateDoc(doc(db, "usuarios", SESION.id), { lastActive: Date.now() }); } catch(e){} } };
+  window.logout = async (clear = true) => { if(clear && SESION.id) try { await updateDoc(doc(db, "usuarios", SESION.id), { token: null, lastActive: 0 }); } catch(e){} localStorage.removeItem('distelsa_pro_fb'); location.reload(); };
 
-  window.logout = async function(clearToken = true) {
-    if(clearToken && SESION.id) try { await updateDoc(doc(db, "usuarios", SESION.id), { token: null, lastActive: 0 }); } catch(e){}
-    localStorage.removeItem('distelsa_pro_fb'); location.reload(); 
-  };
-
-  window.listenToUsers = function() {
-    onSnapshot(collection(db, "usuarios"), (snapshot) => {
-      DB_USERS = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      
+  // ================= USERS & NOTIF =================
+  window.listenToUsers = () => {
+    onSnapshot(collection(db, "usuarios"), (snap) => {
+      DB_USERS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       if (SESION.r === 'admin') {
-        let currentPending = DB_USERS.filter(u => u.r === 'pendiente');
-        let badge = document.getElementById('notifBadge');
-        
-        if (currentPending.length > 0) {
-            badge.innerText = currentPending.length;
-            badge.classList.remove('hidden');
-        } else {
-            badge.classList.add('hidden');
-        }
+        let pending = DB_USERS.filter(u => u.r === 'pendiente'); let badge = document.getElementById('notifBadge');
+        if (pending.length > 0) { badge.innerText = pending.length; badge.classList.remove('hidden'); } else badge.classList.add('hidden');
+        if (!isFirstUserLoad) pending.forEach(u => { if (!knownPendingIds.has(u.id)) window.showToast(`Nueva solicitud: <b>${u.u}</b>. <u style="cursor:pointer; color:var(--blue)" onclick="window.openPendingUsers()">Aprobar</u>`); });
+        knownPendingIds = new Set(pending.map(u => u.id));
+      }
+      isFirstUserLoad = false; window.updateOnlineUI();
+      if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewUsr').classList.contains('hidden') && !EDITING_USER_ID) window.renderUserList();
+    });
+  };
+  window.updateOnlineUI = () => { const now = Date.now(); let online = DB_USERS.filter(u => u.lastActive && (now - u.lastActive < 190000) && u.r !== 'pendiente').map(u => u.u); document.getElementById('onlineCount').innerText = online.length; document.getElementById('onlineList').innerHTML = online.map(u => `<div class="online-item"><i class="fa-solid fa-user" style="color:#28a745"></i> ${u}</div>`).join('') || 'Nadie conectado'; };
 
-        if (!isFirstUserLoad) {
-            currentPending.forEach(u => {
-                if (!knownPendingIds.has(u.id)) {
-                    window.showToast(`Nueva solicitud de <b>${u.u}</b>. <u style="cursor:pointer; color:var(--blue)" onclick="window.openPendingUsers()">Aprobar</u>`);
-                }
-            });
-        }
-        knownPendingIds = new Set(currentPending.map(u => u.id));
+  // ================= ROLES =================
+  window.listenToRoles = function() {
+      onSnapshot(collection(db, "roles_config"), (snapshot) => {
+          DB.roles = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+          window.updateRolesSelect();
+          window.applyPermissionsToUI();
+          if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList();
+      });
+  };
+
+  window.updateRolesSelect = function() {
+      const sel = document.getElementById('uRol');
+      if(!sel) return;
+      let html = `<option value="agente">Agente (Default)</option><option value="invitado">Invitado (Lector)</option><option value="admin">Administrador (Total)</option><option value="pendiente">Pendiente (Bloqueado)</option>`;
+      DB.roles.forEach(r => { html += `<option value="${r.nombre}">Custom: ${r.nombre}</option>`; });
+      sel.innerHTML = html;
+  };
+
+  window.saveRole = async function() {
+      const nombre = document.getElementById('rolName').value.trim();
+      if(!nombre) return alert("Ingresa un nombre para el rol");
+      const perms = [];
+      document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { if(chk.checked) perms.push(chk.id.replace('p_', '')); });
+      try {
+          if(EDITING_ROLE_ID) {
+              await updateDoc(doc(db, "roles_config", EDITING_ROLE_ID), { nombre, perms });
+              EDITING_ROLE_ID = null; document.getElementById('btnRoleAction').innerText = "Guardar Rol";
+          } else { await addDoc(collection(db, "roles_config"), { nombre, perms }); }
+          document.getElementById('rolName').value = '';
+          document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => chk.checked = false);
+          alert("Rol guardado");
+      } catch(e) { alert("Error guardando rol"); }
+  };
+
+  window.editRole = function(id) {
+      EDITING_ROLE_ID = id; const r = DB.roles.find(x => x.id === id);
+      document.getElementById('rolName').value = r.nombre;
+      document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { chk.checked = r.perms.includes(chk.id.replace('p_', '')); });
+      document.getElementById('btnRoleAction').innerText = "Actualizar Rol";
+  };
+
+  window.deleteRole = async function(id) {
+      if(!confirm("¿Eliminar este rol? Los usuarios con este rol perderán permisos.")) return;
+      await deleteDoc(doc(db, "roles_config", id));
+  };
+
+  window.renderRolesList = function() {
+      document.getElementById('rolesListContainer').innerHTML = DB.roles.map(r => `
+          <div class="mod-list-item">
+              <div><b>${r.nombre}</b> <br><small style="color:var(--gray);">${r.perms.join(', ')}</small></div>
+              <div><button onclick="window.editRole('${r.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button>
+                  <button onclick="window.deleteRole('${r.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div>
+          </div>
+      `).join('') || '<p style="font-size:13px; color:var(--gray);">No hay roles personalizados.</p>';
+  };
+
+  // ================= CREADOR DE MÓDULOS (DINÁMICOS) =================
+  function listenToConfigModulos() { onSnapshot(collection(db, "modulos_config"), (snapshot) => { DB.configModulos = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); window.buildDynamicTabs(); if(CURRENT_MODULE === 'ajs') window.renderListaModulos(); }); }
+  function listenToDynData() { onSnapshot(collection(db, "modulos_data"), (snapshot) => { DB.dynData = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); if(CURRENT_MODULE.startsWith('dyn_')) window.renderDynData(); }); }
+
+  window.buildDynamicTabs = function() {
+    document.querySelectorAll('.tab-dyn').forEach(e => e.remove()); const container = document.getElementById('mainTabsContainer'); const tabAjustes = document.getElementById('tabAjs');
+    DB.configModulos.forEach(mod => {
+      const tab = document.createElement('div'); tab.className = `tab-btn tab-dyn ${CURRENT_MODULE === 'dyn_'+mod.id ? 'active' : ''}`; tab.id = 'tab_dyn_' + mod.id;
+      tab.innerHTML = `<i class="fa-solid ${mod.vista === 'directorio' ? 'fa-id-card' : 'fa-folder-open'}"></i> ${mod.nombre}`;
+      tab.onclick = () => window.switchModule('dyn_' + mod.id); container.insertBefore(tab, tabAjustes);
+    });
+    window.applyPermissionsToUI(); 
+  };
+
+  window.crearModuloDinamico = async function() {
+    const nombre = document.getElementById('confModName').value.trim(); const vista = document.getElementById('confModVista').value; const colsRaw = document.getElementById('confModCols').value.trim();
+    if(!nombre || !colsRaw) return alert("Completa nombre y columnas"); const cols = colsRaw.split(',').map(c => c.trim()).filter(c => c !== '');
+    if(cols.length === 0) return alert("Columnas inválidas");
+    try { await addDoc(collection(db, "modulos_config"), { nombre, vista, columnas: cols }); document.getElementById('confModName').value = ''; document.getElementById('confModCols').value = ''; alert("¡Módulo Creado!"); } catch(e) { alert("Error"); }
+  };
+
+  window.renderListaModulos = function() {
+    document.getElementById('listaModulosCreados').innerHTML = DB.configModulos.map(m => `
+      <div class="mod-list-item"><div><b>${m.nombre}</b> <span style="font-size:11px;color:var(--gray);margin-left:5px;">(Vista: ${m.vista})</span> <br><small style="color:var(--gray);">${m.columnas.join(', ')}</small></div>
+      <button onclick="window.eliminarModuloDinamico('${m.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i> Eliminar</button></div>
+    `).join('') || '<p style="font-size:13px; color:var(--gray);">No hay módulos.</p>';
+  };
+
+  window.eliminarModuloDinamico = async function(id) {
+    if(!confirm("¿Eliminar módulo y todos sus datos?")) return;
+    try {
+      await deleteDoc(doc(db, "modulos_config", id)); const batch = writeBatch(db);
+      DB.dynData.filter(d => d.modId === id).forEach(d => batch.delete(doc(db, "modulos_data", d.id))); await batch.commit();
+      if(CURRENT_MODULE === 'dyn_'+id) window.switchModule('cob');
+    } catch(e) { alert("Error"); }
+  };
+
+  // ================= RENDERIZADOR DINÁMICO (TABLA VS DIRECTORIO) =================
+  window.renderDynData = function(reset = false) {
+      if (reset) PAGE_DYN = 1; if(!CURRENT_DYN_CONFIG) return;
+      const rawQ = document.getElementById('searchDynBox').value.toLowerCase().trim();
+      let filtered = DB.dynData.filter(d => d.modId === CURRENT_DYN_CONFIG.id);
+      if (rawQ) { filtered = filtered.filter(row => { let fStr = ""; CURRENT_DYN_CONFIG.columnas.forEach((_, i) => fStr += (row['c'+i]||"")+" "); return fStr.toLowerCase().includes(rawQ); }); }
+
+      const isDir = CURRENT_DYN_CONFIG.vista === 'directorio';
+      const perPage = isDir ? ITEMS_PER_PAGE_ENC : 10;
+      const totalPages = Math.ceil(filtered.length / perPage) || 1;
+      if (PAGE_DYN > totalPages) PAGE_DYN = totalPages;
+      document.getElementById('pageLabelDyn').innerText = `${PAGE_DYN} / ${totalPages}`;
+      const chunk = filtered.slice((PAGE_DYN - 1) * perPage, PAGE_DYN * perPage);
+      
+      const container = document.getElementById('dynContentContainer');
+      const canEdit = window.hasPerm('dyn_edit'); const isAdmin = (SESION.r === 'admin');
+
+      if (chunk.length === 0) { 
+          container.innerHTML = `<div class="card" style="text-align:center; padding: 30px; color:#6c757d; font-style: italic;">No se encontraron registros.</div>`; return; 
       }
 
-      isFirstUserLoad = false;
-      window.updateOnlineUI();
-      if(!document.getElementById('modalUsr').classList.contains('hidden') && !EDITING_USER_ID) window.renderUserList();
-    });
-  };
+      if (isDir) {
+          let html = `<div class="enc-grid">`;
+          chunk.forEach(row => {
+              let title = row.c0 || "Sin Título"; let sub = row.c1 || ""; let ini = title.charAt(0).toUpperCase();
+              let act = ""; if (canEdit) act += `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button>`;
+              
+              let bodyHtml = "";
+              CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => {
+                  if(i < 2) return; 
+                  let val = row['c'+i];
+                  if(val) bodyHtml += `<div class="enc-contact" onclick="window.copyToClip('${val}')" title="Copiar ${colName}"><div style="display:flex; flex-direction:column;"><span style="font-size:10px; color:#adb5bd; font-weight:bold; text-transform:uppercase;">${colName}</span><span>${val}</span></div><div class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</div></div>`;
+              });
 
-  window.showToast = function(message) {
-    const container = document.getElementById('toastContainer');
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.innerHTML = `<i class="fa-solid fa-bell"></i> <div>${message}</div>`;
-    
-    container.appendChild(toast);
-    setTimeout(() => {
-        toast.classList.add('toast-fade');
-        setTimeout(() => toast.remove(), 300);
-    }, 6000);
-  };
-
-  window.updateOnlineUI = function() {
-    const now = Date.now();
-    let onlineUsers = DB_USERS.filter(u => u.lastActive && (now - u.lastActive < 190000) && u.r !== 'pendiente').map(u => u.u);
-    document.getElementById('onlineCount').innerText = onlineUsers.length;
-    document.getElementById('onlineList').innerHTML = onlineUsers.map(u => `<div class="online-item"><i class="fa-solid fa-user" style="color:#28a745"></i> ${u}</div>`).join('') || 'Nadie conectado';
-  };
-
-  function listenToCoberturas() {
-    onSnapshot(collection(db, "coberturas"), (snapshot) => {
-      DB.cob = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      window.renderTable();
-    });
-  }
-
-  window.renderTable = function(reset = false) {
-    if (reset) PAGE = 1;
-    const rawQ = document.getElementById('searchBox').value;
-
-    const norm = (s) => String(s||"").toLowerCase()
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9 ]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-
-    let q = norm(rawQ);
-    q = q.replace(/\bz\s+(\d+)\b/g, "zona $1");
-    q = q.replace(/\bz(\d+)\b/g, "zona $1");
-    q = q.replace(/\bz\b/g, "zona");
-    q = q.replace(/\bcol\b/g, "colonia");
-
-    const stopWords = ['de', 'la', 'las', 'los', 'el', 'en', 'y'];
-    const terms = q.split(" ").filter(t => t.length > 0 && !stopWords.includes(t));
-
-    let filtered = DB.cob;
-
-    if (terms.length > 0) {
-      filtered = DB.cob.map(row => {
-        let score = 0; let matchedAllTokens = true;
-        const nStr = norm(row.n);
-        const mStr = norm(row.m);
-        const rStr = norm(row.r);
-        const cStr = norm(row.c);
-
-        let zRaw = norm(row.z);
-        if (zRaw.match(/^\d+$/)) zRaw = "zona " + zRaw; 
-        else if (zRaw.match(/^z\s*\d+$/)) zRaw = zRaw.replace(/z\s*/, "zona ");
-
-        const fullStr = `${nStr} ${zRaw} ${mStr} ${rStr} ${cStr}`;
-
-        terms.forEach(term => {
-          let termNoS = term.endsWith('s') ? term.slice(0, -1) : term;
-          if (!fullStr.includes(term) && !fullStr.includes(termNoS)) { matchedAllTokens = false; } 
-          else {
-            if (nStr.includes(term)) score += 10;
-            else if (zRaw.includes(term)) score += 5;
-            else if (mStr.includes(term)) score += 3;
-            else score += 1;
-          }
-        });
-        return { ...row, score, matchedAllTokens };
-      }).filter(r => r.matchedAllTokens).sort((a, b) => b.score - a.score);
-    }
-
-    const totalPages = Math.ceil(filtered.length / 10) || 1;
-    if (PAGE > totalPages) PAGE = totalPages;
-    document.getElementById('pageLabel').innerText = `${PAGE} / ${totalPages}`;
-    
-    const chunk = filtered.slice((PAGE - 1) * 10, PAGE * 10);
-    const tbody = document.getElementById('tableBody');
-    
-    if (chunk.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px; color:#6c757d; font-style: italic;">No se encontraron resultados para "${rawQ}".</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = '';
-    const isAdmin = (SESION.r === 'admin');
-    const canEdit = (SESION.r === 'admin' || SESION.r === 'agente');
-
-    chunk.forEach(row => {
-      let bg = row.s === 'Cobertura' ? '#28a745' : row.s === 'Sin Cobertura' ? '#dc3545' : row.s === 'Consultar' ? '#ffc107' : '#6c757d';
-      let color = row.s === 'Consultar' ? 'black' : 'white';
-
-      let statusAction = "";
-      if (canEdit) {
-        let selectHtml = `
-          <select onchange="window.saveStatus('${row.id}', this)" style="flex: 1; background:${bg}; color:${color}; border:none; padding:8px 5px; border-radius:4px; font-weight:bold; cursor:pointer; width:100%; outline:none;">
-            <option value="Cobertura" style="background:#28a745; color:white" ${row.s==='Cobertura'?'selected':''}>Cobertura</option>
-            <option value="Sin Cobertura" style="background:#dc3545; color:white" ${row.s==='Sin Cobertura'?'selected':''}>Sin Cobertura</option>
-            <option value="Consultar" style="background:#ffc107; color:black" ${row.s==='Consultar'?'selected':''}>Consultar</option>
-            <option value="Sin Datos" style="background:#6c757d; color:white" ${row.s==='Sin Datos' || !row.s ? 'selected':''}>Sin Datos</option>
-          </select>`;
-
-        if (isAdmin) {
-          statusAction = `<div style="display: flex; gap: 5px; align-items: center;">
-                            ${selectHtml}
-                            <button onclick="window.editLocation('${row.id}')" class="btn btn-p" style="padding: 8px 10px;" title="Editar"><i class="fa-solid fa-pencil"></i></button>
-                            <button onclick="window.deleteLocation('${row.id}')" class="btn btn-d" style="padding: 8px 10px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-                          </div>`;
-        } else { statusAction = selectHtml; }
+              html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${title}</div><div class="enc-role">${sub}</div></div></div></div><div class="enc-body">${bodyHtml}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`;
+          });
+          html += `</div>`; container.innerHTML = html;
       } else {
-        statusAction = `<span class="badge" style="background:${bg}; color:${color}; width: 100%; box-sizing: border-box; padding: 8px 0;">${row.s || "Sin Datos"}</span>`;
+          let ths = CURRENT_DYN_CONFIG.columnas.map(c => `<th>${c}</th>`).join(''); if(canEdit) ths += `<th width="15%">Acciones</th>`;
+          let html = `<div class="card"><div class="table-responsive"><table><thead><tr>${ths}</tr></thead><tbody>`;
+          chunk.forEach(row => {
+              html += `<tr>`;
+              CURRENT_DYN_CONFIG.columnas.forEach((_, i) => html += `<td>${i===0?`<b>${row['c'+i]||""}</b>`:row['c'+i]||""}</td>`);
+              if(canEdit) {
+                  let act = `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:6px 10px;"><i class="fa-solid fa-pencil"></i></button>`;
+                  if(isAdmin) act += ` <button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:6px 10px;"><i class="fa-solid fa-trash"></i></button>`;
+                  html += `<td>${act}</td>`;
+              }
+              html += `</tr>`;
+          });
+          html += `</tbody></table></div></div>`; container.innerHTML = html;
       }
-      tbody.innerHTML += `<tr><td>${row.m}</td><td><b>${row.n}</b></td><td>${row.c}</td><td>${row.z}</td><td>${row.r}</td><td>${statusAction}</td></tr>`;
-    });
   };
 
-  window.saveStatus = async (id, sel) => {
-    try { await updateDoc(doc(db, "coberturas", id), { s: sel.value }); } catch(e) { alert("Error al actualizar"); }
-  };
-
-  window.editLocation = async (id) => {
-    EDITING_LOCATION_ID = id;
-    const d = DB.cob.find(x => x.id === id);
-    document.getElementById('modalTitle').innerText = "Editar Ubicación";
-    document.getElementById('newMun').value = d.m;
-    document.getElementById('newNom').value = d.n;
-    document.getElementById('newCat').value = d.c;
-    document.getElementById('newZon').value = d.z;
-    document.getElementById('newRef').value = d.r;
-    document.getElementById('newCob').value = d.s || "Sin Datos";
-    window.openModal('modalAdd');
-  };
-
-  window.saveLocation = async () => {
-    const data = { m: document.getElementById('newMun').value, n: document.getElementById('newNom').value, c: document.getElementById('newCat').value, z: document.getElementById('newZon').value, r: document.getElementById('newRef').value, s: document.getElementById('newCob').value };
-    if(!data.m || !data.n) return alert("Faltan datos obligatorios");
-    try {
-      if(EDITING_LOCATION_ID) await updateDoc(doc(db, "coberturas", EDITING_LOCATION_ID), data);
-      else await addDoc(collection(db, "coberturas"), data);
-      window.closeModal('modalAdd');
-    } catch(e) { alert("Error al guardar"); }
-  };
-
-  window.deleteLocation = async (id) => {
-    if(confirm("¿Seguro que deseas eliminar esta ubicación permanentemente?")) { await deleteDoc(doc(db, "coberturas", id)); }
-  };
-
-  window.openModal = id => document.getElementById(id).classList.remove('hidden');
-  window.closeModal = id => { 
-    document.getElementById(id).classList.add('hidden'); 
-    if(id === 'modalAdd') {
-        EDITING_LOCATION_ID = null;
-        document.getElementById('modalTitle').innerText = "Nueva Ubicación";
-        document.querySelectorAll('#modalAdd input').forEach(i => i.value = '');
+  // ================= SOLUCIÓN AL BUG DE EDICIÓN (VENTANAS EN BLANCO) =================
+  window.openModal = (id, isEdit = false) => { 
+    document.getElementById(id).classList.remove('hidden'); 
+    // ¡SOLO LÍMPIA SI NO ESTÁS EDITANDO!
+    if(!isEdit) { 
+        if(id==='modalAdd'){EDITING_LOCATION_ID=null;document.querySelectorAll('#modalAdd input').forEach(i=>i.value='');} 
+        if(id==='modalAddTec'){EDITING_TEC_ID=null;document.querySelectorAll('#modalAddTec input').forEach(i=>i.value='');} 
+        if(id==='modalAddEnc'){EDITING_ENC_ID=null;document.querySelectorAll('#modalAddEnc input').forEach(i=>i.value='');} 
     }
   };
-  window.changePage = d => { PAGE += d; window.renderTable(); };
-  window.openUsers = () => { window.openModal('modalUsr'); window.renderUserList(); };
+  window.closeModal = id => document.getElementById(id).classList.add('hidden');
 
-  window.openPendingUsers = () => {
-    window.openModal('modalUsr');
-    document.getElementById('searchUserBox').value = 'pendiente';
-    window.renderUserList();
+  window.openModalDyn = function() {
+    EDITING_DYN_ID = null; document.getElementById('modalTitleDyn').innerText = "Nuevo Registro - " + CURRENT_DYN_CONFIG.nombre;
+    document.getElementById('formGridDyn').innerHTML = CURRENT_DYN_CONFIG.columnas.map((col, i) => `<div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">${col}</label><input id="dynInp_${i}" class="inp" placeholder="Ingresar ${col}"></div>`).join('');
+    window.openModal('modalDyn', false); // NUEVO
   };
+  window.editDynRecord = function(id) {
+    EDITING_DYN_ID = id; const data = DB.dynData.find(d => d.id === id); document.getElementById('modalTitleDyn').innerText = "Editar Registro - " + CURRENT_DYN_CONFIG.nombre;
+    document.getElementById('formGridDyn').innerHTML = CURRENT_DYN_CONFIG.columnas.map((col, i) => `<div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">${col}</label><input id="dynInp_${i}" class="inp" value="${data['c'+i] || ''}"></div>`).join('');
+    window.openModal('modalDyn', true); // EDITANDO
+  };
+  window.saveDynRecord = async function() {
+    let payload = { modId: CURRENT_DYN_CONFIG.id }; CURRENT_DYN_CONFIG.columnas.forEach((_, i) => payload['c'+i] = document.getElementById('dynInp_'+i).value.trim());
+    if(!payload['c0']) return alert("El primer campo es obligatorio");
+    try { if(EDITING_DYN_ID) await updateDoc(doc(db, "modulos_data", EDITING_DYN_ID), payload); else await addDoc(collection(db, "modulos_data"), payload); window.closeModal('modalDyn'); } catch(e) { alert("Error al guardar"); }
+  };
+  window.deleteDynRecord = async (id) => { if(confirm("¿Eliminar registro?")) { await deleteDoc(doc(db, "modulos_data", id)); } };
+  window.changePageDyn = d => { PAGE_DYN += d; window.renderDynData(); };
 
-  window.renderUserList = function() {
-    const c = document.getElementById('userListContainer');
-    const now = Date.now();
-    const q = document.getElementById('searchUserBox') ? document.getElementById('searchUserBox').value.toLowerCase().trim() : '';
-    
-    let filteredUsers = DB_USERS;
-    if (q) {
-      filteredUsers = DB_USERS.filter(u => 
-        (u.u && u.u.toLowerCase().includes(q)) || 
-        (u.r && u.r.toLowerCase().includes(q))
-      );
-    }
-    
-    // ORDENAMIENTO: Pendientes primero
-    filteredUsers.sort((a, b) => {
-      if (a.r === 'pendiente' && b.r !== 'pendiente') return -1;
-      if (a.r !== 'pendiente' && b.r === 'pendiente') return 1;
-      return (a.u || "").localeCompare(b.u || ""); 
+  // ================= MÓDULOS ESTÁTICOS ORIGINALES =================
+  function listenToCoberturas() { onSnapshot(collection(db, "coberturas"), (snap) => { DB.cob = snap.docs.map(d => ({ id: d.id, ...d.data() })); if(CURRENT_MODULE === 'cob') window.renderTable(); }); }
+  function listenToTecnicos() { onSnapshot(collection(db, "tecnicos"), (snap) => { DB.tec = snap.docs.map(d => ({ id: d.id, ...d.data() })); if(CURRENT_MODULE === 'tec') window.renderTecnicosTable(); }); }
+  function listenToEncargados() { onSnapshot(collection(db, "encargados"), (snap) => { DB.enc = snap.docs.map(d => ({ id: d.id, ...d.data() })); if(CURRENT_MODULE === 'enc') window.renderEncargadosTable(); }); }
+
+  /* Render Cobertura */
+  window.renderTable = function(r=false) { 
+    if (r) PAGE = 1; const q = document.getElementById('searchBox').value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, " ").trim();
+    let f = DB.cob; if(q) f = DB.cob.filter(x => `${x.m} ${x.n} ${x.z} ${x.r}`.toLowerCase().includes(q));
+    const total = Math.ceil(f.length / 10) || 1; if (PAGE > total) PAGE = total; document.getElementById('pageLabel').innerText = `${PAGE} / ${total}`;
+    const chunk = f.slice((PAGE - 1) * 10, PAGE * 10); const tbody = document.getElementById('tableBody'); tbody.innerHTML = '';
+    const canEdit = window.hasPerm('cob_edit'); const isAdmin = (SESION.r === 'admin');
+    chunk.forEach(row => {
+      let bg = row.s === 'Cobertura' ? '#28a745' : row.s === 'Sin Cobertura' ? '#dc3545' : row.s === 'Consultar' ? '#ffc107' : '#6c757d'; let color = row.s === 'Consultar' ? 'black' : 'white';
+      let act = ""; if (canEdit) {
+        let sel = `<select onchange="window.saveStatus('${row.id}', this)" style="background:${bg}; color:${color}; border:none; padding:8px; border-radius:4px; width:100%; outline:none;"><option value="Cobertura" ${row.s==='Cobertura'?'selected':''}>Cobertura</option><option value="Sin Cobertura" ${row.s==='Sin Cobertura'?'selected':''}>Sin Cobertura</option><option value="Consultar" ${row.s==='Consultar'?'selected':''}>Consultar</option><option value="Sin Datos" ${row.s==='Sin Datos' || !row.s ? 'selected':''}>Sin Datos</option></select>`;
+        if (isAdmin) act = `<div style="display:flex;gap:5px;">${sel}<button onclick="window.editLocation('${row.id}')" class="btn btn-p"><i class="fa-solid fa-pencil"></i></button><button onclick="window.deleteLocation('${row.id}')" class="btn btn-d"><i class="fa-solid fa-trash"></i></button></div>`; else act = sel;
+      } else act = `<span class="badge" style="background:${bg}; color:${color}; width:100%; padding:8px 0;">${row.s || "Sin Datos"}</span>`;
+      tbody.innerHTML += `<tr><td>${row.m}</td><td><b>${row.n}</b></td><td>${row.c}</td><td>${row.z}</td><td>${row.r}</td><td>${act}</td></tr>`;
     });
+  };
+  window.saveStatus = async (id, sel) => { await updateDoc(doc(db, "coberturas", id), { s: sel.value }); };
+  window.editLocation = async (id) => { EDITING_LOCATION_ID = id; const d = DB.cob.find(x => x.id === id); document.getElementById('modalTitle').innerText = "Editar Ubicación"; document.getElementById('newMun').value = d.m; document.getElementById('newNom').value = d.n; document.getElementById('newCat').value = d.c; document.getElementById('newZon').value = d.z; document.getElementById('newRef').value = d.r; document.getElementById('newCob').value = d.s || "Sin Datos"; window.openModal('modalAdd', true); };
+  window.saveLocation = async () => { const data = { m: document.getElementById('newMun').value, n: document.getElementById('newNom').value, c: document.getElementById('newCat').value, z: document.getElementById('newZon').value, r: document.getElementById('newRef').value, s: document.getElementById('newCob').value }; if(!data.n) return; if(EDITING_LOCATION_ID) await updateDoc(doc(db, "coberturas", EDITING_LOCATION_ID), data); else await addDoc(collection(db, "coberturas"), data); window.closeModal('modalAdd'); };
+  window.deleteLocation = async (id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, "coberturas", id)); }; window.changePage = d => { PAGE += d; window.renderTable(); };
+
+  /* Render Técnicos */
+  window.renderTecnicosTable = function(r=false) {
+    if (r) PAGE_TEC = 1; const q = document.getElementById('searchTecBox').value.toLowerCase().trim();
+    let f = DB.tec; if (q) f = DB.tec.filter(row => `${row.n} ${row.t1} ${row.t2} ${row.a} ${row.d} ${row.p}`.toLowerCase().includes(q));
+    const total = Math.ceil(f.length / 10) || 1; if (PAGE_TEC > total) PAGE_TEC = total; document.getElementById('pageLabelTec').innerText = `${PAGE_TEC} / ${total}`;
+    const chunk = f.slice((PAGE_TEC - 1) * 10, PAGE_TEC * 10); const tbody = document.getElementById('tableTecnicosBody'); tbody.innerHTML = '';
+    const canEdit = window.hasPerm('tec_edit'); const isAdmin = (SESION.r === 'admin');
+    chunk.forEach(row => {
+      let act = ""; if (canEdit) act += `<button onclick="window.editTecnico('${row.id}')" class="btn btn-p"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += ` <button onclick="window.deleteTecnico('${row.id}')" class="btn btn-d"><i class="fa-solid fa-trash"></i></button>`;
+      let tels = row.t1 || ""; if(row.t2) tels += `<br><span style="color:#6c757d; font-size:11px;">${row.t2}</span>`;
+      tbody.innerHTML += `<tr><td><b>${row.n||''}</b></td><td>${tels}</td><td>${row.a||''}</td><td>${row.d||''}</td><td><span class="badge-tag">${row.p||'-'}</span></td><td>${act}</td></tr>`;
+    });
+  };
+  window.editTecnico = async (id) => { EDITING_TEC_ID = id; const d = DB.tec.find(x => x.id === id); document.getElementById('modalTitleTec').innerText = "Editar Técnico"; document.getElementById('tecNom').value = d.n; document.getElementById('tecTel1').value = d.t1; document.getElementById('tecTel2').value = d.t2; document.getElementById('tecArea').value = d.a; document.getElementById('tecDPI').value = d.d; document.getElementById('tecPlaca').value = d.p; window.openModal('modalAddTec', true); };
+  window.saveTecnico = async () => { const data = { n: document.getElementById('tecNom').value.trim(), t1: document.getElementById('tecTel1').value.trim(), t2: document.getElementById('tecTel2').value.trim(), a: document.getElementById('tecArea').value.trim(), d: document.getElementById('tecDPI').value.trim(), p: document.getElementById('tecPlaca').value.trim() }; if(!data.n) return; if(EDITING_TEC_ID) await updateDoc(doc(db, "tecnicos", EDITING_TEC_ID), data); else await addDoc(collection(db, "tecnicos"), data); window.closeModal('modalAddTec'); };
+  window.deleteTecnico = async (id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, "tecnicos", id)); }; window.changePageTec = d => { PAGE_TEC += d; window.renderTecnicosTable(); };
+
+  /* Render Encargados */
+  window.renderEncargadosTable = function(r=false) {
+    if (r) PAGE_ENC = 1; const q = document.getElementById('searchEncBox').value.toLowerCase().trim();
+    let f = DB.enc; if (q) f = DB.enc.filter(row => `${row.n} ${row.t} ${row.c} ${row.p} ${row.g}`.toLowerCase().includes(q));
+    const total = Math.ceil(f.length / ITEMS_PER_PAGE_ENC) || 1; if (PAGE_ENC > total) PAGE_ENC = total; document.getElementById('pageLabelEnc').innerText = `${PAGE_ENC} / ${total}`;
+    const chunk = f.slice((PAGE_ENC - 1) * ITEMS_PER_PAGE_ENC, PAGE_ENC * ITEMS_PER_PAGE_ENC); const cont = document.getElementById('gridEncargadosContainer');
+    if (chunk.length === 0) { cont.innerHTML = `<div style="text-align:center; padding:50px; background:white; border-radius:8px;">No se encontraron contactos.</div>`; return; }
     
-    c.innerHTML = filteredUsers.map(u => {
-      const isOnline = u.lastActive && (now - u.lastActive < 190000);
-      const isPendiente = u.r === 'pendiente';
-      
-      let bgRow = isPendiente ? 'background: #fff3cd; border-left: 5px solid #ffc107;' : '';
-      let badgeHTML = isOnline ? '<span class="badge" style="display:inline;padding:2px 5px;background:#d1e7dd;color:#0f5132; margin-left:5px;">ON</span>' : '';
-      if(isPendiente) badgeHTML += '<span class="badge" style="display:inline;padding:2px 5px;background:#dc3545;color:white; margin-left:5px; font-size:10px;">ESPERANDO REVISIÓN</span>';
-      
-      return `
-      <div class="user-row" style="${bgRow}">
-        <div><b>${u.u}</b> ${badgeHTML} <br><small style="text-transform:uppercase; font-weight:bold; color: ${isPendiente?'#856404':'#6c757d'}">${u.r}</small></div>
-        <div>
-          <button onclick="window.editUser('${u.id}','${u.u}','${u.p}','${u.r}')" class="btn btn-p" style="padding:4px" title="Modificar / Autorizar"><i class="fa-solid fa-pencil"></i></button>
-          <button onclick="window.deleteUser('${u.id}')" class="btn btn-d" style="padding:4px"><i class="fa-solid fa-trash"></i></button>
-        </div>
-      </div>`;
-    }).join('') || `<p align="center" style="padding:15px; color:#6c757d;">No se encontraron usuarios</p>`;
-  };
+    const grupos = {}; chunk.forEach(r => { const c = r.g || "Otros"; if (!grupos[c]) grupos[c] = []; grupos[c].push(r); });
+    const canEdit = window.hasPerm('enc_edit'); const isAdmin = (SESION.r === 'admin');
+    const orden = ["Rutas domicilio", "Team Leaders", "Encargadas de marca", "Cambios y facturaciones", "Otro"];
+    const cats = Object.keys(grupos).sort((a,b) => (orden.indexOf(a)===-1?99:orden.indexOf(a)) - (orden.indexOf(b)===-1?99:orden.indexOf(b)));
+    
+    let html = "";
+    cats.forEach(cat => {
+        let ic = "fa-users"; if(cat.toLowerCase().includes('rutas')) ic = "fa-truck-fast"; if(cat.toLowerCase().includes('marca')) ic = "fa-tags"; if(cat.toLowerCase().includes('team')) ic = "fa-user-tie"; if(cat.toLowerCase().includes('factura')) ic = "fa-file-invoice-dollar";
+        html += `<div class="enc-category-title"><i class="fa-solid ${ic}"></i> ${cat}</div><div class="enc-grid">`;
+        grupos[cat].forEach(row => {
+            let act = ""; if (canEdit) act += `<button onclick="window.editEncargado('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteEncargado('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button>`;
+            let ini = row.n ? row.n.charAt(0).toUpperCase() : "?"; let rol = row.p || "Equipo";
+            
+            let tel = row.t ? `<div class="enc-contact" onclick="window.copyToClip('${row.t}')"><div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-phone enc-contact-icon"></i> ${row.t}</div><div class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</div></div>` : ``;
+            let cor = row.c ? `<div class="enc-contact" onclick="window.copyToClip('${row.c}')"><div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-envelope enc-contact-icon"></i> ${row.c}</div><div class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</div></div>` : ``;
 
-  window.submitUser = async function() {
-    const u = document.getElementById('uUser').value, p = document.getElementById('uPass').value, r = document.getElementById('uRol').value;
-    if(!u || (!p && r !== 'invitado' && r !== 'pendiente')) return alert("Datos incompletos"); 
-    try {
-      if(EDITING_USER_ID) await updateDoc(doc(db, "usuarios", EDITING_USER_ID), { u, p, r });
-      else await addDoc(collection(db, "usuarios"), { u, p, r, createdAt: Date.now() });
-      window.clearUserForm();
-    } catch(e) { alert("Error al guardar"); }
+            html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${row.n||'Sin Nombre'}</div><div class="enc-role">${rol}</div></div></div></div><div class="enc-body">${tel}${cor}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`;
+        }); html += `</div>`;
+    }); cont.innerHTML = html;
   };
+  window.editEncargado = async (id) => { EDITING_ENC_ID = id; const d = DB.enc.find(x => x.id === id); document.getElementById('modalTitleEnc').innerText = "Editar Contacto"; document.getElementById('encCat').value = d.g || "Otro"; document.getElementById('encNom').value = d.n; document.getElementById('encTel').value = d.t; document.getElementById('encCor').value = d.c; document.getElementById('encPuesto').value = d.p; window.openModal('modalAddEnc', true); };
+  window.saveEncargado = async () => { const data = { g: document.getElementById('encCat').value, n: document.getElementById('encNom').value.trim(), t: document.getElementById('encTel').value.trim(), c: document.getElementById('encCor').value.trim(), p: document.getElementById('encPuesto').value.trim() }; if(!data.n) return; if(EDITING_ENC_ID) await updateDoc(doc(db, "encargados", EDITING_ENC_ID), data); else await addDoc(collection(db, "encargados"), data); window.closeModal('modalAddEnc'); };
+  window.deleteEncargado = async (id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, "encargados", id)); }; window.changePageEnc = d => { PAGE_ENC += d; window.renderEncargadosTable(); };
 
-  window.editUser = function(id, u, p, r) {
-    EDITING_USER_ID = id; document.getElementById('uUser').value = u; document.getElementById('uPass').value = p; document.getElementById('uRol').value = r;
-    document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-save"></i>';
+  // ================= GENERALES DE USUARIO Y MODALES =================
+  window.openUsers = () => { window.switchModule('ajs'); window.showAjsView('usr'); }; 
+  window.openPendingUsers = () => { window.switchModule('ajs'); window.showAjsView('usr'); document.getElementById('searchUserBox').value = 'pendiente'; window.renderUserList(); };
+  
+  window.renderUserList = function() { 
+      const c = document.getElementById('userListContainer'); const q = document.getElementById('searchUserBox').value.toLowerCase().trim(); let f = DB_USERS; 
+      if (q) f = DB_USERS.filter(u => (u.u && u.u.toLowerCase().includes(q)) || (u.r && u.r.toLowerCase().includes(q))); 
+      f.sort((a, b) => { if (a.r === 'pendiente' && b.r !== 'pendiente') return -1; if (a.r !== 'pendiente' && b.r === 'pendiente') return 1; return (a.u||"").localeCompare(b.u||""); }); 
+      c.innerHTML = f.map(u => { 
+          const isP = u.r === 'pendiente'; 
+          return `<div class="user-row" style="${isP ? 'background:#fff3cd; border-left:5px solid #ffc107;' : ''}"><div><b>${u.u}</b> <br><small style="text-transform:uppercase; font-weight:bold; color: ${isP?'#856404':'#6c757d'}">${u.r}</small></div><div><button onclick="window.editUser('${u.id}','${u.u}','${u.p}','${u.r}')" class="btn btn-p" style="padding:4px"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteUser('${u.id}')" class="btn btn-d" style="padding:4px"><i class="fa-solid fa-trash"></i></button></div></div>`; 
+      }).join('') || `<p align="center" style="padding:15px;">No hay usuarios</p>`; 
   };
+  window.submitUser = async function() { const u = document.getElementById('uUser').value, p = document.getElementById('uPass').value, r = document.getElementById('uRol').value; if(!u || (!p && r !== 'invitado' && r !== 'pendiente')) return; if(EDITING_USER_ID) await updateDoc(doc(db, "usuarios", EDITING_USER_ID), { u, p, r }); else await addDoc(collection(db, "usuarios"), { u, p, r, createdAt: Date.now() }); window.clearUserForm(); };
+  window.editUser = function(id, u, p, r) { EDITING_USER_ID = id; document.getElementById('uUser').value = u; document.getElementById('uPass').value = p; document.getElementById('uRol').value = r; document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-save"></i>'; }; window.clearUserForm = function() { EDITING_USER_ID = null; document.getElementById('uUser').value = ''; document.getElementById('uPass').value = ''; document.getElementById('uRol').value = 'agente'; document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-plus"></i>'; }; window.deleteUser = async function(id) { if(confirm("¿Eliminar usuario?")) await deleteDoc(doc(db, "usuarios", id)); };
 
-  window.clearUserForm = function() {
-    EDITING_USER_ID = null; document.getElementById('uUser').value = ''; document.getElementById('uPass').value = ''; document.getElementById('uRol').value = 'agente';
-    document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-plus"></i>';
-  };
+  // ================= EXPORTACIONES =================
+  window.exportToExcel = function() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DB.cob.map(r => ({ "Municipio":r.m, "Nombre":r.n, "Categoria":r.c, "Zona":r.z, "Referencia":r.r, "Estado":r.s || "Sin Datos" }))), "Cobertura"); XLSX.writeFile(wb, "Cobertura.xlsx"); };
+  window.exportTecnicosToExcel = function() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DB.tec.map(r => ({ "Técnico":r.n, "Teléfono 1":r.t1, "Teléfono 2":r.t2, "Área":r.a, "DPI":r.d, "Placa":r.p }))), "Técnicos"); XLSX.writeFile(wb, "Tecnicos.xlsx"); };
+  window.exportEncargadosToExcel = function() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DB.enc.map(r => ({ "Categoría":r.g, "Nombre":r.n, "Teléfono":r.t, "Correo":r.c, "Puesto":r.p }))), "Encargados"); XLSX.writeFile(wb, "Encargados.xlsx"); };
+  window.exportUsersToExcel = function() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DB_USERS.map(u => ({ "Usuario": u.u, "Contraseña": u.p, "Rol": u.r }))), "Usuarios"); XLSX.writeFile(wb, "Usuarios.xlsx"); };
+  window.exportDynToExcel = function() { if(!CURRENT_DYN_CONFIG || DB.dynData.length === 0) return alert("Sin datos"); let data = DB.dynData.filter(d => d.modId === CURRENT_DYN_CONFIG.id).map(r => { let obj = {}; CURRENT_DYN_CONFIG.columnas.forEach((col, i) => obj[col] = r['c'+i] || ""); return obj; }); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), CURRENT_DYN_CONFIG.nombre); XLSX.writeFile(wb, CURRENT_DYN_CONFIG.nombre+".xlsx"); };
 
-  window.deleteUser = async function(id) {
-    if(!confirm("¿Eliminar usuario definitivamente?")) return;
-    await deleteDoc(doc(db, "usuarios", id));
-  };
-
-  window.handleImportCob = function(e) {
-    const file = e.target.files[0]; if(!file) return;
-    const reader = new FileReader();
-    reader.onload = async (evt) => {
-      const data = evt.target.result;
-      const workbook = XLSX.read(data, {type: 'binary'});
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const json = XLSX.utils.sheet_to_json(sheet);
-      if(!confirm(`¿Importar ${json.length} ubicaciones?`)) return;
-      try {
-        const colRef = collection(db, "coberturas");
-        for (let i = 0; i < json.length; i += 400) {
-          const batch = writeBatch(db);
-          const chunk = json.slice(i, i + 400);
-          chunk.forEach(row => {
-            const keys = Object.keys(row);
-            const getVal = (possible) => {
-              for(let k of keys) if(possible.includes(k.toLowerCase().trim())) return String(row[k] || "");
-              return "";
-            };
-            let s = "Sin Datos";
-            let rawS = getVal(["estado", "cobertura", "est"]).toLowerCase();
-            if (rawS.includes("sin cobertura")) s = "Sin Cobertura";
-            else if (rawS.includes("cobertura")) s = "Cobertura";
-            else if (rawS.includes("consultar")) s = "Consultar";
-
-            batch.set(doc(colRef), { 
-                m: getVal(["municipio", "mun"]).trim(), n: getVal(["nombre", "colonia", "nom"]).trim(), c: getVal(["categoria", "categoría", "cat"]).trim(), z: getVal(["zona", "z"]).trim(), r: getVal(["referencia", "ref"]).trim(), s: s 
-            });
-          });
-          await batch.commit();
-        }
-        alert("¡Éxito!");
-      } catch(err) { alert("Error"); }
-    };
-    reader.readAsBinaryString(file);
-  };
-
-  window.handleImportUsr = function(e) {
-    const file = e.target.files[0]; if(!file) return;
-    const reader = new FileReader();
-    reader.onload = async (evt) => {
-      const data = evt.target.result;
-      const workbook = XLSX.read(data, {type: 'binary'});
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const json = XLSX.utils.sheet_to_json(sheet);
-      if(!confirm(`¿Importar ${json.length} usuarios?`)) return;
-      try {
-        const colRef = collection(db, "usuarios");
-        for (let i = 0; i < json.length; i += 400) {
-          const batch = writeBatch(db);
-          const chunk = json.slice(i, i + 400);
-          chunk.forEach(row => {
-            const keys = Object.keys(row);
-            const getVal = (possibleNames) => {
-              for(let k of keys) if(possibleNames.includes(k.toLowerCase().trim())) return String(row[k] || "");
-              return "";
-            };
-            let usr = getVal(["usuario", "usr"]).trim();
-            let pwd = getVal(["contraseña", "password", "clave"]).trim();
-            let r = getVal(["rol", "role"]).trim().toLowerCase();
-            if(r === 'lider') r = 'agente';
-            if (usr !== "") batch.set(doc(colRef), { u: usr, p: pwd, r: r || "invitado", createdAt: Date.now() });
-          });
-          await batch.commit();
-        }
-        alert("¡Usuarios importados!"); e.target.value = "";
-      } catch(err) { alert("Error"); }
-    };
-    reader.readAsBinaryString(file);
-  };
-
-  window.exportToExcel = function() {
-    if(!DB.cob.length) return alert("Sin datos");
-    const ws = XLSX.utils.json_to_sheet(DB.cob.map(r => ({ "Municipio":r.m, "Nombre":r.n, "Categoria":r.c, "Zona":r.z, "Referencia":r.r, "Estado":r.s || "Sin Datos" })));
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Datos");
-    XLSX.writeFile(wb, "Cobertura_Distelsa.xlsx");
-  };
-
-  window.exportUsersToExcel = function() {
-    if(!DB_USERS.length) return alert("No hay usuarios.");
-    const ws = XLSX.utils.json_to_sheet(DB_USERS.map(u => ({ "Usuario": u.u, "Contraseña": u.p, "Rol": u.r })));
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Usuarios");
-    XLSX.writeFile(wb, "Usuarios_Distelsa.xlsx");
-  };
+  // ================= IMPORTACIONES =================
+  window.handleImportCob = function(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar?`)) return; for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { const keys = Object.keys(row); const getVal = (possible) => { for(let k of keys) if(possible.includes(k.toLowerCase().trim())) return String(row[k] || ""); return ""; }; let s = "Sin Datos"; let rawS = getVal(["estado", "cobertura", "est"]).toLowerCase(); if (rawS.includes("sin")) s = "Sin Cobertura"; else if (rawS.includes("cobertura")) s = "Cobertura"; else if (rawS.includes("consultar")) s = "Consultar"; batch.set(doc(collection(db, "coberturas")), { m: getVal(["municipio", "mun"]).trim(), n: getVal(["nombre", "colonia", "nom"]).trim(), c: getVal(["categoria", "categoría", "cat"]).trim(), z: getVal(["zona", "z"]).trim(), r: getVal(["referencia", "ref"]).trim(), s: s }); }); await batch.commit(); } alert("Éxito"); e.target.value = ""; }; r.readAsBinaryString(f); };
+  window.handleImportTec = function(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar?`)) return; for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { const keys = Object.keys(row); const getVal = (possible) => { for(let k of keys) if(possible.includes(k.toLowerCase().trim())) return String(row[k] || ""); return ""; }; batch.set(doc(collection(db, "tecnicos")), { n: getVal(["nombre", "tecnico", "técnico", "tec"]).trim(), t1: getVal(["telefono", "teléfono", "tel1", "celular"]).trim(), t2: getVal(["telefono 2", "teléfono 2", "tel2", "otro"]).trim(), a: getVal(["area", "área", "zona"]).trim(), d: getVal(["dpi", "identificacion"]).trim(), p: getVal(["placa", "vehiculo"]).trim() }); }); await batch.commit(); } alert("Éxito"); e.target.value = ""; }; r.readAsBinaryString(f); };
+  window.handleImportEnc = function(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar?`)) return; for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { const keys = Object.keys(row); const getVal = (possible) => { for(let k of keys) if(possible.includes(k.toLowerCase().trim())) return String(row[k] || ""); return ""; }; batch.set(doc(collection(db, "encargados")), { n: getVal(["nombre", "encargado"]).trim(), t: getVal(["número", "numero", "teléfono", "telefono"]).trim(), c: getVal(["correo", "email"]).trim(), p: getVal(["puesto", "marcas", "encarga", "responsabilidad"]).trim(), g: getVal(["categoria", "categoría", "grupo"]).trim() || "Otro" }); }); await batch.commit(); } alert("Éxito"); e.target.value = ""; }; r.readAsBinaryString(f); };
+  window.handleImportUsr = function(e) { alert("Importación de usuarios requiere formato especial."); e.target.value = ""; };
+  window.handleImportDyn = function(e) { if(!CURRENT_DYN_CONFIG) return; const f = e.target.files[0]; if(!f) return; const reader = new FileReader(); reader.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar a ${CURRENT_DYN_CONFIG.nombre}?`)) return; try { const colRef = collection(db, "modulos_data"); for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { let dataToSave = { modId: CURRENT_DYN_CONFIG.id }; CURRENT_DYN_CONFIG.columnas.forEach((colName, index) => { let val = ""; for(let key of Object.keys(row)) { if(key.toLowerCase().trim() === colName.toLowerCase().trim()) val = row[key]; } dataToSave['c'+index] = String(val).trim(); }); batch.set(doc(colRef), dataToSave); }); await batch.commit(); } alert("¡Importados!"); e.target.value = ""; } catch(err) { alert("Error"); } }; reader.readAsBinaryString(f); };
 </script>
 </body>
 </html>
