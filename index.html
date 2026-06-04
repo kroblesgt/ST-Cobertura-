@@ -7,6 +7,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
 <style>
   :root { --blue: #002855; --light-blue: #0056b3; --green: #217346; --red: #dc3545; --bg: #f4f6f8; --gray: #6c757d; }
   body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: var(--bg); margin: 0; color: #333; }
@@ -28,7 +31,6 @@
   .login-box { background: white; padding: 40px; width: 100%; max-width: 340px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 5px solid var(--blue); text-align: center; box-sizing: border-box;}
   .inp { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box; font-size: 14px; font-family: inherit;}
   .inp:focus { border-color: var(--light-blue); outline: none; }
-  textarea.inp { resize: vertical; min-height: 100px; }
   
   /* APP TOOLS */
   .container { max-width: 1300px; margin: 20px auto; padding: 0 20px; }
@@ -41,7 +43,7 @@
   .btn { border: none; padding: 10px 15px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: white; }
   .btn-p { background: var(--blue); } .btn-s { background: #28a745; } .btn-x { background: var(--green); } .btn-d { background: var(--red); } .btn-o { background: #fd7e14; }
   .btn:hover { opacity: 0.9; }
-  .btn-mini { background: var(--blue); color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 11px; cursor: pointer; font-weight: bold; margin-left: 5px; }
+  .btn-mini { border: none; border-radius: 4px; padding: 4px 8px; font-size: 11px; cursor: pointer; font-weight: bold; margin-left: 5px; color: white;}
   .btn-mini:hover { opacity: 0.8; }
 
   /* TABLAS */
@@ -71,7 +73,7 @@
   .enc-contact:hover .enc-copy-btn { background: var(--blue); color: white; border-color: var(--blue); }
   .enc-footer { padding: 10px 15px; border-top: 1px solid #f1f3f5; display: flex; justify-content: flex-end; gap: 8px; background: white;}
   
-  /* NUEVO: PROCEDIMIENTOS WIKI ESTILO NOTION/DOCS */
+  /* PROCEDIMIENTOS WIKI FULL WIDTH */
   #moduloProcedimientos { display: flex; height: calc(100vh - 155px); background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; margin-top: 20px; border: 1px solid #e9ecef; }
   .proc-sidebar { width: 320px; background: #f8f9fa; border-right: 1px solid #e9ecef; display: flex; flex-direction: column; flex-shrink: 0; }
   .proc-sidebar-header { padding: 20px; border-bottom: 1px solid #e9ecef; background: white; }
@@ -84,16 +86,11 @@
   .proc-item-link.active { background: #e8f0fe; color: var(--blue); font-weight: 600; border-left-color: var(--blue); }
   
   .proc-viewer { flex: 1; background: #f1f3f5; overflow-y: auto; padding: 40px; display: flex; justify-content: center; align-items: flex-start; scrollbar-width: thin; }
-  .proc-document { background: white; width: 100%; max-width: 850px; min-height: 100%; padding: 60px 80px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-radius: 8px; box-sizing: border-box; }
+  .proc-document { background: white; width: 100%; max-width: 900px; min-height: 100%; padding: 60px 80px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-radius: 8px; box-sizing: border-box; }
   
-  .proc-rendered-html { font-size: 15px; line-height: 1.7; color: #333; }
-  .proc-rendered-html h1 { color: var(--blue); border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; font-size: 28px; font-weight: 800;}
-  .proc-rendered-html h2 { color: var(--blue); margin-top: 30px; font-size: 20px;}
-  .proc-rendered-html img { max-width: 100%; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin: 15px 0; }
-  .proc-rendered-html table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px;}
-  .proc-rendered-html th { background: #f8f9fa; text-align: left; }
-  .proc-rendered-html th, .proc-rendered-html td { border: 1px solid #dee2e6; padding: 10px 12px; }
-  .proc-rendered-html blockquote { border-left: 4px solid var(--blue); margin: 15px 0; padding: 10px 20px; background: #e8f0fe; border-radius: 0 6px 6px 0; font-style: italic; }
+  /* ESTILOS DEL CONTENIDO RENDERIZADO */
+  /* Aplicará ql-editor si fue hecho visualmente, de lo contrario respetará tu HTML puro */
+  .proc-document img { max-width: 100%; }
 
   /* ONLINE & NOTIF */
   .online-indicator { font-size: 11px; color: #28a745; font-weight: bold; margin-right: 15px; background: #e8f8f5; padding: 6px 12px; border-radius: 20px; border: 1px solid #d1f2eb; cursor: pointer; position: relative; display: flex; align-items: center; gap: 5px;}
@@ -264,17 +261,17 @@
                 <h3 style="margin:0 0 15px 0; color:var(--blue); font-size: 18px;"><i class="fa-solid fa-book-bookmark"></i> Procedimientos</h3>
                 <div style="position:relative;">
                     <i class="fa-solid fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#adb5bd; font-size:13px;"></i>
-                    <input type="text" id="searchProcBox" class="proc-search-inp" placeholder="Buscar procedimiento..." onkeyup="window.renderProcMenu(true)">
+                    <input type="text" id="searchProcBox" class="proc-search-inp" placeholder="Buscar documento..." onkeyup="window.renderProcMenu(true)">
                 </div>
             </div>
             <div class="proc-list" id="procSidebarMenu">
                 </div>
         </div>
         <div class="proc-viewer" id="procViewerScrollArea">
-            <div class="proc-document proc-rendered-html" id="procViewerContainer">
+            <div class="proc-document" id="procViewerContainer">
                 <div style="text-align:center; padding: 100px 0; color: #adb5bd;">
                     <i class="fa-solid fa-file-signature" style="font-size: 60px; margin-bottom:20px; color:#dee2e6;"></i>
-                    <h2 style="color: #6c757d; margin-top: 0;">Selecciona un documento</h2>
+                    <h2 style="color: #6c757d; margin-top: 0;">Selecciona un procedimiento</h2>
                     <p style="font-size: 15px;">Usa el menú de la izquierda para explorar los procesos y guías.</p>
                 </div>
             </div>
@@ -372,16 +369,41 @@
 
                 <div id="ajsViewProc" class="hidden">
                     <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-file-code"></i> Gestor de Procedimientos</h3>
-                    <p style="font-size:13px; color:var(--gray);">Aquí puedes subir documentos en HTML enriquecido para que aparezcan en el módulo de Procedimientos.</p>
+                    <p style="font-size:13px; color:var(--gray);">Usa el editor visual para guías rápidas, o el modo "HTML Puro" para insertar tus propias maquetas y diseños personalizados.</p>
                     
                     <div class="form-grid" style="background:#f8f9fa; padding:15px; border-radius:6px; margin-bottom:20px; border:1px solid #e9ecef;">
-                        <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Submódulo / Categoría</label><input id="admProcCat" class="inp" placeholder="Ej: Pasos de Cobro, Garantías..."></div>
-                        <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Título del Proceso</label><input id="admProcTit" class="inp" placeholder="Ej: ¿Cómo crear boleta?"></div>
-                        <div class="span-2">
-                            <label style="font-size:12px; font-weight:bold; color:var(--blue);">Código HTML del Proceso</label>
-                            <textarea id="admProcHtml" class="inp" style="font-family: monospace; font-size:12px; background:#212529; color:#f8f9fa;" placeholder="<h1>Título</h1><p>Inserta tu diseño HTML aquí...</p>"></textarea>
+                        <div>
+                            <label style="font-size:12px; font-weight:bold; color:var(--blue);">Submódulo / Categoría</label>
+                            <input id="admProcCat" class="inp" placeholder="Ej: Pasos de Cobro, Garantías...">
                         </div>
-                        <div class="span-2" style="text-align:right;">
+                        <div>
+                            <label style="font-size:12px; font-weight:bold; color:var(--blue);">Título del Procedimiento</label>
+                            <input id="admProcTit" class="inp" placeholder="Ej: ¿Cómo crear boleta?">
+                        </div>
+                        
+                        <div class="span-2" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: -10px;">
+                            <label style="font-size:12px; font-weight:bold; color:var(--blue);">Contenido del Procedimiento</label>
+                            <div>
+                                <button id="btnModoVisual" onclick="window.setProcMode('visual')" class="btn-mini" style="background:var(--blue);"><i class="fa-solid fa-pen-nib"></i> Modo Visual</button>
+                                <button id="btnModoCodigo" onclick="window.setProcMode('codigo')" class="btn-mini" style="background:#6c757d;"><i class="fa-solid fa-code"></i> HTML Puro</button>
+                            </div>
+                        </div>
+
+                        <div class="span-2" id="boxProcVisual">
+                            <div id="admProcEditor" style="height: 250px; background: white; border-radius: 0 0 4px 4px;"></div>
+                        </div>
+                        
+                        <div class="span-2 hidden" id="boxProcCodigo">
+                            <textarea id="admProcHtml" class="inp" style="font-family: monospace; font-size:13px; background:#212529; color:#f8f9fa; height: 292px; margin:0; resize: vertical;" placeholder="<h1>Tu título</h1><p>Pega tu código HTML personalizado aquí. El sistema no lo alterará.</p>"></textarea>
+                        </div>
+
+                        <div class="span-2" style="background: white; border: 1px dashed #ced4da; padding: 15px; border-radius: 6px; margin-top: 5px;">
+                            <label style="font-size:12px; font-weight:bold; color:var(--blue); margin-bottom: 5px; display:block;"><i class="fa-solid fa-file-pdf" style="color:var(--red)"></i> Adjuntar Archivo PDF (Opcional)</label>
+                            <input type="file" id="admProcPdf" class="inp" accept="application/pdf" style="border: none; padding: 0;">
+                            <div id="pdfCurrentStatus" style="font-size: 12px; color: var(--green); margin-top: 5px; font-weight: bold;"></div>
+                        </div>
+
+                        <div class="span-2" style="text-align:right; margin-top: 10px;">
                             <button onclick="window.cancelarEdicionProc()" id="btnCancelProc" class="btn btn-d hidden" style="margin-right: 5px;"><i class="fa-solid fa-times"></i> Cancelar</button>
                             <button onclick="window.guardarProc()" id="btnSaveProc" class="btn btn-s"><i class="fa-solid fa-save"></i> Guardar Procedimiento</button>
                         </div>
@@ -445,9 +467,12 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, addDoc, deleteDoc, query, where, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
   const firebaseConfig = { apiKey: "AIzaSyBsFKRDAYoCjGlr-np2Cqtjb-SIOLznPzY", authDomain: "coberturast-ab44c.firebaseapp.com", projectId: "coberturast-ab44c", storageBucket: "coberturast-ab44c.firebasestorage.app", messagingSenderId: "762980124389", appId: "1:762980124389:web:9d7a8b1ed7c7f259fbb60c" };
-  const app = initializeApp(firebaseConfig); const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig); 
+  const db = getFirestore(app);
+  const storage = getStorage(app);
 
   let DB = { cob: [], tec: [], enc: [], proc: [], configModulos: [], dynData: [], roles: [] };
   let DB_USERS = []; let SESION = { id: null, u: null, r: null, t: null };
@@ -455,8 +480,28 @@
   let EDITING_USER_ID = null, EDITING_LOCATION_ID = null, EDITING_TEC_ID = null, EDITING_ENC_ID = null, EDITING_DYN_ID = null, EDITING_ROLE_ID = null, EDITING_MOD_ID = null, EDITING_PROC_ID = null;
   let CURRENT_MODULE = 'cob'; let CURRENT_DYN_CONFIG = null;
   let isFirstUserLoad = true; let knownPendingIds = new Set(); let heartbeatInterval;
+  
+  let quillEditor;
+  let PROC_MODE = 'visual'; // Controla si usamos el editor rico o html puro
 
-  window.onload = () => { const saved = localStorage.getItem('distelsa_pro_fb'); if(saved) { SESION = JSON.parse(saved); window.startApp(); } };
+  window.onload = () => { 
+      const saved = localStorage.getItem('distelsa_pro_fb'); if(saved) { SESION = JSON.parse(saved); window.startApp(); } 
+      
+      quillEditor = new Quill('#admProcEditor', {
+        theme: 'snow',
+        placeholder: 'Escribe tu procedimiento, pega imágenes o usa las herramientas de arriba...',
+        modules: {
+          toolbar: [
+            [{ 'header': [1, 2, 3, false] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            ['link', 'image'],
+            ['clean']
+          ]
+        }
+      });
+  };
 
   // ================= SISTEMA DE PERMISOS =================
   window.hasPerm = function(perm) {
@@ -515,7 +560,6 @@
     t.innerHTML = `<i class="fa-solid fa-bell"></i> <div>${msg}</div>`; c.appendChild(t); setTimeout(() => { t.classList.add('toast-fade'); setTimeout(() => t.remove(), 300); }, 6000); 
   };
 
-  // ================= VER MÁS (TEXTOS LARGOS EN TABLA) =================
   window.abrirVerMas = function(idFila, indiceColumna) {
       const fila = DB.dynData.find(d => d.id === idFila);
       if(fila) {
@@ -532,7 +576,6 @@
     let activeTab = document.getElementById(mod.startsWith('dyn_') ? 'tab_' + mod : 'tab' + mod.charAt(0).toUpperCase() + mod.slice(1));
     if(activeTab) activeTab.classList.add('active');
     
-    // Si entramos a procedimientos o ajustes, quitamos la clase container general para diseño full width
     if(mod === 'proc' || mod === 'ajs') {
         document.getElementById('mainContainer').style.maxWidth = '100%';
         document.getElementById('mainContainer').style.padding = '0';
@@ -644,7 +687,7 @@
   window.deleteRole = async function(id) { if(confirm("¿Eliminar rol?")) await deleteDoc(doc(db, "roles_config", id)); };
   window.renderRolesList = function() { document.getElementById('rolesListContainer').innerHTML = DB.roles.map(r => `<div class="mod-list-item"><div><b>${r.nombre}</b> <br><small style="color:var(--gray);">${r.perms.join(', ')}</small></div><div><button onclick="window.editRole('${r.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteRole('${r.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`).join('') || '<p style="font-size:13px;">No hay roles.</p>'; };
 
-  // ================= CREADOR DE MÓDULOS (DINÁMICOS Y FIJOS) =================
+  // ================= CREADOR DE MÓDULOS =================
   function listenToConfigModulos() { onSnapshot(collection(db, "modulos_config"), (snapshot) => { DB.configModulos = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); window.buildDynamicTabs(); if(CURRENT_MODULE === 'ajs') window.renderListaModulos(); }); }
   function listenToDynData() { onSnapshot(collection(db, "modulos_data"), (snapshot) => { DB.dynData = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); if(CURRENT_MODULE.startsWith('dyn_')) window.renderDynData(); }); }
 
@@ -672,14 +715,14 @@
     <div class="mod-list-item" style="background:#e9ecef;"><div><b>Cobertura</b> <br><small>Municipio, Nombre, Categoría, Zona...</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
     <div class="mod-list-item" style="background:#e9ecef;"><div><b>Técnicos</b> <br><small>Nombre, Teléfonos, Área, DPI...</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
     <div class="mod-list-item" style="background:#e9ecef;"><div><b>Directorio Domicilio</b> <br><small>Nombre, Categoría, Teléfono...</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
-    <div class="mod-list-item" style="background:#e9ecef;"><div><b>Procedimientos</b> <br><small>Base de conocimientos y procesos en HTML</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
+    <div class="mod-list-item" style="background:#e9ecef;"><div><b>Procedimientos</b> <br><small>Base de conocimientos, PDFs y HTML</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
     <h5 style="color:var(--blue); margin-top:20px; margin-bottom:5px; border-bottom:1px solid #eee; padding-bottom:5px;"><i class="fa-solid fa-puzzle-piece"></i> Módulos Personalizados</h5>`;
     let dynHtml = DB.configModulos.map(m => `<div class="mod-list-item"><div><b>${m.nombre}</b> <span style="font-size:11px;color:var(--gray);">(${m.vista})</span> <br><small style="color:var(--gray);">${m.columnas.join(', ')}</small></div>
       <div><button onclick="window.editarModuloDinamico('${m.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarModuloDinamico('${m.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
     document.getElementById('listaModulosCreados').innerHTML = html + (dynHtml || '<p style="font-size:13px; color:var(--gray);">No hay personalizados.</p>');
   };
 
-  // ================= RENDERIZADOR DINÁMICO (Y OBSERVACIONES LARGAS) =================
+  // ================= RENDERIZADOR DINÁMICO =================
   window.renderDynData = function(reset = false) {
       if (reset) PAGE_DYN = 1; if(!CURRENT_DYN_CONFIG) return;
       const rawQ = document.getElementById('searchDynBox').value.toLowerCase().trim();
@@ -706,7 +749,6 @@
               let bodyHtml = "";
               CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => {
                   if(i < 1) return; let val = row['c'+i];
-                  // Si es directorio, texto largo se acorta
                   if(val) {
                       let displayVal = val.length > 40 ? val.substring(0, 37) + '...' : val;
                       bodyHtml += `<div class="enc-contact" onclick="window.copyToClip('${val}')" title="Copiar ${colName}"><div style="display:flex; flex-direction:column;"><span style="font-size:10px; color:#adb5bd; font-weight:bold; text-transform:uppercase;">${colName}</span><span>${displayVal}</span></div><div class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</div></div>`;
@@ -739,7 +781,7 @@
       }
   };
 
-  // ================= MODULO: PROCEDIMIENTOS WIKI (NUEVO DISEÑO Y BUSCADOR) =================
+  // ================= MODULO: PROCEDIMIENTOS (VISUAL Y CÓDIGO) =================
   function listenToProcedimientos() { 
       onSnapshot(collection(db, "procedimientos_html"), (snapshot) => { 
           DB.proc = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); 
@@ -748,7 +790,23 @@
       }); 
   }
 
-  // Frontend: Renderizar el Menú con Filtro y los HTMLs
+  window.setProcMode = function(mode, autoSync = true) {
+      PROC_MODE = mode;
+      const btnV = document.getElementById('btnModoVisual');
+      const btnC = document.getElementById('btnModoCodigo');
+      const boxV = document.getElementById('boxProcVisual');
+      const boxC = document.getElementById('boxProcCodigo');
+      const txtC = document.getElementById('admProcHtml');
+
+      if (mode === 'visual') {
+          btnV.style.background = 'var(--blue)'; btnC.style.background = '#6c757d';
+          boxV.classList.remove('hidden'); boxC.classList.add('hidden');
+      } else {
+          btnC.style.background = 'var(--blue)'; btnV.style.background = '#6c757d';
+          boxC.classList.remove('hidden'); boxV.classList.add('hidden');
+      }
+  };
+
   window.renderProcMenu = function(isSearch = false) {
       const container = document.getElementById('procSidebarMenu');
       const query = document.getElementById('searchProcBox') ? document.getElementById('searchProcBox').value.toLowerCase().trim() : '';
@@ -774,15 +832,14 @@
       Object.keys(grupos).sort().forEach(cat => {
           html += `<div class="proc-cat-header">${cat}</div>`;
           grupos[cat].sort((a,b)=>a.tit.localeCompare(b.tit)).forEach(p => {
+              let icon = p.pdfUrl ? '<i class="fa-solid fa-file-pdf" style="color:var(--red); font-size: 16px;"></i>' : '<i class="fa-regular fa-file-lines" style="color:#adb5bd; font-size: 16px;"></i>';
               html += `<a class="proc-item-link" id="linkProc_${p.id}" onclick="window.abrirProcedimiento('${p.id}')">
-                         <i class="fa-regular fa-file-lines" style="color:#adb5bd; font-size: 16px;"></i> 
-                         <span style="flex:1;">${p.tit}</span>
+                         ${icon} <span style="flex:1;">${p.tit}</span>
                        </a>`;
           });
       });
       container.innerHTML = html;
       
-      // Mantener la clase active si hay uno seleccionado y aún está en la lista filtrada
       const viewer = document.getElementById('procViewerContainer');
       if(viewer.dataset.activeId) {
           let act = document.getElementById(`linkProc_${viewer.dataset.activeId}`);
@@ -800,51 +857,131 @@
       
       if(proc) {
           viewer.dataset.activeId = id;
-          viewer.innerHTML = proc.html || "<i>El documento no tiene contenido.</i>";
-          // Scroll automático hacia arriba
+          
+          let contentHtml = "";
+          
+          // Renderiza según el modo en el que fue guardado. 
+          // Si es visual usa las clases de Quill, si es código renderiza limpio.
+          if(proc.modo === 'visual' || !proc.modo) {
+              contentHtml += `<div class="ql-editor" style="padding:0; overflow-y:visible;">${proc.html || ''}</div>`;
+          } else {
+              contentHtml += `<div style="padding:0; overflow-y:visible;">${proc.html || ''}</div>`;
+          }
+          
+          if (proc.pdfUrl) {
+              contentHtml += `
+                <div style="margin-top: 40px; border-top: 2px solid #eee; padding-top: 30px;">
+                    <h3 style="color:var(--blue); margin-bottom: 20px;"><i class="fa-solid fa-file-pdf" style="color:var(--red);"></i> Documento PDF Adjunto</h3>
+                    <iframe src="${proc.pdfUrl}" width="100%" height="800px" style="border: 1px solid #ced4da; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); background:#f8f9fa;"></iframe>
+                    <div style="text-align:right; margin-top:10px;">
+                        <a href="${proc.pdfUrl}" target="_blank" class="btn btn-p" style="text-decoration:none;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir en pestaña nueva</a>
+                    </div>
+                </div>
+              `;
+          }
+
+          if(!proc.html && !proc.pdfUrl) contentHtml = "<i>El documento está vacío.</i>";
+
+          viewer.innerHTML = contentHtml;
           document.getElementById('procViewerScrollArea').scrollTo({ top: 0, behavior: 'smooth' });
       }
   };
 
-  // Backend (Ajustes): Guardar, Editar y Eliminar
   window.guardarProc = async function() {
+      const btnSave = document.getElementById('btnSaveProc');
       const cat = document.getElementById('admProcCat').value.trim() || "General";
       const tit = document.getElementById('admProcTit').value.trim();
-      const html = document.getElementById('admProcHtml').value.trim();
+      
+      // Obtener el HTML dependiendo del modo activo
+      const html = PROC_MODE === 'visual' ? quillEditor.root.innerHTML : document.getElementById('admProcHtml').value.trim();
+      
+      const isHtmlEmpty = (html === '<p><br></p>' || html.trim() === '');
+      const fileInput = document.getElementById('admProcPdf');
+      const file = fileInput.files[0];
 
-      if(!tit || !html) return alert("El título y el código HTML son obligatorios.");
+      if(!tit) return alert("El título es obligatorio.");
+      if(isHtmlEmpty && !file && !EDITING_PROC_ID) return alert("Debes escribir contenido o adjuntar un PDF.");
+
+      btnSave.disabled = true;
+      btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
 
       try {
+          let payload = { cat, tit, html, modo: PROC_MODE }; // Guardamos el modo
+          
+          if (file) {
+              const storageRef = ref(storage, 'procedimientos_pdfs/' + Date.now() + '_' + file.name);
+              await uploadBytes(storageRef, file);
+              const downloadURL = await getDownloadURL(storageRef);
+              payload.pdfUrl = downloadURL;
+              payload.pdfName = file.name;
+          }
+
           if (EDITING_PROC_ID) {
-              await updateDoc(doc(db, "procedimientos_html", EDITING_PROC_ID), { cat, tit, html });
+              await updateDoc(doc(db, "procedimientos_html", EDITING_PROC_ID), payload);
               alert("Procedimiento actualizado.");
               window.cancelarEdicionProc();
           } else {
-              await addDoc(collection(db, "procedimientos_html"), { cat, tit, html, fecha: Date.now() });
+              payload.fecha = Date.now();
+              await addDoc(collection(db, "procedimientos_html"), payload);
               alert("Procedimiento creado.");
-              document.getElementById('admProcTit').value = '';
-              document.getElementById('admProcHtml').value = '';
+              window.cancelarEdicionProc();
           }
-      } catch(e) { alert("Error al guardar."); }
+      } catch(e) { 
+          alert("Error al guardar."); 
+          console.error(e);
+      } finally {
+          btnSave.disabled = false;
+          btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Procedimiento';
+      }
   };
 
   window.editarProc = function(id) {
       EDITING_PROC_ID = id;
       const p = DB.proc.find(x => x.id === id);
-      document.getElementById('admProcCat').value = p.cat;
-      document.getElementById('admProcTit').value = p.tit;
-      document.getElementById('admProcHtml').value = p.html;
+      document.getElementById('admProcCat').value = p.cat || '';
+      document.getElementById('admProcTit').value = p.tit || '';
+      
+      // Restaurar el modo correcto
+      const modoGuardado = p.modo || 'visual';
+      window.setProcMode(modoGuardado, false);
+      
+      // Llenar datos según el modo
+      if(modoGuardado === 'visual') {
+          quillEditor.root.innerHTML = p.html || '';
+          document.getElementById('admProcHtml').value = '';
+      } else {
+          quillEditor.root.innerHTML = '';
+          document.getElementById('admProcHtml').value = p.html || '';
+      }
+
+      const statusDiv = document.getElementById('pdfCurrentStatus');
+      if (p.pdfUrl) {
+          statusDiv.innerHTML = `<i class="fa-solid fa-check-circle"></i> Archivo actual: ${p.pdfName || 'PDF adjunto'}. (Si seleccionas uno nuevo, lo reemplazará).`;
+      } else {
+          statusDiv.innerHTML = "";
+      }
+
+      document.getElementById('admProcPdf').value = ""; 
 
       const btnSave = document.getElementById('btnSaveProc');
       btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios';
       btnSave.classList.replace('btn-s', 'btn-p');
       document.getElementById('btnCancelProc').classList.remove('hidden');
+
+      document.querySelector('.ajs-content').scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   window.cancelarEdicionProc = function() {
       EDITING_PROC_ID = null;
       document.getElementById('admProcTit').value = '';
-      document.getElementById('admProcHtml').value = '';
+      document.getElementById('admProcCat').value = '';
+      quillEditor.root.innerHTML = ''; 
+      document.getElementById('admProcHtml').value = ''; 
+      document.getElementById('admProcPdf').value = ''; 
+      document.getElementById('pdfCurrentStatus').innerHTML = ''; 
+      
+      window.setProcMode('visual', false); // Volver a modo visual por defecto
+
       const btnSave = document.getElementById('btnSaveProc');
       btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Procedimiento';
       btnSave.classList.replace('btn-p', 'btn-s');
@@ -852,7 +989,7 @@
   };
 
   window.eliminarProc = async function(id) {
-      if(!confirm("¿Eliminar este procedimiento permanentemente?")) return;
+      if(!confirm("¿Eliminar este procedimiento permanentemente? (Nota: El archivo PDF en Storage no se borra automáticamente).")) return;
       await deleteDoc(doc(db, "procedimientos_html", id));
       if(EDITING_PROC_ID === id) window.cancelarEdicionProc();
   };
@@ -863,15 +1000,19 @@
       if (q) f = DB.proc.filter(p => `${p.tit} ${p.cat}`.toLowerCase().includes(q));
 
       const container = document.getElementById('adminProcListContainer');
-      container.innerHTML = f.map(p => `
+      container.innerHTML = f.map(p => {
+          let badgePdf = p.pdfUrl ? `<span style="background:var(--red); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-file-pdf"></i> PDF</span>` : '';
+          let badgeModo = (p.modo === 'codigo') ? `<span style="background:#6c757d; color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-code"></i> HTML</span>` : `<span style="background:var(--blue); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-pen-nib"></i> Visual</span>`;
+          
+          return `
           <div class="mod-list-item">
-              <div><b>${p.tit}</b> <br><small style="color:var(--gray);"><i class="fa-solid fa-folder"></i> ${p.cat || "General"}</small></div>
+              <div><b>${p.tit}</b> ${badgePdf} ${badgeModo}<br><small style="color:var(--gray);"><i class="fa-solid fa-folder"></i> ${p.cat || "General"}</small></div>
               <div>
                   <button onclick="window.editarProc('${p.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button>
                   <button onclick="window.eliminarProc('${p.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button>
               </div>
           </div>
-      `).join('') || '<p style="font-size:13px; color:var(--gray);">No hay procedimientos registrados.</p>';
+      `}).join('') || '<p style="font-size:13px; color:var(--gray);">No hay procedimientos registrados.</p>';
   };
 
 
@@ -995,14 +1136,13 @@
   window.submitUser = async function() { const u = document.getElementById('uUser').value, p = document.getElementById('uPass').value, r = document.getElementById('uRol').value; if(!u || (!p && r !== 'invitado' && r !== 'pendiente')) return; if(EDITING_USER_ID) await updateDoc(doc(db, "usuarios", EDITING_USER_ID), { u, p, r }); else await addDoc(collection(db, "usuarios"), { u, p, r, createdAt: Date.now() }); window.clearUserForm(); };
   window.editUser = function(id, u, p, r) { EDITING_USER_ID = id; document.getElementById('uUser').value = u; document.getElementById('uPass').value = p; document.getElementById('uRol').value = r; document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-save"></i>'; }; window.clearUserForm = function() { EDITING_USER_ID = null; document.getElementById('uUser').value = ''; document.getElementById('uPass').value = ''; document.getElementById('uRol').value = 'agente'; document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-plus"></i>'; }; window.deleteUser = async function(id) { if(confirm("¿Eliminar usuario?")) await deleteDoc(doc(db, "usuarios", id)); };
 
-  // ================= EXPORTACIONES =================
+  // ================= EXPORTACIONES E IMPORTACIONES =================
   window.exportToExcel = function() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DB.cob.map(r => ({ "Municipio":r.m, "Nombre":r.n, "Categoria":r.c, "Zona":r.z, "Referencia":r.r, "Estado":r.s || "Sin Datos" }))), "Cobertura"); XLSX.writeFile(wb, "Cobertura.xlsx"); };
   window.exportTecnicosToExcel = function() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DB.tec.map(r => ({ "Técnico":r.n, "Teléfono 1":r.t1, "Teléfono 2":r.t2, "Área":r.a, "DPI":r.d, "Placa":r.p }))), "Técnicos"); XLSX.writeFile(wb, "Tecnicos.xlsx"); };
   window.exportEncargadosToExcel = function() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DB.enc.map(r => ({ "Categoría":r.g, "Nombre":r.n, "Teléfono":r.t, "Correo":r.c, "Puesto":r.p }))), "Encargados"); XLSX.writeFile(wb, "Encargados.xlsx"); };
   window.exportUsersToExcel = function() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DB_USERS.map(u => ({ "Usuario": u.u, "Contraseña": u.p, "Rol": u.r }))), "Usuarios"); XLSX.writeFile(wb, "Usuarios.xlsx"); };
   window.exportDynToExcel = function() { if(!CURRENT_DYN_CONFIG || DB.dynData.length === 0) return alert("Sin datos"); let data = DB.dynData.filter(d => d.modId === CURRENT_DYN_CONFIG.id).map(r => { let obj = {}; CURRENT_DYN_CONFIG.columnas.forEach((col, i) => obj[col] = r['c'+i] || ""); return obj; }); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), CURRENT_DYN_CONFIG.nombre); XLSX.writeFile(wb, CURRENT_DYN_CONFIG.nombre+".xlsx"); };
 
-  // ================= IMPORTACIONES =================
   window.handleImportCob = function(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar?`)) return; for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { const keys = Object.keys(row); const getVal = (possible) => { for(let k of keys) if(possible.includes(k.toLowerCase().trim())) return String(row[k] || ""); return ""; }; let s = "Sin Datos"; let rawS = getVal(["estado", "cobertura", "est"]).toLowerCase(); if (rawS.includes("sin")) s = "Sin Cobertura"; else if (rawS.includes("cobertura")) s = "Cobertura"; else if (rawS.includes("consultar")) s = "Consultar"; batch.set(doc(collection(db, "coberturas")), { m: getVal(["municipio", "mun"]).trim(), n: getVal(["nombre", "colonia", "nom"]).trim(), c: getVal(["categoria", "categoría", "cat"]).trim(), z: getVal(["zona", "z"]).trim(), r: getVal(["referencia", "ref"]).trim(), s: s }); }); await batch.commit(); } alert("Éxito"); e.target.value = ""; }; r.readAsBinaryString(f); };
   window.handleImportTec = function(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar?`)) return; for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { const keys = Object.keys(row); const getVal = (possible) => { for(let k of keys) if(possible.includes(k.toLowerCase().trim())) return String(row[k] || ""); return ""; }; batch.set(doc(collection(db, "tecnicos")), { n: getVal(["nombre", "tecnico", "técnico", "tec"]).trim(), t1: getVal(["telefono", "teléfono", "tel1", "celular"]).trim(), t2: getVal(["telefono 2", "teléfono 2", "tel2", "otro"]).trim(), a: getVal(["area", "área", "zona"]).trim(), d: getVal(["dpi", "identificacion"]).trim(), p: getVal(["placa", "vehiculo"]).trim() }); }); await batch.commit(); } alert("Éxito"); e.target.value = ""; }; r.readAsBinaryString(f); };
   window.handleImportEnc = function(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar?`)) return; for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { const keys = Object.keys(row); const getVal = (possible) => { for(let k of keys) if(possible.includes(k.toLowerCase().trim())) return String(row[k] || ""); return ""; }; batch.set(doc(collection(db, "encargados")), { n: getVal(["nombre", "encargado"]).trim(), t: getVal(["número", "numero", "teléfono", "telefono"]).trim(), c: getVal(["correo", "email"]).trim(), p: getVal(["puesto", "marcas", "encarga", "responsabilidad"]).trim(), g: getVal(["categoria", "categoría", "grupo"]).trim() || "Otro" }); }); await batch.commit(); } alert("Éxito"); e.target.value = ""; }; r.readAsBinaryString(f); };
