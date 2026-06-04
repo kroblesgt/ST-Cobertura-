@@ -26,8 +26,9 @@
   /* LOGIN */
   .login-wrapper { height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #e9ecef 0%, #ffffff 100%); padding: 15px; box-sizing: border-box; }
   .login-box { background: white; padding: 40px; width: 100%; max-width: 340px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 5px solid var(--blue); text-align: center; box-sizing: border-box;}
-  .inp { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+  .inp { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box; font-size: 14px; font-family: inherit;}
   .inp:focus { border-color: var(--light-blue); outline: none; }
+  textarea.inp { resize: vertical; min-height: 100px; }
   
   /* APP TOOLS */
   .container { max-width: 1300px; margin: 20px auto; padding: 0 20px; }
@@ -40,6 +41,8 @@
   .btn { border: none; padding: 10px 15px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: white; }
   .btn-p { background: var(--blue); } .btn-s { background: #28a745; } .btn-x { background: var(--green); } .btn-d { background: var(--red); } .btn-o { background: #fd7e14; }
   .btn:hover { opacity: 0.9; }
+  .btn-mini { background: var(--blue); color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 11px; cursor: pointer; font-weight: bold; margin-left: 5px; }
+  .btn-mini:hover { opacity: 0.8; }
 
   /* TABLAS */
   .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -49,21 +52,6 @@
   tr:hover td { background-color: #f8f9fa; }
   .badge { display: block; padding: 6px 0; text-align: center; border-radius: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; color: white; width: 100%; }
   .badge-tag { display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; color: #333; background: #e9ecef; }
-  
-  /* AJUSTE PARA TEXTOS LARGOS EN TABLAS */
-  .cell-long-text {
-      max-height: 80px;
-      overflow-y: auto;
-      white-space: pre-wrap;
-      font-size: 12px;
-      line-height: 1.4;
-      padding-right: 5px;
-      color: #495057;
-      scrollbar-width: thin;
-      scrollbar-color: #adb5bd transparent;
-  }
-  .cell-long-text::-webkit-scrollbar { width: 6px; }
-  .cell-long-text::-webkit-scrollbar-thumb { background: #adb5bd; border-radius: 4px; }
 
   /* DIRECTORIO CARDS */
   .enc-category-title { font-size: 16px; color: var(--blue); border-bottom: 2px solid #ced4da; padding-bottom: 8px; margin: 30px 0 15px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 10px;}
@@ -83,6 +71,30 @@
   .enc-contact:hover .enc-copy-btn { background: var(--blue); color: white; border-color: var(--blue); }
   .enc-footer { padding: 10px 15px; border-top: 1px solid #f1f3f5; display: flex; justify-content: flex-end; gap: 8px; background: white;}
   
+  /* NUEVO: PROCEDIMIENTOS WIKI ESTILO NOTION/DOCS */
+  #moduloProcedimientos { display: flex; height: calc(100vh - 155px); background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; margin-top: 20px; border: 1px solid #e9ecef; }
+  .proc-sidebar { width: 320px; background: #f8f9fa; border-right: 1px solid #e9ecef; display: flex; flex-direction: column; flex-shrink: 0; }
+  .proc-sidebar-header { padding: 20px; border-bottom: 1px solid #e9ecef; background: white; }
+  .proc-search-inp { width: 100%; padding: 12px 15px 12px 35px; border: 1px solid #ced4da; border-radius: 6px; font-size: 13px; box-sizing: border-box; background: #f8f9fa; transition: 0.2s; }
+  .proc-search-inp:focus { background: white; border-color: var(--light-blue); outline: none; }
+  .proc-list { flex: 1; overflow-y: auto; padding: 10px 0; scrollbar-width: thin; }
+  .proc-cat-header { padding: 15px 20px 8px; font-weight: 700; font-size: 11px; color: #adb5bd; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; display: flex; align-items: center; gap: 8px; }
+  .proc-item-link { padding: 10px 20px 10px 30px; font-size: 14px; color: #495057; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 12px; border-left: 3px solid transparent; text-decoration: none;}
+  .proc-item-link:hover { background: #e9ecef; color: var(--blue); }
+  .proc-item-link.active { background: #e8f0fe; color: var(--blue); font-weight: 600; border-left-color: var(--blue); }
+  
+  .proc-viewer { flex: 1; background: #f1f3f5; overflow-y: auto; padding: 40px; display: flex; justify-content: center; align-items: flex-start; scrollbar-width: thin; }
+  .proc-document { background: white; width: 100%; max-width: 850px; min-height: 100%; padding: 60px 80px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-radius: 8px; box-sizing: border-box; }
+  
+  .proc-rendered-html { font-size: 15px; line-height: 1.7; color: #333; }
+  .proc-rendered-html h1 { color: var(--blue); border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; font-size: 28px; font-weight: 800;}
+  .proc-rendered-html h2 { color: var(--blue); margin-top: 30px; font-size: 20px;}
+  .proc-rendered-html img { max-width: 100%; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin: 15px 0; }
+  .proc-rendered-html table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px;}
+  .proc-rendered-html th { background: #f8f9fa; text-align: left; }
+  .proc-rendered-html th, .proc-rendered-html td { border: 1px solid #dee2e6; padding: 10px 12px; }
+  .proc-rendered-html blockquote { border-left: 4px solid var(--blue); margin: 15px 0; padding: 10px 20px; background: #e8f0fe; border-radius: 0 6px 6px 0; font-style: italic; }
+
   /* ONLINE & NOTIF */
   .online-indicator { font-size: 11px; color: #28a745; font-weight: bold; margin-right: 15px; background: #e8f8f5; padding: 6px 12px; border-radius: 20px; border: 1px solid #d1f2eb; cursor: pointer; position: relative; display: flex; align-items: center; gap: 5px;}
   .online-list-popup { display: none; position: absolute; top: 120%; right: 0; background: white; border: 1px solid #ddd; width: 200px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 6px; padding: 10px; z-index: 100; color: #333; font-weight: normal; max-height: 250px; overflow-y: auto;}
@@ -121,6 +133,11 @@
     .action-btns { display: grid; grid-template-columns: 1fr 1fr; } .form-grid { grid-template-columns: 1fr; } .span-2 { grid-column: span 1; }
     .toast-container { bottom: 10px; right: 10px; left: 10px; }
     .ajs-layout { flex-direction: column; } .ajs-sidebar { width: 100%; }
+    #moduloProcedimientos { flex-direction: column; height: auto; border:none; box-shadow:none;}
+    .proc-sidebar { width: 100%; border-right: none; border-bottom: 1px solid #e9ecef; border-radius: 8px 8px 0 0;}
+    .proc-list { max-height: 250px; }
+    .proc-viewer { padding: 15px; }
+    .proc-document { padding: 25px 20px; }
   }
 </style>
 </head>
@@ -175,11 +192,12 @@
   <div class="nav-tabs" id="mainTabsContainer">
     <div id="tabCob" class="tab-btn active" onclick="window.switchModule('cob')"><i class="fa-solid fa-map-location-dot"></i> Cobertura</div>
     <div id="tabTec" class="tab-btn" onclick="window.switchModule('tec')"><i class="fa-solid fa-screwdriver-wrench"></i> Técnicos</div>
-    <div id="tabEnc" class="tab-btn" onclick="window.switchModule('enc')"><i class="fa-regular fa-address-card"></i> Directorio Domicilio</div>
+    <div id="tabEnc" class="tab-btn" onclick="window.switchModule('enc')"><i class="fa-regular fa-address-card"></i> Directorio</div>
+    <div id="tabProc" class="tab-btn" onclick="window.switchModule('proc')"><i class="fa-solid fa-book-open"></i> Procedimientos</div>
     <div id="tabAjs" class="tab-btn hidden" onclick="window.switchModule('ajs')" style="margin-left: auto; color:#343a40;"><i class="fa-solid fa-gear"></i> Ajustes</div>
   </div>
 
-  <div class="container">
+  <div class="container" id="mainContainer">
       
     <div id="moduloCobertura">
         <div class="tools">
@@ -240,6 +258,29 @@
         </div>
     </div>
 
+    <div id="moduloProcedimientos" class="hidden">
+        <div class="proc-sidebar">
+            <div class="proc-sidebar-header">
+                <h3 style="margin:0 0 15px 0; color:var(--blue); font-size: 18px;"><i class="fa-solid fa-book-bookmark"></i> Procedimientos</h3>
+                <div style="position:relative;">
+                    <i class="fa-solid fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#adb5bd; font-size:13px;"></i>
+                    <input type="text" id="searchProcBox" class="proc-search-inp" placeholder="Buscar procedimiento..." onkeyup="window.renderProcMenu(true)">
+                </div>
+            </div>
+            <div class="proc-list" id="procSidebarMenu">
+                </div>
+        </div>
+        <div class="proc-viewer" id="procViewerScrollArea">
+            <div class="proc-document proc-rendered-html" id="procViewerContainer">
+                <div style="text-align:center; padding: 100px 0; color: #adb5bd;">
+                    <i class="fa-solid fa-file-signature" style="font-size: 60px; margin-bottom:20px; color:#dee2e6;"></i>
+                    <h2 style="color: #6c757d; margin-top: 0;">Selecciona un documento</h2>
+                    <p style="font-size: 15px;">Usa el menú de la izquierda para explorar los procesos y guías.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="moduloDinamico" class="hidden">
         <div class="tools">
           <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchDynBox" class="search-inp" placeholder="Buscar en este módulo..." onkeyup="window.renderDynData(true)"></div>
@@ -261,6 +302,7 @@
                 <button id="menuAjsUsr" class="ajs-menu-btn active" onclick="window.showAjsView('usr')"><i class="fa-solid fa-users" style="width:20px;"></i> Accesos y Usuarios</button>
                 <button id="menuAjsRol" class="ajs-menu-btn" onclick="window.showAjsView('rol')"><i class="fa-solid fa-user-shield" style="width:20px;"></i> Roles y Permisos</button>
                 <button id="menuAjsMod" class="ajs-menu-btn" onclick="window.showAjsView('mod')"><i class="fa-solid fa-layer-group" style="width:20px;"></i> Creador de Módulos</button>
+                <button id="menuAjsProc" class="ajs-menu-btn" onclick="window.showAjsView('proc')"><i class="fa-solid fa-file-code" style="width:20px;"></i> Gestor Procedimientos</button>
             </div>
 
             <div class="ajs-content">
@@ -271,7 +313,7 @@
                     <div class="form-inline"><input id="uUser" class="inp" placeholder="Usuario"><input id="uPass" class="inp" placeholder="Clave">
                       <select id="uRol" class="inp">
                         <option value="agente">Agente (Default)</option><option value="invitado">Invitado (Lector)</option><option value="admin">Administrador (Total)</option><option value="pendiente">Pendiente (Bloqueado)</option>
-                        </select>
+                      </select>
                       <div style="display: flex; gap: 10px; width: 100%;"><button id="btnUserAction" onclick="window.submitUser()" class="btn btn-s" style="flex: 1;"><i class="fa-solid fa-plus"></i></button><button onclick="window.clearUserForm()" class="btn btn-d" style="flex: 1;"><i class="fa-solid fa-eraser"></i></button></div>
                     </div>
                     <div class="search-wrap" style="margin-bottom: 10px;"><i class="fa-solid fa-search"></i><input id="searchUserBox" class="search-inp" placeholder="Buscar usuario o rol (ej: pendiente)..." onkeyup="window.renderUserList()"></div>
@@ -280,11 +322,10 @@
 
                 <div id="ajsViewRol" class="hidden">
                     <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-user-shield"></i> Roles Personalizados</h3>
-                    <p style="font-size:13px; color:var(--gray);">Crea roles a la medida (Ej. Auditor, Supervisor) y define a qué partes del sistema tienen acceso.</p>
+                    <p style="font-size:13px; color:var(--gray);">Crea roles a la medida y define a qué partes del sistema tienen acceso.</p>
                     
                     <div style="background:#f8f9fa; padding:15px; border-radius:6px; border:1px solid #e9ecef; margin-bottom:20px;">
                         <input id="rolName" class="inp" placeholder="Nombre del nuevo Rol (Ej: Mesa de Control)">
-                        
                         <h4 style="margin: 15px 0 5px; font-size:14px; color:var(--blue);">Permisos Generales</h4>
                         <div class="perm-grid">
                             <label class="perm-item"><input type="checkbox" id="p_cob_view" checked> Ver Cobertura</label>
@@ -302,10 +343,11 @@
                             <label class="perm-item"><input type="checkbox" id="p_dyn_view" checked> Ver Mods. Creados</label>
                             <label class="perm-item"><input type="checkbox" id="p_dyn_edit"> Editar Mods. Creados</label>
                             <label class="perm-item"><input type="checkbox" id="p_dyn_exp"> Exportar Mods. Creados</label>
+
+                            <label class="perm-item"><input type="checkbox" id="p_proc_view" checked> Ver Procedimientos</label>
                         </div>
                         <div style="text-align:right; margin-top:15px;"><button id="btnRoleAction" onclick="window.saveRole()" class="btn btn-s">Guardar Rol</button></div>
                     </div>
-
                     <h4 style="color:var(--blue);">Roles Creados</h4>
                     <div id="rolesListContainer"></div>
                 </div>
@@ -326,6 +368,28 @@
                         </div>
                     </div>
                     <div id="listaModulosCreados"></div>
+                </div>
+
+                <div id="ajsViewProc" class="hidden">
+                    <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-file-code"></i> Gestor de Procedimientos</h3>
+                    <p style="font-size:13px; color:var(--gray);">Aquí puedes subir documentos en HTML enriquecido para que aparezcan en el módulo de Procedimientos.</p>
+                    
+                    <div class="form-grid" style="background:#f8f9fa; padding:15px; border-radius:6px; margin-bottom:20px; border:1px solid #e9ecef;">
+                        <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Submódulo / Categoría</label><input id="admProcCat" class="inp" placeholder="Ej: Pasos de Cobro, Garantías..."></div>
+                        <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Título del Proceso</label><input id="admProcTit" class="inp" placeholder="Ej: ¿Cómo crear boleta?"></div>
+                        <div class="span-2">
+                            <label style="font-size:12px; font-weight:bold; color:var(--blue);">Código HTML del Proceso</label>
+                            <textarea id="admProcHtml" class="inp" style="font-family: monospace; font-size:12px; background:#212529; color:#f8f9fa;" placeholder="<h1>Título</h1><p>Inserta tu diseño HTML aquí...</p>"></textarea>
+                        </div>
+                        <div class="span-2" style="text-align:right;">
+                            <button onclick="window.cancelarEdicionProc()" id="btnCancelProc" class="btn btn-d hidden" style="margin-right: 5px;"><i class="fa-solid fa-times"></i> Cancelar</button>
+                            <button onclick="window.guardarProc()" id="btnSaveProc" class="btn btn-s"><i class="fa-solid fa-save"></i> Guardar Procedimiento</button>
+                        </div>
+                    </div>
+                    
+                    <h4 style="color:var(--blue); border-bottom:1px solid #eee; padding-bottom:5px;">Procedimientos Guardados</h4>
+                    <div class="search-wrap" style="margin-bottom: 15px;"><i class="fa-solid fa-search"></i><input id="searchProcAdmBox" class="search-inp" placeholder="Buscar título o categoría..." onkeyup="window.renderAdminProcList()"></div>
+                    <div id="adminProcListContainer" style="max-height:400px; overflow-y:auto;"></div>
                 </div>
 
             </div>
@@ -363,6 +427,19 @@
   </div>
 </div>
 
+<div id="modalVerMas" class="modal-backdrop hidden" style="z-index: 1050;">
+  <div class="modal" style="max-width: 500px;">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+        <h3 style="margin:0; color:var(--blue)"><i class="fa-solid fa-align-left"></i> Observación Completa</h3>
+        <button onclick="window.closeModal('modalVerMas')" class="btn btn-d" style="padding: 4px 8px;"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div id="verMasContent" style="font-size: 14px; color: #333; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;"></div>
+    <div style="margin-top: 20px; text-align: right;">
+        <button onclick="window.copyToClip(document.getElementById('verMasContent').innerText)" class="btn btn-p"><i class="fa-solid fa-copy"></i> Copiar Texto</button>
+    </div>
+  </div>
+</div>
+
 <div id="toastContainer" class="toast-container"></div>
 
 <script type="module">
@@ -372,10 +449,10 @@
   const firebaseConfig = { apiKey: "AIzaSyBsFKRDAYoCjGlr-np2Cqtjb-SIOLznPzY", authDomain: "coberturast-ab44c.firebaseapp.com", projectId: "coberturast-ab44c", storageBucket: "coberturast-ab44c.firebasestorage.app", messagingSenderId: "762980124389", appId: "1:762980124389:web:9d7a8b1ed7c7f259fbb60c" };
   const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-  let DB = { cob: [], tec: [], enc: [], configModulos: [], dynData: [], roles: [] };
+  let DB = { cob: [], tec: [], enc: [], proc: [], configModulos: [], dynData: [], roles: [] };
   let DB_USERS = []; let SESION = { id: null, u: null, r: null, t: null };
   let PAGE = 1, PAGE_TEC = 1, PAGE_ENC = 1, PAGE_DYN = 1; let ITEMS_PER_PAGE_ENC = 16;
-  let EDITING_USER_ID = null, EDITING_LOCATION_ID = null, EDITING_TEC_ID = null, EDITING_ENC_ID = null, EDITING_DYN_ID = null, EDITING_ROLE_ID = null, EDITING_MOD_ID = null;
+  let EDITING_USER_ID = null, EDITING_LOCATION_ID = null, EDITING_TEC_ID = null, EDITING_ENC_ID = null, EDITING_DYN_ID = null, EDITING_ROLE_ID = null, EDITING_MOD_ID = null, EDITING_PROC_ID = null;
   let CURRENT_MODULE = 'cob'; let CURRENT_DYN_CONFIG = null;
   let isFirstUserLoad = true; let knownPendingIds = new Set(); let heartbeatInterval;
 
@@ -385,56 +462,49 @@
   window.hasPerm = function(perm) {
       if(SESION.r === 'admin') return true;
       if(SESION.r === 'pendiente') return false;
-      
       if(SESION.r === 'agente') {
-          const def = ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp'];
+          const def = ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view'];
           return def.includes(perm);
       }
       if(SESION.r === 'invitado') {
-          const def = ['cob_view', 'tec_view', 'enc_view', 'dyn_view'];
+          const def = ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view'];
           return def.includes(perm);
       }
-      
       const rolData = DB.roles.find(r => r.nombre === SESION.r);
       if(rolData && rolData.perms) return rolData.perms.includes(perm);
-      
       return false;
   };
 
   window.applyPermissionsToUI = function() {
-      // Pestañas
       document.getElementById('tabCob').classList.toggle('hidden', !window.hasPerm('cob_view'));
       document.getElementById('tabTec').classList.toggle('hidden', !window.hasPerm('tec_view'));
       document.getElementById('tabEnc').classList.toggle('hidden', !window.hasPerm('enc_view'));
+      document.getElementById('tabProc').classList.toggle('hidden', !window.hasPerm('proc_view'));
       document.querySelectorAll('.tab-dyn').forEach(t => t.classList.toggle('hidden', !window.hasPerm('dyn_view')));
       document.getElementById('tabAjs').classList.toggle('hidden', SESION.r !== 'admin');
       document.getElementById('notifBell').classList.toggle('hidden', SESION.r !== 'admin');
 
-      // Botones Cobertura
       if(document.getElementById('btnAdd')) document.getElementById('btnAdd').classList.toggle('hidden', !window.hasPerm('cob_edit'));
       if(document.getElementById('btnExp')) document.getElementById('btnExp').classList.toggle('hidden', !window.hasPerm('cob_exp'));
       if(document.getElementById('btnImpCob')) document.getElementById('btnImpCob').classList.toggle('hidden', !window.hasPerm('cob_exp'));
       
-      // Botones Tecnicos
       if(document.getElementById('btnAddTec')) document.getElementById('btnAddTec').classList.toggle('hidden', !window.hasPerm('tec_edit'));
       if(document.getElementById('btnExpTec')) document.getElementById('btnExpTec').classList.toggle('hidden', !window.hasPerm('tec_exp'));
       if(document.getElementById('btnImpTec')) document.getElementById('btnImpTec').classList.toggle('hidden', !window.hasPerm('tec_exp'));
       
-      // Botones Encargados
       if(document.getElementById('btnAddEnc')) document.getElementById('btnAddEnc').classList.toggle('hidden', !window.hasPerm('enc_edit'));
       if(document.getElementById('btnExpEnc')) document.getElementById('btnExpEnc').classList.toggle('hidden', !window.hasPerm('enc_exp'));
       if(document.getElementById('btnImpEnc')) document.getElementById('btnImpEnc').classList.toggle('hidden', !window.hasPerm('enc_exp'));
 
-      // Botones Dinámicos
       if(document.getElementById('btnAddDyn')) document.getElementById('btnAddDyn').classList.toggle('hidden', !window.hasPerm('dyn_edit'));
       if(document.getElementById('btnExpDyn')) document.getElementById('btnExpDyn').classList.toggle('hidden', !window.hasPerm('dyn_exp'));
       if(document.getElementById('btnImpDyn')) document.getElementById('btnImpDyn').classList.toggle('hidden', !window.hasPerm('dyn_exp'));
   };
 
-  // ================= PORTAPAPELES (COPIAR) =================
+  // ================= PORTAPAPELES Y TOASTS =================
   window.copyToClip = function(text) {
       if(!text) return;
-      navigator.clipboard.writeText(text).then(() => { window.showToastSuccess(`Copiado: <b>${text}</b>`); }).catch(err => alert("Error al copiar"));
+      navigator.clipboard.writeText(text).then(() => { window.showToastSuccess(`Texto Copiado`); }).catch(err => alert("Error al copiar"));
   };
   window.showToastSuccess = function(msg) {
     const c = document.getElementById('toastContainer'); const t = document.createElement('div'); t.className = 'toast success'; 
@@ -445,6 +515,16 @@
     t.innerHTML = `<i class="fa-solid fa-bell"></i> <div>${msg}</div>`; c.appendChild(t); setTimeout(() => { t.classList.add('toast-fade'); setTimeout(() => t.remove(), 300); }, 6000); 
   };
 
+  // ================= VER MÁS (TEXTOS LARGOS EN TABLA) =================
+  window.abrirVerMas = function(idFila, indiceColumna) {
+      const fila = DB.dynData.find(d => d.id === idFila);
+      if(fila) {
+          const texto = fila['c'+indiceColumna] || "";
+          document.getElementById('verMasContent').innerText = texto;
+          document.getElementById('modalVerMas').classList.remove('hidden');
+      }
+  };
+
   // ================= PESTAÑAS Y RUTEO =================
   window.switchModule = function(mod) {
     CURRENT_MODULE = mod; PAGE_DYN = 1;
@@ -452,11 +532,23 @@
     let activeTab = document.getElementById(mod.startsWith('dyn_') ? 'tab_' + mod : 'tab' + mod.charAt(0).toUpperCase() + mod.slice(1));
     if(activeTab) activeTab.classList.add('active');
     
-    ['moduloCobertura', 'moduloTecnicos', 'moduloEncargados', 'moduloAjustes', 'moduloDinamico'].forEach(id => { document.getElementById(id).classList.add('hidden'); });
+    // Si entramos a procedimientos o ajustes, quitamos la clase container general para diseño full width
+    if(mod === 'proc' || mod === 'ajs') {
+        document.getElementById('mainContainer').style.maxWidth = '100%';
+        document.getElementById('mainContainer').style.padding = '0';
+        document.getElementById('mainContainer').style.marginTop = '0';
+    } else {
+        document.getElementById('mainContainer').style.maxWidth = '1300px';
+        document.getElementById('mainContainer').style.padding = '0 20px';
+        document.getElementById('mainContainer').style.marginTop = '20px';
+    }
+
+    ['moduloCobertura', 'moduloTecnicos', 'moduloEncargados', 'moduloProcedimientos', 'moduloAjustes', 'moduloDinamico'].forEach(id => { document.getElementById(id).classList.add('hidden'); });
 
     if(mod === 'cob') { document.getElementById('moduloCobertura').classList.remove('hidden'); window.renderTable(); }
     else if(mod === 'tec') { document.getElementById('moduloTecnicos').classList.remove('hidden'); window.renderTecnicosTable(); }
     else if(mod === 'enc') { document.getElementById('moduloEncargados').classList.remove('hidden'); window.renderEncargadosTable(); }
+    else if(mod === 'proc') { document.getElementById('moduloProcedimientos').classList.remove('hidden'); window.renderProcMenu(); }
     else if(mod === 'ajs') { document.getElementById('moduloAjustes').classList.remove('hidden'); window.showAjsView('usr'); }
     else if(mod.startsWith('dyn_')) {
         document.getElementById('moduloDinamico').classList.remove('hidden');
@@ -468,18 +560,23 @@
   window.showAjsView = function(view) {
       document.querySelectorAll('.ajs-menu-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('menuAjs' + view.charAt(0).toUpperCase() + view.slice(1)).classList.add('active');
+      
       document.getElementById('ajsViewUsr').classList.add('hidden');
       document.getElementById('ajsViewRol').classList.add('hidden');
       document.getElementById('ajsViewMod').classList.add('hidden');
+      document.getElementById('ajsViewProc').classList.add('hidden');
+      
       document.getElementById('ajsView' + view.charAt(0).toUpperCase() + view.slice(1)).classList.remove('hidden');
+      
       if(view === 'usr') window.renderUserList();
       if(view === 'rol') window.renderRolesList();
       if(view === 'mod') window.renderListaModulos();
+      if(view === 'proc') window.renderAdminProcList();
   };
 
   window.toggleAuthBoxes = (s) => { document.getElementById('boxLogin').classList.toggle('hidden', s); document.getElementById('boxRegister').classList.toggle('hidden', !s); };
 
-  // ================= AUTH =================
+  // ================= AUTH Y ARRANQUE =================
   window.registerAccount = async function() {
     const u = document.getElementById('regUser').value.trim(), p = document.getElementById('regPass').value.trim(); const btn = document.getElementById('btnRegister');
     if(!u || !p) return alert("Completa todos los campos."); btn.innerText = 'Enviando...'; btn.disabled = true;
@@ -527,84 +624,25 @@
     document.getElementById('onlineMonitor').classList.remove('hidden');
     window.listenToRoles(); 
     window.listenToUsers(); setInterval(window.updateOnlineUI, 5000);
-    listenToCoberturas(); listenToTecnicos(); listenToEncargados(); listenToConfigModulos(); listenToDynData();
+    
+    listenToCoberturas(); listenToTecnicos(); listenToEncargados(); listenToConfigModulos(); listenToDynData(); listenToProcedimientos();
+    
     window.heartbeat(); heartbeatInterval = setInterval(window.heartbeat, 180000);
   };
 
   window.heartbeat = async () => { if(SESION.id) { try { await updateDoc(doc(db, "usuarios", SESION.id), { lastActive: Date.now() }); } catch(e){} } };
   window.logout = async (clear = true) => { if(clear && SESION.id) try { await updateDoc(doc(db, "usuarios", SESION.id), { token: null, lastActive: 0 }); } catch(e){} localStorage.removeItem('distelsa_pro_fb'); location.reload(); };
 
-  // ================= USERS & NOTIF =================
-  window.listenToUsers = () => {
-    onSnapshot(collection(db, "usuarios"), (snap) => {
-      DB_USERS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      if (SESION.r === 'admin') {
-        let pending = DB_USERS.filter(u => u.r === 'pendiente'); let badge = document.getElementById('notifBadge');
-        if (pending.length > 0) { badge.innerText = pending.length; badge.classList.remove('hidden'); } else badge.classList.add('hidden');
-        if (!isFirstUserLoad) pending.forEach(u => { if (!knownPendingIds.has(u.id)) window.showToast(`Nueva solicitud: <b>${u.u}</b>. <u style="cursor:pointer; color:var(--blue)" onclick="window.openPendingUsers()">Aprobar</u>`); });
-        knownPendingIds = new Set(pending.map(u => u.id));
-      }
-      isFirstUserLoad = false; window.updateOnlineUI();
-      if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewUsr').classList.contains('hidden') && !EDITING_USER_ID) window.renderUserList();
-    });
-  };
+  // ================= USERS Y ROLES =================
+  window.listenToUsers = () => { onSnapshot(collection(db, "usuarios"), (snap) => { DB_USERS = snap.docs.map(d => ({ id: d.id, ...d.data() })); if (SESION.r === 'admin') { let pending = DB_USERS.filter(u => u.r === 'pendiente'); let badge = document.getElementById('notifBadge'); if (pending.length > 0) { badge.innerText = pending.length; badge.classList.remove('hidden'); } else badge.classList.add('hidden'); if (!isFirstUserLoad) pending.forEach(u => { if (!knownPendingIds.has(u.id)) window.showToast(`Nueva solicitud: <b>${u.u}</b>. <u style="cursor:pointer; color:var(--blue)" onclick="window.openPendingUsers()">Aprobar</u>`); }); knownPendingIds = new Set(pending.map(u => u.id)); } isFirstUserLoad = false; window.updateOnlineUI(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewUsr').classList.contains('hidden') && !EDITING_USER_ID) window.renderUserList(); }); };
   window.updateOnlineUI = () => { const now = Date.now(); let online = DB_USERS.filter(u => u.lastActive && (now - u.lastActive < 190000) && u.r !== 'pendiente').map(u => u.u); document.getElementById('onlineCount').innerText = online.length; document.getElementById('onlineList').innerHTML = online.map(u => `<div class="online-item"><i class="fa-solid fa-user" style="color:#28a745"></i> ${u}</div>`).join('') || 'Nadie conectado'; };
 
-  // ================= ROLES =================
-  window.listenToRoles = function() {
-      onSnapshot(collection(db, "roles_config"), (snapshot) => {
-          DB.roles = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-          window.updateRolesSelect();
-          window.applyPermissionsToUI();
-          if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList();
-      });
-  };
-
-  window.updateRolesSelect = function() {
-      const sel = document.getElementById('uRol');
-      if(!sel) return;
-      let html = `<option value="agente">Agente (Default)</option><option value="invitado">Invitado (Lector)</option><option value="admin">Administrador (Total)</option><option value="pendiente">Pendiente (Bloqueado)</option>`;
-      DB.roles.forEach(r => { html += `<option value="${r.nombre}">Custom: ${r.nombre}</option>`; });
-      sel.innerHTML = html;
-  };
-
-  window.saveRole = async function() {
-      const nombre = document.getElementById('rolName').value.trim();
-      if(!nombre) return alert("Ingresa un nombre para el rol");
-      const perms = [];
-      document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { if(chk.checked) perms.push(chk.id.replace('p_', '')); });
-      try {
-          if(EDITING_ROLE_ID) {
-              await updateDoc(doc(db, "roles_config", EDITING_ROLE_ID), { nombre, perms });
-              EDITING_ROLE_ID = null; document.getElementById('btnRoleAction').innerText = "Guardar Rol";
-          } else { await addDoc(collection(db, "roles_config"), { nombre, perms }); }
-          document.getElementById('rolName').value = '';
-          document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => chk.checked = false);
-          alert("Rol guardado");
-      } catch(e) { alert("Error guardando rol"); }
-  };
-
-  window.editRole = function(id) {
-      EDITING_ROLE_ID = id; const r = DB.roles.find(x => x.id === id);
-      document.getElementById('rolName').value = r.nombre;
-      document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { chk.checked = r.perms.includes(chk.id.replace('p_', '')); });
-      document.getElementById('btnRoleAction').innerText = "Actualizar Rol";
-  };
-
-  window.deleteRole = async function(id) {
-      if(!confirm("¿Eliminar este rol? Los usuarios con este rol perderán permisos.")) return;
-      await deleteDoc(doc(db, "roles_config", id));
-  };
-
-  window.renderRolesList = function() {
-      document.getElementById('rolesListContainer').innerHTML = DB.roles.map(r => `
-          <div class="mod-list-item">
-              <div><b>${r.nombre}</b> <br><small style="color:var(--gray);">${r.perms.join(', ')}</small></div>
-              <div><button onclick="window.editRole('${r.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button>
-                  <button onclick="window.deleteRole('${r.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div>
-          </div>
-      `).join('') || '<p style="font-size:13px; color:var(--gray);">No hay roles personalizados.</p>';
-  };
+  window.listenToRoles = function() { onSnapshot(collection(db, "roles_config"), (snapshot) => { DB.roles = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); window.updateRolesSelect(); window.applyPermissionsToUI(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList(); }); };
+  window.updateRolesSelect = function() { const sel = document.getElementById('uRol'); if(!sel) return; let html = `<option value="agente">Agente (Default)</option><option value="invitado">Invitado (Lector)</option><option value="admin">Administrador (Total)</option><option value="pendiente">Pendiente (Bloqueado)</option>`; DB.roles.forEach(r => { html += `<option value="${r.nombre}">Custom: ${r.nombre}</option>`; }); sel.innerHTML = html; };
+  window.saveRole = async function() { const nombre = document.getElementById('rolName').value.trim(); if(!nombre) return alert("Ingresa nombre"); const perms = []; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { if(chk.checked) perms.push(chk.id.replace('p_', '')); }); try { if(EDITING_ROLE_ID) { await updateDoc(doc(db, "roles_config", EDITING_ROLE_ID), { nombre, perms }); EDITING_ROLE_ID = null; document.getElementById('btnRoleAction').innerText = "Guardar Rol"; } else { await addDoc(collection(db, "roles_config"), { nombre, perms }); } document.getElementById('rolName').value = ''; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => chk.checked = false); alert("Rol guardado"); } catch(e) { alert("Error"); } };
+  window.editRole = function(id) { EDITING_ROLE_ID = id; const r = DB.roles.find(x => x.id === id); document.getElementById('rolName').value = r.nombre; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { chk.checked = r.perms.includes(chk.id.replace('p_', '')); }); document.getElementById('btnRoleAction').innerText = "Actualizar Rol"; };
+  window.deleteRole = async function(id) { if(confirm("¿Eliminar rol?")) await deleteDoc(doc(db, "roles_config", id)); };
+  window.renderRolesList = function() { document.getElementById('rolesListContainer').innerHTML = DB.roles.map(r => `<div class="mod-list-item"><div><b>${r.nombre}</b> <br><small style="color:var(--gray);">${r.perms.join(', ')}</small></div><div><button onclick="window.editRole('${r.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteRole('${r.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`).join('') || '<p style="font-size:13px;">No hay roles.</p>'; };
 
   // ================= CREADOR DE MÓDULOS (DINÁMICOS Y FIJOS) =================
   function listenToConfigModulos() { onSnapshot(collection(db, "modulos_config"), (snapshot) => { DB.configModulos = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); window.buildDynamicTabs(); if(CURRENT_MODULE === 'ajs') window.renderListaModulos(); }); }
@@ -621,90 +659,27 @@
   };
 
   window.guardarModuloDinamico = async function() {
-    const nombre = document.getElementById('confModName').value.trim(); 
-    const vista = document.getElementById('confModVista').value; 
-    const colsRaw = document.getElementById('confModCols').value.trim();
-    
-    if(!nombre || !colsRaw) return alert("Completa nombre y columnas"); 
-    const cols = colsRaw.split(',').map(c => c.trim()).filter(c => c !== '');
-    if(cols.length === 0) return alert("Columnas inválidas");
-    
-    try { 
-        if (EDITING_MOD_ID) {
-            await updateDoc(doc(db, "modulos_config", EDITING_MOD_ID), { nombre, vista, columnas: cols });
-            alert("¡Módulo Actualizado!");
-            window.cancelarEdicionModulo();
-        } else {
-            await addDoc(collection(db, "modulos_config"), { nombre, vista, columnas: cols }); 
-            alert("¡Módulo Creado!");
-            document.getElementById('confModName').value = ''; 
-            document.getElementById('confModCols').value = ''; 
-        }
-    } catch(e) { alert("Error al guardar módulo"); }
+    const nombre = document.getElementById('confModName').value.trim(); const vista = document.getElementById('confModVista').value; const colsRaw = document.getElementById('confModCols').value.trim();
+    if(!nombre || !colsRaw) return alert("Completa nombre y columnas"); const cols = colsRaw.split(',').map(c => c.trim()).filter(c => c !== ''); if(cols.length === 0) return alert("Columnas inválidas");
+    try { if (EDITING_MOD_ID) { await updateDoc(doc(db, "modulos_config", EDITING_MOD_ID), { nombre, vista, columnas: cols }); alert("¡Módulo Actualizado!"); window.cancelarEdicionModulo(); } else { await addDoc(collection(db, "modulos_config"), { nombre, vista, columnas: cols }); alert("¡Módulo Creado!"); document.getElementById('confModName').value = ''; document.getElementById('confModCols').value = ''; } } catch(e) { alert("Error"); }
   };
-
-  window.editarModuloDinamico = function(id) {
-      EDITING_MOD_ID = id;
-      const mod = DB.configModulos.find(m => m.id === id);
-      
-      document.getElementById('confModName').value = mod.nombre;
-      document.getElementById('confModVista').value = mod.vista;
-      document.getElementById('confModCols').value = mod.columnas.join(', ');
-      
-      const btnSave = document.getElementById('btnSaveMod');
-      btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios';
-      btnSave.classList.replace('btn-s', 'btn-p');
-      document.getElementById('btnCancelMod').classList.remove('hidden');
-      
-      const container = document.querySelector('.ajs-content');
-      if(container) container.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  window.cancelarEdicionModulo = function() {
-      EDITING_MOD_ID = null;
-      document.getElementById('confModName').value = '';
-      document.getElementById('confModVista').value = 'tabla';
-      document.getElementById('confModCols').value = '';
-      
-      const btnSave = document.getElementById('btnSaveMod');
-      btnSave.innerHTML = '<i class="fa-solid fa-layer-group"></i> Generar Módulo';
-      btnSave.classList.replace('btn-p', 'btn-s');
-      document.getElementById('btnCancelMod').classList.add('hidden');
-  };
+  window.editarModuloDinamico = function(id) { EDITING_MOD_ID = id; const mod = DB.configModulos.find(m => m.id === id); document.getElementById('confModName').value = mod.nombre; document.getElementById('confModVista').value = mod.vista; document.getElementById('confModCols').value = mod.columnas.join(', '); const btnSave = document.getElementById('btnSaveMod'); btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios'; btnSave.classList.replace('btn-s', 'btn-p'); document.getElementById('btnCancelMod').classList.remove('hidden'); const container = document.querySelector('.ajs-content'); if(container) container.scrollTo({ top: 0, behavior: 'smooth' }); };
+  window.cancelarEdicionModulo = function() { EDITING_MOD_ID = null; document.getElementById('confModName').value = ''; document.getElementById('confModVista').value = 'tabla'; document.getElementById('confModCols').value = ''; const btnSave = document.getElementById('btnSaveMod'); btnSave.innerHTML = '<i class="fa-solid fa-layer-group"></i> Generar Módulo'; btnSave.classList.replace('btn-p', 'btn-s'); document.getElementById('btnCancelMod').classList.add('hidden'); };
+  window.eliminarModuloDinamico = async function(id) { if(!confirm("¿Eliminar módulo y todos sus datos?")) return; try { await deleteDoc(doc(db, "modulos_config", id)); const batch = writeBatch(db); DB.dynData.filter(d => d.modId === id).forEach(d => batch.delete(doc(db, "modulos_data", d.id))); await batch.commit(); if (EDITING_MOD_ID === id) window.cancelarEdicionModulo(); if (CURRENT_MODULE === 'dyn_'+id) window.switchModule('cob'); } catch(e) { alert("Error"); } };
 
   window.renderListaModulos = function() {
-    let html = `
-    <h5 style="color:var(--blue); margin-bottom:5px; border-bottom:1px solid #eee; padding-bottom:5px;"><i class="fa-solid fa-lock"></i> Módulos del Sistema (Fijos)</h5>
-    <div class="mod-list-item" style="background:#e9ecef; cursor:not-allowed;"><div><b>Cobertura</b> <span style="font-size:11px;color:var(--gray);margin-left:5px;">(Vista Especial)</span> <br><small style="color:var(--gray);">Municipio, Nombre, Categoría, Zona, Referencia, Estado</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
-    <div class="mod-list-item" style="background:#e9ecef; cursor:not-allowed;"><div><b>Técnicos</b> <span style="font-size:11px;color:var(--gray);margin-left:5px;">(Vista Especial)</span> <br><small style="color:var(--gray);">Nombre, Teléfono 1, Teléfono 2, Área, DPI, Placa</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
-    <div class="mod-list-item" style="background:#e9ecef; cursor:not-allowed;"><div><b>Directorio Domicilio</b> <span style="font-size:11px;color:var(--gray);margin-left:5px;">(Directorio Especial)</span> <br><small style="color:var(--gray);">Nombre, Categoría, Teléfono, Correo, Puesto</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
-
-    <h5 style="color:var(--blue); margin-top:20px; margin-bottom:5px; border-bottom:1px solid #eee; padding-bottom:5px;"><i class="fa-solid fa-puzzle-piece"></i> Módulos Personalizados</h5>
-    `;
-
-    let dynHtml = DB.configModulos.map(m => `
-      <div class="mod-list-item"><div><b>${m.nombre}</b> <span style="font-size:11px;color:var(--gray);margin-left:5px;">(Vista: ${m.vista})</span> <br><small style="color:var(--gray);">${m.columnas.join(', ')}</small></div>
-      <div>
-        <button onclick="window.editarModuloDinamico('${m.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;"><i class="fa-solid fa-pencil"></i> Editar</button>
-        <button onclick="window.eliminarModuloDinamico('${m.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i> Eliminar</button>
-      </div></div>
-    `).join('');
-
-    document.getElementById('listaModulosCreados').innerHTML = html + (dynHtml || '<p style="font-size:13px; color:var(--gray);">No hay módulos personalizados.</p>');
+    let html = `<h5 style="color:var(--blue); margin-bottom:5px; border-bottom:1px solid #eee; padding-bottom:5px;"><i class="fa-solid fa-lock"></i> Módulos Fijos</h5>
+    <div class="mod-list-item" style="background:#e9ecef;"><div><b>Cobertura</b> <br><small>Municipio, Nombre, Categoría, Zona...</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
+    <div class="mod-list-item" style="background:#e9ecef;"><div><b>Técnicos</b> <br><small>Nombre, Teléfonos, Área, DPI...</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
+    <div class="mod-list-item" style="background:#e9ecef;"><div><b>Directorio Domicilio</b> <br><small>Nombre, Categoría, Teléfono...</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
+    <div class="mod-list-item" style="background:#e9ecef;"><div><b>Procedimientos</b> <br><small>Base de conocimientos y procesos en HTML</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
+    <h5 style="color:var(--blue); margin-top:20px; margin-bottom:5px; border-bottom:1px solid #eee; padding-bottom:5px;"><i class="fa-solid fa-puzzle-piece"></i> Módulos Personalizados</h5>`;
+    let dynHtml = DB.configModulos.map(m => `<div class="mod-list-item"><div><b>${m.nombre}</b> <span style="font-size:11px;color:var(--gray);">(${m.vista})</span> <br><small style="color:var(--gray);">${m.columnas.join(', ')}</small></div>
+      <div><button onclick="window.editarModuloDinamico('${m.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarModuloDinamico('${m.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
+    document.getElementById('listaModulosCreados').innerHTML = html + (dynHtml || '<p style="font-size:13px; color:var(--gray);">No hay personalizados.</p>');
   };
 
-  window.eliminarModuloDinamico = async function(id) {
-    if(!confirm("¿Eliminar módulo y todos sus datos? Esta acción no se puede deshacer.")) return;
-    try {
-      await deleteDoc(doc(db, "modulos_config", id)); const batch = writeBatch(db);
-      DB.dynData.filter(d => d.modId === id).forEach(d => batch.delete(doc(db, "modulos_data", d.id))); await batch.commit();
-      
-      if (EDITING_MOD_ID === id) window.cancelarEdicionModulo(); 
-      if (CURRENT_MODULE === 'dyn_'+id) window.switchModule('cob');
-    } catch(e) { alert("Error al eliminar"); }
-  };
-
-  // ================= RENDERIZADOR DINÁMICO (TABLA VS DIRECTORIO) =================
+  // ================= RENDERIZADOR DINÁMICO (Y OBSERVACIONES LARGAS) =================
   window.renderDynData = function(reset = false) {
       if (reset) PAGE_DYN = 1; if(!CURRENT_DYN_CONFIG) return;
       const rawQ = document.getElementById('searchDynBox').value.toLowerCase().trim();
@@ -721,39 +696,23 @@
       const container = document.getElementById('dynContentContainer');
       const canEdit = window.hasPerm('dyn_edit'); const isAdmin = (SESION.r === 'admin');
 
-      if (chunk.length === 0) { 
-          container.innerHTML = `<div class="card" style="text-align:center; padding: 30px; color:#6c757d; font-style: italic;">No se encontraron registros.</div>`; return; 
-      }
+      if (chunk.length === 0) { container.innerHTML = `<div class="card" style="text-align:center; padding: 30px; color:#6c757d; font-style: italic;">No se encontraron registros.</div>`; return; }
 
       if (isDir) {
           let html = `<div class="enc-grid">`;
           chunk.forEach(row => {
-              let title = row.c0 || "Sin Título"; 
-              let ini = title.charAt(0).toUpperCase();
-              
-              let act = ""; 
-              if (canEdit) act += `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; 
-              if (isAdmin) act += `<button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`;
-              
+              let title = row.c0 || "Sin Título"; let ini = title.charAt(0).toUpperCase();
+              let act = ""; if (canEdit) act += `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`;
               let bodyHtml = "";
               CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => {
-                  if(i < 1) return; 
-                  let val = row['c'+i];
-                  if(val) bodyHtml += `<div class="enc-contact" onclick="window.copyToClip('${val}')" title="Copiar ${colName}"><div style="display:flex; flex-direction:column;"><span style="font-size:10px; color:#adb5bd; font-weight:bold; text-transform:uppercase;">${colName}</span><span>${val}</span></div><div class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</div></div>`;
+                  if(i < 1) return; let val = row['c'+i];
+                  // Si es directorio, texto largo se acorta
+                  if(val) {
+                      let displayVal = val.length > 40 ? val.substring(0, 37) + '...' : val;
+                      bodyHtml += `<div class="enc-contact" onclick="window.copyToClip('${val}')" title="Copiar ${colName}"><div style="display:flex; flex-direction:column;"><span style="font-size:10px; color:#adb5bd; font-weight:bold; text-transform:uppercase;">${colName}</span><span>${displayVal}</span></div><div class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</div></div>`;
+                  }
               });
-
-              html += `<div class="enc-card">
-                          <div class="enc-header">
-                              <div style="display:flex;align-items:center;">
-                                  <div class="enc-avatar">${ini}</div>
-                                  <div>
-                                      <div class="enc-name">${title}</div>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="enc-body">${bodyHtml}</div>
-                          ${act!==''?`<div class="enc-footer">${act}</div>`:''}
-                      </div>`;
+              html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${title}</div></div></div></div><div class="enc-body">${bodyHtml}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`;
           });
           html += `</div>`; container.innerHTML = html;
       } else {
@@ -761,10 +720,12 @@
           let html = `<div class="card"><div class="table-responsive"><table><thead><tr>${ths}</tr></thead><tbody>`;
           chunk.forEach(row => {
               html += `<tr>`;
-              CURRENT_DYN_CONFIG.columnas.forEach((_, i) => {
+              CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => {
                   let val = row['c'+i] || "";
-                  // NUEVO: Verificación de longitud para añadir caja con scroll si es muy largo
-                  let displayVal = val.length > 60 ? `<div class="cell-long-text" title="Haga scroll para leer más">${val}</div>` : val;
+                  let displayVal = val;
+                  if (val.length > 45) {
+                      displayVal = `<span>${val.substring(0, 42)}...</span> <button class="btn-mini" onclick="window.abrirVerMas('${row.id}', ${i})">Ver más</button>`;
+                  }
                   html += `<td>${i===0?`<b>${displayVal}</b>`:displayVal}</td>`;
               });
               if(canEdit) {
@@ -778,7 +739,143 @@
       }
   };
 
-  // ================= SOLUCIÓN AL BUG DE EDICIÓN =================
+  // ================= MODULO: PROCEDIMIENTOS WIKI (NUEVO DISEÑO Y BUSCADOR) =================
+  function listenToProcedimientos() { 
+      onSnapshot(collection(db, "procedimientos_html"), (snapshot) => { 
+          DB.proc = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); 
+          if(CURRENT_MODULE === 'proc') window.renderProcMenu(); 
+          if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewProc').classList.contains('hidden')) window.renderAdminProcList();
+      }); 
+  }
+
+  // Frontend: Renderizar el Menú con Filtro y los HTMLs
+  window.renderProcMenu = function(isSearch = false) {
+      const container = document.getElementById('procSidebarMenu');
+      const query = document.getElementById('searchProcBox') ? document.getElementById('searchProcBox').value.toLowerCase().trim() : '';
+
+      let f = DB.proc;
+      if(query) {
+          f = DB.proc.filter(p => p.tit.toLowerCase().includes(query) || (p.cat && p.cat.toLowerCase().includes(query)));
+      }
+
+      if (f.length === 0) { 
+          container.innerHTML = `<p style="padding:20px; color:#adb5bd; font-size:13px; text-align:center;">No se encontraron resultados.</p>`; 
+          return; 
+      }
+      
+      const grupos = {};
+      f.forEach(p => {
+          let cat = p.cat || "General";
+          if(!grupos[cat]) grupos[cat] = [];
+          grupos[cat].push(p);
+      });
+
+      let html = "";
+      Object.keys(grupos).sort().forEach(cat => {
+          html += `<div class="proc-cat-header">${cat}</div>`;
+          grupos[cat].sort((a,b)=>a.tit.localeCompare(b.tit)).forEach(p => {
+              html += `<a class="proc-item-link" id="linkProc_${p.id}" onclick="window.abrirProcedimiento('${p.id}')">
+                         <i class="fa-regular fa-file-lines" style="color:#adb5bd; font-size: 16px;"></i> 
+                         <span style="flex:1;">${p.tit}</span>
+                       </a>`;
+          });
+      });
+      container.innerHTML = html;
+      
+      // Mantener la clase active si hay uno seleccionado y aún está en la lista filtrada
+      const viewer = document.getElementById('procViewerContainer');
+      if(viewer.dataset.activeId) {
+          let act = document.getElementById(`linkProc_${viewer.dataset.activeId}`);
+          if(act) act.classList.add('active');
+      }
+  };
+
+  window.abrirProcedimiento = function(id) {
+      document.querySelectorAll('.proc-item-link').forEach(el => el.classList.remove('active'));
+      const activeLink = document.getElementById(`linkProc_${id}`);
+      if(activeLink) activeLink.classList.add('active');
+
+      const proc = DB.proc.find(p => p.id === id);
+      const viewer = document.getElementById('procViewerContainer');
+      
+      if(proc) {
+          viewer.dataset.activeId = id;
+          viewer.innerHTML = proc.html || "<i>El documento no tiene contenido.</i>";
+          // Scroll automático hacia arriba
+          document.getElementById('procViewerScrollArea').scrollTo({ top: 0, behavior: 'smooth' });
+      }
+  };
+
+  // Backend (Ajustes): Guardar, Editar y Eliminar
+  window.guardarProc = async function() {
+      const cat = document.getElementById('admProcCat').value.trim() || "General";
+      const tit = document.getElementById('admProcTit').value.trim();
+      const html = document.getElementById('admProcHtml').value.trim();
+
+      if(!tit || !html) return alert("El título y el código HTML son obligatorios.");
+
+      try {
+          if (EDITING_PROC_ID) {
+              await updateDoc(doc(db, "procedimientos_html", EDITING_PROC_ID), { cat, tit, html });
+              alert("Procedimiento actualizado.");
+              window.cancelarEdicionProc();
+          } else {
+              await addDoc(collection(db, "procedimientos_html"), { cat, tit, html, fecha: Date.now() });
+              alert("Procedimiento creado.");
+              document.getElementById('admProcTit').value = '';
+              document.getElementById('admProcHtml').value = '';
+          }
+      } catch(e) { alert("Error al guardar."); }
+  };
+
+  window.editarProc = function(id) {
+      EDITING_PROC_ID = id;
+      const p = DB.proc.find(x => x.id === id);
+      document.getElementById('admProcCat').value = p.cat;
+      document.getElementById('admProcTit').value = p.tit;
+      document.getElementById('admProcHtml').value = p.html;
+
+      const btnSave = document.getElementById('btnSaveProc');
+      btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios';
+      btnSave.classList.replace('btn-s', 'btn-p');
+      document.getElementById('btnCancelProc').classList.remove('hidden');
+  };
+
+  window.cancelarEdicionProc = function() {
+      EDITING_PROC_ID = null;
+      document.getElementById('admProcTit').value = '';
+      document.getElementById('admProcHtml').value = '';
+      const btnSave = document.getElementById('btnSaveProc');
+      btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Procedimiento';
+      btnSave.classList.replace('btn-p', 'btn-s');
+      document.getElementById('btnCancelProc').classList.add('hidden');
+  };
+
+  window.eliminarProc = async function(id) {
+      if(!confirm("¿Eliminar este procedimiento permanentemente?")) return;
+      await deleteDoc(doc(db, "procedimientos_html", id));
+      if(EDITING_PROC_ID === id) window.cancelarEdicionProc();
+  };
+
+  window.renderAdminProcList = function() {
+      const q = document.getElementById('searchProcAdmBox').value.toLowerCase().trim();
+      let f = DB.proc;
+      if (q) f = DB.proc.filter(p => `${p.tit} ${p.cat}`.toLowerCase().includes(q));
+
+      const container = document.getElementById('adminProcListContainer');
+      container.innerHTML = f.map(p => `
+          <div class="mod-list-item">
+              <div><b>${p.tit}</b> <br><small style="color:var(--gray);"><i class="fa-solid fa-folder"></i> ${p.cat || "General"}</small></div>
+              <div>
+                  <button onclick="window.editarProc('${p.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button>
+                  <button onclick="window.eliminarProc('${p.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button>
+              </div>
+          </div>
+      `).join('') || '<p style="font-size:13px; color:var(--gray);">No hay procedimientos registrados.</p>';
+  };
+
+
+  // ================= MODALES DINÁMICOS =================
   window.openModal = (id, isEdit = false) => { 
     document.getElementById(id).classList.remove('hidden'); 
     if(!isEdit) { 
@@ -882,7 +979,7 @@
   window.saveEncargado = async () => { const data = { g: document.getElementById('encCat').value, n: document.getElementById('encNom').value.trim(), t: document.getElementById('encTel').value.trim(), c: document.getElementById('encCor').value.trim(), p: document.getElementById('encPuesto').value.trim() }; if(!data.n) return; if(EDITING_ENC_ID) await updateDoc(doc(db, "encargados", EDITING_ENC_ID), data); else await addDoc(collection(db, "encargados"), data); window.closeModal('modalAddEnc'); };
   window.deleteEncargado = async (id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, "encargados", id)); }; window.changePageEnc = d => { PAGE_ENC += d; window.renderEncargadosTable(); };
 
-  // ================= GENERALES DE USUARIO Y MODALES =================
+  // ================= GENERALES DE USUARIO =================
   window.openUsers = () => { window.switchModule('ajs'); window.showAjsView('usr'); }; 
   window.openPendingUsers = () => { window.switchModule('ajs'); window.showAjsView('usr'); document.getElementById('searchUserBox').value = 'pendiente'; window.renderUserList(); };
   
