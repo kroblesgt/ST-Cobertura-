@@ -49,6 +49,21 @@
   tr:hover td { background-color: #f8f9fa; }
   .badge { display: block; padding: 6px 0; text-align: center; border-radius: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; color: white; width: 100%; }
   .badge-tag { display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; color: #333; background: #e9ecef; }
+  
+  /* AJUSTE PARA TEXTOS LARGOS EN TABLAS */
+  .cell-long-text {
+      max-height: 80px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      font-size: 12px;
+      line-height: 1.4;
+      padding-right: 5px;
+      color: #495057;
+      scrollbar-width: thin;
+      scrollbar-color: #adb5bd transparent;
+  }
+  .cell-long-text::-webkit-scrollbar { width: 6px; }
+  .cell-long-text::-webkit-scrollbar-thumb { background: #adb5bd; border-radius: 4px; }
 
   /* DIRECTORIO CARDS */
   .enc-category-title { font-size: 16px; color: var(--blue); border-bottom: 2px solid #ced4da; padding-bottom: 8px; margin: 30px 0 15px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 10px;}
@@ -94,7 +109,7 @@
   .ajs-menu-btn { padding: 15px 20px; display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: none; border: none; font-size: 14px; font-weight: 600; color: #495057; cursor: pointer; transition: 0.2s; border-left: 3px solid transparent;}
   .ajs-menu-btn:hover { background: #f8f9fa; color: var(--blue); }
   .ajs-menu-btn.active { background: #e8f0fe; color: var(--blue); border-left-color: var(--blue); }
-  .ajs-content { flex: 1; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 25px; min-width: 0;}
+  .ajs-content { flex: 1; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 25px; min-width: 0; position: relative;}
   .perm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-top: 10px; background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #e9ecef;}
   .perm-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #333;}
   .perm-item input { cursor: pointer; width: 16px; height: 16px; accent-color: var(--blue);}
@@ -305,9 +320,11 @@
                             <select id="confModVista" class="inp"><option value="tabla">Vista Tabla (Registros e Inventarios)</option><option value="directorio">Vista Directorio (Tarjetas de Contactos)</option></select>
                         </div>
                         <div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">Columnas (Separadas por COMA)</label><input id="confModCols" class="inp" placeholder="Ej: Nombre, Teléfono, Correo, Departamento"><small style="color:var(--gray);">*Si eliges Directorio, la 1ra columna será el Título de la tarjeta, y el resto serán campos con botón de copiar.</small></div>
-                        <div class="span-2" style="text-align:right;"><button onclick="window.crearModuloDinamico()" class="btn btn-s"><i class="fa-solid fa-layer-group"></i> Generar Módulo</button></div>
+                        <div class="span-2" style="text-align:right;">
+                            <button onclick="window.cancelarEdicionModulo()" id="btnCancelMod" class="btn btn-d hidden" style="margin-right: 5px;"><i class="fa-solid fa-times"></i> Cancelar</button>
+                            <button onclick="window.guardarModuloDinamico()" id="btnSaveMod" class="btn btn-s"><i class="fa-solid fa-layer-group"></i> Generar Módulo</button>
+                        </div>
                     </div>
-                    <h4 style="color:var(--blue);">Módulos Creados</h4>
                     <div id="listaModulosCreados"></div>
                 </div>
 
@@ -358,7 +375,7 @@
   let DB = { cob: [], tec: [], enc: [], configModulos: [], dynData: [], roles: [] };
   let DB_USERS = []; let SESION = { id: null, u: null, r: null, t: null };
   let PAGE = 1, PAGE_TEC = 1, PAGE_ENC = 1, PAGE_DYN = 1; let ITEMS_PER_PAGE_ENC = 16;
-  let EDITING_USER_ID = null, EDITING_LOCATION_ID = null, EDITING_TEC_ID = null, EDITING_ENC_ID = null, EDITING_DYN_ID = null, EDITING_ROLE_ID = null;
+  let EDITING_USER_ID = null, EDITING_LOCATION_ID = null, EDITING_TEC_ID = null, EDITING_ENC_ID = null, EDITING_DYN_ID = null, EDITING_ROLE_ID = null, EDITING_MOD_ID = null;
   let CURRENT_MODULE = 'cob'; let CURRENT_DYN_CONFIG = null;
   let isFirstUserLoad = true; let knownPendingIds = new Set(); let heartbeatInterval;
 
@@ -589,7 +606,7 @@
       `).join('') || '<p style="font-size:13px; color:var(--gray);">No hay roles personalizados.</p>';
   };
 
-  // ================= CREADOR DE MÓDULOS (DINÁMICOS) =================
+  // ================= CREADOR DE MÓDULOS (DINÁMICOS Y FIJOS) =================
   function listenToConfigModulos() { onSnapshot(collection(db, "modulos_config"), (snapshot) => { DB.configModulos = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); window.buildDynamicTabs(); if(CURRENT_MODULE === 'ajs') window.renderListaModulos(); }); }
   function listenToDynData() { onSnapshot(collection(db, "modulos_data"), (snapshot) => { DB.dynData = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); if(CURRENT_MODULE.startsWith('dyn_')) window.renderDynData(); }); }
 
@@ -603,27 +620,88 @@
     window.applyPermissionsToUI(); 
   };
 
-  window.crearModuloDinamico = async function() {
-    const nombre = document.getElementById('confModName').value.trim(); const vista = document.getElementById('confModVista').value; const colsRaw = document.getElementById('confModCols').value.trim();
-    if(!nombre || !colsRaw) return alert("Completa nombre y columnas"); const cols = colsRaw.split(',').map(c => c.trim()).filter(c => c !== '');
+  window.guardarModuloDinamico = async function() {
+    const nombre = document.getElementById('confModName').value.trim(); 
+    const vista = document.getElementById('confModVista').value; 
+    const colsRaw = document.getElementById('confModCols').value.trim();
+    
+    if(!nombre || !colsRaw) return alert("Completa nombre y columnas"); 
+    const cols = colsRaw.split(',').map(c => c.trim()).filter(c => c !== '');
     if(cols.length === 0) return alert("Columnas inválidas");
-    try { await addDoc(collection(db, "modulos_config"), { nombre, vista, columnas: cols }); document.getElementById('confModName').value = ''; document.getElementById('confModCols').value = ''; alert("¡Módulo Creado!"); } catch(e) { alert("Error"); }
+    
+    try { 
+        if (EDITING_MOD_ID) {
+            await updateDoc(doc(db, "modulos_config", EDITING_MOD_ID), { nombre, vista, columnas: cols });
+            alert("¡Módulo Actualizado!");
+            window.cancelarEdicionModulo();
+        } else {
+            await addDoc(collection(db, "modulos_config"), { nombre, vista, columnas: cols }); 
+            alert("¡Módulo Creado!");
+            document.getElementById('confModName').value = ''; 
+            document.getElementById('confModCols').value = ''; 
+        }
+    } catch(e) { alert("Error al guardar módulo"); }
+  };
+
+  window.editarModuloDinamico = function(id) {
+      EDITING_MOD_ID = id;
+      const mod = DB.configModulos.find(m => m.id === id);
+      
+      document.getElementById('confModName').value = mod.nombre;
+      document.getElementById('confModVista').value = mod.vista;
+      document.getElementById('confModCols').value = mod.columnas.join(', ');
+      
+      const btnSave = document.getElementById('btnSaveMod');
+      btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios';
+      btnSave.classList.replace('btn-s', 'btn-p');
+      document.getElementById('btnCancelMod').classList.remove('hidden');
+      
+      const container = document.querySelector('.ajs-content');
+      if(container) container.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  window.cancelarEdicionModulo = function() {
+      EDITING_MOD_ID = null;
+      document.getElementById('confModName').value = '';
+      document.getElementById('confModVista').value = 'tabla';
+      document.getElementById('confModCols').value = '';
+      
+      const btnSave = document.getElementById('btnSaveMod');
+      btnSave.innerHTML = '<i class="fa-solid fa-layer-group"></i> Generar Módulo';
+      btnSave.classList.replace('btn-p', 'btn-s');
+      document.getElementById('btnCancelMod').classList.add('hidden');
   };
 
   window.renderListaModulos = function() {
-    document.getElementById('listaModulosCreados').innerHTML = DB.configModulos.map(m => `
+    let html = `
+    <h5 style="color:var(--blue); margin-bottom:5px; border-bottom:1px solid #eee; padding-bottom:5px;"><i class="fa-solid fa-lock"></i> Módulos del Sistema (Fijos)</h5>
+    <div class="mod-list-item" style="background:#e9ecef; cursor:not-allowed;"><div><b>Cobertura</b> <span style="font-size:11px;color:var(--gray);margin-left:5px;">(Vista Especial)</span> <br><small style="color:var(--gray);">Municipio, Nombre, Categoría, Zona, Referencia, Estado</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
+    <div class="mod-list-item" style="background:#e9ecef; cursor:not-allowed;"><div><b>Técnicos</b> <span style="font-size:11px;color:var(--gray);margin-left:5px;">(Vista Especial)</span> <br><small style="color:var(--gray);">Nombre, Teléfono 1, Teléfono 2, Área, DPI, Placa</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
+    <div class="mod-list-item" style="background:#e9ecef; cursor:not-allowed;"><div><b>Directorio Domicilio</b> <span style="font-size:11px;color:var(--gray);margin-left:5px;">(Directorio Especial)</span> <br><small style="color:var(--gray);">Nombre, Categoría, Teléfono, Correo, Puesto</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
+
+    <h5 style="color:var(--blue); margin-top:20px; margin-bottom:5px; border-bottom:1px solid #eee; padding-bottom:5px;"><i class="fa-solid fa-puzzle-piece"></i> Módulos Personalizados</h5>
+    `;
+
+    let dynHtml = DB.configModulos.map(m => `
       <div class="mod-list-item"><div><b>${m.nombre}</b> <span style="font-size:11px;color:var(--gray);margin-left:5px;">(Vista: ${m.vista})</span> <br><small style="color:var(--gray);">${m.columnas.join(', ')}</small></div>
-      <button onclick="window.eliminarModuloDinamico('${m.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i> Eliminar</button></div>
-    `).join('') || '<p style="font-size:13px; color:var(--gray);">No hay módulos.</p>';
+      <div>
+        <button onclick="window.editarModuloDinamico('${m.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;"><i class="fa-solid fa-pencil"></i> Editar</button>
+        <button onclick="window.eliminarModuloDinamico('${m.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i> Eliminar</button>
+      </div></div>
+    `).join('');
+
+    document.getElementById('listaModulosCreados').innerHTML = html + (dynHtml || '<p style="font-size:13px; color:var(--gray);">No hay módulos personalizados.</p>');
   };
 
   window.eliminarModuloDinamico = async function(id) {
-    if(!confirm("¿Eliminar módulo y todos sus datos?")) return;
+    if(!confirm("¿Eliminar módulo y todos sus datos? Esta acción no se puede deshacer.")) return;
     try {
       await deleteDoc(doc(db, "modulos_config", id)); const batch = writeBatch(db);
       DB.dynData.filter(d => d.modId === id).forEach(d => batch.delete(doc(db, "modulos_data", d.id))); await batch.commit();
-      if(CURRENT_MODULE === 'dyn_'+id) window.switchModule('cob');
-    } catch(e) { alert("Error"); }
+      
+      if (EDITING_MOD_ID === id) window.cancelarEdicionModulo(); 
+      if (CURRENT_MODULE === 'dyn_'+id) window.switchModule('cob');
+    } catch(e) { alert("Error al eliminar"); }
   };
 
   // ================= RENDERIZADOR DINÁMICO (TABLA VS DIRECTORIO) =================
@@ -659,7 +737,7 @@
               
               let bodyHtml = "";
               CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => {
-                  if(i < 1) return; // <--- CAMBIO CLAVE: Empezamos desde la columna 1 en lugar de la 2
+                  if(i < 1) return; 
                   let val = row['c'+i];
                   if(val) bodyHtml += `<div class="enc-contact" onclick="window.copyToClip('${val}')" title="Copiar ${colName}"><div style="display:flex; flex-direction:column;"><span style="font-size:10px; color:#adb5bd; font-weight:bold; text-transform:uppercase;">${colName}</span><span>${val}</span></div><div class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</div></div>`;
               });
@@ -683,7 +761,12 @@
           let html = `<div class="card"><div class="table-responsive"><table><thead><tr>${ths}</tr></thead><tbody>`;
           chunk.forEach(row => {
               html += `<tr>`;
-              CURRENT_DYN_CONFIG.columnas.forEach((_, i) => html += `<td>${i===0?`<b>${row['c'+i]||""}</b>`:row['c'+i]||""}</td>`);
+              CURRENT_DYN_CONFIG.columnas.forEach((_, i) => {
+                  let val = row['c'+i] || "";
+                  // NUEVO: Verificación de longitud para añadir caja con scroll si es muy largo
+                  let displayVal = val.length > 60 ? `<div class="cell-long-text" title="Haga scroll para leer más">${val}</div>` : val;
+                  html += `<td>${i===0?`<b>${displayVal}</b>`:displayVal}</td>`;
+              });
               if(canEdit) {
                   let act = `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:6px 10px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`;
                   if(isAdmin) act += ` <button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:6px 10px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`;
