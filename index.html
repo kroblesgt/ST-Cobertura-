@@ -7,11 +7,24 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
+<!-- QUILL JS PARA EL EDITOR DE TEXTO ENRIQUECIDO -->
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
+<!-- SORTABLE JS PARA ARRASTRAR PESTAÑAS -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
 <style>
-  :root { --blue: #002855; --light-blue: #0056b3; --green: #217346; --red: #dc3545; --bg: #f4f6f8; --gray: #6c757d; }
+  :root { 
+      /* PALETA BASE GRUPO DISTELSA (UI y estructura) */
+      --blue: #0A2240;        /* Azul profundo corporativo */
+      --light-blue: #009FE3;  /* Celeste vibrante Distelsa */
+      --green: #00A65A;       
+      --dark-gray: #495057;   
+      --mid-gray: #6c757d;    
+      --light-gray: #e9ecef;  
+      --bg: #f4f6f8; 
+  }
   body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: var(--bg); margin: 0; color: #333; }
   .hidden { display: none !important; }
 
@@ -22,7 +35,8 @@
   
   .nav-tabs { background: white; display: flex; padding: 0 30px; border-bottom: 3px solid var(--blue); box-shadow: 0 2px 10px rgba(0,0,0,0.05); gap: 20px; overflow-x: auto; scrollbar-width: none;}
   .nav-tabs::-webkit-scrollbar { display: none; }
-  .tab-btn { padding: 12px 15px; font-weight: 600; font-size: 14px; color: var(--gray); cursor: pointer; border-bottom: 3px solid transparent; transition: 0.2s; display: flex; align-items: center; gap: 8px; white-space: nowrap;}
+  .tab-btn { padding: 12px 15px; font-weight: 600; font-size: 14px; color: var(--mid-gray); cursor: grab; border-bottom: 3px solid transparent; transition: 0.2s; display: flex; align-items: center; gap: 8px; white-space: nowrap; user-select: none;}
+  .tab-btn:active { cursor: grabbing; }
   .tab-btn:hover { color: var(--blue); }
   .tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
 
@@ -41,7 +55,7 @@
   .search-inp { width: 100%; padding: 12px 12px 12px 35px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; box-sizing: border-box; }
   .action-btns { display: flex; gap: 10px; flex-wrap: wrap; }
   .btn { border: none; padding: 10px 15px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: white; }
-  .btn-p { background: var(--blue); } .btn-s { background: #28a745; } .btn-x { background: var(--green); } .btn-d { background: var(--red); } .btn-o { background: #fd7e14; }
+  .btn-p { background: var(--blue); } .btn-s { background: var(--light-blue); } .btn-x { background: var(--green); } .btn-d { background: var(--dark-gray); } .btn-o { background: var(--mid-gray); }
   .btn:hover { opacity: 0.9; }
   .btn-mini { border: none; border-radius: 4px; padding: 4px 8px; font-size: 11px; cursor: pointer; font-weight: bold; margin-left: 5px; color: white;}
   .btn-mini:hover { opacity: 0.8; }
@@ -49,10 +63,10 @@
   /* TABLAS */
   .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; min-width: 900px; }
-  th { text-align: left; padding: 12px 15px; background: #f8f9fa; color: #495057; border-bottom: 2px solid #e9ecef; }
+  th { text-align: left; padding: 12px 15px; background: #f8f9fa; color: var(--blue); border-bottom: 2px solid #e9ecef; }
   td { padding: 10px 15px; border-bottom: 1px solid #f1f3f5; vertical-align: middle; word-wrap: break-word; }
   tr:hover td { background-color: #f8f9fa; }
-  .badge { display: block; padding: 6px 0; text-align: center; border-radius: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; color: white; width: 100%; }
+  .badge { display: block; padding: 6px 0; text-align: center; border-radius: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; color: white; width: 100%; text-shadow: 0 1px 2px rgba(0,0,0,0.3);}
   .badge-tag { display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; color: #333; background: #e9ecef; }
 
   /* DIRECTORIO CARDS */
@@ -64,13 +78,13 @@
   .enc-avatar { width: 45px; height: 45px; min-width: 45px; border-radius: 50%; background: linear-gradient(135deg, var(--blue) 0%, var(--light-blue) 100%); color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; margin-right: 15px;}
   .enc-info { flex: 1; }
   .enc-name { font-weight: 800; font-size: 16px; color: var(--blue); margin-bottom: 3px; line-height: 1.1;}
-  .enc-role { font-size: 12px; color: #495057; font-weight: 600; line-height: 1.3; }
+  .enc-role { font-size: 12px; color: var(--mid-gray); font-weight: 600; line-height: 1.3; }
   .enc-body { padding: 15px; font-size: 13px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
-  .enc-contact { display: flex; justify-content: space-between; align-items: center; color: #495057; text-decoration: none; padding: 8px 10px; background: #f8f9fa; border-radius: 6px; border: 1px solid #f1f3f5; transition: 0.2s; cursor: pointer; user-select: none;}
-  .enc-contact:hover { background: #e9ecef; color: var(--blue); border-color: #ced4da;}
+  .enc-contact { display: flex; justify-content: space-between; align-items: center; color: var(--dark-gray); text-decoration: none; padding: 8px 10px; background: #f8f9fa; border-radius: 6px; border: 1px solid #f1f3f5; transition: 0.2s; cursor: pointer; user-select: none;}
+  .enc-contact:hover { background: #e9ecef; color: var(--light-blue); border-color: #ced4da;}
   .enc-contact-icon { width: 20px; color: var(--light-blue); text-align: center; }
-  .enc-copy-btn { color: var(--gray); font-size: 13px; background: white; padding: 3px 8px; border-radius: 4px; border: 1px solid #ced4da; transition: 0.2s; }
-  .enc-contact:hover .enc-copy-btn { background: var(--blue); color: white; border-color: var(--blue); }
+  .enc-copy-btn { color: var(--mid-gray); font-size: 13px; background: white; padding: 3px 8px; border-radius: 4px; border: 1px solid #ced4da; transition: 0.2s; }
+  .enc-contact:hover .enc-copy-btn { background: var(--light-blue); color: white; border-color: var(--light-blue); }
   .enc-footer { padding: 10px 15px; border-top: 1px solid #f1f3f5; display: flex; justify-content: flex-end; gap: 8px; background: white;}
   
   /* PROCEDIMIENTOS WIKI FULL WIDTH */
@@ -81,26 +95,23 @@
   .proc-search-inp:focus { background: white; border-color: var(--light-blue); outline: none; }
   .proc-list { flex: 1; overflow-y: auto; padding: 10px 0; scrollbar-width: thin; }
   .proc-cat-header { padding: 15px 20px 8px; font-weight: 700; font-size: 11px; color: #adb5bd; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; display: flex; align-items: center; gap: 8px; }
-  .proc-item-link { padding: 10px 20px 10px 30px; font-size: 14px; color: #495057; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 12px; border-left: 3px solid transparent; text-decoration: none;}
+  .proc-item-link { padding: 10px 20px 10px 30px; font-size: 14px; color: var(--dark-gray); cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 12px; border-left: 3px solid transparent; text-decoration: none;}
   .proc-item-link:hover { background: #e9ecef; color: var(--blue); }
-  .proc-item-link.active { background: #e8f0fe; color: var(--blue); font-weight: 600; border-left-color: var(--blue); }
+  .proc-item-link.active { background: #e8f0fe; color: var(--blue); font-weight: 600; border-left-color: var(--light-blue); }
   
   .proc-viewer { flex: 1; background: #f1f3f5; overflow-y: auto; padding: 40px; display: flex; justify-content: center; align-items: flex-start; scrollbar-width: thin; }
   .proc-document { background: white; width: 100%; max-width: 900px; min-height: 100%; padding: 60px 80px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-radius: 8px; box-sizing: border-box; }
-  
-  /* ESTILOS DEL CONTENIDO RENDERIZADO */
-  /* Aplicará ql-editor si fue hecho visualmente, de lo contrario respetará tu HTML puro */
   .proc-document img { max-width: 100%; }
 
   /* ONLINE & NOTIF */
-  .online-indicator { font-size: 11px; color: #28a745; font-weight: bold; margin-right: 15px; background: #e8f8f5; padding: 6px 12px; border-radius: 20px; border: 1px solid #d1f2eb; cursor: pointer; position: relative; display: flex; align-items: center; gap: 5px;}
+  .online-indicator { font-size: 11px; color: var(--light-blue); font-weight: bold; margin-right: 15px; background: #e0f2fe; padding: 6px 12px; border-radius: 20px; border: 1px solid #bae6fd; cursor: pointer; position: relative; display: flex; align-items: center; gap: 5px;}
   .online-list-popup { display: none; position: absolute; top: 120%; right: 0; background: white; border: 1px solid #ddd; width: 200px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 6px; padding: 10px; z-index: 100; color: #333; font-weight: normal; max-height: 250px; overflow-y: auto;}
   .online-indicator:hover .online-list-popup { display: block; }
   .online-item { padding: 6px 0; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 8px; font-size: 12px;}
   .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
-  .toast { background: white; border-left: 5px solid var(--red); box-shadow: 0 4px 15px rgba(0,0,0,0.2); padding: 15px 20px; border-radius: 4px; display: flex; align-items: center; gap: 12px; font-size: 14px; color: #333; animation: slideUp 0.3s ease-out forwards; min-width: 250px; }
+  .toast { background: white; border-left: 5px solid var(--light-blue); box-shadow: 0 4px 15px rgba(0,0,0,0.2); padding: 15px 20px; border-radius: 4px; display: flex; align-items: center; gap: 12px; font-size: 14px; color: #333; animation: slideUp 0.3s ease-out forwards; min-width: 250px; }
   .toast.success { border-left-color: var(--green); } .toast.success i { color: var(--green); }
-  .toast i { font-size: 20px; color: var(--red); }
+  .toast i { font-size: 20px; color: var(--light-blue); }
   .toast-fade { animation: fadeOut 0.3s ease-in forwards; }
   @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(20px); } }
@@ -115,9 +126,9 @@
   /* DASHBOARD DE AJUSTES */
   .ajs-layout { display: flex; gap: 20px; align-items: flex-start; }
   .ajs-sidebar { width: 250px; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 15px 0; flex-shrink: 0;}
-  .ajs-menu-btn { padding: 15px 20px; display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: none; border: none; font-size: 14px; font-weight: 600; color: #495057; cursor: pointer; transition: 0.2s; border-left: 3px solid transparent;}
+  .ajs-menu-btn { padding: 15px 20px; display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: none; border: none; font-size: 14px; font-weight: 600; color: var(--dark-gray); cursor: pointer; transition: 0.2s; border-left: 3px solid transparent;}
   .ajs-menu-btn:hover { background: #f8f9fa; color: var(--blue); }
-  .ajs-menu-btn.active { background: #e8f0fe; color: var(--blue); border-left-color: var(--blue); }
+  .ajs-menu-btn.active { background: #e8f0fe; color: var(--blue); border-left-color: var(--light-blue); }
   .ajs-content { flex: 1; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 25px; min-width: 0; position: relative;}
   .perm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-top: 10px; background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #e9ecef;}
   .perm-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #333;}
@@ -149,20 +160,20 @@
 <div id="viewLogin" class="login-wrapper">
   <div id="boxLogin" class="login-box">
     <h3 style="color:var(--blue); margin-top:0;">ST - CALL CENTER</h3>
-    <p style="font-size:12px; color:#6c757d; margin-bottom:20px;">ACCESO AL SISTEMA</p>
-    <input id="txtUser" class="inp" placeholder="Usuario">
+    <p style="font-size:12px; color:var(--mid-gray); margin-bottom:20px;">ACCESO AL SISTEMA</p>
+    <input id="txtUser" class="inp" placeholder="Usuario (Ej. Keven.Robles)">
     <input id="txtPass" type="password" class="inp" placeholder="Contraseña">
     <button id="btnLogin" onclick="window.login()" class="btn btn-p" style="width:100%; height: 45px;">INGRESAR</button>
     <p style="font-size: 13px; margin: 15px 0 0 0;">¿No tienes cuenta? <a href="#" onclick="window.toggleAuthBoxes(true)" style="color: var(--light-blue); font-weight: bold; text-decoration: none;">Regístrate aquí</a></p>
     <hr style="border: 0; border-top: 1px solid #e9ecef; margin: 20px 0;">
-    <button onclick="window.loginInvitado()" class="btn btn-o" style="width:100%; height: 40px; background: #6c757d;"><i class="fa-solid fa-user-clock"></i> Entrar como Invitado</button>
+    <button onclick="window.loginInvitado()" class="btn btn-o" style="width:100%; height: 40px;"><i class="fa-solid fa-user-clock"></i> Entrar como Invitado</button>
   </div>
   <div id="boxRegister" class="login-box hidden">
     <h3 style="color:var(--blue); margin-top:0;">SOLICITAR ACCESO</h3>
     <input id="regUser" class="inp" placeholder="Elige tu Usuario">
     <input id="regPass" type="password" class="inp" placeholder="Elige tu Contraseña">
-    <button id="btnRegister" onclick="window.registerAccount()" class="btn btn-s" style="width:100%; height: 45px;">ENVIAR SOLICITUD</button>
-    <p style="font-size: 13px; margin: 20px 0 0 0;"><a href="#" onclick="window.toggleAuthBoxes(false)" style="color: var(--gray); text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> Volver al Login</a></p>
+    <button id="btnRegister" onclick="window.registerAccount()" class="btn btn-s" style="width:100%; height: 45px; color:white;">ENVIAR SOLICITUD</button>
+    <p style="font-size: 13px; margin: 20px 0 0 0;"><a href="#" onclick="window.toggleAuthBoxes(false)" style="color: var(--mid-gray); text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> Volver al Login</a></p>
   </div>
 </div>
 
@@ -172,30 +183,33 @@
     <div style="display: flex; align-items: center; gap: 15px;">
       <div id="notifBell" class="hidden" style="position: relative; cursor: pointer; color: var(--blue); font-size: 20px; margin-right: 5px;" onclick="window.openPendingUsers()">
         <i class="fa-solid fa-bell"></i>
-        <span id="notifBadge" class="hidden" style="position: absolute; top: -5px; right: -8px; background: var(--red); color: white; border-radius: 50%; font-size: 10px; width: 18px; height: 18px; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 2px solid white;">0</span>
+        <span id="notifBadge" class="hidden" style="position: absolute; top: -5px; right: -8px; background: var(--light-blue); color: white; border-radius: 50%; font-size: 10px; width: 18px; height: 18px; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 2px solid white;">0</span>
       </div>
       <div id="onlineMonitor" class="hidden online-indicator">
         <i class="fa-solid fa-circle" style="font-size: 8px;"></i> <span class="hide-mobile">Online:</span> <span id="onlineCount" style="margin-left:3px;">0</span>
         <div id="onlineList" class="online-list-popup">Cargando...</div>
       </div>
       <div class="user-info">
-        <div id="lblUser" style="font-weight: bold;">Usuario</div>
-        <div id="lblRol" style="color: #6c757d; text-transform: uppercase; font-size: 11px;">Rol</div>
+        <div id="lblUser" style="font-weight: bold; color:var(--blue);">Usuario</div>
+        <div id="lblRol" style="color: var(--mid-gray); text-transform: uppercase; font-size: 11px;">Rol</div>
       </div>
       <button onclick="window.logout()" class="btn btn-d" title="Salir" style="padding: 8px 12px;"><i class="fa-solid fa-power-off"></i></button>
     </div>
   </header>
   
+  <!-- CONTENEDOR SORTABLE PARA PESTAÑAS -->
   <div class="nav-tabs" id="mainTabsContainer">
     <div id="tabCob" class="tab-btn active" onclick="window.switchModule('cob')"><i class="fa-solid fa-map-location-dot"></i> Cobertura</div>
     <div id="tabTec" class="tab-btn" onclick="window.switchModule('tec')"><i class="fa-solid fa-screwdriver-wrench"></i> Técnicos</div>
     <div id="tabEnc" class="tab-btn" onclick="window.switchModule('enc')"><i class="fa-regular fa-address-card"></i> Directorio</div>
     <div id="tabProc" class="tab-btn" onclick="window.switchModule('proc')"><i class="fa-solid fa-book-open"></i> Procedimientos</div>
-    <div id="tabAjs" class="tab-btn hidden" onclick="window.switchModule('ajs')" style="margin-left: auto; color:#343a40;"><i class="fa-solid fa-gear"></i> Ajustes</div>
+    <!-- Pestañas dinámicas se inyectan aquí -->
+    <div id="tabAjs" class="tab-btn hidden" onclick="window.switchModule('ajs')" style="color:var(--dark-gray);"><i class="fa-solid fa-gear"></i> Ajustes</div>
   </div>
 
   <div class="container" id="mainContainer">
       
+    <!-- 1. MÓDULO COBERTURA -->
     <div id="moduloCobertura">
         <div class="tools">
           <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchBox" class="search-inp" placeholder="Buscar colinas, milagro z6..." onkeyup="window.renderTable(true)"></div>
@@ -218,6 +232,7 @@
         </div>
     </div>
 
+    <!-- 2. MÓDULO TÉCNICOS -->
     <div id="moduloTecnicos" class="hidden">
         <div class="tools">
           <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchTecBox" class="search-inp" placeholder="Buscar técnico, placa, DPI..." onkeyup="window.renderTecnicosTable(true)"></div>
@@ -240,6 +255,7 @@
         </div>
     </div>
     
+    <!-- 3. MÓDULO ENCARGADOS -->
     <div id="moduloEncargados" class="hidden">
         <div class="tools">
           <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchEncBox" class="search-inp" placeholder="Buscar por nombre, área o correo..." onkeyup="window.renderEncargadosTable(true)"></div>
@@ -255,6 +271,7 @@
         </div>
     </div>
 
+    <!-- 4. MÓDULO PROCEDIMIENTOS -->
     <div id="moduloProcedimientos" class="hidden">
         <div class="proc-sidebar">
             <div class="proc-sidebar-header">
@@ -265,19 +282,21 @@
                 </div>
             </div>
             <div class="proc-list" id="procSidebarMenu">
-                </div>
+                <!-- Categorías de procedimientos se renderizan aquí -->
+            </div>
         </div>
         <div class="proc-viewer" id="procViewerScrollArea">
             <div class="proc-document" id="procViewerContainer">
                 <div style="text-align:center; padding: 100px 0; color: #adb5bd;">
                     <i class="fa-solid fa-file-signature" style="font-size: 60px; margin-bottom:20px; color:#dee2e6;"></i>
-                    <h2 style="color: #6c757d; margin-top: 0;">Selecciona un procedimiento</h2>
+                    <h2 style="color: var(--mid-gray); margin-top: 0;">Selecciona un procedimiento</h2>
                     <p style="font-size: 15px;">Usa el menú de la izquierda para explorar los procesos y guías.</p>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- 5. CONTENEDOR DINÁMICO -->
     <div id="moduloDinamico" class="hidden">
         <div class="tools">
           <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchDynBox" class="search-inp" placeholder="Buscar en este módulo..." onkeyup="window.renderDynData(true)"></div>
@@ -293,36 +312,43 @@
         </div>
     </div>
 
+    <!-- 6. PANEL DE AJUSTES MAESTRO -->
     <div id="moduloAjustes" class="hidden">
         <div class="ajs-layout">
+            <!-- Sidebar Ajustes -->
             <div class="ajs-sidebar">
-                <button id="menuAjsUsr" class="ajs-menu-btn active" onclick="window.showAjsView('usr')"><i class="fa-solid fa-users" style="width:20px;"></i> Accesos y Usuarios</button>
-                <button id="menuAjsRol" class="ajs-menu-btn" onclick="window.showAjsView('rol')"><i class="fa-solid fa-user-shield" style="width:20px;"></i> Roles y Permisos</button>
-                <button id="menuAjsMod" class="ajs-menu-btn" onclick="window.showAjsView('mod')"><i class="fa-solid fa-layer-group" style="width:20px;"></i> Creador de Módulos</button>
-                <button id="menuAjsProc" class="ajs-menu-btn" onclick="window.showAjsView('proc')"><i class="fa-solid fa-file-code" style="width:20px;"></i> Gestor Procedimientos</button>
+                <button id="menuAjsUsr" class="ajs-menu-btn active hidden" onclick="window.showAjsView('usr')"><i class="fa-solid fa-users" style="width:20px;"></i> Accesos y Usuarios</button>
+                <button id="menuAjsRol" class="ajs-menu-btn hidden" onclick="window.showAjsView('rol')"><i class="fa-solid fa-user-shield" style="width:20px;"></i> Roles y Permisos</button>
+                <button id="menuAjsMod" class="ajs-menu-btn hidden" onclick="window.showAjsView('mod')"><i class="fa-solid fa-layer-group" style="width:20px;"></i> Creador de Módulos</button>
+                <button id="menuAjsProc" class="ajs-menu-btn hidden" onclick="window.showAjsView('proc')"><i class="fa-solid fa-file-code" style="width:20px;"></i> Gestor Procedimientos</button>
+                <button id="menuAjsCol" class="ajs-menu-btn hidden" onclick="window.showAjsView('col')"><i class="fa-solid fa-palette" style="width:20px;"></i> Colores Cobertura</button>
             </div>
 
+            <!-- Content Ajustes -->
             <div class="ajs-content">
                 
-                <div id="ajsViewUsr">
+                <!-- VISTA: USUARIOS -->
+                <div id="ajsViewUsr" class="hidden">
                     <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-users"></i> Gestión de Accesos</h3>
                     <div class="action-btns" style="margin-bottom: 15px; justify-content: flex-end;"><button onclick="document.getElementById('fileImportUsr').click()" class="btn btn-o"><i class="fa-solid fa-file-import"></i> Importar CSV</button><button onclick="window.exportUsersToExcel()" class="btn btn-x"><i class="fa-solid fa-file-export"></i> Exportar Excel</button></div>
                     <div class="form-inline"><input id="uUser" class="inp" placeholder="Usuario"><input id="uPass" class="inp" placeholder="Clave">
                       <select id="uRol" class="inp">
                         <option value="agente">Agente (Default)</option><option value="invitado">Invitado (Lector)</option><option value="admin">Administrador (Total)</option><option value="pendiente">Pendiente (Bloqueado)</option>
                       </select>
-                      <div style="display: flex; gap: 10px; width: 100%;"><button id="btnUserAction" onclick="window.submitUser()" class="btn btn-s" style="flex: 1;"><i class="fa-solid fa-plus"></i></button><button onclick="window.clearUserForm()" class="btn btn-d" style="flex: 1;"><i class="fa-solid fa-eraser"></i></button></div>
+                      <div style="display: flex; gap: 10px; width: 100%;"><button id="btnUserAction" onclick="window.submitUser()" class="btn btn-s" style="flex: 1; color:white;"><i class="fa-solid fa-plus"></i></button><button onclick="window.clearUserForm()" class="btn btn-d" style="flex: 1;"><i class="fa-solid fa-eraser"></i></button></div>
                     </div>
-                    <div class="search-wrap" style="margin-bottom: 10px;"><i class="fa-solid fa-search"></i><input id="searchUserBox" class="search-inp" placeholder="Buscar usuario o rol (ej: pendiente)..." onkeyup="window.renderUserList()"></div>
+                    <div class="search-wrap" style="margin-bottom: 10px;"><i class="fa-solid fa-search"></i><input id="searchUserBox" class="search-inp" placeholder="Buscar usuario o rol..." onkeyup="window.renderUserList()"></div>
                     <div id="userListContainer" style="max-height: 350px; overflow-y: auto; border: 1px solid #eee; border-radius: 4px;"></div>
                 </div>
 
+                <!-- VISTA: ROLES Y PERMISOS -->
                 <div id="ajsViewRol" class="hidden">
                     <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-user-shield"></i> Roles Personalizados</h3>
-                    <p style="font-size:13px; color:var(--gray);">Crea roles a la medida y define a qué partes del sistema tienen acceso.</p>
+                    <p style="font-size:13px; color:var(--mid-gray);">Crea roles a la medida y define a qué partes del sistema tienen acceso.</p>
                     
                     <div style="background:#f8f9fa; padding:15px; border-radius:6px; border:1px solid #e9ecef; margin-bottom:20px;">
                         <input id="rolName" class="inp" placeholder="Nombre del nuevo Rol (Ej: Mesa de Control)">
+                        
                         <h4 style="margin: 15px 0 5px; font-size:14px; color:var(--blue);">Permisos Generales</h4>
                         <div class="perm-grid">
                             <label class="perm-item"><input type="checkbox" id="p_cob_view" checked> Ver Cobertura</label>
@@ -343,33 +369,45 @@
 
                             <label class="perm-item"><input type="checkbox" id="p_proc_view" checked> Ver Procedimientos</label>
                         </div>
-                        <div style="text-align:right; margin-top:15px;"><button id="btnRoleAction" onclick="window.saveRole()" class="btn btn-s">Guardar Rol</button></div>
+
+                        <h4 style="margin: 15px 0 5px; font-size:14px; color:var(--blue);">Permisos de Ajustes</h4>
+                        <div class="perm-grid">
+                            <label class="perm-item"><input type="checkbox" id="p_ajs_usr"> Usuarios y Accesos</label>
+                            <label class="perm-item"><input type="checkbox" id="p_ajs_rol"> Roles y Permisos</label>
+                            <label class="perm-item"><input type="checkbox" id="p_ajs_mod"> Creador de Módulos</label>
+                            <label class="perm-item"><input type="checkbox" id="p_ajs_proc"> Gestor Procedimientos</label>
+                            <label class="perm-item"><input type="checkbox" id="p_ajs_col"> Colores Cobertura</label>
+                        </div>
+
+                        <div style="text-align:right; margin-top:15px;"><button id="btnRoleAction" onclick="window.saveRole()" class="btn btn-s" style="color:white;">Guardar Rol</button></div>
                     </div>
                     <h4 style="color:var(--blue);">Roles Creados</h4>
                     <div id="rolesListContainer"></div>
                 </div>
 
+                <!-- VISTA: CREADOR DE MÓDULOS -->
                 <div id="ajsViewMod" class="hidden">
                     <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-layer-group"></i> Creador de Módulos</h3>
-                    <p style="font-size:13px; color:var(--gray);">Agrega nuevas pestañas al sistema. Define el nombre, diseño y columnas.</p>
+                    <p style="font-size:13px; color:var(--mid-gray);">Agrega nuevas pestañas al sistema. Define el nombre, diseño y columnas.</p>
                     
                     <div class="form-grid" style="background:#f8f9fa; padding:15px; border-radius:6px; margin-bottom:20px; border:1px solid #e9ecef;">
                         <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Nombre del Módulo</label><input id="confModName" class="inp" placeholder="Ej: Proveedores, Inventario..."></div>
                         <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Tipo de Diseño (Vista)</label>
                             <select id="confModVista" class="inp"><option value="tabla">Vista Tabla (Registros e Inventarios)</option><option value="directorio">Vista Directorio (Tarjetas de Contactos)</option></select>
                         </div>
-                        <div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">Columnas (Separadas por COMA)</label><input id="confModCols" class="inp" placeholder="Ej: Nombre, Teléfono, Correo, Departamento"><small style="color:var(--gray);">*Si eliges Directorio, la 1ra columna será el Título de la tarjeta, y el resto serán campos con botón de copiar.</small></div>
+                        <div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">Columnas (Separadas por COMA)</label><input id="confModCols" class="inp" placeholder="Ej: Nombre, Teléfono, Correo, Departamento"><small style="color:var(--mid-gray);">*Si eliges Directorio, la 1ra columna será el Título de la tarjeta, y el resto serán campos con botón de copiar.</small></div>
                         <div class="span-2" style="text-align:right;">
                             <button onclick="window.cancelarEdicionModulo()" id="btnCancelMod" class="btn btn-d hidden" style="margin-right: 5px;"><i class="fa-solid fa-times"></i> Cancelar</button>
-                            <button onclick="window.guardarModuloDinamico()" id="btnSaveMod" class="btn btn-s"><i class="fa-solid fa-layer-group"></i> Generar Módulo</button>
+                            <button onclick="window.guardarModuloDinamico()" id="btnSaveMod" class="btn btn-s" style="color:white;"><i class="fa-solid fa-layer-group"></i> Generar Módulo</button>
                         </div>
                     </div>
                     <div id="listaModulosCreados"></div>
                 </div>
 
+                <!-- VISTA: GESTOR PROCEDIMIENTOS -->
                 <div id="ajsViewProc" class="hidden">
                     <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-file-code"></i> Gestor de Procedimientos</h3>
-                    <p style="font-size:13px; color:var(--gray);">Usa el editor visual para guías rápidas, o el modo "HTML Puro" para insertar tus propias maquetas y diseños personalizados.</p>
+                    <p style="font-size:13px; color:var(--mid-gray);">Usa el editor visual para guías rápidas, o el modo "HTML Puro" para insertar tus propias maquetas y diseños personalizados.</p>
                     
                     <div class="form-grid" style="background:#f8f9fa; padding:15px; border-radius:6px; margin-bottom:20px; border:1px solid #e9ecef;">
                         <div>
@@ -381,37 +419,70 @@
                             <input id="admProcTit" class="inp" placeholder="Ej: ¿Cómo crear boleta?">
                         </div>
                         
+                        <!-- SELECTOR DE MODO Y ÁREA DE EDICIÓN -->
                         <div class="span-2" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: -10px;">
                             <label style="font-size:12px; font-weight:bold; color:var(--blue);">Contenido del Procedimiento</label>
                             <div>
                                 <button id="btnModoVisual" onclick="window.setProcMode('visual')" class="btn-mini" style="background:var(--blue);"><i class="fa-solid fa-pen-nib"></i> Modo Visual</button>
-                                <button id="btnModoCodigo" onclick="window.setProcMode('codigo')" class="btn-mini" style="background:#6c757d;"><i class="fa-solid fa-code"></i> HTML Puro</button>
+                                <button id="btnModoCodigo" onclick="window.setProcMode('codigo')" class="btn-mini" style="background:var(--mid-gray);"><i class="fa-solid fa-code"></i> HTML Puro</button>
                             </div>
                         </div>
 
+                        <!-- MODO VISUAL (QUILL) -->
                         <div class="span-2" id="boxProcVisual">
                             <div id="admProcEditor" style="height: 250px; background: white; border-radius: 0 0 4px 4px;"></div>
                         </div>
                         
+                        <!-- MODO CÓDIGO (RAW HTML) -->
                         <div class="span-2 hidden" id="boxProcCodigo">
                             <textarea id="admProcHtml" class="inp" style="font-family: monospace; font-size:13px; background:#212529; color:#f8f9fa; height: 292px; margin:0; resize: vertical;" placeholder="<h1>Tu título</h1><p>Pega tu código HTML personalizado aquí. El sistema no lo alterará.</p>"></textarea>
                         </div>
 
+                        <!-- SUBIDA DE PDF -->
                         <div class="span-2" style="background: white; border: 1px dashed #ced4da; padding: 15px; border-radius: 6px; margin-top: 5px;">
-                            <label style="font-size:12px; font-weight:bold; color:var(--blue); margin-bottom: 5px; display:block;"><i class="fa-solid fa-file-pdf" style="color:var(--red)"></i> Adjuntar Archivo PDF (Opcional)</label>
+                            <label style="font-size:12px; font-weight:bold; color:var(--blue); margin-bottom: 5px; display:block;"><i class="fa-solid fa-file-pdf" style="color:var(--blue)"></i> Adjuntar Archivo PDF (Opcional)</label>
                             <input type="file" id="admProcPdf" class="inp" accept="application/pdf" style="border: none; padding: 0;">
                             <div id="pdfCurrentStatus" style="font-size: 12px; color: var(--green); margin-top: 5px; font-weight: bold;"></div>
                         </div>
 
                         <div class="span-2" style="text-align:right; margin-top: 10px;">
                             <button onclick="window.cancelarEdicionProc()" id="btnCancelProc" class="btn btn-d hidden" style="margin-right: 5px;"><i class="fa-solid fa-times"></i> Cancelar</button>
-                            <button onclick="window.guardarProc()" id="btnSaveProc" class="btn btn-s"><i class="fa-solid fa-save"></i> Guardar Procedimiento</button>
+                            <button onclick="window.guardarProc()" id="btnSaveProc" class="btn btn-s" style="color:white;"><i class="fa-solid fa-save"></i> Guardar Procedimiento</button>
                         </div>
                     </div>
                     
                     <h4 style="color:var(--blue); border-bottom:1px solid #eee; padding-bottom:5px;">Procedimientos Guardados</h4>
                     <div class="search-wrap" style="margin-bottom: 15px;"><i class="fa-solid fa-search"></i><input id="searchProcAdmBox" class="search-inp" placeholder="Buscar título o categoría..." onkeyup="window.renderAdminProcList()"></div>
                     <div id="adminProcListContainer" style="max-height:400px; overflow-y:auto;"></div>
+                </div>
+
+                <!-- VISTA: COLORES COBERTURA -->
+                <div id="ajsViewCol" class="hidden">
+                    <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-palette"></i> Colores de Cobertura</h3>
+                    <p style="font-size:13px; color:var(--mid-gray);">Elige el color exacto que quieres que se muestre en la tabla para cada tipo de estado.</p>
+                    
+                    <div class="form-grid" style="background:#f8f9fa; padding:15px; border-radius:6px; margin-bottom:20px; border:1px solid #e9ecef;">
+                        <div>
+                            <label style="font-size:12px; font-weight:bold; color:var(--blue);">Cobertura</label>
+                            <input type="color" id="colCob" class="inp" style="height:45px; padding:2px; cursor:pointer;">
+                        </div>
+                        <div>
+                            <label style="font-size:12px; font-weight:bold; color:var(--blue);">Sin Cobertura</label>
+                            <input type="color" id="colSinCob" class="inp" style="height:45px; padding:2px; cursor:pointer;">
+                        </div>
+                        <div>
+                            <label style="font-size:12px; font-weight:bold; color:var(--blue);">Consultar</label>
+                            <input type="color" id="colCon" class="inp" style="height:45px; padding:2px; cursor:pointer;">
+                        </div>
+                        <div>
+                            <label style="font-size:12px; font-weight:bold; color:var(--blue);">Sin Datos</label>
+                            <input type="color" id="colSinDat" class="inp" style="height:45px; padding:2px; cursor:pointer;">
+                        </div>
+                        
+                        <div class="span-2" style="text-align:right; margin-top: 10px;">
+                            <button id="btnSaveColors" onclick="window.saveColors()" class="btn btn-s" style="color:white;"><i class="fa-solid fa-save"></i> Guardar Colores</button>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -421,17 +492,18 @@
   </div>
 </div>
 
+<!-- MODALES DE AGREGAR/EDITAR DATOS -->
 <div id="modalAdd" class="modal-backdrop hidden">
   <div class="modal"><div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><h3 id="modalTitle" style="margin:0; color:var(--blue)">Nueva Ubicación</h3><button onclick="window.closeModal('modalAdd')" class="btn btn-d"><i class="fa-solid fa-times"></i></button></div>
     <div class="form-grid"><input id="newMun" class="inp" placeholder="Municipio"><input id="newNom" class="inp" placeholder="Nombre"><input id="newCat" class="inp" placeholder="Categoría"><input id="newZon" class="inp" placeholder="Zona"><input id="newRef" class="inp span-2" placeholder="Referencia">
-      <select id="newCob" class="inp span-2"><option value="Cobertura">Cobertura (Verde)</option><option value="Sin Cobertura">Sin Cobertura (Rojo)</option><option value="Consultar">Consultar (Amarillo)</option><option value="Sin Datos">Sin Datos (Gris)</option></select>
-    </div><div style="margin-top: 20px; text-align: right;"><button onclick="window.saveLocation()" class="btn btn-s" style="width: 100%;">Guardar</button></div></div>
+      <select id="newCob" class="inp span-2"><option value="Cobertura">Cobertura</option><option value="Sin Cobertura">Sin Cobertura</option><option value="Consultar">Consultar</option><option value="Sin Datos">Sin Datos</option></select>
+    </div><div style="margin-top: 20px; text-align: right;"><button onclick="window.saveLocation()" class="btn btn-s" style="width: 100%; color:white;">Guardar</button></div></div>
 </div>
 
 <div id="modalAddTec" class="modal-backdrop hidden">
   <div class="modal"><div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><h3 id="modalTitleTec" style="margin:0; color:var(--blue)">Ficha de Técnico</h3><button onclick="window.closeModal('modalAddTec')" class="btn btn-d"><i class="fa-solid fa-times"></i></button></div>
     <div class="form-grid"><input id="tecNom" class="inp span-2" placeholder="Nombre del Técnico"><input id="tecTel1" class="inp" placeholder="Teléfono 1"><input id="tecTel2" class="inp" placeholder="Teléfono 2 (Opcional)"><input id="tecArea" class="inp span-2" placeholder="Área asignada"><input id="tecDPI" class="inp" placeholder="DPI"><input id="tecPlaca" class="inp" placeholder="Placa de Vehículo"></div>
-    <div style="margin-top: 20px; text-align: right;"><button onclick="window.saveTecnico()" class="btn btn-s" style="width: 100%;">Guardar Técnico</button></div></div>
+    <div style="margin-top: 20px; text-align: right;"><button onclick="window.saveTecnico()" class="btn btn-s" style="width: 100%; color:white;">Guardar Técnico</button></div></div>
 </div>
 
 <div id="modalAddEnc" class="modal-backdrop hidden">
@@ -439,13 +511,13 @@
     <div class="form-grid">
       <select id="encCat" class="inp span-2"><option value="Rutas domicilio">Rutas domicilio</option><option value="Encargadas de marca">Encargadas de marca</option><option value="Team Leaders">Team Leaders</option><option value="Cambios y facturaciones">Cambios y facturaciones</option><option value="Otro">Otro</option></select>
       <input id="encNom" class="inp span-2" placeholder="Nombre completo"><input id="encTel" class="inp" placeholder="Número Telefónico"><input id="encCor" class="inp" placeholder="Correo electrónico"><input id="encPuesto" class="inp span-2" placeholder="Puesto / Marcas / Responsabilidad">
-    </div><div style="margin-top: 20px; text-align: right;"><button onclick="window.saveEncargado()" class="btn btn-s" style="width: 100%;">Guardar Contacto</button></div></div>
+    </div><div style="margin-top: 20px; text-align: right;"><button onclick="window.saveEncargado()" class="btn btn-s" style="width: 100%; color:white;">Guardar Contacto</button></div></div>
 </div>
 
 <div id="modalDyn" class="modal-backdrop hidden">
   <div class="modal"><div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><h3 id="modalTitleDyn" style="margin:0; color:var(--blue)">Registro</h3><button onclick="window.closeModal('modalDyn')" class="btn btn-d"><i class="fa-solid fa-times"></i></button></div>
     <div id="formGridDyn" class="form-grid"></div> 
-    <div style="margin-top: 20px; text-align: right;"><button onclick="window.saveDynRecord()" class="btn btn-s" style="width: 100%;">Guardar Registro</button></div>
+    <div style="margin-top: 20px; text-align: right;"><button onclick="window.saveDynRecord()" class="btn btn-s" style="width: 100%; color:white;">Guardar Registro</button></div>
   </div>
 </div>
 
@@ -466,7 +538,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, addDoc, deleteDoc, query, where, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, setDoc, addDoc, deleteDoc, query, where, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
   import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
   const firebaseConfig = { apiKey: "AIzaSyBsFKRDAYoCjGlr-np2Cqtjb-SIOLznPzY", authDomain: "coberturast-ab44c.firebaseapp.com", projectId: "coberturast-ab44c", storageBucket: "coberturast-ab44c.firebasestorage.app", messagingSenderId: "762980124389", appId: "1:762980124389:web:9d7a8b1ed7c7f259fbb60c" };
@@ -481,29 +553,24 @@
   let CURRENT_MODULE = 'cob'; let CURRENT_DYN_CONFIG = null;
   let isFirstUserLoad = true; let knownPendingIds = new Set(); let heartbeatInterval;
   
+  // COLORES DEFAULT DE LA APLICACIÓN
+  let STATUS_COLORS = { "Cobertura": "#00A65A", "Sin Cobertura": "#dc3545", "Consultar": "#009FE3", "Sin Datos": "#6c757d" };
+  
   let quillEditor;
-  let PROC_MODE = 'visual'; // Controla si usamos el editor rico o html puro
+  let PROC_MODE = 'visual';
+
+  window.normStr = (s) => (s || '').toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
   window.onload = () => { 
       const saved = localStorage.getItem('distelsa_pro_fb'); if(saved) { SESION = JSON.parse(saved); window.startApp(); } 
       
       quillEditor = new Quill('#admProcEditor', {
-        theme: 'snow',
-        placeholder: 'Escribe tu procedimiento, pega imágenes o usa las herramientas de arriba...',
-        modules: {
-          toolbar: [
-            [{ 'header': [1, 2, 3, false] }],
-            ['bold', 'italic', 'underline', 'strike'],
-            [{ 'color': [] }, { 'background': [] }],
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            ['link', 'image'],
-            ['clean']
-          ]
-        }
+        theme: 'snow', placeholder: 'Escribe tu procedimiento, pega imágenes o usa las herramientas de arriba...',
+        modules: { toolbar: [ [{ 'header': [1, 2, 3, false] }], ['bold', 'italic', 'underline', 'strike'], [{ 'color': [] }, { 'background': [] }], [{ 'list': 'ordered'}, { 'list': 'bullet' }], ['link', 'image'], ['clean'] ] }
       });
   };
 
-  // ================= SISTEMA DE PERMISOS =================
+  // ================= SISTEMA DE PERMISOS ACTUALIZADO =================
   window.hasPerm = function(perm) {
       if(SESION.r === 'admin') return true;
       if(SESION.r === 'pendiente') return false;
@@ -526,8 +593,18 @@
       document.getElementById('tabEnc').classList.toggle('hidden', !window.hasPerm('enc_view'));
       document.getElementById('tabProc').classList.toggle('hidden', !window.hasPerm('proc_view'));
       document.querySelectorAll('.tab-dyn').forEach(t => t.classList.toggle('hidden', !window.hasPerm('dyn_view')));
-      document.getElementById('tabAjs').classList.toggle('hidden', SESION.r !== 'admin');
-      document.getElementById('notifBell').classList.toggle('hidden', SESION.r !== 'admin');
+      
+      // Controlar pestaña global de Ajustes y Notificaciones
+      const hasAjs = window.hasPerm('ajs_usr') || window.hasPerm('ajs_rol') || window.hasPerm('ajs_mod') || window.hasPerm('ajs_proc') || window.hasPerm('ajs_col');
+      document.getElementById('tabAjs').classList.toggle('hidden', !hasAjs);
+      document.getElementById('notifBell').classList.toggle('hidden', !window.hasPerm('ajs_usr'));
+
+      // Controlar menús internos de Ajustes
+      if(document.getElementById('menuAjsUsr')) document.getElementById('menuAjsUsr').classList.toggle('hidden', !window.hasPerm('ajs_usr'));
+      if(document.getElementById('menuAjsRol')) document.getElementById('menuAjsRol').classList.toggle('hidden', !window.hasPerm('ajs_rol'));
+      if(document.getElementById('menuAjsMod')) document.getElementById('menuAjsMod').classList.toggle('hidden', !window.hasPerm('ajs_mod'));
+      if(document.getElementById('menuAjsProc')) document.getElementById('menuAjsProc').classList.toggle('hidden', !window.hasPerm('ajs_proc'));
+      if(document.getElementById('menuAjsCol')) document.getElementById('menuAjsCol').classList.toggle('hidden', !window.hasPerm('ajs_col'));
 
       if(document.getElementById('btnAdd')) document.getElementById('btnAdd').classList.toggle('hidden', !window.hasPerm('cob_edit'));
       if(document.getElementById('btnExp')) document.getElementById('btnExp').classList.toggle('hidden', !window.hasPerm('cob_exp'));
@@ -569,7 +646,31 @@
       }
   };
 
-  // ================= PESTAÑAS Y RUTEO =================
+  // ================= PESTAÑAS (DRAG & DROP) Y RUTEO =================
+  window.initSortableTabs = function() {
+      const container = document.getElementById('mainTabsContainer');
+      if(window.tabsSortable) window.tabsSortable.destroy();
+      
+      window.tabsSortable = new Sortable(container, {
+          animation: 150,
+          cursor: 'grab',
+          onEnd: function() {
+              const order = Array.from(container.children).map(c => c.id);
+              if(SESION && SESION.u) localStorage.setItem('distelsa_tabs_order_' + SESION.u, JSON.stringify(order));
+          }
+      });
+      
+      if(SESION && SESION.u) {
+          const savedOrder = JSON.parse(localStorage.getItem('distelsa_tabs_order_' + SESION.u));
+          if(savedOrder) {
+              savedOrder.forEach(id => {
+                  const el = document.getElementById(id);
+                  if(el) container.appendChild(el);
+              });
+          }
+      }
+  };
+
   window.switchModule = function(mod) {
     CURRENT_MODULE = mod; PAGE_DYN = 1;
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -592,7 +693,14 @@
     else if(mod === 'tec') { document.getElementById('moduloTecnicos').classList.remove('hidden'); window.renderTecnicosTable(); }
     else if(mod === 'enc') { document.getElementById('moduloEncargados').classList.remove('hidden'); window.renderEncargadosTable(); }
     else if(mod === 'proc') { document.getElementById('moduloProcedimientos').classList.remove('hidden'); window.renderProcMenu(); }
-    else if(mod === 'ajs') { document.getElementById('moduloAjustes').classList.remove('hidden'); window.showAjsView('usr'); }
+    else if(mod === 'ajs') { 
+        document.getElementById('moduloAjustes').classList.remove('hidden'); 
+        if(window.hasPerm('ajs_usr')) window.showAjsView('usr');
+        else if(window.hasPerm('ajs_rol')) window.showAjsView('rol');
+        else if(window.hasPerm('ajs_mod')) window.showAjsView('mod');
+        else if(window.hasPerm('ajs_proc')) window.showAjsView('proc');
+        else if(window.hasPerm('ajs_col')) window.showAjsView('col');
+    }
     else if(mod.startsWith('dyn_')) {
         document.getElementById('moduloDinamico').classList.remove('hidden');
         CURRENT_DYN_CONFIG = DB.configModulos.find(m => m.id === mod.replace('dyn_', ''));
@@ -602,30 +710,36 @@
 
   window.showAjsView = function(view) {
       document.querySelectorAll('.ajs-menu-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById('menuAjs' + view.charAt(0).toUpperCase() + view.slice(1)).classList.add('active');
+      const btn = document.getElementById('menuAjs' + view.charAt(0).toUpperCase() + view.slice(1));
+      if(btn) btn.classList.add('active');
       
       document.getElementById('ajsViewUsr').classList.add('hidden');
       document.getElementById('ajsViewRol').classList.add('hidden');
       document.getElementById('ajsViewMod').classList.add('hidden');
       document.getElementById('ajsViewProc').classList.add('hidden');
+      document.getElementById('ajsViewCol').classList.add('hidden');
       
-      document.getElementById('ajsView' + view.charAt(0).toUpperCase() + view.slice(1)).classList.remove('hidden');
+      const targetView = document.getElementById('ajsView' + view.charAt(0).toUpperCase() + view.slice(1));
+      if(targetView) targetView.classList.remove('hidden');
       
       if(view === 'usr') window.renderUserList();
       if(view === 'rol') window.renderRolesList();
       if(view === 'mod') window.renderListaModulos();
       if(view === 'proc') window.renderAdminProcList();
+      if(view === 'col') window.renderColorView();
   };
 
   window.toggleAuthBoxes = (s) => { document.getElementById('boxLogin').classList.toggle('hidden', s); document.getElementById('boxRegister').classList.toggle('hidden', !s); };
 
-  // ================= AUTH Y ARRANQUE =================
+  // ================= AUTH Y ARRANQUE (CASE INSENSITIVE APLICADO) =================
   window.registerAccount = async function() {
     const u = document.getElementById('regUser').value.trim(), p = document.getElementById('regPass').value.trim(); const btn = document.getElementById('btnRegister');
     if(!u || !p) return alert("Completa todos los campos."); btn.innerText = 'Enviando...'; btn.disabled = true;
     try {
-      const q = query(collection(db, "usuarios"), where("u", "==", u)); const snap = await getDocs(q);
-      if(!snap.empty) { alert("Usuario en uso."); btn.innerText = 'ENVIAR SOLICITUD'; btn.disabled = false; return; }
+      const snap = await getDocs(collection(db, "usuarios"));
+      const exists = snap.docs.some(d => (d.data().u || "").toLowerCase() === u.toLowerCase());
+      
+      if(exists) { alert("Usuario en uso."); btn.innerText = 'ENVIAR SOLICITUD'; btn.disabled = false; return; }
       await addDoc(collection(db, "usuarios"), { u, p, r: "pendiente", lastActive: 0, token: null, createdAt: Date.now() });
       alert("¡Solicitud enviada!"); window.toggleAuthBoxes(false);
     } catch(e) { alert("Error"); } btn.innerText = 'ENVIAR SOLICITUD'; btn.disabled = false;
@@ -634,9 +748,11 @@
     const u = document.getElementById('txtUser').value.trim(), p = document.getElementById('txtPass').value.trim(); const btn = document.getElementById('btnLogin');
     if(!u || !p) return alert("Ingrese datos"); btn.innerText = 'Cargando...'; btn.disabled = true;
     try {
-      const q = query(collection(db, "usuarios"), where("u", "==", u), where("p", "==", p)); const snap = await getDocs(q);
-      if (!snap.empty) {
-        const uDoc = snap.docs[0]; const uData = uDoc.data();
+      const snap = await getDocs(collection(db, "usuarios"));
+      const uDoc = snap.docs.find(d => (d.data().u || "").toLowerCase() === u.toLowerCase() && d.data().p === p);
+      
+      if (uDoc) {
+        const uData = uDoc.data();
         if(uData.r === 'pendiente') { alert("Cuenta PENDIENTE."); btn.innerText = 'INGRESAR'; btn.disabled = false; return; }
         const token = Math.random().toString(36).substring(2) + Date.now().toString(36);
         let rolFinal = uData.r === 'lider' ? 'agente' : uData.r;
@@ -650,10 +766,13 @@
     const nombre = prompt("Ingresa tu nombre:"); if(!nombre || nombre.trim() === "") return;
     const uName = "Invitado - " + nombre.trim(); const token = Math.random().toString(36).substring(2) + Date.now().toString(36); const now = Date.now();
     try {
-      const q = query(collection(db, "usuarios"), where("u", "==", uName)); const snap = await getDocs(q); let docId;
-      if (!snap.empty) {
-        const uData = snap.docs[0].data(); if (uData.createdAt && (now - uData.createdAt > 86400000)) { alert("Acceso expirado (24h)."); return; }
-        docId = snap.docs[0].id; await updateDoc(doc(db, "usuarios", docId), { token: token, lastActive: now, r: "invitado" });
+      const snap = await getDocs(collection(db, "usuarios"));
+      const uDoc = snap.docs.find(d => (d.data().u || "").toLowerCase() === uName.toLowerCase());
+      
+      let docId;
+      if (uDoc) {
+        const uData = uDoc.data(); if (uData.createdAt && (now - uData.createdAt > 86400000)) { alert("Acceso expirado (24h)."); return; }
+        docId = uDoc.id; await updateDoc(doc(db, "usuarios", docId), { token: token, lastActive: now, r: "invitado" });
       } else { const docRef = await addDoc(collection(db, "usuarios"), { u: uName, p: "", r: "invitado", token: token, lastActive: now, createdAt: now }); docId = docRef.id; }
       SESION = { id: docId, u: uName, r: "invitado", t: token }; localStorage.setItem('distelsa_pro_fb', JSON.stringify(SESION)); window.startApp();
     } catch(e) { alert("Error"); }
@@ -668,8 +787,10 @@
     window.listenToRoles(); 
     window.listenToUsers(); setInterval(window.updateOnlineUI, 5000);
     
+    listenToColors();
     listenToCoberturas(); listenToTecnicos(); listenToEncargados(); listenToConfigModulos(); listenToDynData(); listenToProcedimientos();
     
+    window.initSortableTabs();
     window.heartbeat(); heartbeatInterval = setInterval(window.heartbeat, 180000);
   };
 
@@ -678,14 +799,14 @@
 
   // ================= USERS Y ROLES =================
   window.listenToUsers = () => { onSnapshot(collection(db, "usuarios"), (snap) => { DB_USERS = snap.docs.map(d => ({ id: d.id, ...d.data() })); if (SESION.r === 'admin') { let pending = DB_USERS.filter(u => u.r === 'pendiente'); let badge = document.getElementById('notifBadge'); if (pending.length > 0) { badge.innerText = pending.length; badge.classList.remove('hidden'); } else badge.classList.add('hidden'); if (!isFirstUserLoad) pending.forEach(u => { if (!knownPendingIds.has(u.id)) window.showToast(`Nueva solicitud: <b>${u.u}</b>. <u style="cursor:pointer; color:var(--blue)" onclick="window.openPendingUsers()">Aprobar</u>`); }); knownPendingIds = new Set(pending.map(u => u.id)); } isFirstUserLoad = false; window.updateOnlineUI(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewUsr').classList.contains('hidden') && !EDITING_USER_ID) window.renderUserList(); }); };
-  window.updateOnlineUI = () => { const now = Date.now(); let online = DB_USERS.filter(u => u.lastActive && (now - u.lastActive < 190000) && u.r !== 'pendiente').map(u => u.u); document.getElementById('onlineCount').innerText = online.length; document.getElementById('onlineList').innerHTML = online.map(u => `<div class="online-item"><i class="fa-solid fa-user" style="color:#28a745"></i> ${u}</div>`).join('') || 'Nadie conectado'; };
+  window.updateOnlineUI = () => { const now = Date.now(); let online = DB_USERS.filter(u => u.lastActive && (now - u.lastActive < 190000) && u.r !== 'pendiente').map(u => u.u); document.getElementById('onlineCount').innerText = online.length; document.getElementById('onlineList').innerHTML = online.map(u => `<div class="online-item"><i class="fa-solid fa-user" style="color:var(--light-blue)"></i> ${u}</div>`).join('') || 'Nadie conectado'; };
 
   window.listenToRoles = function() { onSnapshot(collection(db, "roles_config"), (snapshot) => { DB.roles = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); window.updateRolesSelect(); window.applyPermissionsToUI(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList(); }); };
   window.updateRolesSelect = function() { const sel = document.getElementById('uRol'); if(!sel) return; let html = `<option value="agente">Agente (Default)</option><option value="invitado">Invitado (Lector)</option><option value="admin">Administrador (Total)</option><option value="pendiente">Pendiente (Bloqueado)</option>`; DB.roles.forEach(r => { html += `<option value="${r.nombre}">Custom: ${r.nombre}</option>`; }); sel.innerHTML = html; };
   window.saveRole = async function() { const nombre = document.getElementById('rolName').value.trim(); if(!nombre) return alert("Ingresa nombre"); const perms = []; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { if(chk.checked) perms.push(chk.id.replace('p_', '')); }); try { if(EDITING_ROLE_ID) { await updateDoc(doc(db, "roles_config", EDITING_ROLE_ID), { nombre, perms }); EDITING_ROLE_ID = null; document.getElementById('btnRoleAction').innerText = "Guardar Rol"; } else { await addDoc(collection(db, "roles_config"), { nombre, perms }); } document.getElementById('rolName').value = ''; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => chk.checked = false); alert("Rol guardado"); } catch(e) { alert("Error"); } };
   window.editRole = function(id) { EDITING_ROLE_ID = id; const r = DB.roles.find(x => x.id === id); document.getElementById('rolName').value = r.nombre; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { chk.checked = r.perms.includes(chk.id.replace('p_', '')); }); document.getElementById('btnRoleAction').innerText = "Actualizar Rol"; };
   window.deleteRole = async function(id) { if(confirm("¿Eliminar rol?")) await deleteDoc(doc(db, "roles_config", id)); };
-  window.renderRolesList = function() { document.getElementById('rolesListContainer').innerHTML = DB.roles.map(r => `<div class="mod-list-item"><div><b>${r.nombre}</b> <br><small style="color:var(--gray);">${r.perms.join(', ')}</small></div><div><button onclick="window.editRole('${r.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteRole('${r.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`).join('') || '<p style="font-size:13px;">No hay roles.</p>'; };
+  window.renderRolesList = function() { document.getElementById('rolesListContainer').innerHTML = DB.roles.map(r => `<div class="mod-list-item"><div><b>${r.nombre}</b> <br><small style="color:var(--mid-gray);">${r.perms.join(', ')}</small></div><div><button onclick="window.editRole('${r.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteRole('${r.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`).join('') || '<p style="font-size:13px;">No hay roles.</p>'; };
 
   // ================= CREADOR DE MÓDULOS =================
   function listenToConfigModulos() { onSnapshot(collection(db, "modulos_config"), (snapshot) => { DB.configModulos = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); window.buildDynamicTabs(); if(CURRENT_MODULE === 'ajs') window.renderListaModulos(); }); }
@@ -699,6 +820,7 @@
       tab.onclick = () => window.switchModule('dyn_' + mod.id); container.insertBefore(tab, tabAjustes);
     });
     window.applyPermissionsToUI(); 
+    window.initSortableTabs();
   };
 
   window.guardarModuloDinamico = async function() {
@@ -717,17 +839,17 @@
     <div class="mod-list-item" style="background:#e9ecef;"><div><b>Directorio Domicilio</b> <br><small>Nombre, Categoría, Teléfono...</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
     <div class="mod-list-item" style="background:#e9ecef;"><div><b>Procedimientos</b> <br><small>Base de conocimientos, PDFs y HTML</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
     <h5 style="color:var(--blue); margin-top:20px; margin-bottom:5px; border-bottom:1px solid #eee; padding-bottom:5px;"><i class="fa-solid fa-puzzle-piece"></i> Módulos Personalizados</h5>`;
-    let dynHtml = DB.configModulos.map(m => `<div class="mod-list-item"><div><b>${m.nombre}</b> <span style="font-size:11px;color:var(--gray);">(${m.vista})</span> <br><small style="color:var(--gray);">${m.columnas.join(', ')}</small></div>
+    let dynHtml = DB.configModulos.map(m => `<div class="mod-list-item"><div><b>${m.nombre}</b> <span style="font-size:11px;color:var(--mid-gray);">(${m.vista})</span> <br><small style="color:var(--mid-gray);">${m.columnas.join(', ')}</small></div>
       <div><button onclick="window.editarModuloDinamico('${m.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarModuloDinamico('${m.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
-    document.getElementById('listaModulosCreados').innerHTML = html + (dynHtml || '<p style="font-size:13px; color:var(--gray);">No hay personalizados.</p>');
+    document.getElementById('listaModulosCreados').innerHTML = html + (dynHtml || '<p style="font-size:13px; color:var(--mid-gray);">No hay personalizados.</p>');
   };
 
   // ================= RENDERIZADOR DINÁMICO =================
   window.renderDynData = function(reset = false) {
       if (reset) PAGE_DYN = 1; if(!CURRENT_DYN_CONFIG) return;
-      const rawQ = document.getElementById('searchDynBox').value.toLowerCase().trim();
+      const rawQ = window.normStr(document.getElementById('searchDynBox').value);
       let filtered = DB.dynData.filter(d => d.modId === CURRENT_DYN_CONFIG.id);
-      if (rawQ) { filtered = filtered.filter(row => { let fStr = ""; CURRENT_DYN_CONFIG.columnas.forEach((_, i) => fStr += (row['c'+i]||"")+" "); return fStr.toLowerCase().includes(rawQ); }); }
+      if (rawQ) { filtered = filtered.filter(row => { let fStr = ""; CURRENT_DYN_CONFIG.columnas.forEach((_, i) => fStr += (row['c'+i]||"")+" "); return window.normStr(fStr).includes(rawQ); }); }
 
       const isDir = CURRENT_DYN_CONFIG.vista === 'directorio';
       const perPage = isDir ? ITEMS_PER_PAGE_ENC : 10;
@@ -766,7 +888,7 @@
                   let val = row['c'+i] || "";
                   let displayVal = val;
                   if (val.length > 45) {
-                      displayVal = `<span>${val.substring(0, 42)}...</span> <button class="btn-mini" onclick="window.abrirVerMas('${row.id}', ${i})">Ver más</button>`;
+                      displayVal = `<span>${val.substring(0, 42)}...</span> <button class="btn-mini" onclick="window.abrirVerMas('${row.id}', ${i})" style="background:var(--blue)">Ver más</button>`;
                   }
                   html += `<td>${i===0?`<b>${displayVal}</b>`:displayVal}</td>`;
               });
@@ -796,24 +918,24 @@
       const btnC = document.getElementById('btnModoCodigo');
       const boxV = document.getElementById('boxProcVisual');
       const boxC = document.getElementById('boxProcCodigo');
-      const txtC = document.getElementById('admProcHtml');
 
       if (mode === 'visual') {
-          btnV.style.background = 'var(--blue)'; btnC.style.background = '#6c757d';
+          btnV.style.background = 'var(--blue)'; btnC.style.background = 'var(--mid-gray)';
           boxV.classList.remove('hidden'); boxC.classList.add('hidden');
       } else {
-          btnC.style.background = 'var(--blue)'; btnV.style.background = '#6c757d';
+          btnC.style.background = 'var(--blue)'; btnV.style.background = 'var(--mid-gray)';
           boxC.classList.remove('hidden'); boxV.classList.add('hidden');
       }
   };
 
   window.renderProcMenu = function(isSearch = false) {
       const container = document.getElementById('procSidebarMenu');
-      const query = document.getElementById('searchProcBox') ? document.getElementById('searchProcBox').value.toLowerCase().trim() : '';
+      const qInput = document.getElementById('searchProcBox');
+      const query = qInput ? window.normStr(qInput.value) : '';
 
       let f = DB.proc;
       if(query) {
-          f = DB.proc.filter(p => p.tit.toLowerCase().includes(query) || (p.cat && p.cat.toLowerCase().includes(query)));
+          f = DB.proc.filter(p => window.normStr(p.tit).includes(query) || window.normStr(p.cat).includes(query));
       }
 
       if (f.length === 0) { 
@@ -832,7 +954,7 @@
       Object.keys(grupos).sort().forEach(cat => {
           html += `<div class="proc-cat-header">${cat}</div>`;
           grupos[cat].sort((a,b)=>a.tit.localeCompare(b.tit)).forEach(p => {
-              let icon = p.pdfUrl ? '<i class="fa-solid fa-file-pdf" style="color:var(--red); font-size: 16px;"></i>' : '<i class="fa-regular fa-file-lines" style="color:#adb5bd; font-size: 16px;"></i>';
+              let icon = p.pdfUrl ? '<i class="fa-solid fa-file-pdf" style="color:var(--blue); font-size: 16px;"></i>' : '<i class="fa-regular fa-file-lines" style="color:#adb5bd; font-size: 16px;"></i>';
               html += `<a class="proc-item-link" id="linkProc_${p.id}" onclick="window.abrirProcedimiento('${p.id}')">
                          ${icon} <span style="flex:1;">${p.tit}</span>
                        </a>`;
@@ -860,8 +982,6 @@
           
           let contentHtml = "";
           
-          // Renderiza según el modo en el que fue guardado. 
-          // Si es visual usa las clases de Quill, si es código renderiza limpio.
           if(proc.modo === 'visual' || !proc.modo) {
               contentHtml += `<div class="ql-editor" style="padding:0; overflow-y:visible;">${proc.html || ''}</div>`;
           } else {
@@ -871,7 +991,7 @@
           if (proc.pdfUrl) {
               contentHtml += `
                 <div style="margin-top: 40px; border-top: 2px solid #eee; padding-top: 30px;">
-                    <h3 style="color:var(--blue); margin-bottom: 20px;"><i class="fa-solid fa-file-pdf" style="color:var(--red);"></i> Documento PDF Adjunto</h3>
+                    <h3 style="color:var(--blue); margin-bottom: 20px;"><i class="fa-solid fa-file-pdf" style="color:var(--light-blue);"></i> Documento PDF Adjunto</h3>
                     <iframe src="${proc.pdfUrl}" width="100%" height="800px" style="border: 1px solid #ced4da; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); background:#f8f9fa;"></iframe>
                     <div style="text-align:right; margin-top:10px;">
                         <a href="${proc.pdfUrl}" target="_blank" class="btn btn-p" style="text-decoration:none;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir en pestaña nueva</a>
@@ -892,7 +1012,6 @@
       const cat = document.getElementById('admProcCat').value.trim() || "General";
       const tit = document.getElementById('admProcTit').value.trim();
       
-      // Obtener el HTML dependiendo del modo activo
       const html = PROC_MODE === 'visual' ? quillEditor.root.innerHTML : document.getElementById('admProcHtml').value.trim();
       
       const isHtmlEmpty = (html === '<p><br></p>' || html.trim() === '');
@@ -906,7 +1025,7 @@
       btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
 
       try {
-          let payload = { cat, tit, html, modo: PROC_MODE }; // Guardamos el modo
+          let payload = { cat, tit, html, modo: PROC_MODE };
           
           if (file) {
               const storageRef = ref(storage, 'procedimientos_pdfs/' + Date.now() + '_' + file.name);
@@ -941,11 +1060,9 @@
       document.getElementById('admProcCat').value = p.cat || '';
       document.getElementById('admProcTit').value = p.tit || '';
       
-      // Restaurar el modo correcto
       const modoGuardado = p.modo || 'visual';
       window.setProcMode(modoGuardado, false);
       
-      // Llenar datos según el modo
       if(modoGuardado === 'visual') {
           quillEditor.root.innerHTML = p.html || '';
           document.getElementById('admProcHtml').value = '';
@@ -980,7 +1097,7 @@
       document.getElementById('admProcPdf').value = ''; 
       document.getElementById('pdfCurrentStatus').innerHTML = ''; 
       
-      window.setProcMode('visual', false); // Volver a modo visual por defecto
+      window.setProcMode('visual', false); 
 
       const btnSave = document.getElementById('btnSaveProc');
       btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Procedimiento';
@@ -995,28 +1112,28 @@
   };
 
   window.renderAdminProcList = function() {
-      const q = document.getElementById('searchProcAdmBox').value.toLowerCase().trim();
+      const q = window.normStr(document.getElementById('searchProcAdmBox').value);
       let f = DB.proc;
-      if (q) f = DB.proc.filter(p => `${p.tit} ${p.cat}`.toLowerCase().includes(q));
+      if (q) f = f.filter(p => window.normStr(`${p.tit} ${p.cat}`).includes(q));
 
       const container = document.getElementById('adminProcListContainer');
       container.innerHTML = f.map(p => {
-          let badgePdf = p.pdfUrl ? `<span style="background:var(--red); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-file-pdf"></i> PDF</span>` : '';
-          let badgeModo = (p.modo === 'codigo') ? `<span style="background:#6c757d; color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-code"></i> HTML</span>` : `<span style="background:var(--blue); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-pen-nib"></i> Visual</span>`;
+          let badgePdf = p.pdfUrl ? `<span style="background:var(--light-blue); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-file-pdf"></i> PDF</span>` : '';
+          let badgeModo = (p.modo === 'codigo') ? `<span style="background:var(--mid-gray); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-code"></i> HTML</span>` : `<span style="background:var(--blue); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-pen-nib"></i> Visual</span>`;
           
           return `
           <div class="mod-list-item">
-              <div><b>${p.tit}</b> ${badgePdf} ${badgeModo}<br><small style="color:var(--gray);"><i class="fa-solid fa-folder"></i> ${p.cat || "General"}</small></div>
+              <div><b>${p.tit}</b> ${badgePdf} ${badgeModo}<br><small style="color:var(--mid-gray);"><i class="fa-solid fa-folder"></i> ${p.cat || "General"}</small></div>
               <div>
                   <button onclick="window.editarProc('${p.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button>
                   <button onclick="window.eliminarProc('${p.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button>
               </div>
           </div>
-      `}).join('') || '<p style="font-size:13px; color:var(--gray);">No hay procedimientos registrados.</p>';
+      `}).join('') || '<p style="font-size:13px; color:var(--mid-gray);">No hay procedimientos registrados.</p>';
   };
 
 
-  // ================= MODALES DINÁMICOS =================
+  // ================= MODALES ESTÁTICOS ORIGINALES =================
   window.openModal = (id, isEdit = false) => { 
     document.getElementById(id).classList.remove('hidden'); 
     if(!isEdit) { 
@@ -1045,6 +1162,46 @@
   window.deleteDynRecord = async (id) => { if(confirm("¿Eliminar registro?")) { await deleteDoc(doc(db, "modulos_data", id)); } };
   window.changePageDyn = d => { PAGE_DYN += d; window.renderDynData(); };
 
+
+  // ================= CONFIGURACIÓN DE COLORES DINÁMICOS =================
+  function listenToColors() {
+      onSnapshot(doc(db, "configuracion", "colores_cobertura"), (docSnap) => {
+          if (docSnap.exists()) {
+              STATUS_COLORS = docSnap.data();
+          }
+          if(CURRENT_MODULE === 'cob') window.renderTable();
+          if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewCol').classList.contains('hidden')) window.renderColorView();
+      });
+  }
+
+  window.renderColorView = function() {
+      document.getElementById('colCob').value = STATUS_COLORS["Cobertura"] || "#00A65A";
+      document.getElementById('colSinCob').value = STATUS_COLORS["Sin Cobertura"] || "#dc3545";
+      document.getElementById('colCon').value = STATUS_COLORS["Consultar"] || "#009FE3";
+      document.getElementById('colSinDat').value = STATUS_COLORS["Sin Datos"] || "#6c757d";
+  };
+
+  window.saveColors = async function() {
+      const btnSave = document.getElementById('btnSaveColors');
+      btnSave.disabled = true; btnSave.innerHTML = "Guardando...";
+      
+      const data = {
+          "Cobertura": document.getElementById('colCob').value,
+          "Sin Cobertura": document.getElementById('colSinCob').value,
+          "Consultar": document.getElementById('colCon').value,
+          "Sin Datos": document.getElementById('colSinDat').value
+      };
+      
+      try {
+          await setDoc(doc(db, "configuracion", "colores_cobertura"), data, { merge: true });
+          window.showToastSuccess("Colores guardados");
+      } catch(e) {
+          alert("Error al guardar los colores");
+      }
+      
+      btnSave.disabled = false; btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Colores';
+  };
+
   // ================= MÓDULOS ESTÁTICOS ORIGINALES =================
   function listenToCoberturas() { onSnapshot(collection(db, "coberturas"), (snap) => { DB.cob = snap.docs.map(d => ({ id: d.id, ...d.data() })); if(CURRENT_MODULE === 'cob') window.renderTable(); }); }
   function listenToTecnicos() { onSnapshot(collection(db, "tecnicos"), (snap) => { DB.tec = snap.docs.map(d => ({ id: d.id, ...d.data() })); if(CURRENT_MODULE === 'tec') window.renderTecnicosTable(); }); }
@@ -1052,13 +1209,17 @@
 
   /* Render Cobertura */
   window.renderTable = function(r=false) { 
-    if (r) PAGE = 1; const q = document.getElementById('searchBox').value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, " ").trim();
-    let f = DB.cob; if(q) f = DB.cob.filter(x => `${x.m} ${x.n} ${x.z} ${x.r}`.toLowerCase().includes(q));
+    if (r) PAGE = 1; const q = window.normStr(document.getElementById('searchBox').value);
+    let f = DB.cob; if(q) f = f.filter(x => window.normStr(`${x.m} ${x.n} ${x.z} ${x.r}`).includes(q));
     const total = Math.ceil(f.length / 10) || 1; if (PAGE > total) PAGE = total; document.getElementById('pageLabel').innerText = `${PAGE} / ${total}`;
     const chunk = f.slice((PAGE - 1) * 10, PAGE * 10); const tbody = document.getElementById('tableBody'); tbody.innerHTML = '';
     const canEdit = window.hasPerm('cob_edit'); const isAdmin = (SESION.r === 'admin');
+    
     chunk.forEach(row => {
-      let bg = row.s === 'Cobertura' ? '#28a745' : row.s === 'Sin Cobertura' ? '#dc3545' : row.s === 'Consultar' ? '#ffc107' : '#6c757d'; let color = row.s === 'Consultar' ? 'black' : 'white';
+      let statusKey = row.s || "Sin Datos";
+      let bg = STATUS_COLORS[statusKey] || "#6c757d"; 
+      let color = 'white';
+      
       let act = ""; if (canEdit) {
         let sel = `<select onchange="window.saveStatus('${row.id}', this)" style="background:${bg}; color:${color}; border:none; padding:8px; border-radius:4px; width:100%; outline:none;"><option value="Cobertura" ${row.s==='Cobertura'?'selected':''}>Cobertura</option><option value="Sin Cobertura" ${row.s==='Sin Cobertura'?'selected':''}>Sin Cobertura</option><option value="Consultar" ${row.s==='Consultar'?'selected':''}>Consultar</option><option value="Sin Datos" ${row.s==='Sin Datos' || !row.s ? 'selected':''}>Sin Datos</option></select>`;
         if (isAdmin) act = `<div style="display:flex;gap:5px;">${sel}<button onclick="window.editLocation('${row.id}')" class="btn btn-p" title="Modificar"><i class="fa-solid fa-pencil"></i></button><button onclick="window.deleteLocation('${row.id}')" class="btn btn-d" title="Eliminar"><i class="fa-solid fa-trash"></i></button></div>`; else act = sel;
@@ -1073,14 +1234,14 @@
 
   /* Render Técnicos */
   window.renderTecnicosTable = function(r=false) {
-    if (r) PAGE_TEC = 1; const q = document.getElementById('searchTecBox').value.toLowerCase().trim();
-    let f = DB.tec; if (q) f = DB.tec.filter(row => `${row.n} ${row.t1} ${row.t2} ${row.a} ${row.d} ${row.p}`.toLowerCase().includes(q));
+    if (r) PAGE_TEC = 1; const q = window.normStr(document.getElementById('searchTecBox').value);
+    let f = DB.tec; if (q) f = f.filter(row => window.normStr(`${row.n} ${row.t1} ${row.t2} ${row.a} ${row.d} ${row.p}`).includes(q));
     const total = Math.ceil(f.length / 10) || 1; if (PAGE_TEC > total) PAGE_TEC = total; document.getElementById('pageLabelTec').innerText = `${PAGE_TEC} / ${total}`;
     const chunk = f.slice((PAGE_TEC - 1) * 10, PAGE_TEC * 10); const tbody = document.getElementById('tableTecnicosBody'); tbody.innerHTML = '';
     const canEdit = window.hasPerm('tec_edit'); const isAdmin = (SESION.r === 'admin');
     chunk.forEach(row => {
       let act = ""; if (canEdit) act += `<button onclick="window.editTecnico('${row.id}')" class="btn btn-p" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += ` <button onclick="window.deleteTecnico('${row.id}')" class="btn btn-d" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`;
-      let tels = row.t1 || ""; if(row.t2) tels += `<br><span style="color:#6c757d; font-size:11px;">${row.t2}</span>`;
+      let tels = row.t1 || ""; if(row.t2) tels += `<br><span style="color:var(--mid-gray); font-size:11px;">${row.t2}</span>`;
       tbody.innerHTML += `<tr><td><b>${row.n||''}</b></td><td>${tels}</td><td>${row.a||''}</td><td>${row.d||''}</td><td><span class="badge-tag">${row.p||'-'}</span></td><td>${act}</td></tr>`;
     });
   };
@@ -1090,8 +1251,8 @@
 
   /* Render Encargados */
   window.renderEncargadosTable = function(r=false) {
-    if (r) PAGE_ENC = 1; const q = document.getElementById('searchEncBox').value.toLowerCase().trim();
-    let f = DB.enc; if (q) f = DB.enc.filter(row => `${row.n} ${row.t} ${row.c} ${row.p} ${row.g}`.toLowerCase().includes(q));
+    if (r) PAGE_ENC = 1; const q = window.normStr(document.getElementById('searchEncBox').value);
+    let f = DB.enc; if (q) f = f.filter(row => window.normStr(`${row.n} ${row.t} ${row.c} ${row.p} ${row.g}`).includes(q));
     const total = Math.ceil(f.length / ITEMS_PER_PAGE_ENC) || 1; if (PAGE_ENC > total) PAGE_ENC = total; document.getElementById('pageLabelEnc').innerText = `${PAGE_ENC} / ${total}`;
     const chunk = f.slice((PAGE_ENC - 1) * ITEMS_PER_PAGE_ENC, PAGE_ENC * ITEMS_PER_PAGE_ENC); const cont = document.getElementById('gridEncargadosContainer');
     if (chunk.length === 0) { cont.innerHTML = `<div style="text-align:center; padding:50px; background:white; border-radius:8px;">No se encontraron contactos.</div>`; return; }
@@ -1125,12 +1286,12 @@
   window.openPendingUsers = () => { window.switchModule('ajs'); window.showAjsView('usr'); document.getElementById('searchUserBox').value = 'pendiente'; window.renderUserList(); };
   
   window.renderUserList = function() { 
-      const c = document.getElementById('userListContainer'); const q = document.getElementById('searchUserBox').value.toLowerCase().trim(); let f = DB_USERS; 
-      if (q) f = DB_USERS.filter(u => (u.u && u.u.toLowerCase().includes(q)) || (u.r && u.r.toLowerCase().includes(q))); 
+      const c = document.getElementById('userListContainer'); const q = window.normStr(document.getElementById('searchUserBox').value); let f = DB_USERS; 
+      if (q) f = f.filter(u => window.normStr(u.u).includes(q) || window.normStr(u.r).includes(q)); 
       f.sort((a, b) => { if (a.r === 'pendiente' && b.r !== 'pendiente') return -1; if (a.r !== 'pendiente' && b.r === 'pendiente') return 1; return (a.u||"").localeCompare(b.u||""); }); 
       c.innerHTML = f.map(u => { 
           const isP = u.r === 'pendiente'; 
-          return `<div class="user-row" style="${isP ? 'background:#fff3cd; border-left:5px solid #ffc107;' : ''}"><div><b>${u.u}</b> <br><small style="text-transform:uppercase; font-weight:bold; color: ${isP?'#856404':'#6c757d'}">${u.r}</small></div><div><button onclick="window.editUser('${u.id}','${u.u}','${u.p}','${u.r}')" class="btn btn-p" style="padding:4px"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteUser('${u.id}')" class="btn btn-d" style="padding:4px"><i class="fa-solid fa-trash"></i></button></div></div>`; 
+          return `<div class="user-row" style="${isP ? 'background:#e0f2fe; border-left:5px solid var(--light-blue);' : ''}"><div><b>${u.u}</b> <br><small style="text-transform:uppercase; font-weight:bold; color: ${isP?'var(--light-blue)':'var(--mid-gray)'}">${u.r}</small></div><div><button onclick="window.editUser('${u.id}','${u.u}','${u.p}','${u.r}')" class="btn btn-p" style="padding:4px"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteUser('${u.id}')" class="btn btn-d" style="padding:4px"><i class="fa-solid fa-trash"></i></button></div></div>`; 
       }).join('') || `<p align="center" style="padding:15px;">No hay usuarios</p>`; 
   };
   window.submitUser = async function() { const u = document.getElementById('uUser').value, p = document.getElementById('uPass').value, r = document.getElementById('uRol').value; if(!u || (!p && r !== 'invitado' && r !== 'pendiente')) return; if(EDITING_USER_ID) await updateDoc(doc(db, "usuarios", EDITING_USER_ID), { u, p, r }); else await addDoc(collection(db, "usuarios"), { u, p, r, createdAt: Date.now() }); window.clearUserForm(); };
