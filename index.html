@@ -199,10 +199,10 @@
   
   <!-- CONTENEDOR SORTABLE PARA PESTAÑAS -->
   <div class="nav-tabs" id="mainTabsContainer">
-    <div id="tabCob" class="tab-btn active" onclick="window.switchModule('cob')"><i class="fa-solid fa-map-location-dot"></i> Cobertura</div>
-    <div id="tabTec" class="tab-btn" onclick="window.switchModule('tec')"><i class="fa-solid fa-screwdriver-wrench"></i> Técnicos</div>
-    <div id="tabEnc" class="tab-btn" onclick="window.switchModule('enc')"><i class="fa-regular fa-address-card"></i> Directorio</div>
-    <div id="tabProc" class="tab-btn" onclick="window.switchModule('proc')"><i class="fa-solid fa-book-open"></i> Procedimientos</div>
+    <div id="tabCob" class="tab-btn active" onclick="window.switchModule('cob')"><i class="fa-solid fa-map-location-dot"></i> <span id="txtTabCob">Cobertura</span></div>
+    <div id="tabTec" class="tab-btn" onclick="window.switchModule('tec')"><i class="fa-solid fa-screwdriver-wrench"></i> <span id="txtTabTec">Técnicos</span></div>
+    <div id="tabEnc" class="tab-btn" onclick="window.switchModule('enc')"><i class="fa-regular fa-address-card"></i> <span id="txtTabEnc">Directorio</span></div>
+    <div id="tabProc" class="tab-btn" onclick="window.switchModule('proc')"><i class="fa-solid fa-book-open"></i> <span id="txtTabProc">Procedimientos</span></div>
     <!-- Pestañas dinámicas se inyectan aquí -->
     <div id="tabAjs" class="tab-btn hidden" onclick="window.switchModule('ajs')" style="color:var(--dark-gray);"><i class="fa-solid fa-gear"></i> Ajustes</div>
   </div>
@@ -275,10 +275,10 @@
     <div id="moduloProcedimientos" class="hidden">
         <div class="proc-sidebar">
             <div class="proc-sidebar-header">
-                <h3 style="margin:0 0 15px 0; color:var(--blue); font-size: 18px;"><i class="fa-solid fa-book-bookmark"></i> Procedimientos</h3>
+                <h3 style="margin:0 0 15px 0; color:var(--blue); font-size: 18px;"><i class="fa-solid fa-book-bookmark"></i> <span id="lblProcSidebar">Procedimientos</span></h3>
                 <div style="position:relative;">
                     <i class="fa-solid fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#adb5bd; font-size:13px;"></i>
-                    <input type="text" id="searchProcBox" class="proc-search-inp" placeholder="Buscar documento..." onkeyup="window.renderProcMenu(true)">
+                    <input type="text" id="searchProcBox" class="proc-search-inp search-inp" placeholder="Buscar documento..." onkeyup="window.renderProcMenu(true)">
                 </div>
             </div>
             <div class="proc-list" id="procSidebarMenu">
@@ -289,7 +289,7 @@
             <div class="proc-document" id="procViewerContainer">
                 <div style="text-align:center; padding: 100px 0; color: #adb5bd;">
                     <i class="fa-solid fa-file-signature" style="font-size: 60px; margin-bottom:20px; color:#dee2e6;"></i>
-                    <h2 style="color: var(--mid-gray); margin-top: 0;">Selecciona un procedimiento</h2>
+                    <h2 style="color: var(--mid-gray); margin-top: 0;">Selecciona un documento</h2>
                     <p style="font-size: 15px;">Usa el menú de la izquierda para explorar los procesos y guías.</p>
                 </div>
             </div>
@@ -333,7 +333,7 @@
                     <div class="action-btns" style="margin-bottom: 15px; justify-content: flex-end;"><button onclick="document.getElementById('fileImportUsr').click()" class="btn btn-o"><i class="fa-solid fa-file-import"></i> Importar CSV</button><button onclick="window.exportUsersToExcel()" class="btn btn-x"><i class="fa-solid fa-file-export"></i> Exportar Excel</button></div>
                     <div class="form-inline"><input id="uUser" class="inp" placeholder="Usuario"><input id="uPass" class="inp" placeholder="Clave">
                       <select id="uRol" class="inp">
-                        <option value="agente">Agente (Default)</option><option value="invitado">Invitado (Lector)</option><option value="admin">Administrador (Total)</option><option value="pendiente">Pendiente (Bloqueado)</option>
+                        <option value="agente">Agente (Default)</option><option value="invitado">Invitado (Lector)</option><option value="pendiente">Pendiente (Bloqueado)</option>
                       </select>
                       <div style="display: flex; gap: 10px; width: 100%;"><button id="btnUserAction" onclick="window.submitUser()" class="btn btn-s" style="flex: 1; color:white;"><i class="fa-solid fa-plus"></i></button><button onclick="window.clearUserForm()" class="btn btn-d" style="flex: 1;"><i class="fa-solid fa-eraser"></i></button></div>
                     </div>
@@ -387,15 +387,18 @@
 
                 <!-- VISTA: CREADOR DE MÓDULOS -->
                 <div id="ajsViewMod" class="hidden">
-                    <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-layer-group"></i> Creador de Módulos</h3>
-                    <p style="font-size:13px; color:var(--mid-gray);">Agrega nuevas pestañas al sistema. Define el nombre, diseño y columnas.</p>
+                    <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-layer-group"></i> Creador y Editor de Módulos</h3>
+                    <p style="font-size:13px; color:var(--mid-gray);">Agrega nuevas pestañas o personaliza el nombre de las funciones del sistema.</p>
                     
                     <div class="form-grid" style="background:#f8f9fa; padding:15px; border-radius:6px; margin-bottom:20px; border:1px solid #e9ecef;">
+                        <div class="span-2" style="border-bottom: 2px solid #e9ecef; padding-bottom: 5px; margin-bottom: 5px;">
+                            <h4 style="margin:0; color:var(--blue);"><i class="fa-solid fa-plus"></i> Crear Nuevo Módulo Personalizado</h4>
+                        </div>
                         <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Nombre del Módulo</label><input id="confModName" class="inp" placeholder="Ej: Proveedores, Inventario..."></div>
                         <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Tipo de Diseño (Vista)</label>
                             <select id="confModVista" class="inp"><option value="tabla">Vista Tabla (Registros e Inventarios)</option><option value="directorio">Vista Directorio (Tarjetas de Contactos)</option></select>
                         </div>
-                        <div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">Columnas (Separadas por COMA)</label><input id="confModCols" class="inp" placeholder="Ej: Nombre, Teléfono, Correo, Departamento"><small style="color:var(--mid-gray);">*Si eliges Directorio, la 1ra columna será el Título de la tarjeta, y el resto serán campos con botón de copiar.</small></div>
+                        <div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">Columnas (Separadas por COMA)</label><input id="confModCols" class="inp" placeholder="Ej: Nombre, Teléfono, Correo, Departamento"><small style="color:var(--mid-gray);">*Si eliges Directorio, la 1ra columna es el Título, <b>la 2da es el Puesto/Responsabilidad</b>, y el resto campos con botón de copiar.</small></div>
                         <div class="span-2" style="text-align:right;">
                             <button onclick="window.cancelarEdicionModulo()" id="btnCancelMod" class="btn btn-d hidden" style="margin-right: 5px;"><i class="fa-solid fa-times"></i> Cancelar</button>
                             <button onclick="window.guardarModuloDinamico()" id="btnSaveMod" class="btn btn-s" style="color:white;"><i class="fa-solid fa-layer-group"></i> Generar Módulo</button>
@@ -407,7 +410,7 @@
                 <!-- VISTA: GESTOR PROCEDIMIENTOS -->
                 <div id="ajsViewProc" class="hidden">
                     <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-file-code"></i> Gestor de Procedimientos</h3>
-                    <p style="font-size:13px; color:var(--mid-gray);">Usa el editor visual para guías rápidas, o el modo "HTML Puro" para insertar tus propias maquetas y diseños personalizados.</p>
+                    <p style="font-size:13px; color:var(--mid-gray);">Crea procedimientos usando el editor visual o HTML personalizado.</p>
                     
                     <div class="form-grid" style="background:#f8f9fa; padding:15px; border-radius:6px; margin-bottom:20px; border:1px solid #e9ecef;">
                         <div>
@@ -436,13 +439,6 @@
                         <!-- MODO CÓDIGO (RAW HTML) -->
                         <div class="span-2 hidden" id="boxProcCodigo">
                             <textarea id="admProcHtml" class="inp" style="font-family: monospace; font-size:13px; background:#212529; color:#f8f9fa; height: 292px; margin:0; resize: vertical;" placeholder="<h1>Tu título</h1><p>Pega tu código HTML personalizado aquí. El sistema no lo alterará.</p>"></textarea>
-                        </div>
-
-                        <!-- SUBIDA DE PDF -->
-                        <div class="span-2" style="background: white; border: 1px dashed #ced4da; padding: 15px; border-radius: 6px; margin-top: 5px;">
-                            <label style="font-size:12px; font-weight:bold; color:var(--blue); margin-bottom: 5px; display:block;"><i class="fa-solid fa-file-pdf" style="color:var(--blue)"></i> Adjuntar Archivo PDF (Opcional)</label>
-                            <input type="file" id="admProcPdf" class="inp" accept="application/pdf" style="border: none; padding: 0;">
-                            <div id="pdfCurrentStatus" style="font-size: 12px; color: var(--green); margin-top: 5px; font-weight: bold;"></div>
                         </div>
 
                         <div class="span-2" style="text-align:right; margin-top: 10px;">
@@ -539,12 +535,10 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, setDoc, addDoc, deleteDoc, query, where, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
   const firebaseConfig = { apiKey: "AIzaSyBsFKRDAYoCjGlr-np2Cqtjb-SIOLznPzY", authDomain: "coberturast-ab44c.firebaseapp.com", projectId: "coberturast-ab44c", storageBucket: "coberturast-ab44c.firebasestorage.app", messagingSenderId: "762980124389", appId: "1:762980124389:web:9d7a8b1ed7c7f259fbb60c" };
   const app = initializeApp(firebaseConfig); 
   const db = getFirestore(app);
-  const storage = getStorage(app);
 
   let DB = { cob: [], tec: [], enc: [], proc: [], configModulos: [], dynData: [], roles: [] };
   let DB_USERS = []; let SESION = { id: null, u: null, r: null, t: null };
@@ -553,7 +547,7 @@
   let CURRENT_MODULE = 'cob'; let CURRENT_DYN_CONFIG = null;
   let isFirstUserLoad = true; let knownPendingIds = new Set(); let heartbeatInterval;
   
-  // COLORES DEFAULT DE LA APLICACIÓN
+  let SYS_MOD_NAMES = { cob: "Cobertura", tec: "Técnicos", enc: "Directorio", proc: "Procedimientos" };
   let STATUS_COLORS = { "Cobertura": "#00A65A", "Sin Cobertura": "#dc3545", "Consultar": "#009FE3", "Sin Datos": "#6c757d" };
   
   let quillEditor;
@@ -594,12 +588,10 @@
       document.getElementById('tabProc').classList.toggle('hidden', !window.hasPerm('proc_view'));
       document.querySelectorAll('.tab-dyn').forEach(t => t.classList.toggle('hidden', !window.hasPerm('dyn_view')));
       
-      // Controlar pestaña global de Ajustes y Notificaciones
       const hasAjs = window.hasPerm('ajs_usr') || window.hasPerm('ajs_rol') || window.hasPerm('ajs_mod') || window.hasPerm('ajs_proc') || window.hasPerm('ajs_col');
       document.getElementById('tabAjs').classList.toggle('hidden', !hasAjs);
       document.getElementById('notifBell').classList.toggle('hidden', !window.hasPerm('ajs_usr'));
 
-      // Controlar menús internos de Ajustes
       if(document.getElementById('menuAjsUsr')) document.getElementById('menuAjsUsr').classList.toggle('hidden', !window.hasPerm('ajs_usr'));
       if(document.getElementById('menuAjsRol')) document.getElementById('menuAjsRol').classList.toggle('hidden', !window.hasPerm('ajs_rol'));
       if(document.getElementById('menuAjsMod')) document.getElementById('menuAjsMod').classList.toggle('hidden', !window.hasPerm('ajs_mod'));
@@ -636,43 +628,34 @@
     const c = document.getElementById('toastContainer'); const t = document.createElement('div'); t.className = 'toast'; 
     t.innerHTML = `<i class="fa-solid fa-bell"></i> <div>${msg}</div>`; c.appendChild(t); setTimeout(() => { t.classList.add('toast-fade'); setTimeout(() => t.remove(), 300); }, 6000); 
   };
-
   window.abrirVerMas = function(idFila, indiceColumna) {
       const fila = DB.dynData.find(d => d.id === idFila);
       if(fila) {
-          const texto = fila['c'+indiceColumna] || "";
-          document.getElementById('verMasContent').innerText = texto;
+          document.getElementById('verMasContent').innerText = fila['c'+indiceColumna] || "";
           document.getElementById('modalVerMas').classList.remove('hidden');
       }
   };
 
-  // ================= PESTAÑAS (DRAG & DROP) Y RUTEO =================
+  // ================= PESTAÑAS Y LIMPIEZA DE BÚSQUEDAS =================
   window.initSortableTabs = function() {
       const container = document.getElementById('mainTabsContainer');
       if(window.tabsSortable) window.tabsSortable.destroy();
-      
       window.tabsSortable = new Sortable(container, {
-          animation: 150,
-          cursor: 'grab',
-          onEnd: function() {
-              const order = Array.from(container.children).map(c => c.id);
-              if(SESION && SESION.u) localStorage.setItem('distelsa_tabs_order_' + SESION.u, JSON.stringify(order));
-          }
+          animation: 150, cursor: 'grab',
+          onEnd: function() { const order = Array.from(container.children).map(c => c.id); if(SESION && SESION.u) localStorage.setItem('distelsa_tabs_order_' + SESION.u, JSON.stringify(order)); }
       });
-      
       if(SESION && SESION.u) {
           const savedOrder = JSON.parse(localStorage.getItem('distelsa_tabs_order_' + SESION.u));
-          if(savedOrder) {
-              savedOrder.forEach(id => {
-                  const el = document.getElementById(id);
-                  if(el) container.appendChild(el);
-              });
-          }
+          if(savedOrder) { savedOrder.forEach(id => { const el = document.getElementById(id); if(el) container.appendChild(el); }); }
       }
   };
 
   window.switchModule = function(mod) {
     CURRENT_MODULE = mod; PAGE_DYN = 1;
+    
+    // LIMPIA TODOS LOS BUSCADORES AL CAMBIAR DE PESTAÑA
+    document.querySelectorAll('.search-inp').forEach(inp => inp.value = '');
+
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     let activeTab = document.getElementById(mod.startsWith('dyn_') ? 'tab_' + mod : 'tab' + mod.charAt(0).toUpperCase() + mod.slice(1));
     if(activeTab) activeTab.classList.add('active');
@@ -731,14 +714,13 @@
 
   window.toggleAuthBoxes = (s) => { document.getElementById('boxLogin').classList.toggle('hidden', s); document.getElementById('boxRegister').classList.toggle('hidden', !s); };
 
-  // ================= AUTH Y ARRANQUE (CASE INSENSITIVE APLICADO) =================
+  // ================= AUTH Y ARRANQUE =================
   window.registerAccount = async function() {
     const u = document.getElementById('regUser').value.trim(), p = document.getElementById('regPass').value.trim(); const btn = document.getElementById('btnRegister');
     if(!u || !p) return alert("Completa todos los campos."); btn.innerText = 'Enviando...'; btn.disabled = true;
     try {
       const snap = await getDocs(collection(db, "usuarios"));
       const exists = snap.docs.some(d => (d.data().u || "").toLowerCase() === u.toLowerCase());
-      
       if(exists) { alert("Usuario en uso."); btn.innerText = 'ENVIAR SOLICITUD'; btn.disabled = false; return; }
       await addDoc(collection(db, "usuarios"), { u, p, r: "pendiente", lastActive: 0, token: null, createdAt: Date.now() });
       alert("¡Solicitud enviada!"); window.toggleAuthBoxes(false);
@@ -750,7 +732,6 @@
     try {
       const snap = await getDocs(collection(db, "usuarios"));
       const uDoc = snap.docs.find(d => (d.data().u || "").toLowerCase() === u.toLowerCase() && d.data().p === p);
-      
       if (uDoc) {
         const uData = uDoc.data();
         if(uData.r === 'pendiente') { alert("Cuenta PENDIENTE."); btn.innerText = 'INGRESAR'; btn.disabled = false; return; }
@@ -768,7 +749,6 @@
     try {
       const snap = await getDocs(collection(db, "usuarios"));
       const uDoc = snap.docs.find(d => (d.data().u || "").toLowerCase() === uName.toLowerCase());
-      
       let docId;
       if (uDoc) {
         const uData = uDoc.data(); if (uData.createdAt && (now - uData.createdAt > 86400000)) { alert("Acceso expirado (24h)."); return; }
@@ -782,11 +762,11 @@
     if (SESION.r === 'invitado') { const userObj = DB_USERS.find(u => u.id === SESION.id); if (userObj && userObj.createdAt && (Date.now() - userObj.createdAt > 86400000)) { alert("Sesión expirada."); window.logout(); return; } }
     document.getElementById('viewLogin').classList.add('hidden'); document.getElementById('viewApp').classList.remove('hidden');
     document.getElementById('lblUser').innerText = SESION.u; document.getElementById('lblRol').innerText = SESION.r;
-    
     document.getElementById('onlineMonitor').classList.remove('hidden');
+    
+    listenToSysMods();
     window.listenToRoles(); 
     window.listenToUsers(); setInterval(window.updateOnlineUI, 5000);
-    
     listenToColors();
     listenToCoberturas(); listenToTecnicos(); listenToEncargados(); listenToConfigModulos(); listenToDynData(); listenToProcedimientos();
     
@@ -797,18 +777,74 @@
   window.heartbeat = async () => { if(SESION.id) { try { await updateDoc(doc(db, "usuarios", SESION.id), { lastActive: Date.now() }); } catch(e){} } };
   window.logout = async (clear = true) => { if(clear && SESION.id) try { await updateDoc(doc(db, "usuarios", SESION.id), { token: null, lastActive: 0 }); } catch(e){} localStorage.removeItem('distelsa_pro_fb'); location.reload(); };
 
-  // ================= USERS Y ROLES =================
+  // ================= USERS Y ROLES (ADMIN OCULTO) =================
   window.listenToUsers = () => { onSnapshot(collection(db, "usuarios"), (snap) => { DB_USERS = snap.docs.map(d => ({ id: d.id, ...d.data() })); if (SESION.r === 'admin') { let pending = DB_USERS.filter(u => u.r === 'pendiente'); let badge = document.getElementById('notifBadge'); if (pending.length > 0) { badge.innerText = pending.length; badge.classList.remove('hidden'); } else badge.classList.add('hidden'); if (!isFirstUserLoad) pending.forEach(u => { if (!knownPendingIds.has(u.id)) window.showToast(`Nueva solicitud: <b>${u.u}</b>. <u style="cursor:pointer; color:var(--blue)" onclick="window.openPendingUsers()">Aprobar</u>`); }); knownPendingIds = new Set(pending.map(u => u.id)); } isFirstUserLoad = false; window.updateOnlineUI(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewUsr').classList.contains('hidden') && !EDITING_USER_ID) window.renderUserList(); }); };
-  window.updateOnlineUI = () => { const now = Date.now(); let online = DB_USERS.filter(u => u.lastActive && (now - u.lastActive < 190000) && u.r !== 'pendiente').map(u => u.u); document.getElementById('onlineCount').innerText = online.length; document.getElementById('onlineList').innerHTML = online.map(u => `<div class="online-item"><i class="fa-solid fa-user" style="color:var(--light-blue)"></i> ${u}</div>`).join('') || 'Nadie conectado'; };
+  window.updateOnlineUI = () => { const now = Date.now(); let online = DB_USERS.filter(u => u.lastActive && (now - u.lastActive < 190000) && u.r !== 'pendiente'); if(SESION.r !== 'admin') online = online.filter(u => u.r !== 'admin'); let onlineNames = online.map(u => u.u); document.getElementById('onlineCount').innerText = onlineNames.length; document.getElementById('onlineList').innerHTML = onlineNames.map(u => `<div class="online-item"><i class="fa-solid fa-user" style="color:var(--light-blue)"></i> ${u}</div>`).join('') || 'Nadie conectado'; };
 
   window.listenToRoles = function() { onSnapshot(collection(db, "roles_config"), (snapshot) => { DB.roles = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); window.updateRolesSelect(); window.applyPermissionsToUI(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList(); }); };
-  window.updateRolesSelect = function() { const sel = document.getElementById('uRol'); if(!sel) return; let html = `<option value="agente">Agente (Default)</option><option value="invitado">Invitado (Lector)</option><option value="admin">Administrador (Total)</option><option value="pendiente">Pendiente (Bloqueado)</option>`; DB.roles.forEach(r => { html += `<option value="${r.nombre}">Custom: ${r.nombre}</option>`; }); sel.innerHTML = html; };
+  window.updateRolesSelect = function() { 
+      const sel = document.getElementById('uRol'); if(!sel) return; 
+      let adminOpt = SESION.r === 'admin' ? `<option value="admin">Administrador (Total)</option>` : ``;
+      let html = `<option value="agente">Agente (Default)</option><option value="invitado">Invitado (Lector)</option>${adminOpt}<option value="pendiente">Pendiente (Bloqueado)</option>`; 
+      DB.roles.forEach(r => { html += `<option value="${r.nombre}">Custom: ${r.nombre}</option>`; }); 
+      sel.innerHTML = html; 
+  };
   window.saveRole = async function() { const nombre = document.getElementById('rolName').value.trim(); if(!nombre) return alert("Ingresa nombre"); const perms = []; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { if(chk.checked) perms.push(chk.id.replace('p_', '')); }); try { if(EDITING_ROLE_ID) { await updateDoc(doc(db, "roles_config", EDITING_ROLE_ID), { nombre, perms }); EDITING_ROLE_ID = null; document.getElementById('btnRoleAction').innerText = "Guardar Rol"; } else { await addDoc(collection(db, "roles_config"), { nombre, perms }); } document.getElementById('rolName').value = ''; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => chk.checked = false); alert("Rol guardado"); } catch(e) { alert("Error"); } };
   window.editRole = function(id) { EDITING_ROLE_ID = id; const r = DB.roles.find(x => x.id === id); document.getElementById('rolName').value = r.nombre; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { chk.checked = r.perms.includes(chk.id.replace('p_', '')); }); document.getElementById('btnRoleAction').innerText = "Actualizar Rol"; };
   window.deleteRole = async function(id) { if(confirm("¿Eliminar rol?")) await deleteDoc(doc(db, "roles_config", id)); };
   window.renderRolesList = function() { document.getElementById('rolesListContainer').innerHTML = DB.roles.map(r => `<div class="mod-list-item"><div><b>${r.nombre}</b> <br><small style="color:var(--mid-gray);">${r.perms.join(', ')}</small></div><div><button onclick="window.editRole('${r.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteRole('${r.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`).join('') || '<p style="font-size:13px;">No hay roles.</p>'; };
 
-  // ================= CREADOR DE MÓDULOS =================
+  window.renderUserList = function() { 
+      const c = document.getElementById('userListContainer'); const q = window.normStr(document.getElementById('searchUserBox').value); 
+      let f = DB_USERS; 
+      if (SESION.r !== 'admin') f = f.filter(u => u.r !== 'admin');
+      if (q) f = f.filter(u => window.normStr(u.u).includes(q) || window.normStr(u.r).includes(q)); 
+      f.sort((a, b) => { if (a.r === 'pendiente' && b.r !== 'pendiente') return -1; if (a.r !== 'pendiente' && b.r === 'pendiente') return 1; return (a.u||"").localeCompare(b.u||""); }); 
+      c.innerHTML = f.map(u => { 
+          const isP = u.r === 'pendiente'; 
+          return `<div class="user-row" style="${isP ? 'background:#e0f2fe; border-left:5px solid var(--light-blue);' : ''}"><div><b>${u.u}</b> <br><small style="text-transform:uppercase; font-weight:bold; color: ${isP?'var(--light-blue)':'var(--mid-gray)'}">${u.r}</small></div><div><button onclick="window.editUser('${u.id}','${u.u}','${u.p}','${u.r}')" class="btn btn-p" style="padding:4px"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteUser('${u.id}')" class="btn btn-d" style="padding:4px"><i class="fa-solid fa-trash"></i></button></div></div>`; 
+      }).join('') || `<p align="center" style="padding:15px;">No hay usuarios</p>`; 
+  };
+  window.submitUser = async function() { const u = document.getElementById('uUser').value, p = document.getElementById('uPass').value, r = document.getElementById('uRol').value; if(!u || (!p && r !== 'invitado' && r !== 'pendiente')) return; if(EDITING_USER_ID) await updateDoc(doc(db, "usuarios", EDITING_USER_ID), { u, p, r }); else await addDoc(collection(db, "usuarios"), { u, p, r, createdAt: Date.now() }); window.clearUserForm(); };
+  window.editUser = function(id, u, p, r) { EDITING_USER_ID = id; document.getElementById('uUser').value = u; document.getElementById('uPass').value = p; document.getElementById('uRol').value = r; document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-save"></i>'; }; window.clearUserForm = function() { EDITING_USER_ID = null; document.getElementById('uUser').value = ''; document.getElementById('uPass').value = ''; document.getElementById('uRol').value = 'agente'; document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-plus"></i>'; }; window.deleteUser = async function(id) { if(confirm("¿Eliminar usuario?")) await deleteDoc(doc(db, "usuarios", id)); };
+
+
+  // ================= NOMBRES DE MÓDULOS DEL SISTEMA =================
+  function listenToSysMods() {
+      onSnapshot(doc(db, "configuracion", "nombres_modulos"), (docSnap) => {
+          if (docSnap.exists()) {
+              Object.assign(SYS_MOD_NAMES, docSnap.data());
+          }
+          window.updateSysModUI();
+      });
+  }
+  
+  window.updateSysModUI = function() {
+      document.getElementById('txtTabCob').innerText = SYS_MOD_NAMES.cob;
+      document.getElementById('txtTabTec').innerText = SYS_MOD_NAMES.tec;
+      document.getElementById('txtTabEnc').innerText = SYS_MOD_NAMES.enc;
+      document.getElementById('txtTabProc').innerText = SYS_MOD_NAMES.proc;
+      
+      const lblProc = document.getElementById('lblProcSidebar');
+      if(lblProc) lblProc.innerText = SYS_MOD_NAMES.proc;
+
+      if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewMod').classList.contains('hidden')) window.renderListaModulos();
+  };
+
+  window.saveSysMods = async function() {
+      const data = {
+          cob: document.getElementById('sysNomCob').value.trim() || "Cobertura",
+          tec: document.getElementById('sysNomTec').value.trim() || "Técnicos",
+          enc: document.getElementById('sysNomEnc').value.trim() || "Directorio",
+          proc: document.getElementById('sysNomProc').value.trim() || "Procedimientos"
+      };
+      try {
+          await setDoc(doc(db, "configuracion", "nombres_modulos"), data, { merge: true });
+          window.showToastSuccess("Nombres de sistema actualizados");
+      } catch(e) { alert("Error al guardar nombres"); }
+  };
+
+  // ================= CREADOR DE MÓDULOS DINÁMICOS =================
   function listenToConfigModulos() { onSnapshot(collection(db, "modulos_config"), (snapshot) => { DB.configModulos = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); window.buildDynamicTabs(); if(CURRENT_MODULE === 'ajs') window.renderListaModulos(); }); }
   function listenToDynData() { onSnapshot(collection(db, "modulos_data"), (snapshot) => { DB.dynData = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); if(CURRENT_MODULE.startsWith('dyn_')) window.renderDynData(); }); }
 
@@ -833,12 +869,18 @@
   window.eliminarModuloDinamico = async function(id) { if(!confirm("¿Eliminar módulo y todos sus datos?")) return; try { await deleteDoc(doc(db, "modulos_config", id)); const batch = writeBatch(db); DB.dynData.filter(d => d.modId === id).forEach(d => batch.delete(doc(db, "modulos_data", d.id))); await batch.commit(); if (EDITING_MOD_ID === id) window.cancelarEdicionModulo(); if (CURRENT_MODULE === 'dyn_'+id) window.switchModule('cob'); } catch(e) { alert("Error"); } };
 
   window.renderListaModulos = function() {
-    let html = `<h5 style="color:var(--blue); margin-bottom:5px; border-bottom:1px solid #eee; padding-bottom:5px;"><i class="fa-solid fa-lock"></i> Módulos Fijos</h5>
-    <div class="mod-list-item" style="background:#e9ecef;"><div><b>Cobertura</b> <br><small>Municipio, Nombre, Categoría, Zona...</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
-    <div class="mod-list-item" style="background:#e9ecef;"><div><b>Técnicos</b> <br><small>Nombre, Teléfonos, Área, DPI...</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
-    <div class="mod-list-item" style="background:#e9ecef;"><div><b>Directorio Domicilio</b> <br><small>Nombre, Categoría, Teléfono...</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
-    <div class="mod-list-item" style="background:#e9ecef;"><div><b>Procedimientos</b> <br><small>Base de conocimientos, PDFs y HTML</small></div><div><span class="badge-tag" style="background:#dee2e6;"><i class="fa-solid fa-lock"></i> Sistema</span></div></div>
+    let html = `
+    <h5 style="color:var(--blue); margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:5px;"><i class="fa-solid fa-lock"></i> Renombrar Módulos del Sistema</h5>
+    <div class="form-grid" style="background:#f8f9fa; padding:15px; border-radius:6px; margin-bottom:20px; border:1px solid #e9ecef;">
+        <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Cobertura</label><input id="sysNomCob" class="inp" value="${SYS_MOD_NAMES.cob}"></div>
+        <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Técnicos</label><input id="sysNomTec" class="inp" value="${SYS_MOD_NAMES.tec}"></div>
+        <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Directorio</label><input id="sysNomEnc" class="inp" value="${SYS_MOD_NAMES.enc}"></div>
+        <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Procedimientos</label><input id="sysNomProc" class="inp" value="${SYS_MOD_NAMES.proc}"></div>
+        <div class="span-2" style="text-align:right;"><button onclick="window.saveSysMods()" class="btn btn-s" style="color:white;"><i class="fa-solid fa-save"></i> Guardar Nombres</button></div>
+    </div>
+    
     <h5 style="color:var(--blue); margin-top:20px; margin-bottom:5px; border-bottom:1px solid #eee; padding-bottom:5px;"><i class="fa-solid fa-puzzle-piece"></i> Módulos Personalizados</h5>`;
+    
     let dynHtml = DB.configModulos.map(m => `<div class="mod-list-item"><div><b>${m.nombre}</b> <span style="font-size:11px;color:var(--mid-gray);">(${m.vista})</span> <br><small style="color:var(--mid-gray);">${m.columnas.join(', ')}</small></div>
       <div><button onclick="window.editarModuloDinamico('${m.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarModuloDinamico('${m.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
     document.getElementById('listaModulosCreados').innerHTML = html + (dynHtml || '<p style="font-size:13px; color:var(--mid-gray);">No hay personalizados.</p>');
@@ -867,16 +909,19 @@
           let html = `<div class="enc-grid">`;
           chunk.forEach(row => {
               let title = row.c0 || "Sin Título"; let ini = title.charAt(0).toUpperCase();
+              let role = row.c1 || ""; 
+              
               let act = ""; if (canEdit) act += `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`;
               let bodyHtml = "";
               CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => {
-                  if(i < 1) return; let val = row['c'+i];
+                  if(i < 2) return; // Ignora c0 (Título) y c1 (Rol)
+                  let val = row['c'+i];
                   if(val) {
                       let displayVal = val.length > 40 ? val.substring(0, 37) + '...' : val;
                       bodyHtml += `<div class="enc-contact" onclick="window.copyToClip('${val}')" title="Copiar ${colName}"><div style="display:flex; flex-direction:column;"><span style="font-size:10px; color:#adb5bd; font-weight:bold; text-transform:uppercase;">${colName}</span><span>${displayVal}</span></div><div class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</div></div>`;
                   }
               });
-              html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${title}</div></div></div></div><div class="enc-body">${bodyHtml}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`;
+              html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${title}</div><div class="enc-role">${role}</div></div></div></div><div class="enc-body">${bodyHtml}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`;
           });
           html += `</div>`; container.innerHTML = html;
       } else {
@@ -934,30 +979,19 @@
       const query = qInput ? window.normStr(qInput.value) : '';
 
       let f = DB.proc;
-      if(query) {
-          f = DB.proc.filter(p => window.normStr(p.tit).includes(query) || window.normStr(p.cat).includes(query));
-      }
+      if(query) { f = DB.proc.filter(p => window.normStr(p.tit).includes(query) || window.normStr(p.cat).includes(query)); }
 
-      if (f.length === 0) { 
-          container.innerHTML = `<p style="padding:20px; color:#adb5bd; font-size:13px; text-align:center;">No se encontraron resultados.</p>`; 
-          return; 
-      }
+      if (f.length === 0) { container.innerHTML = `<p style="padding:20px; color:#adb5bd; font-size:13px; text-align:center;">No se encontraron resultados.</p>`; return; }
       
       const grupos = {};
-      f.forEach(p => {
-          let cat = p.cat || "General";
-          if(!grupos[cat]) grupos[cat] = [];
-          grupos[cat].push(p);
-      });
+      f.forEach(p => { let cat = p.cat || "General"; if(!grupos[cat]) grupos[cat] = []; grupos[cat].push(p); });
 
       let html = "";
       Object.keys(grupos).sort().forEach(cat => {
           html += `<div class="proc-cat-header">${cat}</div>`;
           grupos[cat].sort((a,b)=>a.tit.localeCompare(b.tit)).forEach(p => {
-              let icon = p.pdfUrl ? '<i class="fa-solid fa-file-pdf" style="color:var(--blue); font-size: 16px;"></i>' : '<i class="fa-regular fa-file-lines" style="color:#adb5bd; font-size: 16px;"></i>';
-              html += `<a class="proc-item-link" id="linkProc_${p.id}" onclick="window.abrirProcedimiento('${p.id}')">
-                         ${icon} <span style="flex:1;">${p.tit}</span>
-                       </a>`;
+              let icon = '<i class="fa-regular fa-file-lines" style="color:#adb5bd; font-size: 16px;"></i>';
+              html += `<a class="proc-item-link" id="linkProc_${p.id}" onclick="window.abrirProcedimiento('${p.id}')">${icon} <span style="flex:1;">${p.tit}</span></a>`;
           });
       });
       container.innerHTML = html;
@@ -979,29 +1013,10 @@
       
       if(proc) {
           viewer.dataset.activeId = id;
-          
           let contentHtml = "";
-          
-          if(proc.modo === 'visual' || !proc.modo) {
-              contentHtml += `<div class="ql-editor" style="padding:0; overflow-y:visible;">${proc.html || ''}</div>`;
-          } else {
-              contentHtml += `<div style="padding:0; overflow-y:visible;">${proc.html || ''}</div>`;
-          }
-          
-          if (proc.pdfUrl) {
-              contentHtml += `
-                <div style="margin-top: 40px; border-top: 2px solid #eee; padding-top: 30px;">
-                    <h3 style="color:var(--blue); margin-bottom: 20px;"><i class="fa-solid fa-file-pdf" style="color:var(--light-blue);"></i> Documento PDF Adjunto</h3>
-                    <iframe src="${proc.pdfUrl}" width="100%" height="800px" style="border: 1px solid #ced4da; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); background:#f8f9fa;"></iframe>
-                    <div style="text-align:right; margin-top:10px;">
-                        <a href="${proc.pdfUrl}" target="_blank" class="btn btn-p" style="text-decoration:none;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir en pestaña nueva</a>
-                    </div>
-                </div>
-              `;
-          }
-
-          if(!proc.html && !proc.pdfUrl) contentHtml = "<i>El documento está vacío.</i>";
-
+          if(proc.modo === 'visual' || !proc.modo) { contentHtml += `<div class="ql-editor" style="padding:0; overflow-y:visible;">${proc.html || ''}</div>`; } 
+          else { contentHtml += `<div style="padding:0; overflow-y:visible;">${proc.html || ''}</div>`; }
+          if(!proc.html) contentHtml = "<i>El documento está vacío.</i>";
           viewer.innerHTML = contentHtml;
           document.getElementById('procViewerScrollArea').scrollTo({ top: 0, behavior: 'smooth' });
       }
@@ -1011,123 +1026,63 @@
       const btnSave = document.getElementById('btnSaveProc');
       const cat = document.getElementById('admProcCat').value.trim() || "General";
       const tit = document.getElementById('admProcTit').value.trim();
-      
       const html = PROC_MODE === 'visual' ? quillEditor.root.innerHTML : document.getElementById('admProcHtml').value.trim();
-      
       const isHtmlEmpty = (html === '<p><br></p>' || html.trim() === '');
-      const fileInput = document.getElementById('admProcPdf');
-      const file = fileInput.files[0];
 
       if(!tit) return alert("El título es obligatorio.");
-      if(isHtmlEmpty && !file && !EDITING_PROC_ID) return alert("Debes escribir contenido o adjuntar un PDF.");
+      if(isHtmlEmpty) return alert("Debes escribir contenido en el procedimiento.");
 
-      btnSave.disabled = true;
-      btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+      btnSave.disabled = true; btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
 
       try {
           let payload = { cat, tit, html, modo: PROC_MODE };
-          
-          if (file) {
-              const storageRef = ref(storage, 'procedimientos_pdfs/' + Date.now() + '_' + file.name);
-              await uploadBytes(storageRef, file);
-              const downloadURL = await getDownloadURL(storageRef);
-              payload.pdfUrl = downloadURL;
-              payload.pdfName = file.name;
-          }
-
           if (EDITING_PROC_ID) {
               await updateDoc(doc(db, "procedimientos_html", EDITING_PROC_ID), payload);
-              alert("Procedimiento actualizado.");
-              window.cancelarEdicionProc();
+              alert("Procedimiento actualizado."); window.cancelarEdicionProc();
           } else {
               payload.fecha = Date.now();
               await addDoc(collection(db, "procedimientos_html"), payload);
-              alert("Procedimiento creado.");
-              window.cancelarEdicionProc();
+              alert("Procedimiento creado."); window.cancelarEdicionProc();
           }
-      } catch(e) { 
-          alert("Error al guardar."); 
-          console.error(e);
-      } finally {
-          btnSave.disabled = false;
-          btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Procedimiento';
-      }
+      } catch(e) { alert("Error al guardar."); console.error(e); } 
+      finally { btnSave.disabled = false; btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Procedimiento'; }
   };
 
   window.editarProc = function(id) {
-      EDITING_PROC_ID = id;
-      const p = DB.proc.find(x => x.id === id);
-      document.getElementById('admProcCat').value = p.cat || '';
-      document.getElementById('admProcTit').value = p.tit || '';
+      EDITING_PROC_ID = id; const p = DB.proc.find(x => x.id === id);
+      document.getElementById('admProcCat').value = p.cat || ''; document.getElementById('admProcTit').value = p.tit || '';
+      const modoGuardado = p.modo || 'visual'; window.setProcMode(modoGuardado, false);
       
-      const modoGuardado = p.modo || 'visual';
-      window.setProcMode(modoGuardado, false);
-      
-      if(modoGuardado === 'visual') {
-          quillEditor.root.innerHTML = p.html || '';
-          document.getElementById('admProcHtml').value = '';
-      } else {
-          quillEditor.root.innerHTML = '';
-          document.getElementById('admProcHtml').value = p.html || '';
-      }
+      if(modoGuardado === 'visual') { quillEditor.root.innerHTML = p.html || ''; document.getElementById('admProcHtml').value = ''; } 
+      else { quillEditor.root.innerHTML = ''; document.getElementById('admProcHtml').value = p.html || ''; }
 
-      const statusDiv = document.getElementById('pdfCurrentStatus');
-      if (p.pdfUrl) {
-          statusDiv.innerHTML = `<i class="fa-solid fa-check-circle"></i> Archivo actual: ${p.pdfName || 'PDF adjunto'}. (Si seleccionas uno nuevo, lo reemplazará).`;
-      } else {
-          statusDiv.innerHTML = "";
-      }
-
-      document.getElementById('admProcPdf').value = ""; 
-
-      const btnSave = document.getElementById('btnSaveProc');
-      btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios';
-      btnSave.classList.replace('btn-s', 'btn-p');
-      document.getElementById('btnCancelProc').classList.remove('hidden');
-
-      document.querySelector('.ajs-content').scrollTo({ top: 0, behavior: 'smooth' });
+      const btnSave = document.getElementById('btnSaveProc'); btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios'; btnSave.classList.replace('btn-s', 'btn-p');
+      document.getElementById('btnCancelProc').classList.remove('hidden'); document.querySelector('.ajs-content').scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   window.cancelarEdicionProc = function() {
-      EDITING_PROC_ID = null;
-      document.getElementById('admProcTit').value = '';
-      document.getElementById('admProcCat').value = '';
-      quillEditor.root.innerHTML = ''; 
-      document.getElementById('admProcHtml').value = ''; 
-      document.getElementById('admProcPdf').value = ''; 
-      document.getElementById('pdfCurrentStatus').innerHTML = ''; 
-      
+      EDITING_PROC_ID = null; document.getElementById('admProcTit').value = ''; document.getElementById('admProcCat').value = '';
+      quillEditor.root.innerHTML = ''; document.getElementById('admProcHtml').value = ''; 
       window.setProcMode('visual', false); 
-
-      const btnSave = document.getElementById('btnSaveProc');
-      btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Procedimiento';
-      btnSave.classList.replace('btn-p', 'btn-s');
-      document.getElementById('btnCancelProc').classList.add('hidden');
+      const btnSave = document.getElementById('btnSaveProc'); btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Procedimiento'; btnSave.classList.replace('btn-p', 'btn-s'); document.getElementById('btnCancelProc').classList.add('hidden');
   };
 
   window.eliminarProc = async function(id) {
-      if(!confirm("¿Eliminar este procedimiento permanentemente? (Nota: El archivo PDF en Storage no se borra automáticamente).")) return;
-      await deleteDoc(doc(db, "procedimientos_html", id));
-      if(EDITING_PROC_ID === id) window.cancelarEdicionProc();
+      if(!confirm("¿Eliminar este procedimiento permanentemente?")) return;
+      await deleteDoc(doc(db, "procedimientos_html", id)); if(EDITING_PROC_ID === id) window.cancelarEdicionProc();
   };
 
   window.renderAdminProcList = function() {
-      const q = window.normStr(document.getElementById('searchProcAdmBox').value);
-      let f = DB.proc;
+      const q = window.normStr(document.getElementById('searchProcAdmBox').value); let f = DB.proc;
       if (q) f = f.filter(p => window.normStr(`${p.tit} ${p.cat}`).includes(q));
 
       const container = document.getElementById('adminProcListContainer');
       container.innerHTML = f.map(p => {
-          let badgePdf = p.pdfUrl ? `<span style="background:var(--light-blue); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-file-pdf"></i> PDF</span>` : '';
           let badgeModo = (p.modo === 'codigo') ? `<span style="background:var(--mid-gray); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-code"></i> HTML</span>` : `<span style="background:var(--blue); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-pen-nib"></i> Visual</span>`;
-          
           return `
           <div class="mod-list-item">
-              <div><b>${p.tit}</b> ${badgePdf} ${badgeModo}<br><small style="color:var(--mid-gray);"><i class="fa-solid fa-folder"></i> ${p.cat || "General"}</small></div>
-              <div>
-                  <button onclick="window.editarProc('${p.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button>
-                  <button onclick="window.eliminarProc('${p.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button>
-              </div>
+              <div><b>${p.tit}</b> ${badgeModo}<br><small style="color:var(--mid-gray);"><i class="fa-solid fa-folder"></i> ${p.cat || "General"}</small></div>
+              <div><button onclick="window.editarProc('${p.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarProc('${p.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div>
           </div>
       `}).join('') || '<p style="font-size:13px; color:var(--mid-gray);">No hay procedimientos registrados.</p>';
   };
@@ -1162,43 +1117,24 @@
   window.deleteDynRecord = async (id) => { if(confirm("¿Eliminar registro?")) { await deleteDoc(doc(db, "modulos_data", id)); } };
   window.changePageDyn = d => { PAGE_DYN += d; window.renderDynData(); };
 
-
   // ================= CONFIGURACIÓN DE COLORES DINÁMICOS =================
   function listenToColors() {
       onSnapshot(doc(db, "configuracion", "colores_cobertura"), (docSnap) => {
-          if (docSnap.exists()) {
-              STATUS_COLORS = docSnap.data();
-          }
+          if (docSnap.exists()) { STATUS_COLORS = docSnap.data(); }
           if(CURRENT_MODULE === 'cob') window.renderTable();
           if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewCol').classList.contains('hidden')) window.renderColorView();
       });
   }
-
   window.renderColorView = function() {
       document.getElementById('colCob').value = STATUS_COLORS["Cobertura"] || "#00A65A";
       document.getElementById('colSinCob').value = STATUS_COLORS["Sin Cobertura"] || "#dc3545";
       document.getElementById('colCon').value = STATUS_COLORS["Consultar"] || "#009FE3";
       document.getElementById('colSinDat').value = STATUS_COLORS["Sin Datos"] || "#6c757d";
   };
-
   window.saveColors = async function() {
-      const btnSave = document.getElementById('btnSaveColors');
-      btnSave.disabled = true; btnSave.innerHTML = "Guardando...";
-      
-      const data = {
-          "Cobertura": document.getElementById('colCob').value,
-          "Sin Cobertura": document.getElementById('colSinCob').value,
-          "Consultar": document.getElementById('colCon').value,
-          "Sin Datos": document.getElementById('colSinDat').value
-      };
-      
-      try {
-          await setDoc(doc(db, "configuracion", "colores_cobertura"), data, { merge: true });
-          window.showToastSuccess("Colores guardados");
-      } catch(e) {
-          alert("Error al guardar los colores");
-      }
-      
+      const btnSave = document.getElementById('btnSaveColors'); btnSave.disabled = true; btnSave.innerHTML = "Guardando...";
+      const data = { "Cobertura": document.getElementById('colCob').value, "Sin Cobertura": document.getElementById('colSinCob').value, "Consultar": document.getElementById('colCon').value, "Sin Datos": document.getElementById('colSinDat').value };
+      try { await setDoc(doc(db, "configuracion", "colores_cobertura"), data, { merge: true }); window.showToastSuccess("Colores guardados"); } catch(e) { alert("Error al guardar los colores"); }
       btnSave.disabled = false; btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Colores';
   };
 
@@ -1280,22 +1216,6 @@
   window.editEncargado = async (id) => { EDITING_ENC_ID = id; const d = DB.enc.find(x => x.id === id); document.getElementById('modalTitleEnc').innerText = "Editar Contacto"; document.getElementById('encCat').value = d.g || "Otro"; document.getElementById('encNom').value = d.n; document.getElementById('encTel').value = d.t; document.getElementById('encCor').value = d.c; document.getElementById('encPuesto').value = d.p; window.openModal('modalAddEnc', true); };
   window.saveEncargado = async () => { const data = { g: document.getElementById('encCat').value, n: document.getElementById('encNom').value.trim(), t: document.getElementById('encTel').value.trim(), c: document.getElementById('encCor').value.trim(), p: document.getElementById('encPuesto').value.trim() }; if(!data.n) return; if(EDITING_ENC_ID) await updateDoc(doc(db, "encargados", EDITING_ENC_ID), data); else await addDoc(collection(db, "encargados"), data); window.closeModal('modalAddEnc'); };
   window.deleteEncargado = async (id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, "encargados", id)); }; window.changePageEnc = d => { PAGE_ENC += d; window.renderEncargadosTable(); };
-
-  // ================= GENERALES DE USUARIO =================
-  window.openUsers = () => { window.switchModule('ajs'); window.showAjsView('usr'); }; 
-  window.openPendingUsers = () => { window.switchModule('ajs'); window.showAjsView('usr'); document.getElementById('searchUserBox').value = 'pendiente'; window.renderUserList(); };
-  
-  window.renderUserList = function() { 
-      const c = document.getElementById('userListContainer'); const q = window.normStr(document.getElementById('searchUserBox').value); let f = DB_USERS; 
-      if (q) f = f.filter(u => window.normStr(u.u).includes(q) || window.normStr(u.r).includes(q)); 
-      f.sort((a, b) => { if (a.r === 'pendiente' && b.r !== 'pendiente') return -1; if (a.r !== 'pendiente' && b.r === 'pendiente') return 1; return (a.u||"").localeCompare(b.u||""); }); 
-      c.innerHTML = f.map(u => { 
-          const isP = u.r === 'pendiente'; 
-          return `<div class="user-row" style="${isP ? 'background:#e0f2fe; border-left:5px solid var(--light-blue);' : ''}"><div><b>${u.u}</b> <br><small style="text-transform:uppercase; font-weight:bold; color: ${isP?'var(--light-blue)':'var(--mid-gray)'}">${u.r}</small></div><div><button onclick="window.editUser('${u.id}','${u.u}','${u.p}','${u.r}')" class="btn btn-p" style="padding:4px"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteUser('${u.id}')" class="btn btn-d" style="padding:4px"><i class="fa-solid fa-trash"></i></button></div></div>`; 
-      }).join('') || `<p align="center" style="padding:15px;">No hay usuarios</p>`; 
-  };
-  window.submitUser = async function() { const u = document.getElementById('uUser').value, p = document.getElementById('uPass').value, r = document.getElementById('uRol').value; if(!u || (!p && r !== 'invitado' && r !== 'pendiente')) return; if(EDITING_USER_ID) await updateDoc(doc(db, "usuarios", EDITING_USER_ID), { u, p, r }); else await addDoc(collection(db, "usuarios"), { u, p, r, createdAt: Date.now() }); window.clearUserForm(); };
-  window.editUser = function(id, u, p, r) { EDITING_USER_ID = id; document.getElementById('uUser').value = u; document.getElementById('uPass').value = p; document.getElementById('uRol').value = r; document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-save"></i>'; }; window.clearUserForm = function() { EDITING_USER_ID = null; document.getElementById('uUser').value = ''; document.getElementById('uPass').value = ''; document.getElementById('uRol').value = 'agente'; document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-plus"></i>'; }; window.deleteUser = async function(id) { if(confirm("¿Eliminar usuario?")) await deleteDoc(doc(db, "usuarios", id)); };
 
   // ================= EXPORTACIONES E IMPORTACIONES =================
   window.exportToExcel = function() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DB.cob.map(r => ({ "Municipio":r.m, "Nombre":r.n, "Categoria":r.c, "Zona":r.z, "Referencia":r.r, "Estado":r.s || "Sin Datos" }))), "Cobertura"); XLSX.writeFile(wb, "Cobertura.xlsx"); };
