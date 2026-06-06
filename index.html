@@ -7,11 +7,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-<!-- QUILL JS PARA EL EDITOR DE TEXTO ENRIQUECIDO -->
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
-<!-- SORTABLE JS PARA ARRASTRAR PESTAÑAS -->
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
 <style>
@@ -197,19 +195,16 @@
     </div>
   </header>
   
-  <!-- CONTENEDOR SORTABLE PARA PESTAÑAS -->
   <div class="nav-tabs" id="mainTabsContainer">
     <div id="tabCob" class="tab-btn active" onclick="window.switchModule('cob')"><i class="fa-solid fa-map-location-dot"></i> <span id="txtTabCob">Cobertura</span></div>
     <div id="tabTec" class="tab-btn" onclick="window.switchModule('tec')"><i class="fa-solid fa-screwdriver-wrench"></i> <span id="txtTabTec">Técnicos</span></div>
     <div id="tabEnc" class="tab-btn" onclick="window.switchModule('enc')"><i class="fa-regular fa-address-card"></i> <span id="txtTabEnc">Directorio</span></div>
     <div id="tabProc" class="tab-btn" onclick="window.switchModule('proc')"><i class="fa-solid fa-book-open"></i> <span id="txtTabProc">Procedimientos</span></div>
-    <!-- Pestañas dinámicas se inyectan aquí -->
     <div id="tabAjs" class="tab-btn hidden" onclick="window.switchModule('ajs')" style="color:var(--dark-gray);"><i class="fa-solid fa-gear"></i> Ajustes</div>
   </div>
 
   <div class="container" id="mainContainer">
       
-    <!-- 1. MÓDULO COBERTURA -->
     <div id="moduloCobertura">
         <div class="tools">
           <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchBox" class="search-inp" placeholder="Buscar colinas, milagro z6..." onkeyup="window.renderTable(true)"></div>
@@ -232,7 +227,6 @@
         </div>
     </div>
 
-    <!-- 2. MÓDULO TÉCNICOS -->
     <div id="moduloTecnicos" class="hidden">
         <div class="tools">
           <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchTecBox" class="search-inp" placeholder="Buscar técnico, placa, DPI..." onkeyup="window.renderTecnicosTable(true)"></div>
@@ -255,7 +249,6 @@
         </div>
     </div>
     
-    <!-- 3. MÓDULO ENCARGADOS -->
     <div id="moduloEncargados" class="hidden">
         <div class="tools">
           <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchEncBox" class="search-inp" placeholder="Buscar por nombre, área o correo..." onkeyup="window.renderEncargadosTable(true)"></div>
@@ -271,7 +264,6 @@
         </div>
     </div>
 
-    <!-- 4. MÓDULO PROCEDIMIENTOS -->
     <div id="moduloProcedimientos" class="hidden">
         <div class="proc-sidebar">
             <div class="proc-sidebar-header">
@@ -282,8 +274,7 @@
                 </div>
             </div>
             <div class="proc-list" id="procSidebarMenu">
-                <!-- Categorías de procedimientos se renderizan aquí -->
-            </div>
+                </div>
         </div>
         <div class="proc-viewer" id="procViewerScrollArea">
             <div class="proc-document" id="procViewerContainer">
@@ -296,7 +287,6 @@
         </div>
     </div>
 
-    <!-- 5. CONTENEDOR DINÁMICO -->
     <div id="moduloDinamico" class="hidden">
         <div class="tools">
           <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchDynBox" class="search-inp" placeholder="Buscar en este módulo..." onkeyup="window.renderDynData(true)"></div>
@@ -312,10 +302,8 @@
         </div>
     </div>
 
-    <!-- 6. PANEL DE AJUSTES MAESTRO -->
     <div id="moduloAjustes" class="hidden">
         <div class="ajs-layout">
-            <!-- Sidebar Ajustes -->
             <div class="ajs-sidebar">
                 <button id="menuAjsUsr" class="ajs-menu-btn active hidden" onclick="window.showAjsView('usr')"><i class="fa-solid fa-users" style="width:20px;"></i> Accesos y Usuarios</button>
                 <button id="menuAjsRol" class="ajs-menu-btn hidden" onclick="window.showAjsView('rol')"><i class="fa-solid fa-user-shield" style="width:20px;"></i> Roles y Permisos</button>
@@ -324,10 +312,8 @@
                 <button id="menuAjsCol" class="ajs-menu-btn hidden" onclick="window.showAjsView('col')"><i class="fa-solid fa-palette" style="width:20px;"></i> Colores Cobertura</button>
             </div>
 
-            <!-- Content Ajustes -->
             <div class="ajs-content">
                 
-                <!-- VISTA: USUARIOS -->
                 <div id="ajsViewUsr" class="hidden">
                     <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-users"></i> Gestión de Accesos</h3>
                     <div class="action-btns" style="margin-bottom: 15px; justify-content: flex-end;"><button onclick="document.getElementById('fileImportUsr').click()" class="btn btn-o"><i class="fa-solid fa-file-import"></i> Importar CSV</button><button onclick="window.exportUsersToExcel()" class="btn btn-x"><i class="fa-solid fa-file-export"></i> Exportar Excel</button></div>
@@ -341,7 +327,6 @@
                     <div id="userListContainer" style="max-height: 350px; overflow-y: auto; border: 1px solid #eee; border-radius: 4px;"></div>
                 </div>
 
-                <!-- VISTA: ROLES Y PERMISOS -->
                 <div id="ajsViewRol" class="hidden">
                     <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-user-shield"></i> Roles Personalizados</h3>
                     <p style="font-size:13px; color:var(--mid-gray);">Crea roles a la medida y define a qué partes del sistema tienen acceso.</p>
@@ -385,7 +370,6 @@
                     <div id="rolesListContainer"></div>
                 </div>
 
-                <!-- VISTA: CREADOR DE MÓDULOS -->
                 <div id="ajsViewMod" class="hidden">
                     <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-layer-group"></i> Creador y Editor de Módulos</h3>
                     <p style="font-size:13px; color:var(--mid-gray);">Agrega nuevas pestañas o personaliza el nombre de las funciones del sistema.</p>
@@ -407,7 +391,6 @@
                     <div id="listaModulosCreados"></div>
                 </div>
 
-                <!-- VISTA: GESTOR PROCEDIMIENTOS -->
                 <div id="ajsViewProc" class="hidden">
                     <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-file-code"></i> Gestor de Procedimientos</h3>
                     <p style="font-size:13px; color:var(--mid-gray);">Crea procedimientos usando el editor visual o HTML personalizado.</p>
@@ -422,7 +405,6 @@
                             <input id="admProcTit" class="inp" placeholder="Ej: ¿Cómo crear boleta?">
                         </div>
                         
-                        <!-- SELECTOR DE MODO Y ÁREA DE EDICIÓN -->
                         <div class="span-2" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: -10px;">
                             <label style="font-size:12px; font-weight:bold; color:var(--blue);">Contenido del Procedimiento</label>
                             <div>
@@ -431,12 +413,10 @@
                             </div>
                         </div>
 
-                        <!-- MODO VISUAL (QUILL) -->
                         <div class="span-2" id="boxProcVisual">
                             <div id="admProcEditor" style="height: 250px; background: white; border-radius: 0 0 4px 4px;"></div>
                         </div>
                         
-                        <!-- MODO CÓDIGO (RAW HTML) -->
                         <div class="span-2 hidden" id="boxProcCodigo">
                             <textarea id="admProcHtml" class="inp" style="font-family: monospace; font-size:13px; background:#212529; color:#f8f9fa; height: 292px; margin:0; resize: vertical;" placeholder="<h1>Tu título</h1><p>Pega tu código HTML personalizado aquí. El sistema no lo alterará.</p>"></textarea>
                         </div>
@@ -452,7 +432,6 @@
                     <div id="adminProcListContainer" style="max-height:400px; overflow-y:auto;"></div>
                 </div>
 
-                <!-- VISTA: COLORES COBERTURA -->
                 <div id="ajsViewCol" class="hidden">
                     <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-palette"></i> Colores de Cobertura</h3>
                     <p style="font-size:13px; color:var(--mid-gray);">Elige el color exacto que quieres que se muestre en la tabla para cada tipo de estado.</p>
@@ -488,7 +467,6 @@
   </div>
 </div>
 
-<!-- MODALES DE AGREGAR/EDITAR DATOS -->
 <div id="modalAdd" class="modal-backdrop hidden">
   <div class="modal"><div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><h3 id="modalTitle" style="margin:0; color:var(--blue)">Nueva Ubicación</h3><button onclick="window.closeModal('modalAdd')" class="btn btn-d"><i class="fa-solid fa-times"></i></button></div>
     <div class="form-grid"><input id="newMun" class="inp" placeholder="Municipio"><input id="newNom" class="inp" placeholder="Nombre"><input id="newCat" class="inp" placeholder="Categoría"><input id="newZon" class="inp" placeholder="Zona"><input id="newRef" class="inp span-2" placeholder="Referencia">
@@ -1017,7 +995,19 @@
           if(proc.modo === 'visual' || !proc.modo) { contentHtml += `<div class="ql-editor" style="padding:0; overflow-y:visible;">${proc.html || ''}</div>`; } 
           else { contentHtml += `<div style="padding:0; overflow-y:visible;">${proc.html || ''}</div>`; }
           if(!proc.html) contentHtml = "<i>El documento está vacío.</i>";
+          
           viewer.innerHTML = contentHtml;
+
+          // --- NUEVO: FORZAR LA EJECUCIÓN DE SCRIPTS ---
+          const scripts = viewer.querySelectorAll('script');
+          scripts.forEach(oldScript => {
+              const newScript = document.createElement('script');
+              Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+              newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+              oldScript.parentNode.replaceChild(newScript, oldScript);
+          });
+          // ---------------------------------------------
+
           document.getElementById('procViewerScrollArea').scrollTo({ top: 0, behavior: 'smooth' });
       }
   };
