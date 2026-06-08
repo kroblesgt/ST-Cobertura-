@@ -393,7 +393,7 @@
 
                 <div id="ajsViewProc" class="hidden">
                     <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-file-code"></i> Gestor de Procedimientos</h3>
-                    <p style="font-size:13px; color:var(--mid-gray);">Crea procedimientos usando el editor visual o HTML personalizado.</p>
+                    <p style="font-size:13px; color:var(--mid-gray);">Crea procedimientos usando el editor visual, código HTML o directamente de Drive.</p>
                     
                     <div class="form-grid" style="background:#f8f9fa; padding:15px; border-radius:6px; margin-bottom:20px; border:1px solid #e9ecef;">
                         <div>
@@ -410,6 +410,7 @@
                             <div>
                                 <button id="btnModoVisual" onclick="window.setProcMode('visual')" class="btn-mini" style="background:var(--blue);"><i class="fa-solid fa-pen-nib"></i> Modo Visual</button>
                                 <button id="btnModoCodigo" onclick="window.setProcMode('codigo')" class="btn-mini" style="background:var(--mid-gray);"><i class="fa-solid fa-code"></i> HTML Puro</button>
+                                <button id="btnModoDrive" onclick="window.setProcMode('drive')" class="btn-mini" style="background:var(--mid-gray);"><i class="fa-brands fa-google-drive"></i> Documento Drive</button>
                             </div>
                         </div>
 
@@ -419,6 +420,12 @@
                         
                         <div class="span-2 hidden" id="boxProcCodigo">
                             <textarea id="admProcHtml" class="inp" style="font-family: monospace; font-size:13px; background:#212529; color:#f8f9fa; height: 292px; margin:0; resize: vertical;" placeholder="<h1>Tu título</h1><p>Pega tu código HTML personalizado aquí. El sistema no lo alterará.</p>"></textarea>
+                        </div>
+                        
+                        <div class="span-2 hidden" id="boxProcDrive" style="background: white; padding: 20px; border-radius: 4px; border: 1px solid #ced4da;">
+                            <label style="font-size:12px; font-weight:bold; color:var(--blue);">Enlace de Google Drive (El archivo debe ser público)</label>
+                            <input id="admProcDriveLink" class="inp" placeholder="Ej: https://drive.google.com/file/d/16N0EYm.../view?usp=drive_link">
+                            <p style="font-size: 12px; color: var(--mid-gray); margin: 5px 0 0 0;"><i>Copia y pega el enlace completo de tu PDF o documento. El sistema generará el visor automáticamente.</i></p>
                         </div>
 
                         <div class="span-2" style="text-align:right; margin-top: 10px;">
@@ -755,72 +762,25 @@
   window.heartbeat = async () => { if(SESION.id) { try { await updateDoc(doc(db, "usuarios", SESION.id), { lastActive: Date.now() }); } catch(e){} } };
   window.logout = async (clear = true) => { if(clear && SESION.id) try { await updateDoc(doc(db, "usuarios", SESION.id), { token: null, lastActive: 0 }); } catch(e){} localStorage.removeItem('distelsa_pro_fb'); location.reload(); };
 
-  // ================= USERS Y ROLES (ADMIN OCULTO) =================
+  // ================= USERS Y ROLES =================
   window.listenToUsers = () => { onSnapshot(collection(db, "usuarios"), (snap) => { DB_USERS = snap.docs.map(d => ({ id: d.id, ...d.data() })); if (SESION.r === 'admin') { let pending = DB_USERS.filter(u => u.r === 'pendiente'); let badge = document.getElementById('notifBadge'); if (pending.length > 0) { badge.innerText = pending.length; badge.classList.remove('hidden'); } else badge.classList.add('hidden'); if (!isFirstUserLoad) pending.forEach(u => { if (!knownPendingIds.has(u.id)) window.showToast(`Nueva solicitud: <b>${u.u}</b>. <u style="cursor:pointer; color:var(--blue)" onclick="window.openPendingUsers()">Aprobar</u>`); }); knownPendingIds = new Set(pending.map(u => u.id)); } isFirstUserLoad = false; window.updateOnlineUI(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewUsr').classList.contains('hidden') && !EDITING_USER_ID) window.renderUserList(); }); };
   window.updateOnlineUI = () => { const now = Date.now(); let online = DB_USERS.filter(u => u.lastActive && (now - u.lastActive < 190000) && u.r !== 'pendiente'); if(SESION.r !== 'admin') online = online.filter(u => u.r !== 'admin'); let onlineNames = online.map(u => u.u); document.getElementById('onlineCount').innerText = onlineNames.length; document.getElementById('onlineList').innerHTML = onlineNames.map(u => `<div class="online-item"><i class="fa-solid fa-user" style="color:var(--light-blue)"></i> ${u}</div>`).join('') || 'Nadie conectado'; };
 
   window.listenToRoles = function() { onSnapshot(collection(db, "roles_config"), (snapshot) => { DB.roles = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); window.updateRolesSelect(); window.applyPermissionsToUI(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList(); }); };
-  window.updateRolesSelect = function() { 
-      const sel = document.getElementById('uRol'); if(!sel) return; 
-      let adminOpt = SESION.r === 'admin' ? `<option value="admin">Administrador (Total)</option>` : ``;
-      let html = `<option value="agente">Agente (Default)</option><option value="invitado">Invitado (Lector)</option>${adminOpt}<option value="pendiente">Pendiente (Bloqueado)</option>`; 
-      DB.roles.forEach(r => { html += `<option value="${r.nombre}">Custom: ${r.nombre}</option>`; }); 
-      sel.innerHTML = html; 
-  };
+  window.updateRolesSelect = function() { const sel = document.getElementById('uRol'); if(!sel) return; let adminOpt = SESION.r === 'admin' ? `<option value="admin">Administrador (Total)</option>` : ``; let html = `<option value="agente">Agente (Default)</option><option value="invitado">Invitado (Lector)</option>${adminOpt}<option value="pendiente">Pendiente (Bloqueado)</option>`; DB.roles.forEach(r => { html += `<option value="${r.nombre}">Custom: ${r.nombre}</option>`; }); sel.innerHTML = html; };
   window.saveRole = async function() { const nombre = document.getElementById('rolName').value.trim(); if(!nombre) return alert("Ingresa nombre"); const perms = []; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { if(chk.checked) perms.push(chk.id.replace('p_', '')); }); try { if(EDITING_ROLE_ID) { await updateDoc(doc(db, "roles_config", EDITING_ROLE_ID), { nombre, perms }); EDITING_ROLE_ID = null; document.getElementById('btnRoleAction').innerText = "Guardar Rol"; } else { await addDoc(collection(db, "roles_config"), { nombre, perms }); } document.getElementById('rolName').value = ''; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => chk.checked = false); alert("Rol guardado"); } catch(e) { alert("Error"); } };
   window.editRole = function(id) { EDITING_ROLE_ID = id; const r = DB.roles.find(x => x.id === id); document.getElementById('rolName').value = r.nombre; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { chk.checked = r.perms.includes(chk.id.replace('p_', '')); }); document.getElementById('btnRoleAction').innerText = "Actualizar Rol"; };
   window.deleteRole = async function(id) { if(confirm("¿Eliminar rol?")) await deleteDoc(doc(db, "roles_config", id)); };
   window.renderRolesList = function() { document.getElementById('rolesListContainer').innerHTML = DB.roles.map(r => `<div class="mod-list-item"><div><b>${r.nombre}</b> <br><small style="color:var(--mid-gray);">${r.perms.join(', ')}</small></div><div><button onclick="window.editRole('${r.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteRole('${r.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`).join('') || '<p style="font-size:13px;">No hay roles.</p>'; };
 
-  window.renderUserList = function() { 
-      const c = document.getElementById('userListContainer'); const q = window.normStr(document.getElementById('searchUserBox').value); 
-      let f = DB_USERS; 
-      if (SESION.r !== 'admin') f = f.filter(u => u.r !== 'admin');
-      if (q) f = f.filter(u => window.normStr(u.u).includes(q) || window.normStr(u.r).includes(q)); 
-      f.sort((a, b) => { if (a.r === 'pendiente' && b.r !== 'pendiente') return -1; if (a.r !== 'pendiente' && b.r === 'pendiente') return 1; return (a.u||"").localeCompare(b.u||""); }); 
-      c.innerHTML = f.map(u => { 
-          const isP = u.r === 'pendiente'; 
-          return `<div class="user-row" style="${isP ? 'background:#e0f2fe; border-left:5px solid var(--light-blue);' : ''}"><div><b>${u.u}</b> <br><small style="text-transform:uppercase; font-weight:bold; color: ${isP?'var(--light-blue)':'var(--mid-gray)'}">${u.r}</small></div><div><button onclick="window.editUser('${u.id}','${u.u}','${u.p}','${u.r}')" class="btn btn-p" style="padding:4px"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteUser('${u.id}')" class="btn btn-d" style="padding:4px"><i class="fa-solid fa-trash"></i></button></div></div>`; 
-      }).join('') || `<p align="center" style="padding:15px;">No hay usuarios</p>`; 
-  };
+  window.renderUserList = function() { const c = document.getElementById('userListContainer'); const q = window.normStr(document.getElementById('searchUserBox').value); let f = DB_USERS; if (SESION.r !== 'admin') f = f.filter(u => u.r !== 'admin'); if (q) f = f.filter(u => window.normStr(u.u).includes(q) || window.normStr(u.r).includes(q)); f.sort((a, b) => { if (a.r === 'pendiente' && b.r !== 'pendiente') return -1; if (a.r !== 'pendiente' && b.r === 'pendiente') return 1; return (a.u||"").localeCompare(b.u||""); }); c.innerHTML = f.map(u => { const isP = u.r === 'pendiente'; return `<div class="user-row" style="${isP ? 'background:#e0f2fe; border-left:5px solid var(--light-blue);' : ''}"><div><b>${u.u}</b> <br><small style="text-transform:uppercase; font-weight:bold; color: ${isP?'var(--light-blue)':'var(--mid-gray)'}">${u.r}</small></div><div><button onclick="window.editUser('${u.id}','${u.u}','${u.p}','${u.r}')" class="btn btn-p" style="padding:4px"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteUser('${u.id}')" class="btn btn-d" style="padding:4px"><i class="fa-solid fa-trash"></i></button></div></div>`; }).join('') || `<p align="center" style="padding:15px;">No hay usuarios</p>`; };
   window.submitUser = async function() { const u = document.getElementById('uUser').value, p = document.getElementById('uPass').value, r = document.getElementById('uRol').value; if(!u || (!p && r !== 'invitado' && r !== 'pendiente')) return; if(EDITING_USER_ID) await updateDoc(doc(db, "usuarios", EDITING_USER_ID), { u, p, r }); else await addDoc(collection(db, "usuarios"), { u, p, r, createdAt: Date.now() }); window.clearUserForm(); };
   window.editUser = function(id, u, p, r) { EDITING_USER_ID = id; document.getElementById('uUser').value = u; document.getElementById('uPass').value = p; document.getElementById('uRol').value = r; document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-save"></i>'; }; window.clearUserForm = function() { EDITING_USER_ID = null; document.getElementById('uUser').value = ''; document.getElementById('uPass').value = ''; document.getElementById('uRol').value = 'agente'; document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-plus"></i>'; }; window.deleteUser = async function(id) { if(confirm("¿Eliminar usuario?")) await deleteDoc(doc(db, "usuarios", id)); };
 
-
   // ================= NOMBRES DE MÓDULOS DEL SISTEMA =================
-  function listenToSysMods() {
-      onSnapshot(doc(db, "configuracion", "nombres_modulos"), (docSnap) => {
-          if (docSnap.exists()) {
-              Object.assign(SYS_MOD_NAMES, docSnap.data());
-          }
-          window.updateSysModUI();
-      });
-  }
-  
-  window.updateSysModUI = function() {
-      document.getElementById('txtTabCob').innerText = SYS_MOD_NAMES.cob;
-      document.getElementById('txtTabTec').innerText = SYS_MOD_NAMES.tec;
-      document.getElementById('txtTabEnc').innerText = SYS_MOD_NAMES.enc;
-      document.getElementById('txtTabProc').innerText = SYS_MOD_NAMES.proc;
-      
-      const lblProc = document.getElementById('lblProcSidebar');
-      if(lblProc) lblProc.innerText = SYS_MOD_NAMES.proc;
-
-      if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewMod').classList.contains('hidden')) window.renderListaModulos();
-  };
-
-  window.saveSysMods = async function() {
-      const data = {
-          cob: document.getElementById('sysNomCob').value.trim() || "Cobertura",
-          tec: document.getElementById('sysNomTec').value.trim() || "Técnicos",
-          enc: document.getElementById('sysNomEnc').value.trim() || "Directorio",
-          proc: document.getElementById('sysNomProc').value.trim() || "Procedimientos"
-      };
-      try {
-          await setDoc(doc(db, "configuracion", "nombres_modulos"), data, { merge: true });
-          window.showToastSuccess("Nombres de sistema actualizados");
-      } catch(e) { alert("Error al guardar nombres"); }
-  };
+  function listenToSysMods() { onSnapshot(doc(db, "configuracion", "nombres_modulos"), (docSnap) => { if (docSnap.exists()) { Object.assign(SYS_MOD_NAMES, docSnap.data()); } window.updateSysModUI(); }); }
+  window.updateSysModUI = function() { document.getElementById('txtTabCob').innerText = SYS_MOD_NAMES.cob; document.getElementById('txtTabTec').innerText = SYS_MOD_NAMES.tec; document.getElementById('txtTabEnc').innerText = SYS_MOD_NAMES.enc; document.getElementById('txtTabProc').innerText = SYS_MOD_NAMES.proc; const lblProc = document.getElementById('lblProcSidebar'); if(lblProc) lblProc.innerText = SYS_MOD_NAMES.proc; if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewMod').classList.contains('hidden')) window.renderListaModulos(); };
+  window.saveSysMods = async function() { const data = { cob: document.getElementById('sysNomCob').value.trim() || "Cobertura", tec: document.getElementById('sysNomTec').value.trim() || "Técnicos", enc: document.getElementById('sysNomEnc').value.trim() || "Directorio", proc: document.getElementById('sysNomProc').value.trim() || "Procedimientos" }; try { await setDoc(doc(db, "configuracion", "nombres_modulos"), data, { merge: true }); window.showToastSuccess("Nombres de sistema actualizados"); } catch(e) { alert("Error al guardar nombres"); } };
 
   // ================= CREADOR DE MÓDULOS DINÁMICOS =================
   function listenToConfigModulos() { onSnapshot(collection(db, "modulos_config"), (snapshot) => { DB.configModulos = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); window.buildDynamicTabs(); if(CURRENT_MODULE === 'ajs') window.renderListaModulos(); }); }
@@ -832,153 +792,69 @@
       const tab = document.createElement('div'); tab.className = `tab-btn tab-dyn ${CURRENT_MODULE === 'dyn_'+mod.id ? 'active' : ''}`; tab.id = 'tab_dyn_' + mod.id;
       tab.innerHTML = `<i class="fa-solid ${mod.vista === 'directorio' ? 'fa-id-card' : 'fa-folder-open'}"></i> ${mod.nombre}`;
       tab.onclick = () => window.switchModule('dyn_' + mod.id); container.insertBefore(tab, tabAjustes);
-    });
-    window.applyPermissionsToUI(); 
-    window.initSortableTabs();
+    }); window.applyPermissionsToUI(); window.initSortableTabs();
   };
 
-  window.guardarModuloDinamico = async function() {
-    const nombre = document.getElementById('confModName').value.trim(); const vista = document.getElementById('confModVista').value; const colsRaw = document.getElementById('confModCols').value.trim();
-    if(!nombre || !colsRaw) return alert("Completa nombre y columnas"); const cols = colsRaw.split(',').map(c => c.trim()).filter(c => c !== ''); if(cols.length === 0) return alert("Columnas inválidas");
-    try { if (EDITING_MOD_ID) { await updateDoc(doc(db, "modulos_config", EDITING_MOD_ID), { nombre, vista, columnas: cols }); alert("¡Módulo Actualizado!"); window.cancelarEdicionModulo(); } else { await addDoc(collection(db, "modulos_config"), { nombre, vista, columnas: cols }); alert("¡Módulo Creado!"); document.getElementById('confModName').value = ''; document.getElementById('confModCols').value = ''; } } catch(e) { alert("Error"); }
-  };
+  window.guardarModuloDinamico = async function() { const nombre = document.getElementById('confModName').value.trim(); const vista = document.getElementById('confModVista').value; const colsRaw = document.getElementById('confModCols').value.trim(); if(!nombre || !colsRaw) return alert("Completa nombre y columnas"); const cols = colsRaw.split(',').map(c => c.trim()).filter(c => c !== ''); if(cols.length === 0) return alert("Columnas inválidas"); try { if (EDITING_MOD_ID) { await updateDoc(doc(db, "modulos_config", EDITING_MOD_ID), { nombre, vista, columnas: cols }); alert("¡Módulo Actualizado!"); window.cancelarEdicionModulo(); } else { await addDoc(collection(db, "modulos_config"), { nombre, vista, columnas: cols }); alert("¡Módulo Creado!"); document.getElementById('confModName').value = ''; document.getElementById('confModCols').value = ''; } } catch(e) { alert("Error"); } };
   window.editarModuloDinamico = function(id) { EDITING_MOD_ID = id; const mod = DB.configModulos.find(m => m.id === id); document.getElementById('confModName').value = mod.nombre; document.getElementById('confModVista').value = mod.vista; document.getElementById('confModCols').value = mod.columnas.join(', '); const btnSave = document.getElementById('btnSaveMod'); btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios'; btnSave.classList.replace('btn-s', 'btn-p'); document.getElementById('btnCancelMod').classList.remove('hidden'); const container = document.querySelector('.ajs-content'); if(container) container.scrollTo({ top: 0, behavior: 'smooth' }); };
   window.cancelarEdicionModulo = function() { EDITING_MOD_ID = null; document.getElementById('confModName').value = ''; document.getElementById('confModVista').value = 'tabla'; document.getElementById('confModCols').value = ''; const btnSave = document.getElementById('btnSaveMod'); btnSave.innerHTML = '<i class="fa-solid fa-layer-group"></i> Generar Módulo'; btnSave.classList.replace('btn-p', 'btn-s'); document.getElementById('btnCancelMod').classList.add('hidden'); };
   window.eliminarModuloDinamico = async function(id) { if(!confirm("¿Eliminar módulo y todos sus datos?")) return; try { await deleteDoc(doc(db, "modulos_config", id)); const batch = writeBatch(db); DB.dynData.filter(d => d.modId === id).forEach(d => batch.delete(doc(db, "modulos_data", d.id))); await batch.commit(); if (EDITING_MOD_ID === id) window.cancelarEdicionModulo(); if (CURRENT_MODULE === 'dyn_'+id) window.switchModule('cob'); } catch(e) { alert("Error"); } };
 
   window.renderListaModulos = function() {
-    let html = `
-    <h5 style="color:var(--blue); margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:5px;"><i class="fa-solid fa-lock"></i> Renombrar Módulos del Sistema</h5>
-    <div class="form-grid" style="background:#f8f9fa; padding:15px; border-radius:6px; margin-bottom:20px; border:1px solid #e9ecef;">
-        <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Cobertura</label><input id="sysNomCob" class="inp" value="${SYS_MOD_NAMES.cob}"></div>
-        <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Técnicos</label><input id="sysNomTec" class="inp" value="${SYS_MOD_NAMES.tec}"></div>
-        <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Directorio</label><input id="sysNomEnc" class="inp" value="${SYS_MOD_NAMES.enc}"></div>
-        <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Procedimientos</label><input id="sysNomProc" class="inp" value="${SYS_MOD_NAMES.proc}"></div>
-        <div class="span-2" style="text-align:right;"><button onclick="window.saveSysMods()" class="btn btn-s" style="color:white;"><i class="fa-solid fa-save"></i> Guardar Nombres</button></div>
-    </div>
-    
-    <h5 style="color:var(--blue); margin-top:20px; margin-bottom:5px; border-bottom:1px solid #eee; padding-bottom:5px;"><i class="fa-solid fa-puzzle-piece"></i> Módulos Personalizados</h5>`;
-    
-    let dynHtml = DB.configModulos.map(m => `<div class="mod-list-item"><div><b>${m.nombre}</b> <span style="font-size:11px;color:var(--mid-gray);">(${m.vista})</span> <br><small style="color:var(--mid-gray);">${m.columnas.join(', ')}</small></div>
-      <div><button onclick="window.editarModuloDinamico('${m.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarModuloDinamico('${m.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
+    let html = `<h5 style="color:var(--blue); margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:5px;"><i class="fa-solid fa-lock"></i> Renombrar Módulos del Sistema</h5><div class="form-grid" style="background:#f8f9fa; padding:15px; border-radius:6px; margin-bottom:20px; border:1px solid #e9ecef;"><div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Cobertura</label><input id="sysNomCob" class="inp" value="${SYS_MOD_NAMES.cob}"></div><div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Técnicos</label><input id="sysNomTec" class="inp" value="${SYS_MOD_NAMES.tec}"></div><div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Directorio</label><input id="sysNomEnc" class="inp" value="${SYS_MOD_NAMES.enc}"></div><div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Procedimientos</label><input id="sysNomProc" class="inp" value="${SYS_MOD_NAMES.proc}"></div><div class="span-2" style="text-align:right;"><button onclick="window.saveSysMods()" class="btn btn-s" style="color:white;"><i class="fa-solid fa-save"></i> Guardar Nombres</button></div></div><h5 style="color:var(--blue); margin-top:20px; margin-bottom:5px; border-bottom:1px solid #eee; padding-bottom:5px;"><i class="fa-solid fa-puzzle-piece"></i> Módulos Personalizados</h5>`;
+    let dynHtml = DB.configModulos.map(m => `<div class="mod-list-item"><div><b>${m.nombre}</b> <span style="font-size:11px;color:var(--mid-gray);">(${m.vista})</span> <br><small style="color:var(--mid-gray);">${m.columnas.join(', ')}</small></div><div><button onclick="window.editarModuloDinamico('${m.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarModuloDinamico('${m.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`).join('');
     document.getElementById('listaModulosCreados').innerHTML = html + (dynHtml || '<p style="font-size:13px; color:var(--mid-gray);">No hay personalizados.</p>');
   };
 
   // ================= RENDERIZADOR DINÁMICO =================
   window.renderDynData = function(reset = false) {
-      if (reset) PAGE_DYN = 1; if(!CURRENT_DYN_CONFIG) return;
-      const rawQ = window.normStr(document.getElementById('searchDynBox').value);
-      let filtered = DB.dynData.filter(d => d.modId === CURRENT_DYN_CONFIG.id);
+      if (reset) PAGE_DYN = 1; if(!CURRENT_DYN_CONFIG) return; const rawQ = window.normStr(document.getElementById('searchDynBox').value); let filtered = DB.dynData.filter(d => d.modId === CURRENT_DYN_CONFIG.id);
       if (rawQ) { filtered = filtered.filter(row => { let fStr = ""; CURRENT_DYN_CONFIG.columnas.forEach((_, i) => fStr += (row['c'+i]||"")+" "); return window.normStr(fStr).includes(rawQ); }); }
-
-      const isDir = CURRENT_DYN_CONFIG.vista === 'directorio';
-      const perPage = isDir ? ITEMS_PER_PAGE_ENC : 10;
-      const totalPages = Math.ceil(filtered.length / perPage) || 1;
-      if (PAGE_DYN > totalPages) PAGE_DYN = totalPages;
-      document.getElementById('pageLabelDyn').innerText = `${PAGE_DYN} / ${totalPages}`;
-      const chunk = filtered.slice((PAGE_DYN - 1) * perPage, PAGE_DYN * perPage);
-      
-      const container = document.getElementById('dynContentContainer');
-      const canEdit = window.hasPerm('dyn_edit'); const isAdmin = (SESION.r === 'admin');
-
+      const isDir = CURRENT_DYN_CONFIG.vista === 'directorio'; const perPage = isDir ? ITEMS_PER_PAGE_ENC : 10; const totalPages = Math.ceil(filtered.length / perPage) || 1;
+      if (PAGE_DYN > totalPages) PAGE_DYN = totalPages; document.getElementById('pageLabelDyn').innerText = `${PAGE_DYN} / ${totalPages}`; const chunk = filtered.slice((PAGE_DYN - 1) * perPage, PAGE_DYN * perPage);
+      const container = document.getElementById('dynContentContainer'); const canEdit = window.hasPerm('dyn_edit'); const isAdmin = (SESION.r === 'admin');
       if (chunk.length === 0) { container.innerHTML = `<div class="card" style="text-align:center; padding: 30px; color:#6c757d; font-style: italic;">No se encontraron registros.</div>`; return; }
-
       if (isDir) {
-          let html = `<div class="enc-grid">`;
-          chunk.forEach(row => {
-              let title = row.c0 || "Sin Título"; let ini = title.charAt(0).toUpperCase();
-              let role = row.c1 || ""; 
-              
-              let act = ""; if (canEdit) act += `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`;
-              let bodyHtml = "";
-              CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => {
-                  if(i < 2) return; // Ignora c0 (Título) y c1 (Rol)
-                  let val = row['c'+i];
-                  if(val) {
-                      let displayVal = val.length > 40 ? val.substring(0, 37) + '...' : val;
-                      bodyHtml += `<div class="enc-contact" onclick="window.copyToClip('${val}')" title="Copiar ${colName}"><div style="display:flex; flex-direction:column;"><span style="font-size:10px; color:#adb5bd; font-weight:bold; text-transform:uppercase;">${colName}</span><span>${displayVal}</span></div><div class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</div></div>`;
-                  }
-              });
-              html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${title}</div><div class="enc-role">${role}</div></div></div></div><div class="enc-body">${bodyHtml}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`;
-          });
-          html += `</div>`; container.innerHTML = html;
+          let html = `<div class="enc-grid">`; chunk.forEach(row => { let title = row.c0 || "Sin Título"; let ini = title.charAt(0).toUpperCase(); let role = row.c1 || ""; let act = ""; if (canEdit) act += `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let bodyHtml = ""; CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => { if(i < 2) return; let val = row['c'+i]; if(val) { let displayVal = val.length > 40 ? val.substring(0, 37) + '...' : val; bodyHtml += `<div class="enc-contact" onclick="window.copyToClip('${val}')" title="Copiar ${colName}"><div style="display:flex; flex-direction:column;"><span style="font-size:10px; color:#adb5bd; font-weight:bold; text-transform:uppercase;">${colName}</span><span>${displayVal}</span></div><div class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</div></div>`; } }); html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${title}</div><div class="enc-role">${role}</div></div></div></div><div class="enc-body">${bodyHtml}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`; }); html += `</div>`; container.innerHTML = html;
       } else {
-          let ths = CURRENT_DYN_CONFIG.columnas.map(c => `<th>${c}</th>`).join(''); if(canEdit) ths += `<th width="15%">Acciones</th>`;
-          let html = `<div class="card"><div class="table-responsive"><table><thead><tr>${ths}</tr></thead><tbody>`;
-          chunk.forEach(row => {
-              html += `<tr>`;
-              CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => {
-                  let val = row['c'+i] || "";
-                  let displayVal = val;
-                  if (val.length > 45) {
-                      displayVal = `<span>${val.substring(0, 42)}...</span> <button class="btn-mini" onclick="window.abrirVerMas('${row.id}', ${i})" style="background:var(--blue)">Ver más</button>`;
-                  }
-                  html += `<td>${i===0?`<b>${displayVal}</b>`:displayVal}</td>`;
-              });
-              if(canEdit) {
-                  let act = `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:6px 10px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`;
-                  if(isAdmin) act += ` <button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:6px 10px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`;
-                  html += `<td>${act}</td>`;
-              }
-              html += `</tr>`;
-          });
-          html += `</tbody></table></div></div>`; container.innerHTML = html;
+          let ths = CURRENT_DYN_CONFIG.columnas.map(c => `<th>${c}</th>`).join(''); if(canEdit) ths += `<th width="15%">Acciones</th>`; let html = `<div class="card"><div class="table-responsive"><table><thead><tr>${ths}</tr></thead><tbody>`;
+          chunk.forEach(row => { html += `<tr>`; CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => { let val = row['c'+i] || ""; let displayVal = val; if (val.length > 45) { displayVal = `<span>${val.substring(0, 42)}...</span> <button class="btn-mini" onclick="window.abrirVerMas('${row.id}', ${i})" style="background:var(--blue)">Ver más</button>`; } html += `<td>${i===0?`<b>${displayVal}</b>`:displayVal}</td>`; }); if(canEdit) { let act = `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:6px 10px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if(isAdmin) act += ` <button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:6px 10px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; html += `<td>${act}</td>`; } html += `</tr>`; }); html += `</tbody></table></div></div>`; container.innerHTML = html;
       }
   };
 
-  // ================= MODULO: PROCEDIMIENTOS (VISUAL Y CÓDIGO) =================
-  function listenToProcedimientos() { 
-      onSnapshot(collection(db, "procedimientos_html"), (snapshot) => { 
-          DB.proc = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); 
-          if(CURRENT_MODULE === 'proc') window.renderProcMenu(); 
-          if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewProc').classList.contains('hidden')) window.renderAdminProcList();
-      }); 
-  }
+  // ================= MODULO: PROCEDIMIENTOS =================
+  function listenToProcedimientos() { onSnapshot(collection(db, "procedimientos_html"), (snapshot) => { DB.proc = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); if(CURRENT_MODULE === 'proc') window.renderProcMenu(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewProc').classList.contains('hidden')) window.renderAdminProcList(); }); }
 
   window.setProcMode = function(mode, autoSync = true) {
       PROC_MODE = mode;
       const btnV = document.getElementById('btnModoVisual');
       const btnC = document.getElementById('btnModoCodigo');
+      const btnD = document.getElementById('btnModoDrive'); // NUEVO BOTÓN
       const boxV = document.getElementById('boxProcVisual');
       const boxC = document.getElementById('boxProcCodigo');
+      const boxD = document.getElementById('boxProcDrive');   // NUEVO CONTENEDOR
+
+      // Reset styles and hide all
+      btnV.style.background = 'var(--mid-gray)'; boxV.classList.add('hidden');
+      btnC.style.background = 'var(--mid-gray)'; boxC.classList.add('hidden');
+      if(btnD) { btnD.style.background = 'var(--mid-gray)'; boxD.classList.add('hidden'); }
 
       if (mode === 'visual') {
-          btnV.style.background = 'var(--blue)'; btnC.style.background = 'var(--mid-gray)';
-          boxV.classList.remove('hidden'); boxC.classList.add('hidden');
-      } else {
-          btnC.style.background = 'var(--blue)'; btnV.style.background = 'var(--mid-gray)';
-          boxC.classList.remove('hidden'); boxV.classList.add('hidden');
+          btnV.style.background = 'var(--blue)'; boxV.classList.remove('hidden');
+      } else if (mode === 'codigo') {
+          btnC.style.background = 'var(--blue)'; boxC.classList.remove('hidden');
+      } else if (mode === 'drive') {
+          btnD.style.background = 'var(--blue)'; boxD.classList.remove('hidden');
       }
   };
 
   window.renderProcMenu = function(isSearch = false) {
-      const container = document.getElementById('procSidebarMenu');
-      const qInput = document.getElementById('searchProcBox');
-      const query = qInput ? window.normStr(qInput.value) : '';
-
-      let f = DB.proc;
-      if(query) { f = DB.proc.filter(p => window.normStr(p.tit).includes(query) || window.normStr(p.cat).includes(query)); }
-
+      const container = document.getElementById('procSidebarMenu'); const qInput = document.getElementById('searchProcBox'); const query = qInput ? window.normStr(qInput.value) : '';
+      let f = DB.proc; if(query) { f = DB.proc.filter(p => window.normStr(p.tit).includes(query) || window.normStr(p.cat).includes(query)); }
       if (f.length === 0) { container.innerHTML = `<p style="padding:20px; color:#adb5bd; font-size:13px; text-align:center;">No se encontraron resultados.</p>`; return; }
-      
-      const grupos = {};
-      f.forEach(p => { let cat = p.cat || "General"; if(!grupos[cat]) grupos[cat] = []; grupos[cat].push(p); });
-
-      let html = "";
-      Object.keys(grupos).sort().forEach(cat => {
-          html += `<div class="proc-cat-header">${cat}</div>`;
-          grupos[cat].sort((a,b)=>a.tit.localeCompare(b.tit)).forEach(p => {
-              let icon = '<i class="fa-regular fa-file-lines" style="color:#adb5bd; font-size: 16px;"></i>';
-              html += `<a class="proc-item-link" id="linkProc_${p.id}" onclick="window.abrirProcedimiento('${p.id}')">${icon} <span style="flex:1;">${p.tit}</span></a>`;
-          });
-      });
-      container.innerHTML = html;
-      
-      const viewer = document.getElementById('procViewerContainer');
-      if(viewer.dataset.activeId) {
-          let act = document.getElementById(`linkProc_${viewer.dataset.activeId}`);
-          if(act) act.classList.add('active');
-      }
+      const grupos = {}; f.forEach(p => { let cat = p.cat || "General"; if(!grupos[cat]) grupos[cat] = []; grupos[cat].push(p); });
+      let html = ""; Object.keys(grupos).sort().forEach(cat => { html += `<div class="proc-cat-header">${cat}</div>`; grupos[cat].sort((a,b)=>a.tit.localeCompare(b.tit)).forEach(p => { let icon = '<i class="fa-regular fa-file-lines" style="color:#adb5bd; font-size: 16px;"></i>'; html += `<a class="proc-item-link" id="linkProc_${p.id}" onclick="window.abrirProcedimiento('${p.id}')">${icon} <span style="flex:1;">${p.tit}</span></a>`; }); }); container.innerHTML = html;
+      const viewer = document.getElementById('procViewerContainer'); if(viewer.dataset.activeId) { let act = document.getElementById(`linkProc_${viewer.dataset.activeId}`); if(act) act.classList.add('active'); }
   };
 
   window.abrirProcedimiento = function(id) {
@@ -992,13 +868,45 @@
       if(proc) {
           viewer.dataset.activeId = id;
           let contentHtml = "";
-          if(proc.modo === 'visual' || !proc.modo) { contentHtml += `<div class="ql-editor" style="padding:0; overflow-y:visible;">${proc.html || ''}</div>`; } 
-          else { contentHtml += `<div style="padding:0; overflow-y:visible;">${proc.html || ''}</div>`; }
-          if(!proc.html) contentHtml = "<i>El documento está vacío.</i>";
+
+          // --- NUEVA LÓGICA PARA RENDERIZAR DRIVE ---
+          if (proc.modo === 'drive') {
+              let driveId = "";
+              const match = (proc.driveLink || "").match(/\/d\/([a-zA-Z0-9_-]+)/);
+              if(match) driveId = match[1];
+              
+              if(driveId) {
+                  contentHtml = `
+                  <div style="background: white; border-radius: 8px; border: 1px solid #e9ecef; padding: 25px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #e9ecef; padding-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                      <h3 style="margin: 0; color: #0A2240; display: flex; align-items: center; gap: 10px; font-size: 18px;">
+                        <i class="fa-solid fa-file-pdf" style="color: #dc3545; font-size: 24px;"></i> 
+                        ${proc.tit}
+                      </h3>
+                      <a href="https://drive.google.com/uc?export=download&id=${driveId}" target="_blank" style="background: #009FE3; color: white; padding: 10px 15px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 13px; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-download"></i> Descargar
+                      </a>
+                    </div>
+                    <div style="width: 100%; height: 70vh; min-height: 500px; border-radius: 6px; overflow: hidden; border: 1px solid #ced4da; background: #f8f9fa;">
+                      <iframe src="https://drive.google.com/file/d/${driveId}/preview" width="100%" height="100%" style="border: none;" allow="autoplay"></iframe>
+                    </div>
+                  </div>`;
+              } else {
+                  contentHtml = `<div style="text-align:center; padding: 50px; color:#dc3545;">Enlace de Google Drive inválido.</div>`;
+              }
+          } 
+          // --- LÓGICA ANTERIOR ---
+          else if(proc.modo === 'visual' || !proc.modo) { 
+              contentHtml = `<div class="ql-editor" style="padding:0; overflow-y:visible;">${proc.html || ''}</div>`; 
+          } else { 
+              contentHtml = `<div style="padding:0; overflow-y:visible;">${proc.html || ''}</div>`; 
+          }
+          
+          if(!proc.html && proc.modo !== 'drive') contentHtml = "<i>El documento está vacío.</i>";
           
           viewer.innerHTML = contentHtml;
 
-          // --- NUEVO: FORZAR LA EJECUCIÓN DE SCRIPTS ---
+          // Forzar ejecución de scripts
           const scripts = viewer.querySelectorAll('script');
           scripts.forEach(oldScript => {
               const newScript = document.createElement('script');
@@ -1006,7 +914,6 @@
               newScript.appendChild(document.createTextNode(oldScript.innerHTML));
               oldScript.parentNode.replaceChild(newScript, oldScript);
           });
-          // ---------------------------------------------
 
           document.getElementById('procViewerScrollArea').scrollTo({ top: 0, behavior: 'smooth' });
       }
@@ -1016,16 +923,28 @@
       const btnSave = document.getElementById('btnSaveProc');
       const cat = document.getElementById('admProcCat').value.trim() || "General";
       const tit = document.getElementById('admProcTit').value.trim();
-      const html = PROC_MODE === 'visual' ? quillEditor.root.innerHTML : document.getElementById('admProcHtml').value.trim();
-      const isHtmlEmpty = (html === '<p><br></p>' || html.trim() === '');
+      
+      let htmlContent = "";
+      let driveLink = "";
+
+      // CAPTURAR SEGÚN EL MODO
+      if (PROC_MODE === 'visual') {
+          htmlContent = quillEditor.root.innerHTML;
+          if(htmlContent === '<p><br></p>') htmlContent = "";
+      } else if (PROC_MODE === 'codigo') {
+          htmlContent = document.getElementById('admProcHtml').value.trim();
+      } else if (PROC_MODE === 'drive') {
+          driveLink = document.getElementById('admProcDriveLink').value.trim();
+      }
 
       if(!tit) return alert("El título es obligatorio.");
-      if(isHtmlEmpty) return alert("Debes escribir contenido en el procedimiento.");
+      if(PROC_MODE !== 'drive' && !htmlContent) return alert("Debes escribir contenido en el procedimiento.");
+      if(PROC_MODE === 'drive' && !driveLink) return alert("Debes colocar el enlace de Drive.");
 
       btnSave.disabled = true; btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
 
       try {
-          let payload = { cat, tit, html, modo: PROC_MODE };
+          let payload = { cat, tit, html: htmlContent, driveLink: driveLink, modo: PROC_MODE };
           if (EDITING_PROC_ID) {
               await updateDoc(doc(db, "procedimientos_html", EDITING_PROC_ID), payload);
               alert("Procedimiento actualizado."); window.cancelarEdicionProc();
@@ -1041,6 +960,8 @@
   window.editarProc = function(id) {
       EDITING_PROC_ID = id; const p = DB.proc.find(x => x.id === id);
       document.getElementById('admProcCat').value = p.cat || ''; document.getElementById('admProcTit').value = p.tit || '';
+      document.getElementById('admProcDriveLink').value = p.driveLink || '';
+      
       const modoGuardado = p.modo || 'visual'; window.setProcMode(modoGuardado, false);
       
       if(modoGuardado === 'visual') { quillEditor.root.innerHTML = p.html || ''; document.getElementById('admProcHtml').value = ''; } 
@@ -1053,6 +974,7 @@
   window.cancelarEdicionProc = function() {
       EDITING_PROC_ID = null; document.getElementById('admProcTit').value = ''; document.getElementById('admProcCat').value = '';
       quillEditor.root.innerHTML = ''; document.getElementById('admProcHtml').value = ''; 
+      document.getElementById('admProcDriveLink').value = '';
       window.setProcMode('visual', false); 
       const btnSave = document.getElementById('btnSaveProc'); btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Procedimiento'; btnSave.classList.replace('btn-p', 'btn-s'); document.getElementById('btnCancelProc').classList.add('hidden');
   };
@@ -1068,7 +990,11 @@
 
       const container = document.getElementById('adminProcListContainer');
       container.innerHTML = f.map(p => {
-          let badgeModo = (p.modo === 'codigo') ? `<span style="background:var(--mid-gray); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-code"></i> HTML</span>` : `<span style="background:var(--blue); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-pen-nib"></i> Visual</span>`;
+          let badgeModo = "";
+          if(p.modo === 'codigo') badgeModo = `<span style="background:var(--mid-gray); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-code"></i> HTML</span>`;
+          else if(p.modo === 'drive') badgeModo = `<span style="background:#00A65A; color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-brands fa-google-drive"></i> Drive</span>`;
+          else badgeModo = `<span style="background:var(--blue); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-pen-nib"></i> Visual</span>`;
+          
           return `
           <div class="mod-list-item">
               <div><b>${p.tit}</b> ${badgeModo}<br><small style="color:var(--mid-gray);"><i class="fa-solid fa-folder"></i> ${p.cat || "General"}</small></div>
@@ -1077,56 +1003,18 @@
       `}).join('') || '<p style="font-size:13px; color:var(--mid-gray);">No hay procedimientos registrados.</p>';
   };
 
-
-  // ================= MODALES ESTÁTICOS ORIGINALES =================
-  window.openModal = (id, isEdit = false) => { 
-    document.getElementById(id).classList.remove('hidden'); 
-    if(!isEdit) { 
-        if(id==='modalAdd'){EDITING_LOCATION_ID=null;document.querySelectorAll('#modalAdd input').forEach(i=>i.value='');} 
-        if(id==='modalAddTec'){EDITING_TEC_ID=null;document.querySelectorAll('#modalAddTec input').forEach(i=>i.value='');} 
-        if(id==='modalAddEnc'){EDITING_ENC_ID=null;document.querySelectorAll('#modalAddEnc input').forEach(i=>i.value='');} 
-    }
-  };
+  // ================= MODALES ESTÁTICOS Y CONFIG COLORES =================
+  window.openModal = (id, isEdit = false) => { document.getElementById(id).classList.remove('hidden'); if(!isEdit) { if(id==='modalAdd'){EDITING_LOCATION_ID=null;document.querySelectorAll('#modalAdd input').forEach(i=>i.value='');} if(id==='modalAddTec'){EDITING_TEC_ID=null;document.querySelectorAll('#modalAddTec input').forEach(i=>i.value='');} if(id==='modalAddEnc'){EDITING_ENC_ID=null;document.querySelectorAll('#modalAddEnc input').forEach(i=>i.value='');} } };
   window.closeModal = id => document.getElementById(id).classList.add('hidden');
-
-  window.openModalDyn = function() {
-    EDITING_DYN_ID = null; document.getElementById('modalTitleDyn').innerText = "Nuevo Registro - " + CURRENT_DYN_CONFIG.nombre;
-    document.getElementById('formGridDyn').innerHTML = CURRENT_DYN_CONFIG.columnas.map((col, i) => `<div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">${col}</label><input id="dynInp_${i}" class="inp" placeholder="Ingresar ${col}"></div>`).join('');
-    window.openModal('modalDyn', false); 
-  };
-  window.editDynRecord = function(id) {
-    EDITING_DYN_ID = id; const data = DB.dynData.find(d => d.id === id); document.getElementById('modalTitleDyn').innerText = "Editar Registro - " + CURRENT_DYN_CONFIG.nombre;
-    document.getElementById('formGridDyn').innerHTML = CURRENT_DYN_CONFIG.columnas.map((col, i) => `<div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">${col}</label><input id="dynInp_${i}" class="inp" value="${data['c'+i] || ''}"></div>`).join('');
-    window.openModal('modalDyn', true); 
-  };
-  window.saveDynRecord = async function() {
-    let payload = { modId: CURRENT_DYN_CONFIG.id }; CURRENT_DYN_CONFIG.columnas.forEach((_, i) => payload['c'+i] = document.getElementById('dynInp_'+i).value.trim());
-    if(!payload['c0']) return alert("El primer campo es obligatorio");
-    try { if(EDITING_DYN_ID) await updateDoc(doc(db, "modulos_data", EDITING_DYN_ID), payload); else await addDoc(collection(db, "modulos_data"), payload); window.closeModal('modalDyn'); } catch(e) { alert("Error al guardar"); }
-  };
+  window.openModalDyn = function() { EDITING_DYN_ID = null; document.getElementById('modalTitleDyn').innerText = "Nuevo Registro - " + CURRENT_DYN_CONFIG.nombre; document.getElementById('formGridDyn').innerHTML = CURRENT_DYN_CONFIG.columnas.map((col, i) => `<div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">${col}</label><input id="dynInp_${i}" class="inp" placeholder="Ingresar ${col}"></div>`).join(''); window.openModal('modalDyn', false); };
+  window.editDynRecord = function(id) { EDITING_DYN_ID = id; const data = DB.dynData.find(d => d.id === id); document.getElementById('modalTitleDyn').innerText = "Editar Registro - " + CURRENT_DYN_CONFIG.nombre; document.getElementById('formGridDyn').innerHTML = CURRENT_DYN_CONFIG.columnas.map((col, i) => `<div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">${col}</label><input id="dynInp_${i}" class="inp" value="${data['c'+i] || ''}"></div>`).join(''); window.openModal('modalDyn', true); };
+  window.saveDynRecord = async function() { let payload = { modId: CURRENT_DYN_CONFIG.id }; CURRENT_DYN_CONFIG.columnas.forEach((_, i) => payload['c'+i] = document.getElementById('dynInp_'+i).value.trim()); if(!payload['c0']) return alert("El primer campo es obligatorio"); try { if(EDITING_DYN_ID) await updateDoc(doc(db, "modulos_data", EDITING_DYN_ID), payload); else await addDoc(collection(db, "modulos_data"), payload); window.closeModal('modalDyn'); } catch(e) { alert("Error al guardar"); } };
   window.deleteDynRecord = async (id) => { if(confirm("¿Eliminar registro?")) { await deleteDoc(doc(db, "modulos_data", id)); } };
   window.changePageDyn = d => { PAGE_DYN += d; window.renderDynData(); };
 
-  // ================= CONFIGURACIÓN DE COLORES DINÁMICOS =================
-  function listenToColors() {
-      onSnapshot(doc(db, "configuracion", "colores_cobertura"), (docSnap) => {
-          if (docSnap.exists()) { STATUS_COLORS = docSnap.data(); }
-          if(CURRENT_MODULE === 'cob') window.renderTable();
-          if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewCol').classList.contains('hidden')) window.renderColorView();
-      });
-  }
-  window.renderColorView = function() {
-      document.getElementById('colCob').value = STATUS_COLORS["Cobertura"] || "#00A65A";
-      document.getElementById('colSinCob').value = STATUS_COLORS["Sin Cobertura"] || "#dc3545";
-      document.getElementById('colCon').value = STATUS_COLORS["Consultar"] || "#009FE3";
-      document.getElementById('colSinDat').value = STATUS_COLORS["Sin Datos"] || "#6c757d";
-  };
-  window.saveColors = async function() {
-      const btnSave = document.getElementById('btnSaveColors'); btnSave.disabled = true; btnSave.innerHTML = "Guardando...";
-      const data = { "Cobertura": document.getElementById('colCob').value, "Sin Cobertura": document.getElementById('colSinCob').value, "Consultar": document.getElementById('colCon').value, "Sin Datos": document.getElementById('colSinDat').value };
-      try { await setDoc(doc(db, "configuracion", "colores_cobertura"), data, { merge: true }); window.showToastSuccess("Colores guardados"); } catch(e) { alert("Error al guardar los colores"); }
-      btnSave.disabled = false; btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Colores';
-  };
+  function listenToColors() { onSnapshot(doc(db, "configuracion", "colores_cobertura"), (docSnap) => { if (docSnap.exists()) { STATUS_COLORS = docSnap.data(); } if(CURRENT_MODULE === 'cob') window.renderTable(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewCol').classList.contains('hidden')) window.renderColorView(); }); }
+  window.renderColorView = function() { document.getElementById('colCob').value = STATUS_COLORS["Cobertura"] || "#00A65A"; document.getElementById('colSinCob').value = STATUS_COLORS["Sin Cobertura"] || "#dc3545"; document.getElementById('colCon').value = STATUS_COLORS["Consultar"] || "#009FE3"; document.getElementById('colSinDat').value = STATUS_COLORS["Sin Datos"] || "#6c757d"; };
+  window.saveColors = async function() { const btnSave = document.getElementById('btnSaveColors'); btnSave.disabled = true; btnSave.innerHTML = "Guardando..."; const data = { "Cobertura": document.getElementById('colCob').value, "Sin Cobertura": document.getElementById('colSinCob').value, "Consultar": document.getElementById('colCon').value, "Sin Datos": document.getElementById('colSinDat').value }; try { await setDoc(doc(db, "configuracion", "colores_cobertura"), data, { merge: true }); window.showToastSuccess("Colores guardados"); } catch(e) { alert("Error al guardar los colores"); } btnSave.disabled = false; btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Colores'; };
 
   // ================= MÓDULOS ESTÁTICOS ORIGINALES =================
   function listenToCoberturas() { onSnapshot(collection(db, "coberturas"), (snap) => { DB.cob = snap.docs.map(d => ({ id: d.id, ...d.data() })); if(CURRENT_MODULE === 'cob') window.renderTable(); }); }
@@ -1135,23 +1023,8 @@
 
   /* Render Cobertura */
   window.renderTable = function(r=false) { 
-    if (r) PAGE = 1; const q = window.normStr(document.getElementById('searchBox').value);
-    let f = DB.cob; if(q) f = f.filter(x => window.normStr(`${x.m} ${x.n} ${x.z} ${x.r}`).includes(q));
-    const total = Math.ceil(f.length / 10) || 1; if (PAGE > total) PAGE = total; document.getElementById('pageLabel').innerText = `${PAGE} / ${total}`;
-    const chunk = f.slice((PAGE - 1) * 10, PAGE * 10); const tbody = document.getElementById('tableBody'); tbody.innerHTML = '';
-    const canEdit = window.hasPerm('cob_edit'); const isAdmin = (SESION.r === 'admin');
-    
-    chunk.forEach(row => {
-      let statusKey = row.s || "Sin Datos";
-      let bg = STATUS_COLORS[statusKey] || "#6c757d"; 
-      let color = 'white';
-      
-      let act = ""; if (canEdit) {
-        let sel = `<select onchange="window.saveStatus('${row.id}', this)" style="background:${bg}; color:${color}; border:none; padding:8px; border-radius:4px; width:100%; outline:none;"><option value="Cobertura" ${row.s==='Cobertura'?'selected':''}>Cobertura</option><option value="Sin Cobertura" ${row.s==='Sin Cobertura'?'selected':''}>Sin Cobertura</option><option value="Consultar" ${row.s==='Consultar'?'selected':''}>Consultar</option><option value="Sin Datos" ${row.s==='Sin Datos' || !row.s ? 'selected':''}>Sin Datos</option></select>`;
-        if (isAdmin) act = `<div style="display:flex;gap:5px;">${sel}<button onclick="window.editLocation('${row.id}')" class="btn btn-p" title="Modificar"><i class="fa-solid fa-pencil"></i></button><button onclick="window.deleteLocation('${row.id}')" class="btn btn-d" title="Eliminar"><i class="fa-solid fa-trash"></i></button></div>`; else act = sel;
-      } else act = `<span class="badge" style="background:${bg}; color:${color}; width:100%; padding:8px 0;">${row.s || "Sin Datos"}</span>`;
-      tbody.innerHTML += `<tr><td>${row.m}</td><td><b>${row.n}</b></td><td>${row.c}</td><td>${row.z}</td><td>${row.r}</td><td>${act}</td></tr>`;
-    });
+    if (r) PAGE = 1; const q = window.normStr(document.getElementById('searchBox').value); let f = DB.cob; if(q) f = f.filter(x => window.normStr(`${x.m} ${x.n} ${x.z} ${x.r}`).includes(q)); const total = Math.ceil(f.length / 10) || 1; if (PAGE > total) PAGE = total; document.getElementById('pageLabel').innerText = `${PAGE} / ${total}`; const chunk = f.slice((PAGE - 1) * 10, PAGE * 10); const tbody = document.getElementById('tableBody'); tbody.innerHTML = ''; const canEdit = window.hasPerm('cob_edit'); const isAdmin = (SESION.r === 'admin');
+    chunk.forEach(row => { let statusKey = row.s || "Sin Datos"; let bg = STATUS_COLORS[statusKey] || "#6c757d"; let color = 'white'; let act = ""; if (canEdit) { let sel = `<select onchange="window.saveStatus('${row.id}', this)" style="background:${bg}; color:${color}; border:none; padding:8px; border-radius:4px; width:100%; outline:none;"><option value="Cobertura" ${row.s==='Cobertura'?'selected':''}>Cobertura</option><option value="Sin Cobertura" ${row.s==='Sin Cobertura'?'selected':''}>Sin Cobertura</option><option value="Consultar" ${row.s==='Consultar'?'selected':''}>Consultar</option><option value="Sin Datos" ${row.s==='Sin Datos' || !row.s ? 'selected':''}>Sin Datos</option></select>`; if (isAdmin) act = `<div style="display:flex;gap:5px;">${sel}<button onclick="window.editLocation('${row.id}')" class="btn btn-p" title="Modificar"><i class="fa-solid fa-pencil"></i></button><button onclick="window.deleteLocation('${row.id}')" class="btn btn-d" title="Eliminar"><i class="fa-solid fa-trash"></i></button></div>`; else act = sel; } else act = `<span class="badge" style="background:${bg}; color:${color}; width:100%; padding:8px 0;">${row.s || "Sin Datos"}</span>`; tbody.innerHTML += `<tr><td>${row.m}</td><td><b>${row.n}</b></td><td>${row.c}</td><td>${row.z}</td><td>${row.r}</td><td>${act}</td></tr>`; });
   };
   window.saveStatus = async (id, sel) => { await updateDoc(doc(db, "coberturas", id), { s: sel.value }); };
   window.editLocation = async (id) => { EDITING_LOCATION_ID = id; const d = DB.cob.find(x => x.id === id); document.getElementById('modalTitle').innerText = "Editar Ubicación"; document.getElementById('newMun').value = d.m; document.getElementById('newNom').value = d.n; document.getElementById('newCat').value = d.c; document.getElementById('newZon').value = d.z; document.getElementById('newRef').value = d.r; document.getElementById('newCob').value = d.s || "Sin Datos"; window.openModal('modalAdd', true); };
@@ -1160,16 +1033,8 @@
 
   /* Render Técnicos */
   window.renderTecnicosTable = function(r=false) {
-    if (r) PAGE_TEC = 1; const q = window.normStr(document.getElementById('searchTecBox').value);
-    let f = DB.tec; if (q) f = f.filter(row => window.normStr(`${row.n} ${row.t1} ${row.t2} ${row.a} ${row.d} ${row.p}`).includes(q));
-    const total = Math.ceil(f.length / 10) || 1; if (PAGE_TEC > total) PAGE_TEC = total; document.getElementById('pageLabelTec').innerText = `${PAGE_TEC} / ${total}`;
-    const chunk = f.slice((PAGE_TEC - 1) * 10, PAGE_TEC * 10); const tbody = document.getElementById('tableTecnicosBody'); tbody.innerHTML = '';
-    const canEdit = window.hasPerm('tec_edit'); const isAdmin = (SESION.r === 'admin');
-    chunk.forEach(row => {
-      let act = ""; if (canEdit) act += `<button onclick="window.editTecnico('${row.id}')" class="btn btn-p" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += ` <button onclick="window.deleteTecnico('${row.id}')" class="btn btn-d" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`;
-      let tels = row.t1 || ""; if(row.t2) tels += `<br><span style="color:var(--mid-gray); font-size:11px;">${row.t2}</span>`;
-      tbody.innerHTML += `<tr><td><b>${row.n||''}</b></td><td>${tels}</td><td>${row.a||''}</td><td>${row.d||''}</td><td><span class="badge-tag">${row.p||'-'}</span></td><td>${act}</td></tr>`;
-    });
+    if (r) PAGE_TEC = 1; const q = window.normStr(document.getElementById('searchTecBox').value); let f = DB.tec; if (q) f = f.filter(row => window.normStr(`${row.n} ${row.t1} ${row.t2} ${row.a} ${row.d} ${row.p}`).includes(q)); const total = Math.ceil(f.length / 10) || 1; if (PAGE_TEC > total) PAGE_TEC = total; document.getElementById('pageLabelTec').innerText = `${PAGE_TEC} / ${total}`; const chunk = f.slice((PAGE_TEC - 1) * 10, PAGE_TEC * 10); const tbody = document.getElementById('tableTecnicosBody'); tbody.innerHTML = ''; const canEdit = window.hasPerm('tec_edit'); const isAdmin = (SESION.r === 'admin');
+    chunk.forEach(row => { let act = ""; if (canEdit) act += `<button onclick="window.editTecnico('${row.id}')" class="btn btn-p" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += ` <button onclick="window.deleteTecnico('${row.id}')" class="btn btn-d" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let tels = row.t1 || ""; if(row.t2) tels += `<br><span style="color:var(--mid-gray); font-size:11px;">${row.t2}</span>`; tbody.innerHTML += `<tr><td><b>${row.n||''}</b></td><td>${tels}</td><td>${row.a||''}</td><td>${row.d||''}</td><td><span class="badge-tag">${row.p||'-'}</span></td><td>${act}</td></tr>`; });
   };
   window.editTecnico = async (id) => { EDITING_TEC_ID = id; const d = DB.tec.find(x => x.id === id); document.getElementById('modalTitleTec').innerText = "Editar Técnico"; document.getElementById('tecNom').value = d.n; document.getElementById('tecTel1').value = d.t1; document.getElementById('tecTel2').value = d.t2; document.getElementById('tecArea').value = d.a; document.getElementById('tecDPI').value = d.d; document.getElementById('tecPlaca').value = d.p; window.openModal('modalAddTec', true); };
   window.saveTecnico = async () => { const data = { n: document.getElementById('tecNom').value.trim(), t1: document.getElementById('tecTel1').value.trim(), t2: document.getElementById('tecTel2').value.trim(), a: document.getElementById('tecArea').value.trim(), d: document.getElementById('tecDPI').value.trim(), p: document.getElementById('tecPlaca').value.trim() }; if(!data.n) return; if(EDITING_TEC_ID) await updateDoc(doc(db, "tecnicos", EDITING_TEC_ID), data); else await addDoc(collection(db, "tecnicos"), data); window.closeModal('modalAddTec'); };
@@ -1177,31 +1042,9 @@
 
   /* Render Encargados */
   window.renderEncargadosTable = function(r=false) {
-    if (r) PAGE_ENC = 1; const q = window.normStr(document.getElementById('searchEncBox').value);
-    let f = DB.enc; if (q) f = f.filter(row => window.normStr(`${row.n} ${row.t} ${row.c} ${row.p} ${row.g}`).includes(q));
-    const total = Math.ceil(f.length / ITEMS_PER_PAGE_ENC) || 1; if (PAGE_ENC > total) PAGE_ENC = total; document.getElementById('pageLabelEnc').innerText = `${PAGE_ENC} / ${total}`;
-    const chunk = f.slice((PAGE_ENC - 1) * ITEMS_PER_PAGE_ENC, PAGE_ENC * ITEMS_PER_PAGE_ENC); const cont = document.getElementById('gridEncargadosContainer');
-    if (chunk.length === 0) { cont.innerHTML = `<div style="text-align:center; padding:50px; background:white; border-radius:8px;">No se encontraron contactos.</div>`; return; }
-    
-    const grupos = {}; chunk.forEach(r => { const c = r.g || "Otros"; if (!grupos[c]) grupos[c] = []; grupos[c].push(r); });
-    const canEdit = window.hasPerm('enc_edit'); const isAdmin = (SESION.r === 'admin');
-    const orden = ["Rutas domicilio", "Team Leaders", "Encargadas de marca", "Cambios y facturaciones", "Otro"];
-    const cats = Object.keys(grupos).sort((a,b) => (orden.indexOf(a)===-1?99:orden.indexOf(a)) - (orden.indexOf(b)===-1?99:orden.indexOf(b)));
-    
-    let html = "";
-    cats.forEach(cat => {
-        let ic = "fa-users"; if(cat.toLowerCase().includes('rutas')) ic = "fa-truck-fast"; if(cat.toLowerCase().includes('marca')) ic = "fa-tags"; if(cat.toLowerCase().includes('team')) ic = "fa-user-tie"; if(cat.toLowerCase().includes('factura')) ic = "fa-file-invoice-dollar";
-        html += `<div class="enc-category-title"><i class="fa-solid ${ic}"></i> ${cat}</div><div class="enc-grid">`;
-        grupos[cat].forEach(row => {
-            let act = ""; if (canEdit) act += `<button onclick="window.editEncargado('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteEncargado('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`;
-            let ini = row.n ? row.n.charAt(0).toUpperCase() : "?"; let rol = row.p || "Equipo";
-            
-            let tel = row.t ? `<div class="enc-contact" onclick="window.copyToClip('${row.t}')"><div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-phone enc-contact-icon"></i> ${row.t}</div><div class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</div></div>` : ``;
-            let cor = row.c ? `<div class="enc-contact" onclick="window.copyToClip('${row.c}')"><div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-envelope enc-contact-icon"></i> ${row.c}</div><div class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</div></div>` : ``;
-
-            html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${row.n||'Sin Nombre'}</div><div class="enc-role">${rol}</div></div></div></div><div class="enc-body">${tel}${cor}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`;
-        }); html += `</div>`;
-    }); cont.innerHTML = html;
+    if (r) PAGE_ENC = 1; const q = window.normStr(document.getElementById('searchEncBox').value); let f = DB.enc; if (q) f = f.filter(row => window.normStr(`${row.n} ${row.t} ${row.c} ${row.p} ${row.g}`).includes(q)); const total = Math.ceil(f.length / ITEMS_PER_PAGE_ENC) || 1; if (PAGE_ENC > total) PAGE_ENC = total; document.getElementById('pageLabelEnc').innerText = `${PAGE_ENC} / ${total}`; const chunk = f.slice((PAGE_ENC - 1) * ITEMS_PER_PAGE_ENC, PAGE_ENC * ITEMS_PER_PAGE_ENC); const cont = document.getElementById('gridEncargadosContainer'); if (chunk.length === 0) { cont.innerHTML = `<div style="text-align:center; padding:50px; background:white; border-radius:8px;">No se encontraron contactos.</div>`; return; }
+    const grupos = {}; chunk.forEach(r => { const c = r.g || "Otros"; if (!grupos[c]) grupos[c] = []; grupos[c].push(r); }); const canEdit = window.hasPerm('enc_edit'); const isAdmin = (SESION.r === 'admin'); const orden = ["Rutas domicilio", "Team Leaders", "Encargadas de marca", "Cambios y facturaciones", "Otro"]; const cats = Object.keys(grupos).sort((a,b) => (orden.indexOf(a)===-1?99:orden.indexOf(a)) - (orden.indexOf(b)===-1?99:orden.indexOf(b)));
+    let html = ""; cats.forEach(cat => { let ic = "fa-users"; if(cat.toLowerCase().includes('rutas')) ic = "fa-truck-fast"; if(cat.toLowerCase().includes('marca')) ic = "fa-tags"; if(cat.toLowerCase().includes('team')) ic = "fa-user-tie"; if(cat.toLowerCase().includes('factura')) ic = "fa-file-invoice-dollar"; html += `<div class="enc-category-title"><i class="fa-solid ${ic}"></i> ${cat}</div><div class="enc-grid">`; grupos[cat].forEach(row => { let act = ""; if (canEdit) act += `<button onclick="window.editEncargado('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteEncargado('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let ini = row.n ? row.n.charAt(0).toUpperCase() : "?"; let rol = row.p || "Equipo"; let tel = row.t ? `<div class="enc-contact" onclick="window.copyToClip('${row.t}')"><div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-phone enc-contact-icon"></i> ${row.t}</div><div class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</div></div>` : ``; let cor = row.c ? `<div class="enc-contact" onclick="window.copyToClip('${row.c}')"><div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-envelope enc-contact-icon"></i> ${row.c}</div><div class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</div></div>` : ``; html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${row.n||'Sin Nombre'}</div><div class="enc-role">${rol}</div></div></div></div><div class="enc-body">${tel}${cor}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`; }); html += `</div>`; }); cont.innerHTML = html;
   };
   window.editEncargado = async (id) => { EDITING_ENC_ID = id; const d = DB.enc.find(x => x.id === id); document.getElementById('modalTitleEnc').innerText = "Editar Contacto"; document.getElementById('encCat').value = d.g || "Otro"; document.getElementById('encNom').value = d.n; document.getElementById('encTel').value = d.t; document.getElementById('encCor').value = d.c; document.getElementById('encPuesto').value = d.p; window.openModal('modalAddEnc', true); };
   window.saveEncargado = async () => { const data = { g: document.getElementById('encCat').value, n: document.getElementById('encNom').value.trim(), t: document.getElementById('encTel').value.trim(), c: document.getElementById('encCor').value.trim(), p: document.getElementById('encPuesto').value.trim() }; if(!data.n) return; if(EDITING_ENC_ID) await updateDoc(doc(db, "encargados", EDITING_ENC_ID), data); else await addDoc(collection(db, "encargados"), data); window.closeModal('modalAddEnc'); };
