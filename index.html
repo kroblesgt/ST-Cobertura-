@@ -119,6 +119,7 @@
   .login-box { background: white; padding: 40px; width: 100%; max-width: 340px; border-radius: 8px; box-shadow: 0 10px 40px rgba(10,34,64,0.1); border-top: 5px solid var(--blue); text-align: center; box-sizing: border-box;}
   .inp { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border-soft); border-radius: 4px; box-sizing: border-box; font-size: 14px; font-family: inherit; transition: 0.2s;}
   .inp:focus { border-color: var(--light-blue); box-shadow: 0 0 0 3px rgba(0,159,227,0.1); outline: none; }
+  .inp:disabled { background: #e9ecef; color: #6c757d; cursor: not-allowed; }
   
   /* APP TOOLS */
   .card { background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 20px; border: 1px solid var(--border-soft);}
@@ -433,8 +434,8 @@
                     </div>
 
                     <div id="ajsViewRol" class="hidden">
-                        <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-user-shield"></i> Roles Personalizados</h3>
-                        <p style="font-size:13px; color:var(--mid-gray);">Crea roles a la medida y define a qué partes del sistema tienen acceso.</p>
+                        <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-user-shield"></i> Roles y Permisos</h3>
+                        <p style="font-size:13px; color:var(--mid-gray);">Crea roles a la medida o edita los permisos de los roles predeterminados (Agente / Invitado).</p>
                         
                         <div style="background:#f8fafc; padding:20px; border-radius:8px; border:1px solid var(--border-soft); margin-bottom:20px;">
                             <input id="rolName" class="inp" placeholder="Nombre del nuevo Rol (Ej: Mesa de Control)">
@@ -469,9 +470,12 @@
                                 <label class="perm-item"><input type="checkbox" id="p_ajs_col"> Colores Cobertura</label>
                             </div>
 
-                            <div style="text-align:right; margin-top:20px;"><button id="btnRoleAction" onclick="window.saveRole()" class="btn btn-s" style="color:white; font-size: 14px; padding: 10px 20px;">Guardar Rol</button></div>
+                            <div style="text-align:right; margin-top:20px;">
+                                <button id="btnCancelRole" onclick="window.cancelarEdicionRol()" class="btn btn-d hidden" style="margin-right: 5px;"><i class="fa-solid fa-times"></i> Cancelar</button>
+                                <button id="btnRoleAction" onclick="window.saveRole()" class="btn btn-s" style="color:white; font-size: 14px; padding: 10px 20px;">Guardar Rol</button>
+                            </div>
                         </div>
-                        <h4 style="color:var(--blue); margin-bottom: 10px;">Roles Creados</h4>
+                        <h4 style="color:var(--blue); margin-bottom: 10px;">Roles en el Sistema</h4>
                         <div id="rolesListContainer"></div>
                     </div>
 
@@ -668,23 +672,20 @@
         theme: 'snow', placeholder: 'Escribe tu procedimiento, pega imágenes o usa las herramientas de arriba...',
         modules: { toolbar: [ [{ 'header': [1, 2, 3, false] }], ['bold', 'italic', 'underline', 'strike'], [{ 'color': [] }, { 'background': [] }], [{ 'list': 'ordered'}, { 'list': 'bullet' }], ['link', 'image'], ['clean'] ] }
       });
-
-      // El sidebar ahora es vertical, Sortable JS se adapta automáticamente a listas verticales.
   };
 
+  // NUEVA LÓGICA DE PERMISOS: Busca el rol directamente en la BD sin quemarlo en código
   window.hasPerm = function(perm) {
       if(SESION.r === 'admin') return true;
       if(SESION.r === 'pendiente') return false;
-      if(SESION.r === 'agente') {
-          const def = ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view'];
-          return def.includes(perm);
-      }
-      if(SESION.r === 'invitado') {
-          const def = ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view'];
-          return def.includes(perm);
-      }
-      const rolData = DB.roles.find(r => r.nombre === SESION.r);
+
+      const rolData = DB.roles.find(r => (r.nombre||'').toLowerCase() === (SESION.r||'').toLowerCase());
       if(rolData && rolData.perms) return rolData.perms.includes(perm);
+
+      // Respaldo de seguridad por si la BD tarda milisegundos en cargar la primera vez
+      if(SESION.r === 'agente') { return ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view'].includes(perm); }
+      if(SESION.r === 'invitado') { return ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view'].includes(perm); }
+      
       return false;
   };
 
@@ -741,7 +742,6 @@
     let activeTab = document.getElementById(mod.startsWith('dyn_') ? 'tab_' + mod : 'tab' + mod.charAt(0).toUpperCase() + mod.slice(1));
     if(activeTab) activeTab.classList.add('active');
     
-    // Ocultar barra lateral en móvil al hacer clic
     document.getElementById('appSidebar').classList.remove('open');
     
     if(mod === 'proc' || mod === 'ajs') { 
@@ -852,12 +852,111 @@
   window.listenToUsers = () => { onSnapshot(collection(db, "usuarios"), (snap) => { DB_USERS = snap.docs.map(d => ({ id: d.id, ...d.data() })); if (SESION.r === 'admin') { let pending = DB_USERS.filter(u => u.r === 'pendiente'); let badge = document.getElementById('notifBadge'); if (pending.length > 0) { badge.innerText = pending.length; badge.classList.remove('hidden'); } else badge.classList.add('hidden'); if (!isFirstUserLoad) pending.forEach(u => { if (!knownPendingIds.has(u.id)) window.showToast(`Nueva solicitud: <b>${u.u}</b>. <u style="cursor:pointer; color:var(--blue)" onclick="window.openPendingUsers()">Aprobar</u>`); }); knownPendingIds = new Set(pending.map(u => u.id)); } isFirstUserLoad = false; window.updateOnlineUI(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewUsr').classList.contains('hidden') && !EDITING_USER_ID) window.renderUserList(); }); };
   window.updateOnlineUI = () => { const now = Date.now(); let online = DB_USERS.filter(u => u.lastActive && (now - u.lastActive < 190000) && u.r !== 'pendiente'); if(SESION.r !== 'admin') online = online.filter(u => u.r !== 'admin'); let onlineNames = online.map(u => u.u); document.getElementById('onlineCount').innerText = onlineNames.length; document.getElementById('onlineList').innerHTML = onlineNames.map(u => `<div class="online-item"><i class="fa-solid fa-user"></i> ${u}</div>`).join('') || 'Nadie conectado'; };
 
-  window.listenToRoles = function() { onSnapshot(collection(db, "roles_config"), (snapshot) => { DB.roles = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); window.updateRolesSelect(); window.applyPermissionsToUI(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList(); }); };
-  window.updateRolesSelect = function() { const sel = document.getElementById('uRol'); if(!sel) return; let adminOpt = SESION.r === 'admin' ? `<option value="admin">Administrador (Total)</option>` : ``; let html = `<option value="agente">Agente (Default)</option><option value="invitado">Invitado (Lector)</option>${adminOpt}<option value="pendiente">Pendiente (Bloqueado)</option>`; DB.roles.forEach(r => { html += `<option value="${r.nombre}">Custom: ${r.nombre}</option>`; }); sel.innerHTML = html; };
-  window.saveRole = async function() { const nombre = document.getElementById('rolName').value.trim(); if(!nombre) return alert("Ingresa nombre"); const perms = []; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { if(chk.checked) perms.push(chk.id.replace('p_', '')); }); try { if(EDITING_ROLE_ID) { await updateDoc(doc(db, "roles_config", EDITING_ROLE_ID), { nombre, perms }); EDITING_ROLE_ID = null; document.getElementById('btnRoleAction').innerText = "Guardar Rol"; } else { await addDoc(collection(db, "roles_config"), { nombre, perms }); } document.getElementById('rolName').value = ''; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => chk.checked = false); alert("Rol guardado"); } catch(e) { alert("Error"); } };
-  window.editRole = function(id) { EDITING_ROLE_ID = id; const r = DB.roles.find(x => x.id === id); document.getElementById('rolName').value = r.nombre; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { chk.checked = r.perms.includes(chk.id.replace('p_', '')); }); document.getElementById('btnRoleAction').innerText = "Actualizar Rol"; };
-  window.deleteRole = async function(id) { if(confirm("¿Eliminar rol?")) await deleteDoc(doc(db, "roles_config", id)); };
-  window.renderRolesList = function() { document.getElementById('rolesListContainer').innerHTML = DB.roles.map(r => `<div class="mod-list-item"><div><b>${r.nombre}</b> <br><small style="color:var(--mid-gray);">${r.perms.join(', ')}</small></div><div><button onclick="window.editRole('${r.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteRole('${r.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`).join('') || '<p style="font-size:13px;">No hay roles.</p>'; };
+  window.listenToRoles = function() { 
+      onSnapshot(collection(db, "roles_config"), (snapshot) => { 
+          DB.roles = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); 
+
+          // Inyectar roles predeterminados temporalmente si no existen aún en la BD
+          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) {
+              DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view'] });
+          }
+          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) {
+              DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view'] });
+          }
+
+          window.updateRolesSelect(); 
+          window.applyPermissionsToUI(); 
+          if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList(); 
+      }); 
+  };
+  
+  window.updateRolesSelect = function() { 
+      const sel = document.getElementById('uRol'); if(!sel) return; 
+      let adminOpt = SESION.r === 'admin' ? `<option value="admin">Administrador (Total)</option>` : ``; 
+      let html = `${adminOpt}<option value="pendiente">Pendiente (Bloqueado)</option>`; 
+
+      // Ordenar para que Agente e Invitado salgan hasta arriba
+      let sortedRoles = [...DB.roles].sort((a,b) => {
+          if(a.nombre.toLowerCase() === 'agente') return -1;
+          if(b.nombre.toLowerCase() === 'agente') return 1;
+          if(a.nombre.toLowerCase() === 'invitado') return -1;
+          if(b.nombre.toLowerCase() === 'invitado') return 1;
+          return a.nombre.localeCompare(b.nombre);
+      });
+
+      sortedRoles.forEach(r => { 
+          let isDef = (r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado');
+          let lbl = isDef ? `${r.nombre.charAt(0).toUpperCase() + r.nombre.slice(1)} (Predeterminado)` : `Custom: ${r.nombre}`;
+          html += `<option value="${r.nombre}">${lbl}</option>`; 
+      }); 
+      sel.innerHTML = html; 
+  };
+  
+  window.saveRole = async function() { 
+      const nombre = document.getElementById('rolName').value.trim(); 
+      if(!nombre) return alert("Ingresa nombre"); 
+      const perms = []; 
+      document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { if(chk.checked) perms.push(chk.id.replace('p_', '')); }); 
+      
+      try { 
+          if(EDITING_ROLE_ID) { 
+              if (EDITING_ROLE_ID.startsWith('default_')) {
+                  // Si era un predeterminado virtual, lo creamos real en la base de datos
+                  await addDoc(collection(db, "roles_config"), { nombre: nombre.toLowerCase(), perms });
+              } else {
+                  await updateDoc(doc(db, "roles_config", EDITING_ROLE_ID), { nombre, perms }); 
+              }
+              alert("Permisos actualizados correctamente"); 
+          } else { 
+              // Validar que no exista el nombre
+              if(DB.roles.some(r => r.nombre.toLowerCase() === nombre.toLowerCase() && !r.id.startsWith('default_'))) {
+                  return alert("Ya existe un rol con ese nombre.");
+              }
+              await addDoc(collection(db, "roles_config"), { nombre, perms }); 
+              alert("Nuevo rol creado exitosamente");
+          } 
+          window.cancelarEdicionRol();
+      } catch(e) { alert("Error al guardar rol"); } 
+  };
+  
+  window.editRole = function(id) { 
+      EDITING_ROLE_ID = id; 
+      const r = DB.roles.find(x => x.id === id); 
+      document.getElementById('rolName').value = r.nombre; 
+      
+      // Si es un rol default, bloqueamos la caja de texto para que no le cambien el nombre
+      const isDefault = r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado';
+      document.getElementById('rolName').disabled = isDefault;
+
+      document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { chk.checked = r.perms.includes(chk.id.replace('p_', '')); }); 
+      document.getElementById('btnRoleAction').innerHTML = '<i class="fa-solid fa-save"></i> Actualizar Permisos'; 
+      document.getElementById('btnCancelRole').classList.remove('hidden');
+      const container = document.querySelector('.ajs-content'); if(container) container.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  
+  window.cancelarEdicionRol = function() {
+      EDITING_ROLE_ID = null;
+      document.getElementById('rolName').value = '';
+      document.getElementById('rolName').disabled = false;
+      document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => chk.checked = false);
+      document.getElementById('btnRoleAction').innerText = "Guardar Rol";
+      document.getElementById('btnCancelRole').classList.add('hidden');
+  };
+
+  window.deleteRole = async function(id) { 
+      if(id.startsWith('default_')) return; // Seguridad
+      if(confirm("¿Eliminar este rol? Los usuarios con este rol podrían perder acceso.")) await deleteDoc(doc(db, "roles_config", id)); 
+  };
+  
+  window.renderRolesList = function() { 
+      document.getElementById('rolesListContainer').innerHTML = DB.roles.map(r => {
+          let isDefault = r.id.startsWith('default_') || r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado';
+          let delBtn = isDefault ? '' : `<button onclick="window.deleteRole('${r.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`;
+          let badge = isDefault ? `<span style="background:var(--light-blue); color:white; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px;"><i class="fa-solid fa-lock"></i> Predeterminado</span>` : '';
+          
+          return `<div class="mod-list-item"><div><b style="color:var(--blue); text-transform:capitalize;">${r.nombre}</b> ${badge}<br><small style="color:var(--mid-gray);">${r.perms.join(', ')}</small></div><div><button onclick="window.editRole('${r.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;" title="Editar Permisos"><i class="fa-solid fa-pencil"></i></button>${delBtn}</div></div>`;
+      }).join('') || '<p style="font-size:13px;">No hay roles.</p>'; 
+  };
 
   window.renderUserList = function() { const c = document.getElementById('userListContainer'); const q = window.normStr(document.getElementById('searchUserBox').value); let f = DB_USERS; if (SESION.r !== 'admin') f = f.filter(u => u.r !== 'admin'); if (q) f = f.filter(u => window.normStr(u.u).includes(q) || window.normStr(u.r).includes(q)); f.sort((a, b) => { if (a.r === 'pendiente' && b.r !== 'pendiente') return -1; if (a.r !== 'pendiente' && b.r === 'pendiente') return 1; return (a.u||"").localeCompare(b.u||""); }); c.innerHTML = f.map(u => { const isP = u.r === 'pendiente'; return `<div class="user-row" style="${isP ? 'background:#ffe3e3; border-left:5px solid #e63946;' : ''}"><div><b style="color:var(--blue);">${u.u}</b> <br><small style="text-transform:uppercase; font-weight:bold; color: ${isP?'#e63946':'var(--light-blue)'}">${u.r}</small></div><div><button onclick="window.editUser('${u.id}','${u.u}','${u.p}','${u.r}')" class="btn btn-p" style="padding:4px"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteUser('${u.id}')" class="btn btn-d" style="padding:4px"><i class="fa-solid fa-trash"></i></button></div></div>`; }).join('') || `<p align="center" style="padding:15px; color:var(--mid-gray);">No hay usuarios</p>`; };
   window.submitUser = async function() { const u = document.getElementById('uUser').value, p = document.getElementById('uPass').value, r = document.getElementById('uRol').value; if(!u || (!p && r !== 'invitado' && r !== 'pendiente')) return; if(EDITING_USER_ID) await updateDoc(doc(db, "usuarios", EDITING_USER_ID), { u, p, r }); else await addDoc(collection(db, "usuarios"), { u, p, r, createdAt: Date.now() }); window.clearUserForm(); };
