@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>ST - Call Center</title>
+<title>ST - Call Center Intranet</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -100,7 +100,7 @@
       background: white; 
       display: flex; 
       align-items: center; 
-      justify-content: flex-end; /* Lo empuja a la derecha */
+      justify-content: flex-end; 
       padding: 0 30px; 
       border-bottom: 1px solid var(--border-soft); 
       box-shadow: 0 2px 10px rgba(0,0,0,0.02); 
@@ -113,6 +113,18 @@
   #mainContainer { flex: 1; overflow-y: auto; padding: 20px; max-width: 1300px; margin: 0 auto; width: 100%; box-sizing: border-box; scrollbar-width: thin; }
   #mainContainer::-webkit-scrollbar { width: 6px; }
   #mainContainer::-webkit-scrollbar-thumb { background: #ced4da; border-radius: 10px; }
+
+  /* BANNER INICIO */
+  .welcome-banner { background: linear-gradient(135deg, var(--blue) 0%, #1a3a60 100%); color: white; padding: 35px 30px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(10,34,64,0.15); position: relative; overflow: hidden; }
+  .welcome-banner h2 { margin: 0 0 8px 0; font-size: 26px; font-weight: 800; position: relative; z-index: 2;}
+  .welcome-banner p { margin: 0; color: #a9c2df; font-size: 15px; position: relative; z-index: 2;}
+  .welcome-banner::after { content: '\f0c2'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; right: 20px; top: -20px; font-size: 150px; color: rgba(255,255,255,0.05); z-index: 1; transform: rotate(-15deg); }
+  
+  .proc-card-home { background: #f8fafc; border: 1px solid var(--border-soft); border-radius: 8px; padding: 20px; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; gap: 10px; }
+  .proc-card-home:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,159,227,0.1); border-color: var(--light-blue); background: white; }
+  .proc-card-home .cat { font-size: 11px; color: var(--light-blue); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
+  .proc-card-home .tit { font-size: 16px; color: var(--blue); font-weight: 700; margin: 0; line-height: 1.3; }
+  .proc-card-home .date { font-size: 11px; color: var(--mid-gray); margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border-soft); display: flex; justify-content: space-between; align-items: center;}
 
   /* LOGIN */
   .login-wrapper { height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, var(--bg) 0%, #ffffff 100%); padding: 15px; box-sizing: border-box; }
@@ -218,13 +230,9 @@
   /* RESPONSIVE MOBILE */
   @media (max-width: 768px) {
     .app-layout { flex-direction: column; }
-    
-    /* Ocultar barra lateral por defecto en móvil */
     .sidebar { position: fixed; left: -280px; height: 100%; box-shadow: 0 0 20px rgba(0,0,0,0.3); }
     .sidebar.open { left: 0; }
-    
     .hide-desktop { display: block; }
-    
     header { justify-content: space-between; padding: 0 15px; }
     .user-info { display: none; } 
     #mainContainer { padding: 15px; }
@@ -232,7 +240,6 @@
     .action-btns { display: grid; grid-template-columns: 1fr 1fr; } 
     .form-grid { grid-template-columns: 1fr; } .span-2 { grid-column: span 1; }
     .toast-container { bottom: 10px; right: 10px; left: 10px; }
-    
     .ajs-layout { flex-direction: column; height: auto;} .ajs-sidebar { width: 100%; }
     .ajs-content { height: auto; overflow-y: visible; padding: 15px;}
     #moduloProcedimientos { flex-direction: column; height: auto; border:none; box-shadow:none;}
@@ -240,6 +247,8 @@
     .proc-list { max-height: 250px; }
     .proc-viewer { padding: 15px; }
     .proc-document { padding: 25px 20px; }
+    .welcome-banner { padding: 20px; }
+    .welcome-banner::after { display: none; }
   }
 </style>
 </head>
@@ -276,10 +285,11 @@
   <aside class="sidebar" id="appSidebar">
     <div class="sidebar-header">
         <i class="fa-solid fa-location-dot" style="color: var(--light-blue); font-size: 22px;"></i> 
-        <span>ST - Call Center</span>
+        <span>ST - Intranet</span>
     </div>
     <div class="sidebar-menu" id="mainTabsContainer">
-        <div id="tabCob" class="tab-btn active" onclick="window.switchModule('cob')"><i class="fa-solid fa-map-location-dot"></i> <span id="txtTabCob">Cobertura</span></div>
+        <div id="tabInicio" class="tab-btn active" onclick="window.switchModule('inicio')"><i class="fa-solid fa-house"></i> <span>Inicio</span></div>
+        <div id="tabCob" class="tab-btn" onclick="window.switchModule('cob')"><i class="fa-solid fa-map-location-dot"></i> <span id="txtTabCob">Cobertura</span></div>
         <div id="tabTec" class="tab-btn" onclick="window.switchModule('tec')"><i class="fa-solid fa-screwdriver-wrench"></i> <span id="txtTabTec">Técnicos</span></div>
         <div id="tabEnc" class="tab-btn" onclick="window.switchModule('enc')"><i class="fa-regular fa-address-card"></i> <span id="txtTabEnc">Directorio</span></div>
         <div id="tabProc" class="tab-btn" onclick="window.switchModule('proc')"><i class="fa-solid fa-book-open"></i> <span id="txtTabProc">Procedimientos</span></div>
@@ -311,7 +321,24 @@
 
       <div id="mainContainer">
           
-        <div id="moduloCobertura">
+        <div id="moduloInicio">
+            <div class="welcome-banner">
+                <h2>Hola, <span id="lblUserHome">Usuario</span> 👋</h2>
+                <p>Bienvenido a la Intranet de ST Call Center. Selecciona una herramienta del menú para comenzar.</p>
+            </div>
+            
+            <div class="card" style="padding: 25px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 10px;">
+                    <h3 style="margin: 0; color: var(--blue); font-size: 18px;"><i class="fa-solid fa-bullhorn" style="color: var(--light-blue);"></i> Últimos Procedimientos Publicados</h3>
+                    <button onclick="window.switchModule('proc')" class="btn btn-o" style="padding: 6px 12px; font-size: 12px;">Ver todos</button>
+                </div>
+                <div id="homeRecientesContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px;">
+                    <div style="color:var(--mid-gray); font-size:13px; font-style:italic;">Cargando publicaciones recientes...</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="moduloCobertura" class="hidden">
             <div class="tools">
               <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchBox" class="search-inp" placeholder="Buscar colinas, milagro z6..." onkeyup="window.renderTable(true)"></div>
               <div class="action-btns">
@@ -654,7 +681,7 @@
   let DB_USERS = []; let SESION = { id: null, u: null, r: null, t: null };
   let PAGE = 1, PAGE_TEC = 1, PAGE_ENC = 1, PAGE_DYN = 1; let ITEMS_PER_PAGE_ENC = 16;
   let EDITING_USER_ID = null, EDITING_LOCATION_ID = null, EDITING_TEC_ID = null, EDITING_ENC_ID = null, EDITING_DYN_ID = null, EDITING_ROLE_ID = null, EDITING_MOD_ID = null, EDITING_PROC_ID = null;
-  let CURRENT_MODULE = 'cob'; let CURRENT_DYN_CONFIG = null;
+  let CURRENT_MODULE = 'inicio'; let CURRENT_DYN_CONFIG = null;
   let isFirstUserLoad = true; let knownPendingIds = new Set(); let heartbeatInterval;
   
   let LOAD_STATE = { cob: false, tec: false, enc: false, proc: false, dyn: false };
@@ -674,7 +701,6 @@
       });
   };
 
-  // NUEVA LÓGICA DE PERMISOS: Busca el rol directamente en la BD sin quemarlo en código
   window.hasPerm = function(perm) {
       if(SESION.r === 'admin') return true;
       if(SESION.r === 'pendiente') return false;
@@ -682,7 +708,7 @@
       const rolData = DB.roles.find(r => (r.nombre||'').toLowerCase() === (SESION.r||'').toLowerCase());
       if(rolData && rolData.perms) return rolData.perms.includes(perm);
 
-      // Respaldo de seguridad por si la BD tarda milisegundos en cargar la primera vez
+      // Respaldo
       if(SESION.r === 'agente') { return ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view'].includes(perm); }
       if(SESION.r === 'invitado') { return ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view'].includes(perm); }
       
@@ -690,6 +716,7 @@
   };
 
   window.applyPermissionsToUI = function() {
+      // Ojo: Inicio no se oculta, siempre está visible.
       document.getElementById('tabCob').classList.toggle('hidden', !window.hasPerm('cob_view'));
       document.getElementById('tabTec').classList.toggle('hidden', !window.hasPerm('tec_view'));
       document.getElementById('tabEnc').classList.toggle('hidden', !window.hasPerm('enc_view'));
@@ -721,6 +748,8 @@
       if(document.getElementById('btnAddDyn')) document.getElementById('btnAddDyn').classList.toggle('hidden', !window.hasPerm('dyn_edit'));
       if(document.getElementById('btnExpDyn')) document.getElementById('btnExpDyn').classList.toggle('hidden', !window.hasPerm('dyn_exp'));
       if(document.getElementById('btnImpDyn')) document.getElementById('btnImpDyn').classList.toggle('hidden', !window.hasPerm('dyn_exp'));
+      
+      window.renderInicioRecientes(); // Para ocultar o mostrar si no tiene permisos
   };
 
   window.copyToClip = function(text) { if(!text) return; navigator.clipboard.writeText(text).then(() => { window.showToastSuccess(`Texto Copiado`); }).catch(err => alert("Error al copiar")); };
@@ -731,7 +760,7 @@
   window.initSortableTabs = function() {
       const container = document.getElementById('mainTabsContainer');
       if(window.tabsSortable) window.tabsSortable.destroy();
-      window.tabsSortable = new Sortable(container, { animation: 150, cursor: 'grab', onEnd: function() { const order = Array.from(container.children).map(c => c.id); if(SESION && SESION.u) localStorage.setItem('distelsa_tabs_order_' + SESION.u, JSON.stringify(order)); } });
+      window.tabsSortable = new Sortable(container, { animation: 150, cursor: 'grab', filter: '#tabInicio', onEnd: function() { const order = Array.from(container.children).map(c => c.id); if(SESION && SESION.u) localStorage.setItem('distelsa_tabs_order_' + SESION.u, JSON.stringify(order)); } });
       if(SESION && SESION.u) { const savedOrder = JSON.parse(localStorage.getItem('distelsa_tabs_order_' + SESION.u)); if(savedOrder) { savedOrder.forEach(id => { const el = document.getElementById(id); if(el) container.appendChild(el); }); } }
   };
 
@@ -744,18 +773,19 @@
     
     document.getElementById('appSidebar').classList.remove('open');
     
-    if(mod === 'proc' || mod === 'ajs') { 
+    if(mod === 'proc' || mod === 'ajs' || mod === 'inicio') { 
         document.getElementById('mainContainer').style.maxWidth = '100%'; 
-        document.getElementById('mainContainer').style.padding = '0'; 
+        document.getElementById('mainContainer').style.padding = mod === 'inicio' ? '20px 30px' : '0'; 
     } 
     else { 
         document.getElementById('mainContainer').style.maxWidth = '1300px'; 
         document.getElementById('mainContainer').style.padding = '20px'; 
     }
 
-    ['moduloCobertura', 'moduloTecnicos', 'moduloEncargados', 'moduloProcedimientos', 'moduloAjustes', 'moduloDinamico'].forEach(id => { document.getElementById(id).classList.add('hidden'); });
+    ['moduloInicio', 'moduloCobertura', 'moduloTecnicos', 'moduloEncargados', 'moduloProcedimientos', 'moduloAjustes', 'moduloDinamico'].forEach(id => { document.getElementById(id).classList.add('hidden'); });
 
-    if(mod === 'cob') { document.getElementById('moduloCobertura').classList.remove('hidden'); window.renderTable(); }
+    if(mod === 'inicio') { document.getElementById('moduloInicio').classList.remove('hidden'); }
+    else if(mod === 'cob') { document.getElementById('moduloCobertura').classList.remove('hidden'); window.renderTable(); }
     else if(mod === 'tec') { document.getElementById('moduloTecnicos').classList.remove('hidden'); window.renderTecnicosTable(); }
     else if(mod === 'enc') { document.getElementById('moduloEncargados').classList.remove('hidden'); window.renderEncargadosTable(); }
     else if(mod === 'proc') { document.getElementById('moduloProcedimientos').classList.remove('hidden'); window.renderProcMenu(); }
@@ -764,6 +794,12 @@
         if(window.hasPerm('ajs_usr')) window.showAjsView('usr'); else if(window.hasPerm('ajs_rol')) window.showAjsView('rol'); else if(window.hasPerm('ajs_mod')) window.showAjsView('mod'); else if(window.hasPerm('ajs_proc')) window.showAjsView('proc'); else if(window.hasPerm('ajs_col')) window.showAjsView('col');
     }
     else if(mod.startsWith('dyn_')) { document.getElementById('moduloDinamico').classList.remove('hidden'); CURRENT_DYN_CONFIG = DB.configModulos.find(m => m.id === mod.replace('dyn_', '')); window.renderDynData(); }
+  };
+
+  // NAVEGACIÓN DIRECTA DESDE INICIO A UN PROCEDIMIENTO
+  window.goToProc = function(id) {
+      window.switchModule('proc');
+      setTimeout(() => { window.abrirProcedimiento(id); }, 100);
   };
 
   window.showAjsView = function(view) {
@@ -837,12 +873,20 @@
   window.startApp = function() {
     if (SESION.r === 'invitado') { const userObj = DB_USERS.find(u => u.id === SESION.id); if (userObj && userObj.createdAt && (Date.now() - userObj.createdAt > 86400000)) { alert("Sesión expirada."); window.logout(); return; } }
     document.getElementById('viewLogin').classList.add('hidden'); document.getElementById('viewApp').classList.remove('hidden');
-    document.getElementById('lblUser').innerText = SESION.u; document.getElementById('lblRol').innerText = SESION.r;
+    
+    // Configurar labels del Dashboard y Header
+    document.getElementById('lblUser').innerText = SESION.u; 
+    document.getElementById('lblUserHome').innerText = SESION.u.split(" - ")[1] || SESION.u; 
+    document.getElementById('lblRol').innerText = SESION.r;
+    
     document.getElementById('onlineMonitor').classList.remove('hidden');
     
     listenToSysMods(); window.listenToRoles(); window.listenToUsers(); setInterval(window.updateOnlineUI, 5000); listenToColors();
     listenToCoberturas(); listenToTecnicos(); listenToEncargados(); listenToConfigModulos(); listenToDynData(); listenToProcedimientos();
-    window.initSortableTabs(); window.heartbeat(); heartbeatInterval = setInterval(window.heartbeat, 180000);
+    
+    window.switchModule('inicio'); // Cargar Inicio por defecto
+    window.initSortableTabs(); 
+    window.heartbeat(); heartbeatInterval = setInterval(window.heartbeat, 180000);
   };
 
   window.heartbeat = async () => { if(SESION.id && SESION.id !== "master_admin") { try { await updateDoc(doc(db, "usuarios", SESION.id), { lastActive: Date.now() }); } catch(e){} } };
@@ -855,18 +899,9 @@
   window.listenToRoles = function() { 
       onSnapshot(collection(db, "roles_config"), (snapshot) => { 
           DB.roles = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); 
-
-          // Inyectar roles predeterminados temporalmente si no existen aún en la BD
-          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) {
-              DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view'] });
-          }
-          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) {
-              DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view'] });
-          }
-
-          window.updateRolesSelect(); 
-          window.applyPermissionsToUI(); 
-          if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList(); 
+          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) { DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view'] }); }
+          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) { DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view'] }); }
+          window.updateRolesSelect(); window.applyPermissionsToUI(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList(); 
       }); 
   };
   
@@ -874,86 +909,30 @@
       const sel = document.getElementById('uRol'); if(!sel) return; 
       let adminOpt = SESION.r === 'admin' ? `<option value="admin">Administrador (Total)</option>` : ``; 
       let html = `${adminOpt}<option value="pendiente">Pendiente (Bloqueado)</option>`; 
-
-      // Ordenar para que Agente e Invitado salgan hasta arriba
-      let sortedRoles = [...DB.roles].sort((a,b) => {
-          if(a.nombre.toLowerCase() === 'agente') return -1;
-          if(b.nombre.toLowerCase() === 'agente') return 1;
-          if(a.nombre.toLowerCase() === 'invitado') return -1;
-          if(b.nombre.toLowerCase() === 'invitado') return 1;
-          return a.nombre.localeCompare(b.nombre);
-      });
-
-      sortedRoles.forEach(r => { 
-          let isDef = (r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado');
-          let lbl = isDef ? `${r.nombre.charAt(0).toUpperCase() + r.nombre.slice(1)} (Predeterminado)` : `Custom: ${r.nombre}`;
-          html += `<option value="${r.nombre}">${lbl}</option>`; 
-      }); 
-      sel.innerHTML = html; 
+      let sortedRoles = [...DB.roles].sort((a,b) => { if(a.nombre.toLowerCase() === 'agente') return -1; if(b.nombre.toLowerCase() === 'agente') return 1; if(a.nombre.toLowerCase() === 'invitado') return -1; if(b.nombre.toLowerCase() === 'invitado') return 1; return a.nombre.localeCompare(b.nombre); });
+      sortedRoles.forEach(r => { let isDef = (r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado'); let lbl = isDef ? `${r.nombre.charAt(0).toUpperCase() + r.nombre.slice(1)} (Predeterminado)` : `Custom: ${r.nombre}`; html += `<option value="${r.nombre}">${lbl}</option>`; }); sel.innerHTML = html; 
   };
   
   window.saveRole = async function() { 
-      const nombre = document.getElementById('rolName').value.trim(); 
-      if(!nombre) return alert("Ingresa nombre"); 
-      const perms = []; 
-      document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { if(chk.checked) perms.push(chk.id.replace('p_', '')); }); 
-      
+      const nombre = document.getElementById('rolName').value.trim(); if(!nombre) return alert("Ingresa nombre"); const perms = []; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { if(chk.checked) perms.push(chk.id.replace('p_', '')); }); 
       try { 
-          if(EDITING_ROLE_ID) { 
-              if (EDITING_ROLE_ID.startsWith('default_')) {
-                  // Si era un predeterminado virtual, lo creamos real en la base de datos
-                  await addDoc(collection(db, "roles_config"), { nombre: nombre.toLowerCase(), perms });
-              } else {
-                  await updateDoc(doc(db, "roles_config", EDITING_ROLE_ID), { nombre, perms }); 
-              }
-              alert("Permisos actualizados correctamente"); 
-          } else { 
-              // Validar que no exista el nombre
-              if(DB.roles.some(r => r.nombre.toLowerCase() === nombre.toLowerCase() && !r.id.startsWith('default_'))) {
-                  return alert("Ya existe un rol con ese nombre.");
-              }
-              await addDoc(collection(db, "roles_config"), { nombre, perms }); 
-              alert("Nuevo rol creado exitosamente");
-          } 
-          window.cancelarEdicionRol();
+          if(EDITING_ROLE_ID) { if (EDITING_ROLE_ID.startsWith('default_')) { await addDoc(collection(db, "roles_config"), { nombre: nombre.toLowerCase(), perms }); } else { await updateDoc(doc(db, "roles_config", EDITING_ROLE_ID), { nombre, perms }); } alert("Permisos actualizados correctamente"); } 
+          else { if(DB.roles.some(r => r.nombre.toLowerCase() === nombre.toLowerCase() && !r.id.startsWith('default_'))) { return alert("Ya existe un rol con ese nombre."); } await addDoc(collection(db, "roles_config"), { nombre, perms }); alert("Nuevo rol creado exitosamente"); } window.cancelarEdicionRol();
       } catch(e) { alert("Error al guardar rol"); } 
   };
   
   window.editRole = function(id) { 
-      EDITING_ROLE_ID = id; 
-      const r = DB.roles.find(x => x.id === id); 
-      document.getElementById('rolName').value = r.nombre; 
-      
-      // Si es un rol default, bloqueamos la caja de texto para que no le cambien el nombre
-      const isDefault = r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado';
-      document.getElementById('rolName').disabled = isDefault;
-
-      document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { chk.checked = r.perms.includes(chk.id.replace('p_', '')); }); 
-      document.getElementById('btnRoleAction').innerHTML = '<i class="fa-solid fa-save"></i> Actualizar Permisos'; 
-      document.getElementById('btnCancelRole').classList.remove('hidden');
-      const container = document.querySelector('.ajs-content'); if(container) container.scrollTo({ top: 0, behavior: 'smooth' });
+      EDITING_ROLE_ID = id; const r = DB.roles.find(x => x.id === id); document.getElementById('rolName').value = r.nombre; const isDefault = r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado'; document.getElementById('rolName').disabled = isDefault; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { chk.checked = r.perms.includes(chk.id.replace('p_', '')); }); document.getElementById('btnRoleAction').innerHTML = '<i class="fa-solid fa-save"></i> Actualizar Permisos'; document.getElementById('btnCancelRole').classList.remove('hidden'); const container = document.querySelector('.ajs-content'); if(container) container.scrollTo({ top: 0, behavior: 'smooth' });
   };
   
-  window.cancelarEdicionRol = function() {
-      EDITING_ROLE_ID = null;
-      document.getElementById('rolName').value = '';
-      document.getElementById('rolName').disabled = false;
-      document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => chk.checked = false);
-      document.getElementById('btnRoleAction').innerText = "Guardar Rol";
-      document.getElementById('btnCancelRole').classList.add('hidden');
-  };
-
-  window.deleteRole = async function(id) { 
-      if(id.startsWith('default_')) return; // Seguridad
-      if(confirm("¿Eliminar este rol? Los usuarios con este rol podrían perder acceso.")) await deleteDoc(doc(db, "roles_config", id)); 
-  };
+  window.cancelarEdicionRol = function() { EDITING_ROLE_ID = null; document.getElementById('rolName').value = ''; document.getElementById('rolName').disabled = false; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => chk.checked = false); document.getElementById('btnRoleAction').innerText = "Guardar Rol"; document.getElementById('btnCancelRole').classList.add('hidden'); };
+  window.deleteRole = async function(id) { if(id.startsWith('default_')) return; if(confirm("¿Eliminar este rol? Los usuarios con este rol podrían perder acceso.")) await deleteDoc(doc(db, "roles_config", id)); };
   
   window.renderRolesList = function() { 
       document.getElementById('rolesListContainer').innerHTML = DB.roles.map(r => {
           let isDefault = r.id.startsWith('default_') || r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado';
           let delBtn = isDefault ? '' : `<button onclick="window.deleteRole('${r.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`;
           let badge = isDefault ? `<span style="background:var(--light-blue); color:white; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px;"><i class="fa-solid fa-lock"></i> Predeterminado</span>` : '';
-          
           return `<div class="mod-list-item"><div><b style="color:var(--blue); text-transform:capitalize;">${r.nombre}</b> ${badge}<br><small style="color:var(--mid-gray);">${r.perms.join(', ')}</small></div><div><button onclick="window.editRole('${r.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;" title="Editar Permisos"><i class="fa-solid fa-pencil"></i></button>${delBtn}</div></div>`;
       }).join('') || '<p style="font-size:13px;">No hay roles.</p>'; 
   };
@@ -989,10 +968,8 @@
 
   window.guardarModuloDinamico = async function() { 
       const nombre = document.getElementById('confModName').value.trim(); const vista = document.getElementById('confModVista').value; const colsRaw = document.getElementById('confModCols').value.trim(); const htmlCode = document.getElementById('confModHtml').value.trim();
-      if(!nombre) return alert("Completa el nombre del módulo"); 
-      let cols = [];
-      if(vista !== 'html') { cols = colsRaw.split(',').map(c => c.trim()).filter(c => c !== ''); if(cols.length === 0) return alert("Debes agregar al menos una columna válida"); } 
-      else { if(!htmlCode) return alert("El código HTML no puede estar vacío"); }
+      if(!nombre) return alert("Completa el nombre del módulo"); let cols = [];
+      if(vista !== 'html') { cols = colsRaw.split(',').map(c => c.trim()).filter(c => c !== ''); if(cols.length === 0) return alert("Debes agregar al menos una columna válida"); } else { if(!htmlCode) return alert("El código HTML no puede estar vacío"); }
       try { 
           let payload = { nombre, vista, columnas: cols, htmlContent: htmlCode };
           if (EDITING_MOD_ID) { await updateDoc(doc(db, "modulos_config", EDITING_MOD_ID), payload); alert("¡Módulo Actualizado!"); window.cancelarEdicionModulo(); } 
@@ -1001,8 +978,7 @@
   };
   
   window.editarModuloDinamico = function(id) { 
-      EDITING_MOD_ID = id; const mod = DB.configModulos.find(m => m.id === id); document.getElementById('confModName').value = mod.nombre; document.getElementById('confModVista').value = mod.vista; document.getElementById('confModCols').value = (mod.columnas||[]).join(', '); document.getElementById('confModHtml').value = mod.htmlContent || ''; window.toggleModType();
-      const btnSave = document.getElementById('btnSaveMod'); btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios'; btnSave.classList.replace('btn-s', 'btn-p'); document.getElementById('btnCancelMod').classList.remove('hidden'); const container = document.querySelector('.ajs-content'); if(container) container.scrollTo({ top: 0, behavior: 'smooth' }); 
+      EDITING_MOD_ID = id; const mod = DB.configModulos.find(m => m.id === id); document.getElementById('confModName').value = mod.nombre; document.getElementById('confModVista').value = mod.vista; document.getElementById('confModCols').value = (mod.columnas||[]).join(', '); document.getElementById('confModHtml').value = mod.htmlContent || ''; window.toggleModType(); const btnSave = document.getElementById('btnSaveMod'); btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios'; btnSave.classList.replace('btn-s', 'btn-p'); document.getElementById('btnCancelMod').classList.remove('hidden'); const container = document.querySelector('.ajs-content'); if(container) container.scrollTo({ top: 0, behavior: 'smooth' }); 
   };
   window.cancelarEdicionModulo = function() { EDITING_MOD_ID = null; document.getElementById('confModName').value = ''; document.getElementById('confModVista').value = 'tabla'; document.getElementById('confModCols').value = ''; document.getElementById('confModHtml').value = ''; window.toggleModType(); const btnSave = document.getElementById('btnSaveMod'); btnSave.innerHTML = '<i class="fa-solid fa-layer-group"></i> Generar Módulo'; btnSave.classList.replace('btn-p', 'btn-s'); document.getElementById('btnCancelMod').classList.add('hidden'); };
   window.eliminarModuloDinamico = async function(id) { if(!confirm("¿Eliminar módulo y todos sus datos?")) return; try { await deleteDoc(doc(db, "modulos_config", id)); const batch = writeBatch(db); DB.dynData.filter(d => d.modId === id).forEach(d => batch.delete(doc(db, "modulos_data", d.id))); await batch.commit(); if (EDITING_MOD_ID === id) window.cancelarEdicionModulo(); if (CURRENT_MODULE === 'dyn_'+id) window.switchModule('cob'); } catch(e) { alert("Error al eliminar"); } };
@@ -1029,8 +1005,45 @@
       }
   };
 
-  // ================= MODULO: PROCEDIMIENTOS =================
-  function listenToProcedimientos() { onSnapshot(collection(db, "procedimientos_html"), (snapshot) => { DB.proc = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); LOAD_STATE.proc = true; if(CURRENT_MODULE === 'proc') window.renderProcMenu(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewProc').classList.contains('hidden')) window.renderAdminProcList(); }); }
+  // ================= MODULO: PROCEDIMIENTOS E INICIO =================
+  function listenToProcedimientos() { onSnapshot(collection(db, "procedimientos_html"), (snapshot) => { DB.proc = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); LOAD_STATE.proc = true; if(CURRENT_MODULE === 'proc') window.renderProcMenu(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewProc').classList.contains('hidden')) window.renderAdminProcList(); window.renderInicioRecientes(); }); }
+  
+  // RENDERIZAR PROCEDIMIENTOS RECIENTES EN EL INICIO
+  window.renderInicioRecientes = function() {
+      const container = document.getElementById('homeRecientesContainer');
+      if(!container) return;
+      if (!window.hasPerm('proc_view')) { container.innerHTML = `<div style="grid-column: 1 / -1; background: #ffe3e3; color: #e63946; padding: 15px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 13px;">No tienes permisos para ver el contenido de la Intranet.</div>`; return; }
+      
+      let sorted = [...DB.proc].sort((a, b) => (b.fecha || 0) - (a.fecha || 0));
+      let recent = sorted.slice(0, 6); // Top 6 más recientes
+      
+      if(recent.length === 0) {
+          container.innerHTML = `<div style="grid-column: 1 / -1; color: var(--mid-gray); font-size: 13px; text-align: center; padding: 20px;">Aún no se ha publicado ningún procedimiento.</div>`;
+          return;
+      }
+      
+      let html = "";
+      recent.forEach(p => {
+          let dateStr = p.fecha ? new Date(p.fecha).toLocaleDateString() : "Reciente";
+          let icon = '<i class="fa-solid fa-file-lines" style="color:var(--light-blue); font-size: 24px; margin-right: 15px;"></i>';
+          if(p.modo === 'drive') icon = '<i class="fa-brands fa-google-drive" style="color:#00A65A; font-size: 24px; margin-right: 15px;"></i>';
+          
+          html += `
+          <div class="proc-card-home" onclick="window.goToProc('${p.id}')">
+              <div style="display:flex; align-items:flex-start;">
+                  ${icon}
+                  <div>
+                      <div class="cat"><i class="fa-solid fa-folder-open"></i> ${p.cat || 'General'}</div>
+                      <h4 class="tit">${p.tit}</h4>
+                  </div>
+              </div>
+              <div class="date"><span>Publicado:</span> <span>${dateStr}</span></div>
+          </div>
+          `;
+      });
+      container.innerHTML = html;
+  };
+
   window.setProcMode = function(mode, autoSync = true) { PROC_MODE = mode; const btnV = document.getElementById('btnModoVisual'); const btnC = document.getElementById('btnModoCodigo'); const btnD = document.getElementById('btnModoDrive'); const boxV = document.getElementById('boxProcVisual'); const boxC = document.getElementById('boxProcCodigo'); const boxD = document.getElementById('boxProcDrive'); btnV.style.background = 'var(--mid-gray)'; boxV.classList.add('hidden'); btnC.style.background = 'var(--mid-gray)'; boxC.classList.add('hidden'); if(btnD) { btnD.style.background = 'var(--mid-gray)'; boxD.classList.add('hidden'); } if (mode === 'visual') { btnV.style.background = 'var(--blue)'; boxV.classList.remove('hidden'); } else if (mode === 'codigo') { btnC.style.background = 'var(--blue)'; boxC.classList.remove('hidden'); } else if (mode === 'drive') { btnD.style.background = 'var(--blue)'; boxD.classList.remove('hidden'); } };
   window.renderProcMenu = function(isSearch = false) {
       const container = document.getElementById('procSidebarMenu'); 
