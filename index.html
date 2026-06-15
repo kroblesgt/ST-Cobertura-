@@ -195,6 +195,19 @@
   .proc-document { background: white; width: 100%; max-width: 900px; min-height: 100%; padding: 60px 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border-radius: 8px; box-sizing: border-box; border: 1px solid var(--border-soft);}
   .proc-document img { max-width: 100%; }
 
+  /* NUEVO: CONTENEDOR INTERACTIVO PROFESIONAL PARA ADJUNTOS DRIVE */
+  .proc-attachments-container { background: #ffffff; border: 1px solid var(--border-soft); border-radius: 8px; margin-bottom: 25px; padding: 15px; }
+  .proc-attachments-title { font-size: 12px; font-weight: 800; color: var(--blue); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border-soft); padding-bottom: 8px; }
+  .proc-files-grid { display: flex; flex-direction: column; gap: 8px; }
+  .proc-file-card { display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid var(--border-soft); border-radius: 6px; padding: 10px 15px; transition: all 0.2s ease; }
+  .proc-file-card:hover { background: #f1f5f9; border-color: var(--light-blue); }
+  .proc-file-card.active-file { background: #e0f2fe; border-color: var(--light-blue); box-shadow: 0 2px 8px rgba(0,159,227,0.08); }
+  .proc-file-meta { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .proc-file-badge { width: 34px; height: 34px; border-radius: 6px; background: #ffebe6; color: #ea4335; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; transition: all 0.2s; }
+  .proc-file-card.active-file .proc-file-badge { background: var(--light-blue); color: white; }
+  .proc-file-title { font-size: 13.5px; font-weight: 600; color: var(--blue); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .proc-file-btn-group { display: flex; gap: 6px; flex-shrink: 0; }
+
   /* ONLINE & NOTIF */
   .online-indicator { font-size: 11px; color: var(--blue); font-weight: bold; background: #e0eaf5; padding: 6px 12px; border-radius: 20px; border: 1px solid #cce0f5; cursor: pointer; position: relative; display: flex; align-items: center; gap: 5px;}
   .online-list-popup { display: none; position: absolute; top: 120%; right: 0; background: white; border: 1px solid var(--border-soft); width: 200px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-radius: 8px; padding: 10px; z-index: 100; color: #333; font-weight: normal; max-height: 250px; overflow-y: auto;}
@@ -285,7 +298,7 @@
   <aside class="sidebar" id="appSidebar">
     <div class="sidebar-header">
         <i class="fa-solid fa-location-dot" style="color: var(--light-blue); font-size: 22px;"></i> 
-        <span>ST - Call Center Intranet</span>
+        <span>ST - Intranet</span>
     </div>
     <div class="sidebar-menu" id="mainTabsContainer">
         <div id="tabInicio" class="tab-btn active" onclick="window.switchModule('inicio')"><i class="fa-solid fa-house"></i> <span>Inicio</span></div>
@@ -298,10 +311,8 @@
   </aside>
 
   <div class="main-wrapper">
-      
       <header>
         <button class="btn btn-o hide-desktop" style="padding: 8px 12px; border:none; color:var(--blue);" onclick="document.getElementById('appSidebar').classList.toggle('open')"><i class="fa-solid fa-bars fa-lg"></i></button>
-        
         <div class="header-actions">
           <div id="notifBell" class="hidden" style="position: relative; cursor: pointer; color: var(--blue); font-size: 20px; transition: 0.2s;" onclick="window.openPendingUsers()">
             <i class="fa-solid fa-bell"></i>
@@ -320,13 +331,11 @@
       </header>
 
       <div id="mainContainer">
-          
         <div id="moduloInicio">
             <div class="welcome-banner">
                 <h2>Hola, <span id="lblUserHome">Usuario</span> 👋</h2>
                 <p>Bienvenido a la Intranet de ST Call Center. Selecciona una herramienta del menú para comenzar.</p>
             </div>
-            
             <div class="card" style="padding: 25px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 10px;">
                     <h3 style="margin: 0; color: var(--blue); font-size: 18px;"><i class="fa-solid fa-bullhorn" style="color: var(--light-blue);"></i> Últimos Procedimientos Publicados</h3>
@@ -406,8 +415,7 @@
                         <input type="text" id="searchProcBox" class="proc-search-inp search-inp" placeholder="Buscar documento..." onkeyup="window.renderProcMenu(true)">
                     </div>
                 </div>
-                <div class="proc-list" id="procSidebarMenu">
-                    </div>
+                <div class="proc-list" id="procSidebarMenu"></div>
             </div>
             <div class="proc-viewer" id="procViewerScrollArea">
                 <div class="proc-document" id="procViewerContainer">
@@ -446,7 +454,6 @@
                 </div>
 
                 <div class="ajs-content">
-                    
                     <div id="ajsViewUsr" class="hidden">
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-users"></i> Gestión de Accesos</h3>
                         <div class="action-btns" style="margin-bottom: 15px; justify-content: flex-end;"><button onclick="document.getElementById('fileImportUsr').click()" class="btn btn-o"><i class="fa-solid fa-file-import"></i> Importar CSV</button><button onclick="window.exportUsersToExcel()" class="btn btn-x"><i class="fa-solid fa-file-export"></i> Exportar Excel</button></div>
@@ -463,31 +470,24 @@
                     <div id="ajsViewRol" class="hidden">
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-user-shield"></i> Roles y Permisos</h3>
                         <p style="font-size:13px; color:var(--mid-gray);">Crea roles a la medida o edita los permisos de los roles predeterminados (Agente / Invitado).</p>
-                        
                         <div style="background:#f8fafc; padding:20px; border-radius:8px; border:1px solid var(--border-soft); margin-bottom:20px;">
                             <input id="rolName" class="inp" placeholder="Nombre del nuevo Rol (Ej: Mesa de Control)">
-                            
                             <h4 style="margin: 15px 0 10px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">Permisos Generales</h4>
                             <div class="perm-grid">
                                 <label class="perm-item"><input type="checkbox" id="p_cob_view" checked> Ver Cobertura</label>
                                 <label class="perm-item"><input type="checkbox" id="p_cob_edit"> Editar Cobertura</label>
                                 <label class="perm-item"><input type="checkbox" id="p_cob_exp"> Exportar/Importar Cob</label>
-
                                 <label class="perm-item"><input type="checkbox" id="p_tec_view" checked> Ver Técnicos</label>
                                 <label class="perm-item"><input type="checkbox" id="p_tec_edit"> Editar Técnicos</label>
                                 <label class="perm-item"><input type="checkbox" id="p_tec_exp"> Exportar/Importar Tec</label>
-
                                 <label class="perm-item"><input type="checkbox" id="p_enc_view" checked> Ver Directorio</label>
                                 <label class="perm-item"><input type="checkbox" id="p_enc_edit"> Editar Directorio</label>
                                 <label class="perm-item"><input type="checkbox" id="p_enc_exp"> Exportar/Importar Dir</label>
-
                                 <label class="perm-item"><input type="checkbox" id="p_dyn_view" checked> Ver Mods. Creados</label>
                                 <label class="perm-item"><input type="checkbox" id="p_dyn_edit"> Editar Mods. Creados</label>
                                 <label class="perm-item"><input type="checkbox" id="p_dyn_exp"> Exportar Mods. Creados</label>
-
                                 <label class="perm-item"><input type="checkbox" id="p_proc_view" checked> Ver Procedimientos</label>
                             </div>
-
                             <h4 style="margin: 20px 0 10px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">Permisos de Ajustes</h4>
                             <div class="perm-grid">
                                 <label class="perm-item"><input type="checkbox" id="p_ajs_usr"> Usuarios y Accesos</label>
@@ -496,7 +496,6 @@
                                 <label class="perm-item"><input type="checkbox" id="p_ajs_proc"> Gestor Procedimientos</label>
                                 <label class="perm-item"><input type="checkbox" id="p_ajs_col"> Colores Cobertura</label>
                             </div>
-
                             <div style="text-align:right; margin-top:20px;">
                                 <button id="btnCancelRole" onclick="window.cancelarEdicionRol()" class="btn btn-d hidden" style="margin-right: 5px;"><i class="fa-solid fa-times"></i> Cancelar</button>
                                 <button id="btnRoleAction" onclick="window.saveRole()" class="btn btn-s" style="color:white; font-size: 14px; padding: 10px 20px;">Guardar Rol</button>
@@ -509,7 +508,6 @@
                     <div id="ajsViewMod" class="hidden">
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-layer-group"></i> Creador y Editor de Módulos</h3>
                         <p style="font-size:13px; color:var(--mid-gray);">Agrega nuevas pestañas o personaliza el nombre de las funciones del sistema.</p>
-                        
                         <div class="form-grid" style="background:#f8fafc; padding:20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--border-soft);">
                             <div class="span-2" style="border-bottom: 2px solid var(--border-soft); padding-bottom: 10px; margin-bottom: 5px;">
                                 <h4 style="margin:0; color:var(--blue); font-size: 16px;"><i class="fa-solid fa-plus" style="color: var(--light-blue);"></i> Crear Nuevo Módulo Personalizado</h4>
@@ -525,11 +523,10 @@
                             <div id="divConfModCols" class="span-2">
                                 <label style="font-size:12px; font-weight:bold; color:var(--blue);">Columnas (Separadas por COMA)</label>
                                 <input id="confModCols" class="inp" placeholder="Ej: Nombre, Teléfono, Correo, Departamento">
-                                <small style="color:var(--light-blue); font-weight: bold;">*Si eliges Directorio, la 1ra columna es el Título, la 2da es el Puesto/Responsabilidad, y el resto campos con botón de copiar.</small>
                             </div>
                             <div id="divConfModHtml" class="span-2 hidden">
                                 <label style="font-size:12px; font-weight:bold; color:var(--blue);">Código HTML Libre</label>
-                                <textarea id="confModHtml" class="inp" style="height: 150px; font-family: monospace; resize:vertical; font-size:13px;" placeholder="Pega aquí tu <iframe> o código HTML personalizado para que se muestre en esta pestaña..."></textarea>
+                                <textarea id="confModHtml" class="inp" style="height: 150px; font-family: monospace; resize:vertical; font-size:13px;" placeholder="Pega aquí tu código HTML personalizado..."></textarea>
                             </div>
                             <div class="span-2" style="text-align:right; margin-top: 10px;">
                                 <button onclick="window.cancelarEdicionModulo()" id="btnCancelMod" class="btn btn-d hidden" style="margin-right: 5px;"><i class="fa-solid fa-times"></i> Cancelar</button>
@@ -541,8 +538,7 @@
 
                     <div id="ajsViewProc" class="hidden">
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-file-code"></i> Gestor de Procedimientos</h3>
-                        <p style="font-size:13px; color:var(--mid-gray);">Crea procedimientos usando el editor visual, código HTML o directamente de Drive.</p>
-                        
+                        <p style="font-size:13px; color:var(--mid-gray);">Crea procedimientos usando el editor visual, código HTML o incrustando archivos de Drive.</p>
                         <div class="form-grid" style="background:#f8fafc; padding:20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--border-soft);">
                             <div>
                                 <label style="font-size:12px; font-weight:bold; color:var(--blue);">Submódulo / Categoría</label>
@@ -552,28 +548,30 @@
                                 <label style="font-size:12px; font-weight:bold; color:var(--blue);">Título del Procedimiento</label>
                                 <input id="admProcTit" class="inp" placeholder="Ej: ¿Cómo crear boleta?">
                             </div>
-                            
                             <div class="span-2" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: -10px;">
                                 <label style="font-size:12px; font-weight:bold; color:var(--blue);">Contenido del Procedimiento</label>
                                 <div>
                                     <button id="btnModoVisual" onclick="window.setProcMode('visual')" class="btn-mini" style="background:var(--blue); padding: 6px 12px;"><i class="fa-solid fa-pen-nib"></i> Modo Visual</button>
                                     <button id="btnModoCodigo" onclick="window.setProcMode('codigo')" class="btn-mini" style="background:var(--mid-gray); padding: 6px 12px;"><i class="fa-solid fa-code"></i> HTML Puro</button>
-                                    <button id="btnModoDrive" onclick="window.setProcMode('drive')" class="btn-mini" style="background:var(--mid-gray); padding: 6px 12px;"><i class="fa-brands fa-google-drive"></i> Documento Drive</button>
+                                    <button id="btnModoDrive" onclick="window.setProcMode('drive')" class="btn-mini" style="background:var(--mid-gray); padding: 6px 12px;"><i class="fa-brands fa-google-drive"></i> Archivos Drive</button>
                                 </div>
                             </div>
 
                             <div class="span-2" id="boxProcVisual" style="margin-top: 10px;">
-                                <div id="admProcEditor" style="height: 300px; background: white; border-radius: 0 0 4px 4px; border-color: var(--border-soft);"></div>
+                                <div id="admProcEditor" style="height: 300px; background: white; border-radius: 0 0 4px 4px;"></div>
                             </div>
-                            
                             <div class="span-2 hidden" id="boxProcCodigo" style="margin-top: 10px;">
-                                <textarea id="admProcHtml" class="inp" style="font-family: monospace; font-size:13px; background:#212529; color:#f8f9fa; height: 342px; margin:0; resize: vertical; border-radius: 4px;" placeholder="<h1>Tu título</h1><p>Pega tu código HTML personalizado aquí. El sistema no lo alterará.</p>"></textarea>
+                                <textarea id="admProcHtml" class="inp" style="font-family: monospace; font-size:13px; background:#212529; color:#f8f9fa; height: 342px; margin:0; resize: vertical;" placeholder="Pega tu código HTML aquí."></textarea>
                             </div>
-                            
                             <div class="span-2 hidden" id="boxProcDrive" style="background: white; padding: 20px; border-radius: 6px; border: 1px solid var(--light-blue); margin-top: 10px; box-shadow: 0 4px 10px rgba(0,159,227,0.05);">
-                                <label style="font-size:12px; font-weight:bold; color:var(--blue);">Enlace de Google Drive (El archivo debe ser público)</label>
-                                <input id="admProcDriveLink" class="inp" placeholder="Ej: https://drive.google.com/file/d/16N0EYm.../view?usp=drive_link">
-                                <p style="font-size: 12px; color: var(--light-blue); margin: 5px 0 0 0; font-weight: 500;"><i>Copia y pega el enlace completo de tu PDF o documento. El sistema generará el visor automáticamente.</i></p>
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                                    <div>
+                                        <label style="font-size:14px; font-weight:bold; color:var(--blue);"><i class="fa-brands fa-google-drive" style="color:var(--light-blue);"></i> Archivos Adjuntos</label>
+                                        <p style="font-size: 11px; color: var(--mid-gray); margin: 3px 0 0 0;">Agrega un nombre personalizado y el enlace de cada archivo.</p>
+                                    </div>
+                                    <button onclick="window.addDriveLinkRow()" class="btn btn-s" style="padding:6px 12px; font-size:11px; color:white;"><i class="fa-solid fa-plus"></i> Añadir Archivo</button>
+                                </div>
+                                <div id="driveLinksContainer" style="display:flex; flex-direction:column; gap:10px;"></div>
                             </div>
 
                             <div class="span-2" style="text-align:right; margin-top: 15px;">
@@ -581,7 +579,6 @@
                                 <button onclick="window.guardarProc()" id="btnSaveProc" class="btn btn-s" style="color:white; padding: 10px 20px;"><i class="fa-solid fa-save"></i> Guardar Procedimiento</button>
                             </div>
                         </div>
-                        
                         <h4 style="color:var(--blue); border-bottom:2px solid var(--border-soft); padding-bottom:8px; margin-bottom: 15px;">Procedimientos Guardados</h4>
                         <div class="search-wrap" style="margin-bottom: 15px;"><i class="fa-solid fa-search"></i><input id="searchProcAdmBox" class="search-inp" placeholder="Buscar título o categoría..." onkeyup="window.renderAdminProcList()"></div>
                         <div id="adminProcListContainer" style="max-height:400px; overflow-y:auto; border: 1px solid var(--border-soft); border-radius: 6px; padding: 5px;"></div>
@@ -590,7 +587,6 @@
                     <div id="ajsViewCol" class="hidden">
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-palette"></i> Colores de Cobertura</h3>
                         <p style="font-size:13px; color:var(--mid-gray);">Elige el color exacto que quieres que se muestre en la tabla para cada tipo de estado.</p>
-                        
                         <div class="form-grid" style="background:#f8fafc; padding:20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--border-soft);">
                             <div>
                                 <label style="font-size:12px; font-weight:bold; color:var(--blue);">Cobertura</label>
@@ -608,17 +604,14 @@
                                 <label style="font-size:12px; font-weight:bold; color:var(--blue);">Sin Datos</label>
                                 <input type="color" id="colSinDat" class="inp" style="height:50px; padding:2px; cursor:pointer; border-radius: 6px;">
                             </div>
-                            
                             <div class="span-2" style="text-align:right; margin-top: 15px;">
                                 <button id="btnSaveColors" onclick="window.saveColors()" class="btn btn-s" style="color:white; padding: 10px 20px;"><i class="fa-solid fa-save"></i> Guardar Colores</button>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
-
       </div>
   </div>
 </div>
@@ -699,24 +692,43 @@
         theme: 'snow', placeholder: 'Escribe tu procedimiento, pega imágenes o usa las herramientas de arriba...',
         modules: { toolbar: [ [{ 'header': [1, 2, 3, false] }], ['bold', 'italic', 'underline', 'strike'], [{ 'color': [] }, { 'background': [] }], [{ 'list': 'ordered'}, { 'list': 'bullet' }], ['link', 'image'], ['clean'] ] }
       });
+
+      window.addDriveLinkRow();
+  };
+
+  window.addDriveLinkRow = function(name = '', url = '') {
+      const container = document.getElementById('driveLinksContainer');
+      const row = document.createElement('div');
+      row.style.display = 'flex'; row.style.gap = '10px'; row.className = 'drive-link-row';
+      row.innerHTML = `
+          <input type="text" class="inp d-link-name" placeholder="Nombre de Pestaña (Ej: Manual V1)" value="${name}" style="flex:1; margin:0;">
+          <input type="text" class="inp d-link-url" placeholder="Enlace de Drive" value="${url}" style="flex:2; margin:0;">
+          <button class="btn btn-d" onclick="this.parentElement.remove()" style="margin:0; padding: 10px;" title="Eliminar fila"><i class="fa-solid fa-trash"></i></button>
+      `;
+      container.appendChild(row);
+  };
+
+  window.getDriveLinks = function() {
+      let links = [];
+      document.querySelectorAll('.drive-link-row').forEach(row => {
+          let n = row.querySelector('.d-link-name').value.trim();
+          let u = row.querySelector('.d-link-url').value.trim();
+          if(u) links.push({ n: n || 'Documento', u: u });
+      });
+      return JSON.stringify(links);
   };
 
   window.hasPerm = function(perm) {
       if(SESION.r === 'admin') return true;
       if(SESION.r === 'pendiente') return false;
-
       const rolData = DB.roles.find(r => (r.nombre||'').toLowerCase() === (SESION.r||'').toLowerCase());
       if(rolData && rolData.perms) return rolData.perms.includes(perm);
-
-      // Respaldo
       if(SESION.r === 'agente') { return ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view'].includes(perm); }
       if(SESION.r === 'invitado') { return ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view'].includes(perm); }
-      
       return false;
   };
 
   window.applyPermissionsToUI = function() {
-      // Ojo: Inicio no se oculta, siempre está visible.
       document.getElementById('tabCob').classList.toggle('hidden', !window.hasPerm('cob_view'));
       document.getElementById('tabTec').classList.toggle('hidden', !window.hasPerm('tec_view'));
       document.getElementById('tabEnc').classList.toggle('hidden', !window.hasPerm('enc_view'));
@@ -748,8 +760,7 @@
       if(document.getElementById('btnAddDyn')) document.getElementById('btnAddDyn').classList.toggle('hidden', !window.hasPerm('dyn_edit'));
       if(document.getElementById('btnExpDyn')) document.getElementById('btnExpDyn').classList.toggle('hidden', !window.hasPerm('dyn_exp'));
       if(document.getElementById('btnImpDyn')) document.getElementById('btnImpDyn').classList.toggle('hidden', !window.hasPerm('dyn_exp'));
-      
-      window.renderInicioRecientes(); // Para ocultar o mostrar si no tiene permisos
+      window.renderInicioRecientes();
   };
 
   window.copyToClip = function(text) { if(!text) return; navigator.clipboard.writeText(text).then(() => { window.showToastSuccess(`Texto Copiado`); }).catch(err => alert("Error al copiar")); };
@@ -770,14 +781,12 @@
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     let activeTab = document.getElementById(mod.startsWith('dyn_') ? 'tab_' + mod : 'tab' + mod.charAt(0).toUpperCase() + mod.slice(1));
     if(activeTab) activeTab.classList.add('active');
-    
     document.getElementById('appSidebar').classList.remove('open');
     
     if(mod === 'proc' || mod === 'ajs' || mod === 'inicio') { 
         document.getElementById('mainContainer').style.maxWidth = '100%'; 
         document.getElementById('mainContainer').style.padding = mod === 'inicio' ? '20px 30px' : '0'; 
-    } 
-    else { 
+    } else { 
         document.getElementById('mainContainer').style.maxWidth = '1300px'; 
         document.getElementById('mainContainer').style.padding = '20px'; 
     }
@@ -796,7 +805,6 @@
     else if(mod.startsWith('dyn_')) { document.getElementById('moduloDinamico').classList.remove('hidden'); CURRENT_DYN_CONFIG = DB.configModulos.find(m => m.id === mod.replace('dyn_', '')); window.renderDynData(); }
   };
 
-  // NAVEGACIÓN DIRECTA DESDE INICIO A UN PROCEDIMIENTO
   window.goToProc = function(id) {
       window.switchModule('proc');
       setTimeout(() => { window.abrirProcedimiento(id); }, 100);
@@ -827,19 +835,15 @@
 
   window.login = async function() {
     const u = document.getElementById('txtUser').value.trim(); const p = document.getElementById('txtPass').value.trim(); const btn = document.getElementById('btnLogin');
-
     if (u.toLowerCase() === "admin" && p === "distelsa") {
         SESION = { id: "master_admin", u: "Administrador Maestro", r: "admin", t: "bypass_token" };
         localStorage.setItem('distelsa_pro_fb', JSON.stringify(SESION)); window.startApp(); return;
     }
-
     if(!u || !p) return alert("Ingrese usuario y contraseña");
     btn.innerText = 'Cargando...'; btn.disabled = true;
-
     try {
       const snap = await getDocs(collection(db, "usuarios"));
       const uDoc = snap.docs.find(d => (d.data().u || "").toLowerCase() === u.toLowerCase() && d.data().p === p);
-      
       if (uDoc) {
         const uData = uDoc.data();
         if(uData.r === 'pendiente') { alert("Tu cuenta está en estado PENDIENTE. Pide al admin que te apruebe."); } 
@@ -853,7 +857,6 @@
         }
       } else { alert("Datos incorrectos. Verifica bien tu usuario y contraseña."); }
     } catch(e) { alert("Fallo de red: El firewall bloqueó la conexión a la base de datos."); } 
-    
     btn.innerText = 'INGRESAR'; btn.disabled = false;
   };
 
@@ -873,18 +876,15 @@
   window.startApp = function() {
     if (SESION.r === 'invitado') { const userObj = DB_USERS.find(u => u.id === SESION.id); if (userObj && userObj.createdAt && (Date.now() - userObj.createdAt > 86400000)) { alert("Sesión expirada."); window.logout(); return; } }
     document.getElementById('viewLogin').classList.add('hidden'); document.getElementById('viewApp').classList.remove('hidden');
-    
-    // Configurar labels del Dashboard y Header
     document.getElementById('lblUser').innerText = SESION.u; 
     document.getElementById('lblUserHome').innerText = SESION.u.split(" - ")[1] || SESION.u; 
     document.getElementById('lblRol').innerText = SESION.r;
-    
     document.getElementById('onlineMonitor').classList.remove('hidden');
     
     listenToSysMods(); window.listenToRoles(); window.listenToUsers(); setInterval(window.updateOnlineUI, 5000); listenToColors();
     listenToCoberturas(); listenToTecnicos(); listenToEncargados(); listenToConfigModulos(); listenToDynData(); listenToProcedimientos();
     
-    window.switchModule('inicio'); // Cargar Inicio por defecto
+    window.switchModule('inicio'); 
     window.initSortableTabs(); 
     window.heartbeat(); heartbeatInterval = setInterval(window.heartbeat, 180000);
   };
@@ -917,7 +917,7 @@
       const nombre = document.getElementById('rolName').value.trim(); if(!nombre) return alert("Ingresa nombre"); const perms = []; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { if(chk.checked) perms.push(chk.id.replace('p_', '')); }); 
       try { 
           if(EDITING_ROLE_ID) { if (EDITING_ROLE_ID.startsWith('default_')) { await addDoc(collection(db, "roles_config"), { nombre: nombre.toLowerCase(), perms }); } else { await updateDoc(doc(db, "roles_config", EDITING_ROLE_ID), { nombre, perms }); } alert("Permisos actualizados correctamente"); } 
-          else { if(DB.roles.some(r => r.nombre.toLowerCase() === nombre.toLowerCase() && !r.id.startsWith('default_'))) { return alert("Ya existe un rol con ese nombre."); } await addDoc(collection(db, "roles_config"), { nombre, perms }); alert("Nuevo rol creado exitosamente"); } window.cancelarEdicionRol();
+          else { if(DB.roles.some(r => r.nombre.toLowerCase() === nombre.toLowerCase() && !r.id.startsWith('default_'))) { return alert("Ya existe un rol con ese nombre."); } await addDoc(collection(db, "roles_config"), { nombre, perms }); alert("Nuevo rol creado exitosamente"); window.cancelarEdicionRol(); }
       } catch(e) { alert("Error al guardar rol"); } 
   };
   
@@ -944,7 +944,7 @@
   // ================= NOMBRES DE MÓDULOS DEL SISTEMA =================
   function listenToSysMods() { onSnapshot(doc(db, "configuracion", "nombres_modulos"), (docSnap) => { if (docSnap.exists()) { Object.assign(SYS_MOD_NAMES, docSnap.data()); } window.updateSysModUI(); }); }
   window.updateSysModUI = function() { document.getElementById('txtTabCob').innerText = SYS_MOD_NAMES.cob; document.getElementById('txtTabTec').innerText = SYS_MOD_NAMES.tec; document.getElementById('txtTabEnc').innerText = SYS_MOD_NAMES.enc; document.getElementById('txtTabProc').innerText = SYS_MOD_NAMES.proc; const lblProc = document.getElementById('lblProcSidebar'); if(lblProc) lblProc.innerText = SYS_MOD_NAMES.proc; if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewMod').classList.contains('hidden')) window.renderListaModulos(); };
-  window.saveSysMods = async function() { const data = { cob: document.getElementById('sysNomCob').value.trim() || "Cobertura", tec: document.getElementById('sysNomTec').value.trim() || "Técnicos", enc: document.getElementById('sysNomEnc').value.trim() || "Directorio", proc: document.getElementById('sysNomProc').value.trim() || "Procedimientos" }; try { await setDoc(doc(db, "configuracion", "nombres_modulos"), data, { merge: true }); window.showToastSuccess("Nombres actualizados"); } catch(e) { alert("Error al guardar nombres"); } };
+  window.saveSysMods = async function() { const data = { cob: document.getElementById('sysNomCob').value.trim() || "Cobertura", tec: document.getElementById('sysNomTec').value.trim() || "Técnicos", enc: document.getElementById('sysNomEnc').value.trim() || "Directorio", proc: document.getElementById('sysNomProc').value.trim() || "Procedimientos" }; try { await setDoc(doc(db, "configuracion", "nombres_modulos"), data, { merge: true }); window.showToastSuccess("Nombres updated"); } catch(e) { alert("Error"); } };
 
   // ================= CREADOR DE MÓDULOS DINÁMICOS =================
   function listenToConfigModulos() { onSnapshot(collection(db, "modulos_config"), (snapshot) => { DB.configModulos = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); window.buildDynamicTabs(); if(CURRENT_MODULE === 'ajs') window.renderListaModulos(); }); }
@@ -983,12 +983,6 @@
   window.cancelarEdicionModulo = function() { EDITING_MOD_ID = null; document.getElementById('confModName').value = ''; document.getElementById('confModVista').value = 'tabla'; document.getElementById('confModCols').value = ''; document.getElementById('confModHtml').value = ''; window.toggleModType(); const btnSave = document.getElementById('btnSaveMod'); btnSave.innerHTML = '<i class="fa-solid fa-layer-group"></i> Generar Módulo'; btnSave.classList.replace('btn-p', 'btn-s'); document.getElementById('btnCancelMod').classList.add('hidden'); };
   window.eliminarModuloDinamico = async function(id) { if(!confirm("¿Eliminar módulo y todos sus datos?")) return; try { await deleteDoc(doc(db, "modulos_config", id)); const batch = writeBatch(db); DB.dynData.filter(d => d.modId === id).forEach(d => batch.delete(doc(db, "modulos_data", d.id))); await batch.commit(); if (EDITING_MOD_ID === id) window.cancelarEdicionModulo(); if (CURRENT_MODULE === 'dyn_'+id) window.switchModule('cob'); } catch(e) { alert("Error al eliminar"); } };
 
-  window.renderListaModulos = function() {
-    let html = `<h5 style="color:var(--blue); margin-bottom:15px; border-bottom:1px solid var(--border-soft); padding-bottom:5px;"><i class="fa-solid fa-lock"></i> Renombrar Módulos del Sistema</h5><div class="form-grid" style="background:#f8fafc; padding:20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--border-soft);"><div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Cobertura</label><input id="sysNomCob" class="inp" value="${SYS_MOD_NAMES.cob}"></div><div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Técnicos</label><input id="sysNomTec" class="inp" value="${SYS_MOD_NAMES.tec}"></div><div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Directorio</label><input id="sysNomEnc" class="inp" value="${SYS_MOD_NAMES.enc}"></div><div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Procedimientos</label><input id="sysNomProc" class="inp" value="${SYS_MOD_NAMES.proc}"></div><div class="span-2" style="text-align:right;"><button onclick="window.saveSysMods()" class="btn btn-s" style="color:white; padding: 10px 20px;"><i class="fa-solid fa-save"></i> Guardar Nombres</button></div></div><h5 style="color:var(--blue); margin-top:20px; margin-bottom:5px; border-bottom:1px solid var(--border-soft); padding-bottom:5px;"><i class="fa-solid fa-puzzle-piece"></i> Módulos Personalizados</h5>`;
-    let dynHtml = DB.configModulos.map(m => { let desc = m.vista === 'html' ? `<i class="fa-solid fa-code"></i> Contenido HTML Personalizado` : (m.columnas||[]).join(', '); return `<div class="mod-list-item"><div><b style="color:var(--blue);">${m.nombre}</b> <span style="font-size:11px;color:var(--light-blue); font-weight:bold;">(${m.vista})</span> <br><small style="color:var(--mid-gray);">${desc}</small></div><div><button onclick="window.editarModuloDinamico('${m.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarModuloDinamico('${m.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`; }).join('');
-    document.getElementById('listaModulosCreados').innerHTML = html + (dynHtml || '<p style="font-size:13px; color:var(--mid-gray);">No hay personalizados.</p>');
-  };
-
   window.renderDynData = function(reset = false) {
       if (reset) PAGE_DYN = 1; if(!CURRENT_DYN_CONFIG) return; 
       const isHtml = CURRENT_DYN_CONFIG.vista === 'html'; const toolsDiv = document.querySelector('#moduloDinamico .tools'); const pageDiv = document.getElementById('pageLabelDyn').parentElement; const container = document.getElementById('dynContentContainer');
@@ -998,76 +992,237 @@
       const isDir = CURRENT_DYN_CONFIG.vista === 'directorio'; const perPage = isDir ? ITEMS_PER_PAGE_ENC : 10; const totalPages = Math.ceil(filtered.length / perPage) || 1; if (PAGE_DYN > totalPages) PAGE_DYN = totalPages; document.getElementById('pageLabelDyn').innerText = `${PAGE_DYN} / ${totalPages}`; const chunk = filtered.slice((PAGE_DYN - 1) * perPage, PAGE_DYN * perPage); const canEdit = window.hasPerm('dyn_edit'); const isAdmin = (SESION.r === 'admin');
       if (chunk.length === 0) { container.innerHTML = `<div class="card" style="text-align:center; padding: 40px; color:var(--light-blue); font-weight:bold; font-size: 16px;">No se encontraron registros.</div>`; return; }
       if (isDir) {
-          let html = `<div class="enc-grid">`; chunk.forEach(row => { let title = row.c0 || "Sin Título"; let ini = title.charAt(0).toUpperCase(); let role = row.c1 || ""; let act = ""; if (canEdit) act += `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let bodyHtml = ""; CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => { if(i < 2) return; let val = row['c'+i]; if(val) { bodyHtml += `<div class="enc-contact" onclick="window.copyToClip('${val}')" title="Copiar"><div><span class="enc-contact-label">${colName}</span><span class="enc-contact-value">${val}</span></div><button class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</button></div>`; } }); html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${title}</div><div class="enc-role">${role}</div></div></div></div><div class="enc-body">${bodyHtml}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`; }); html += `</div>`; container.innerHTML = html;
+          let html = `<div class="enc-grid">`; chunk.forEach(row => { let title = row.c0 || "Sin Título"; let ini = title.charAt(0).toUpperCase(); let role = row.c1 || ""; let act = ""; if (canEdit) act += `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let bodyHtml = ""; CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => { if(i < 2) return; let val = row['c'+i]; if(val) { bodyHtml += `<div class="enc-contact" onclick="window.copyToClip('${val}')"><div><span class="enc-contact-label">${colName}</span><span class="enc-contact-value">${val}</span></div><button class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</button></div>`; } }); html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${title}</div><div class="enc-role">${role}</div></div></div></div><div class="enc-body">${bodyHtml}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`; }); html += `</div>`; container.innerHTML = html;
       } else {
           let ths = CURRENT_DYN_CONFIG.columnas.map(c => `<th>${c}</th>`).join(''); if(canEdit) ths += `<th width="15%">Acciones</th>`; let html = `<div class="card"><div class="table-responsive"><table><thead><tr>${ths}</tr></thead><tbody>`;
           chunk.forEach(row => { html += `<tr>`; CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => { let val = row['c'+i] || ""; let displayVal = val; if (val.length > 55) { displayVal = `<span>${val.substring(0, 50)}...</span> <button class="btn-mini" onclick="window.abrirVerMas('${row.id}', ${i})" style="background:var(--blue); margin-top:5px;"><i class="fa-solid fa-eye"></i> Leer completo</button>`; } html += `<td>${i===0?`<b style="color:var(--blue);">${displayVal}</b>`:displayVal}</td>`; }); if(canEdit) { let act = `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:6px 10px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if(isAdmin) act += ` <button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:6px 10px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; html += `<td>${act}</td>`; } html += `</tr>`; }); html += `</tbody></table></div></div>`; container.innerHTML = html;
       }
   };
 
-  // ================= MODULO: PROCEDIMIENTOS E INICIO =================
+  // ================= MÓDULO PROCEDIMIENTOS E INICIO =================
   function listenToProcedimientos() { onSnapshot(collection(db, "procedimientos_html"), (snapshot) => { DB.proc = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); LOAD_STATE.proc = true; if(CURRENT_MODULE === 'proc') window.renderProcMenu(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewProc').classList.contains('hidden')) window.renderAdminProcList(); window.renderInicioRecientes(); }); }
   
-  // RENDERIZAR PROCEDIMIENTOS RECIENTES EN EL INICIO
   window.renderInicioRecientes = function() {
-      const container = document.getElementById('homeRecientesContainer');
-      if(!container) return;
+      const container = document.getElementById('homeRecientesContainer'); if(!container) return;
       if (!window.hasPerm('proc_view')) { container.innerHTML = `<div style="grid-column: 1 / -1; background: #ffe3e3; color: #e63946; padding: 15px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 13px;">No tienes permisos para ver el contenido de la Intranet.</div>`; return; }
-      
-      let sorted = [...DB.proc].sort((a, b) => (b.fecha || 0) - (a.fecha || 0));
-      let recent = sorted.slice(0, 6); // Top 6 más recientes
-      
-      if(recent.length === 0) {
-          container.innerHTML = `<div style="grid-column: 1 / -1; color: var(--mid-gray); font-size: 13px; text-align: center; padding: 20px;">Aún no se ha publicado ningún procedimiento.</div>`;
-          return;
-      }
-      
+      let sorted = [...DB.proc].sort((a, b) => (b.fecha || 0) - (a.fecha || 0)); let recent = sorted.slice(0, 6);
+      if(recent.length === 0) { container.innerHTML = `<div style="grid-column: 1 / -1; color: var(--mid-gray); font-size: 13px; text-align: center; padding: 20px;">Aún no se ha publicado ningún procedimiento.</div>`; return; }
       let html = "";
       recent.forEach(p => {
           let dateStr = p.fecha ? new Date(p.fecha).toLocaleDateString() : "Reciente";
           let icon = '<i class="fa-solid fa-file-lines" style="color:var(--light-blue); font-size: 24px; margin-right: 15px;"></i>';
           if(p.modo === 'drive') icon = '<i class="fa-brands fa-google-drive" style="color:#00A65A; font-size: 24px; margin-right: 15px;"></i>';
-          
-          html += `
-          <div class="proc-card-home" onclick="window.goToProc('${p.id}')">
-              <div style="display:flex; align-items:flex-start;">
-                  ${icon}
-                  <div>
-                      <div class="cat"><i class="fa-solid fa-folder-open"></i> ${p.cat || 'General'}</div>
-                      <h4 class="tit">${p.tit}</h4>
-                  </div>
-              </div>
-              <div class="date"><span>Publicado:</span> <span>${dateStr}</span></div>
-          </div>
-          `;
+          html += `<div class="proc-card-home" onclick="window.goToProc('${p.id}')"><div style="display:flex; align-items:flex-start;">${icon}<div><div class="cat"><i class="fa-solid fa-folder-open"></i> ${p.cat || 'General'}</div><h4 class="tit">${p.tit}</h4></div></div><div class="date"><span>Publicado:</span> <span>${dateStr}</span></div></div>`;
       });
       container.innerHTML = html;
   };
 
   window.setProcMode = function(mode, autoSync = true) { PROC_MODE = mode; const btnV = document.getElementById('btnModoVisual'); const btnC = document.getElementById('btnModoCodigo'); const btnD = document.getElementById('btnModoDrive'); const boxV = document.getElementById('boxProcVisual'); const boxC = document.getElementById('boxProcCodigo'); const boxD = document.getElementById('boxProcDrive'); btnV.style.background = 'var(--mid-gray)'; boxV.classList.add('hidden'); btnC.style.background = 'var(--mid-gray)'; boxC.classList.add('hidden'); if(btnD) { btnD.style.background = 'var(--mid-gray)'; boxD.classList.add('hidden'); } if (mode === 'visual') { btnV.style.background = 'var(--blue)'; boxV.classList.remove('hidden'); } else if (mode === 'codigo') { btnC.style.background = 'var(--blue)'; boxC.classList.remove('hidden'); } else if (mode === 'drive') { btnD.style.background = 'var(--blue)'; boxD.classList.remove('hidden'); } };
   window.renderProcMenu = function(isSearch = false) {
-      const container = document.getElementById('procSidebarMenu'); 
-      if (!LOAD_STATE.proc) { container.innerHTML = `<div class="spinner-container" style="padding: 20px;"><div class="spinner" style="width:30px; height:30px;"></div><div class="loading-text" style="font-size:12px;">Cargando...</div></div>`; return; }
+      const container = document.getElementById('procSidebarMenu'); if (!LOAD_STATE.proc) { container.innerHTML = `<div class="spinner-container" style="padding: 20px;"><div class="spinner" style="width:30px; height:30px;"></div><div class="loading-text" style="font-size:12px;">Cargando...</div></div>`; return; }
       const qInput = document.getElementById('searchProcBox'); const query = qInput ? window.normStr(qInput.value) : ''; let f = DB.proc; if(query) { f = DB.proc.filter(p => window.normStr(p.tit).includes(query) || window.normStr(p.cat).includes(query)); } if (f.length === 0) { container.innerHTML = `<p style="padding:20px; color:var(--light-blue); font-size:13px; font-weight:bold; text-align:center;">No se encontraron resultados.</p>`; return; } const grupos = {}; f.forEach(p => { let cat = p.cat || "General"; if(!grupos[cat]) grupos[cat] = []; grupos[cat].push(p); }); let html = ""; Object.keys(grupos).sort().forEach(cat => { html += `<div class="proc-cat-header"><i class="fa-solid fa-folder-open"></i> ${cat}</div>`; grupos[cat].sort((a,b)=>a.tit.localeCompare(b.tit)).forEach(p => { let icon = '<i class="fa-regular fa-file-lines" style="color:var(--light-blue); font-size: 16px;"></i>'; html += `<a class="proc-item-link" id="linkProc_${p.id}" onclick="window.abrirProcedimiento('${p.id}')">${icon} <span style="flex:1;">${p.tit}</span></a>`; }); }); container.innerHTML = html; const viewer = document.getElementById('procViewerContainer'); if(viewer.dataset.activeId) { let act = document.getElementById(`linkProc_${viewer.dataset.activeId}`); if(act) act.classList.add('active'); }
   };
+
+  // NUEVA FUNCIÓN INTERACTIVA CON CLASES REESTRUCTURADAS (MÓDULO PROFESIONAL DE ADJUNTOS)
+  window.visualizeDriveFile = function(url, idx) {
+      document.getElementById('procDriveIframe').src = url;
+      document.querySelectorAll('.proc-file-card').forEach(card => card.classList.remove('active-file'));
+      const selectedCard = document.getElementById(`fileCard_${idx}`);
+      if(selectedCard) selectedCard.classList.add('active-file');
+  };
+
   window.abrirProcedimiento = function(id) {
       document.querySelectorAll('.proc-item-link').forEach(el => el.classList.remove('active')); const activeLink = document.getElementById(`linkProc_${id}`); if(activeLink) activeLink.classList.add('active'); const proc = DB.proc.find(p => p.id === id); const viewer = document.getElementById('procViewerContainer');
       if(proc) {
           viewer.dataset.activeId = id; let contentHtml = "";
           if (proc.modo === 'drive') {
-              let driveId = ""; const match = (proc.driveLink || "").match(/\/d\/([a-zA-Z0-9_-]+)/); if(match) driveId = match[1];
-              if(driveId) { contentHtml = `<div style="background: white; border-radius: 8px; border: 1px solid var(--border-soft); padding: 25px;"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 15px; flex-wrap: wrap; gap: 10px;"><h3 style="margin: 0; color: var(--blue); display: flex; align-items: center; gap: 10px; font-size: 18px;"><i class="fa-solid fa-file-pdf" style="color: #e63946; font-size: 24px;"></i> ${proc.tit}</h3><a href="https://drive.google.com/uc?export=download&id=${driveId}" target="_blank" style="background: var(--light-blue); color: white; padding: 10px 15px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 13px; display: inline-flex; align-items: center; gap: 8px;"><i class="fa-solid fa-download"></i> Descargar</a></div><div style="width: 100%; height: 70vh; min-height: 500px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border-soft); background: #f8fafc;"><iframe src="https://drive.google.com/file/d/${driveId}/preview" width="100%" height="100%" style="border: none;" allow="autoplay"></iframe></div></div>`; } 
-              else { contentHtml = `<div style="text-align:center; padding: 50px; color:#e63946; font-weight:bold;">Enlace de Google Drive inválido.</div>`; }
+              let links = [];
+              try { 
+                  links = JSON.parse(proc.driveLink || "[]"); 
+              } catch(e) { 
+                  let rawLinks = (proc.driveLink || "").split(/[\n,]+/).map(l => l.trim()).filter(l => l !== "");
+                  links = rawLinks.map((url, idx) => ({ n: "Documento " + (idx+1), u: url }));
+              }
+              
+              if(links.length > 0) {
+                  let filesGridHtml = `<div class="proc-files-grid">`;
+                  let firstUrl = "";
+                  
+                  links.forEach((linkObj, idx) => {
+                      let url = linkObj.u;
+                      let title = linkObj.n || ("Documento " + (idx+1));
+                      let previewUrl = url;
+                      let downloadUrl = url;
+                      
+                      let fileMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                      let folderMatch = url.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+                      
+                      if(fileMatch) {
+                          previewUrl = `https://drive.google.com/file/d/${fileMatch[1]}/preview`;
+                          downloadUrl = `https://drive.google.com/uc?export=download&id=${fileMatch[1]}`;
+                      } else if(folderMatch) {
+                          previewUrl = `https://drive.google.com/embeddedfolderview?id=${folderMatch[1]}#grid`;
+                      }
+
+                      if(idx === 0) firstUrl = previewUrl;
+
+                      filesGridHtml += `
+                      <div class="proc-file-card ${idx === 0 ? 'active-file' : ''}" id="fileCard_${idx}">
+                          <div class="proc-file-meta">
+                              <div class="proc-file-badge"><i class="fa-solid fa-file-pdf"></i></div>
+                              <div class="proc-file-title">${title}</div>
+                          </div>
+                          <div class="proc-file-btn-group">
+                              <button class="btn btn-p" style="padding: 6px 14px; font-size:11px; box-shadow:none;" onclick="window.visualizeDriveFile('${previewUrl}', ${idx})" title="Leer documento integrado"><i class="fa-solid fa-eye"></i> Leer</button>
+                              <a href="${downloadUrl}" target="_blank" class="btn btn-o" style="padding: 6px 14px; font-size:11px; border-color:var(--border-soft); box-shadow:none;" title="Descargar PDF en equipo local"><i class="fa-solid fa-download"></i> Descargar</a>
+                          </div>
+                      </div>`;
+                  });
+                  filesGridHtml += `</div>`;
+
+                  contentHtml = `<div style="background: white; border-radius: 8px; border: 1px solid var(--border-soft); padding: 25px;">
+                      <div style="margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 15px;">
+                          <h3 style="margin: 0; color: var(--blue); font-size: 20px;"><i class="fa-brands fa-google-drive" style="color: #00A65A;"></i> ${proc.tit}</h3>
+                      </div>
+                      
+                      <div class="proc-attachments-container">
+                          <div class="proc-attachments-title"><i class="fa-solid fa-paperclip" style="color:var(--light-blue)"></i> Documentación de Consulta Rápida</div>
+                          ${filesGridHtml}
+                      </div>
+
+                      <div style="width: 100%; height: 75vh; min-height: 600px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border-soft); background: #f8fafc;">
+                          <iframe id="procDriveIframe" src="${firstUrl}" width="100%" height="100%" style="border: none;" allow="autoplay"></iframe>
+                      </div>
+                  </div>`;
+              } else { 
+                  contentHtml = `<div style="text-align:center; padding: 50px; color:#e63946; font-weight:bold;">No hay enlaces válidos para mostrar.</div>`; 
+              }
           } else if(proc.modo === 'visual' || !proc.modo) { contentHtml = `<div class="ql-editor" style="padding:0; overflow-y:visible;">${proc.html || ''}</div>`; } else { contentHtml = `<div style="padding:0; overflow-y:visible;">${proc.html || ''}</div>`; }
           if(!proc.html && proc.modo !== 'drive') contentHtml = "<i style='color:var(--mid-gray);'>El documento está vacío.</i>"; viewer.innerHTML = contentHtml;
           const scripts = viewer.querySelectorAll('script'); scripts.forEach(oldScript => { const newScript = document.createElement('script'); Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value)); newScript.appendChild(document.createTextNode(oldScript.innerHTML)); oldScript.parentNode.replaceChild(newScript, oldScript); });
           document.getElementById('procViewerScrollArea').scrollTo({ top: 0, behavior: 'smooth' });
       }
   };
-  window.guardarProc = async function() { const btnSave = document.getElementById('btnSaveProc'); const cat = document.getElementById('admProcCat').value.trim() || "General"; const tit = document.getElementById('admProcTit').value.trim(); let htmlContent = ""; let driveLink = ""; if (PROC_MODE === 'visual') { htmlContent = quillEditor.root.innerHTML; if(htmlContent === '<p><br></p>') htmlContent = ""; } else if (PROC_MODE === 'codigo') { htmlContent = document.getElementById('admProcHtml').value.trim(); } else if (PROC_MODE === 'drive') { driveLink = document.getElementById('admProcDriveLink').value.trim(); } if(!tit) return alert("El título es obligatorio."); if(PROC_MODE !== 'drive' && !htmlContent) return alert("Debes escribir contenido en el procedimiento."); if(PROC_MODE === 'drive' && !driveLink) return alert("Debes colocar el enlace de Drive."); btnSave.disabled = true; btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...'; try { let payload = { cat, tit, html: htmlContent, driveLink: driveLink, modo: PROC_MODE }; if (EDITING_PROC_ID) { await updateDoc(doc(db, "procedimientos_html", EDITING_PROC_ID), payload); alert("Procedimiento actualizado."); window.cancelarEdicionProc(); } else { payload.fecha = Date.now(); await addDoc(collection(db, "procedimientos_html"), payload); alert("Procedimiento creado."); window.cancelarEdicionProc(); } } catch(e) { alert("Error al guardar."); console.error(e); } finally { btnSave.disabled = false; btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Procedimiento'; } };
-  window.editarProc = function(id) { EDITING_PROC_ID = id; const p = DB.proc.find(x => x.id === id); document.getElementById('admProcCat').value = p.cat || ''; document.getElementById('admProcTit').value = p.tit || ''; document.getElementById('admProcDriveLink').value = p.driveLink || ''; const modoGuardado = p.modo || 'visual'; window.setProcMode(modoGuardado, false); if(modoGuardado === 'visual') { quillEditor.root.innerHTML = p.html || ''; document.getElementById('admProcHtml').value = ''; } else { quillEditor.root.innerHTML = ''; document.getElementById('admProcHtml').value = p.html || ''; } const btnSave = document.getElementById('btnSaveProc'); btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios'; btnSave.classList.replace('btn-s', 'btn-p'); document.getElementById('btnCancelProc').classList.remove('hidden'); document.querySelector('.ajs-content').scrollTo({ top: 0, behavior: 'smooth' }); };
-  window.cancelarEdicionProc = function() { EDITING_PROC_ID = null; document.getElementById('admProcTit').value = ''; document.getElementById('admProcCat').value = ''; quillEditor.root.innerHTML = ''; document.getElementById('admProcHtml').value = ''; document.getElementById('admProcDriveLink').value = ''; window.setProcMode('visual', false); const btnSave = document.getElementById('btnSaveProc'); btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Procedimiento'; btnSave.classList.replace('btn-p', 'btn-s'); document.getElementById('btnCancelProc').classList.add('hidden'); };
-  window.eliminarProc = async function(id) { if(!confirm("¿Eliminar este procedimiento permanentemente?")) return; await deleteDoc(doc(db, "procedimientos_html", id)); if(EDITING_PROC_ID === id) window.cancelarEdicionProc(); };
+
+  window.guardarProc = async function() { 
+      const btnSave = document.getElementById('btnSaveProc'); 
+      const cat = document.getElementById('admProcCat').value.trim() || "General"; 
+      const tit = document.getElementById('admProcTit').value.trim(); 
+      let htmlContent = ""; 
+      let driveLink = ""; 
+      
+      if (PROC_MODE === 'visual') { 
+          htmlContent = quillEditor.root.innerHTML; 
+          if(htmlContent === '<p><br></p>') htmlContent = ""; 
+      } else if (PROC_MODE === 'codigo') { 
+          htmlContent = document.getElementById('admProcHtml').value.trim(); 
+      } else if (PROC_MODE === 'drive') { 
+          const linksJson = window.getDriveLinks();
+          if(linksJson === "[]") return alert("Debes colocar al menos un enlace de Drive.");
+          driveLink = linksJson;
+      } 
+      
+      if(!tit) return alert("El título es obligatorio."); 
+      if(PROC_MODE !== 'drive' && !htmlContent) return alert("Debes escribir contenido en el procedimiento."); 
+      
+      btnSave.disabled = true; btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...'; 
+      try { 
+          let payload = { cat, tit, html: htmlContent, driveLink: driveLink, modo: PROC_MODE }; 
+          if (EDITING_PROC_ID) { 
+              await updateDoc(doc(db, "procedimientos_html", EDITING_PROC_ID), payload); 
+              alert("Procedimiento actualizado."); 
+              window.cancelarEdicionProc(); 
+          } else { 
+              payload.fecha = Date.now(); 
+              await addDoc(collection(db, "procedimientos_html"), payload); 
+              alert("Procedimiento creado."); 
+              window.cancelarEdicionProc(); 
+          } 
+      } catch(e) { 
+          alert("Error al guardar."); console.error(e); 
+      } finally { 
+          btnSave.disabled = false; btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Procedimiento'; 
+      } 
+  };
+  
+  window.editarProc = function(id) { 
+      EDITING_PROC_ID = id; 
+      const p = DB.proc.find(x => x.id === id); 
+      document.getElementById('admProcCat').value = p.cat || ''; 
+      document.getElementById('admProcTit').value = p.tit || ''; 
+      
+      document.getElementById('driveLinksContainer').innerHTML = '';
+      if(p.modo === 'drive' && p.driveLink) {
+          try {
+              let parsed = JSON.parse(p.driveLink);
+              if(Array.isArray(parsed)) {
+                  parsed.forEach(link => window.addDriveLinkRow(link.n, link.u));
+              } else {
+                  window.addDriveLinkRow('Documento', p.driveLink);
+              }
+          } catch(e) { 
+              let rawLinks = (p.driveLink || "").split(/[\n,]+/).map(l => l.trim()).filter(l => l !== "");
+              rawLinks.forEach((l, i) => window.addDriveLinkRow('Documento '+(i+1), l));
+          }
+      } else {
+          window.addDriveLinkRow(); 
+      }
+
+      const modoGuardado = p.modo || 'visual'; 
+      window.setProcMode(modoGuardado, false); 
+      
+      if(modoGuardado === 'visual') { 
+          quillEditor.root.innerHTML = p.html || ''; 
+          document.getElementById('admProcHtml').value = ''; 
+      } else { 
+          quillEditor.root.innerHTML = ''; 
+          document.getElementById('admProcHtml').value = p.html || ''; 
+      } 
+      
+      const btnSave = document.getElementById('btnSaveProc'); 
+      btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios'; 
+      btnSave.classList.replace('btn-s', 'btn-p'); 
+      document.getElementById('btnCancelProc').classList.remove('hidden'); 
+      document.querySelector('.ajs-content').scrollTo({ top: 0, behavior: 'smooth' }); 
+  };
+  
+  window.cancelarEdicionProc = function() { 
+      EDITING_PROC_ID = null; 
+      document.getElementById('admProcTit').value = ''; 
+      document.getElementById('admProcCat').value = ''; 
+      quillEditor.root.innerHTML = ''; 
+      document.getElementById('admProcHtml').value = ''; 
+      document.getElementById('driveLinksContainer').innerHTML = '';
+      window.addDriveLinkRow(); 
+      window.setProcMode('visual', false); 
+      const btnSave = document.getElementById('btnSaveProc'); 
+      btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Procedimiento'; 
+      btnSave.classList.replace('btn-p', 'btn-s'); 
+      document.getElementById('btnCancelProc').classList.add('hidden'); 
+  };
+  
+  window.eliminarProc = async function(id) { 
+      if(!confirm("¿Estás seguro de eliminar este procedimiento de forma permanente?")) return; 
+      try {
+          await deleteDoc(doc(db, "procedimientos_html", id)); 
+          if(EDITING_PROC_ID === id) window.cancelarEdicionProc(); 
+          window.showToastSuccess("Procedimiento eliminado con éxito");
+          
+          DB.proc = DB.proc.filter(p => p.id !== id);
+          window.renderAdminProcList();
+          window.renderProcMenu();
+          window.renderInicioRecientes();
+          
+          const viewer = document.getElementById('procViewerContainer');
+          if(viewer.dataset.activeId === id) {
+              viewer.innerHTML = '<div style="text-align:center; padding: 100px 0; color: #adb5bd;"><i class="fa-solid fa-file-signature" style="font-size: 60px; margin-bottom:20px; color:#dce4ec;"></i><h2 style="color: var(--blue); margin-top: 0;">Documento Eliminado</h2><p style="font-size: 15px;">Selecciona otro documento de la lista.</p></div>';
+              delete viewer.dataset.activeId;
+          }
+      } catch(e) {
+          alert("Error: " + e.message);
+      } 
+  };
+  
   window.renderAdminProcList = function() { const q = window.normStr(document.getElementById('searchProcAdmBox').value); let f = DB.proc; if (q) f = f.filter(p => window.normStr(`${p.tit} ${p.cat}`).includes(q)); const container = document.getElementById('adminProcListContainer'); container.innerHTML = f.map(p => { let badgeModo = ""; if(p.modo === 'codigo') badgeModo = `<span style="background:var(--mid-gray); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-code"></i> HTML</span>`; else if(p.modo === 'drive') badgeModo = `<span style="background:var(--green); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-brands fa-google-drive"></i> Drive</span>`; else badgeModo = `<span style="background:var(--blue); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-pen-nib"></i> Visual</span>`; return `<div class="mod-list-item"><div><b style="color:var(--blue);">${p.tit}</b> ${badgeModo}<br><small style="color:var(--light-blue); font-weight:bold;"><i class="fa-solid fa-folder-open"></i> ${p.cat || "General"}</small></div><div><button onclick="window.editarProc('${p.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarProc('${p.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>` }).join('') || '<p style="font-size:13px; color:var(--mid-gray);">No hay procedimientos registrados.</p>'; };
 
   // ================= MODALES ESTÁTICOS Y CONFIG COLORES =================
@@ -1088,8 +1243,7 @@
   function listenToEncargados() { onSnapshot(collection(db, "encargados"), (snap) => { DB.enc = snap.docs.map(d => ({ id: d.id, ...d.data() })); LOAD_STATE.enc = true; if(CURRENT_MODULE === 'enc') window.renderEncargadosTable(); }); }
 
   window.renderTable = function(r=false) { 
-    if (r) PAGE = 1; const tbody = document.getElementById('tableBody'); 
-    if (!LOAD_STATE.cob) { tbody.innerHTML = `<tr><td colspan="6"><div class="spinner-container"><div class="spinner"></div><div class="loading-text">Cargando coberturas...</div></div></td></tr>`; return; }
+    if (r) PAGE = 1; const tbody = document.getElementById('tableBody'); if (!LOAD_STATE.cob) { tbody.innerHTML = `<tr><td colspan="6"><div class="spinner-container"><div class="spinner"></div><div class="loading-text">Cargando coberturas...</div></div></td></tr>`; return; }
     const q = window.normStr(document.getElementById('searchBox').value); let f = DB.cob; if(q) f = f.filter(x => window.normStr(`${x.m} ${x.n} ${x.z} ${x.r}`).includes(q)); const total = Math.ceil(f.length / 10) || 1; if (PAGE > total) PAGE = total; document.getElementById('pageLabel').innerText = `${PAGE} / ${total}`; const chunk = f.slice((PAGE - 1) * 10, PAGE * 10); tbody.innerHTML = ''; const canEdit = window.hasPerm('cob_edit'); const isAdmin = (SESION.r === 'admin');
     if (chunk.length === 0) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px; color:var(--light-blue); font-weight:bold;">No se encontraron ubicaciones.</td></tr>`; return; }
     chunk.forEach(row => { let statusKey = row.s || "Sin Datos"; let bg = STATUS_COLORS[statusKey] || "#6c757d"; let color = 'white'; let act = ""; if (canEdit) { let sel = `<select onchange="window.saveStatus('${row.id}', this)" style="background:${bg}; color:${color}; border:none; padding:8px; border-radius:4px; width:100%; outline:none; cursor:pointer; font-weight:bold;"><option value="Cobertura" ${row.s==='Cobertura'?'selected':''}>Cobertura</option><option value="Sin Cobertura" ${row.s==='Sin Cobertura'?'selected':''}>Sin Cobertura</option><option value="Consultar" ${row.s==='Consultar'?'selected':''}>Consultar</option><option value="Sin Datos" ${row.s==='Sin Datos' || !row.s ? 'selected':''}>Sin Datos</option></select>`; if (isAdmin) act = `<div style="display:flex;gap:5px;">${sel}<button onclick="window.editLocation('${row.id}')" class="btn btn-p" title="Modificar"><i class="fa-solid fa-pencil"></i></button><button onclick="window.deleteLocation('${row.id}')" class="btn btn-d" title="Eliminar"><i class="fa-solid fa-trash"></i></button></div>`; else act = sel; } else act = `<span class="badge" style="background:${bg}; color:${color}; width:100%; padding:8px 0;">${row.s || "Sin Datos"}</span>`; tbody.innerHTML += `<tr><td>${row.m}</td><td><b style="color:var(--blue);">${row.n}</b></td><td>${row.c}</td><td><span class="badge-tag" style="background:var(--bg);">${row.z}</span></td><td>${row.r}</td><td>${act}</td></tr>`; });
@@ -1100,8 +1254,7 @@
   window.deleteLocation = async (id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, "coberturas", id)); }; window.changePage = d => { PAGE += d; window.renderTable(); };
 
   window.renderTecnicosTable = function(r=false) {
-    if (r) PAGE_TEC = 1; const tbody = document.getElementById('tableTecnicosBody'); 
-    if (!LOAD_STATE.tec) { tbody.innerHTML = `<tr><td colspan="6"><div class="spinner-container"><div class="spinner"></div><div class="loading-text">Cargando técnicos...</div></div></td></tr>`; return; }
+    if (r) PAGE_TEC = 1; const tbody = document.getElementById('tableTecnicosBody'); if (!LOAD_STATE.tec) { tbody.innerHTML = `<tr><td colspan="6"><div class="spinner-container"><div class="spinner"></div><div class="loading-text">Cargando técnicos...</div></div></td></tr>`; return; }
     const q = window.normStr(document.getElementById('searchTecBox').value); let f = DB.tec; if (q) f = f.filter(row => window.normStr(`${row.n} ${row.t1} ${row.t2} ${row.a} ${row.d} ${row.p}`).includes(q)); const total = Math.ceil(f.length / 10) || 1; if (PAGE_TEC > total) PAGE_TEC = total; document.getElementById('pageLabelTec').innerText = `${PAGE_TEC} / ${total}`; const chunk = f.slice((PAGE_TEC - 1) * 10, PAGE_TEC * 10); tbody.innerHTML = ''; const canEdit = window.hasPerm('tec_edit'); const isAdmin = (SESION.r === 'admin');
     if (chunk.length === 0) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px; color:var(--light-blue); font-weight:bold;">No se encontraron técnicos.</td></tr>`; return; }
     chunk.forEach(row => { let act = ""; if (canEdit) act += `<button onclick="window.editTecnico('${row.id}')" class="btn btn-p" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += ` <button onclick="window.deleteTecnico('${row.id}')" class="btn btn-d" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let tels = row.t1 || ""; if(row.t2) tels += `<br><span style="color:var(--mid-gray); font-size:11px;">${row.t2}</span>`; tbody.innerHTML += `<tr><td><b style="color:var(--blue);">${row.n||''}</b></td><td>${tels}</td><td>${row.a||''}</td><td>${row.d||''}</td><td><span class="badge-tag">${row.p||'-'}</span></td><td>${act}</td></tr>`; });
@@ -1111,11 +1264,10 @@
   window.deleteTecnico = async (id) => { if(confirm("¿Eliminar?")) await deleteDoc(doc(db, "tecnicos", id)); }; window.changePageTec = d => { PAGE_TEC += d; window.renderTecnicosTable(); };
 
   window.renderEncargadosTable = function(r=false) {
-    if (r) PAGE_ENC = 1; const cont = document.getElementById('gridEncargadosContainer'); 
-    if (!LOAD_STATE.enc) { cont.innerHTML = `<div class="spinner-container"><div class="spinner"></div><div class="loading-text">Cargando directorio de contactos...</div></div>`; return; }
+    if (r) PAGE_ENC = 1; const cont = document.getElementById('gridEncargadosContainer'); if (!LOAD_STATE.enc) { cont.innerHTML = `<div class="spinner-container"><div class="spinner"></div><div class="loading-text">Cargando directorio de contactos...</div></div>`; return; }
     const q = window.normStr(document.getElementById('searchEncBox').value); let f = DB.enc; if (q) f = f.filter(row => window.normStr(`${row.n} ${row.t} ${row.c} ${row.p} ${row.g}`).includes(q)); const total = Math.ceil(f.length / ITEMS_PER_PAGE_ENC) || 1; if (PAGE_ENC > total) PAGE_ENC = total; document.getElementById('pageLabelEnc').innerText = `${PAGE_ENC} / ${total}`; const chunk = f.slice((PAGE_ENC - 1) * ITEMS_PER_PAGE_ENC, PAGE_ENC * ITEMS_PER_PAGE_ENC); if (chunk.length === 0) { cont.innerHTML = `<div style="text-align:center; padding:50px; background:white; border-radius:8px; color:var(--light-blue); font-weight:bold; font-size:16px;">No se encontraron contactos.</div>`; return; }
     const grupos = {}; chunk.forEach(r => { const c = r.g || "Otros"; if (!grupos[c]) grupos[c] = []; grupos[c].push(r); }); const canEdit = window.hasPerm('enc_edit'); const isAdmin = (SESION.r === 'admin'); const orden = ["Rutas domicilio", "Team Leaders", "Encargadas de marca", "Cambios y facturaciones", "Otro"]; const cats = Object.keys(grupos).sort((a,b) => (orden.indexOf(a)===-1?99:orden.indexOf(a)) - (orden.indexOf(b)===-1?99:orden.indexOf(b)));
-    let html = ""; cats.forEach(cat => { let ic = "fa-users"; if(cat.toLowerCase().includes('rutas')) ic = "fa-truck-fast"; if(cat.toLowerCase().includes('marca')) ic = "fa-tags"; if(cat.toLowerCase().includes('team')) ic = "fa-user-tie"; if(cat.toLowerCase().includes('factura')) ic = "fa-file-invoice-dollar"; html += `<div class="enc-category-title"><i class="fa-solid ${ic}"></i> ${cat}</div><div class="enc-grid">`; grupos[cat].forEach(row => { let act = ""; if (canEdit) act += `<button onclick="window.editEncargado('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteEncargado('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let ini = row.n ? row.n.charAt(0).toUpperCase() : "?"; let rol = row.p || "Equipo"; let tel = row.t ? `<div class="enc-contact" onclick="window.copyToClip('${row.t}')"><div><span class="enc-contact-label"><i class="fa-solid fa-phone"></i> Teléfono</span><span class="enc-contact-value">${row.t}</span></div><button class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</button></div>` : ``; let cor = row.c ? `<div class="enc-contact" onclick="window.copyToClip('${row.c}')"><div><span class="enc-contact-label"><i class="fa-solid fa-envelope"></i> Correo</span><span class="enc-contact-value">${row.c}</span></div><button class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</button></div>` : ``; html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${row.n||'Sin Nombre'}</div><div class="enc-role">${rol}</div></div></div></div><div class="enc-body">${tel}${cor}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`; }); html += `</div>`; }); cont.innerHTML = html;
+    let html = ""; cats.forEach(cat => { let ic = "fa-users"; if(cat.toLowerCase().includes('rutas')) ic = "fa-truck-fast"; if(cat.toLowerCase().includes('marca')) ic = "fa-tags"; if(cat.toLowerCase().includes('team')) ic = "fa-user-tie"; if(cat.toLowerCase().includes('factura')) ic = "fa-file-invoice-dollar"; html += `<div class="enc-category-title"><i class="fa-solid ${ic}"></i> ${cat}</div><div class="enc-grid">`; grupos[cat].forEach(row => { let act = ""; if (canEdit) act += `<button onclick="window.editEncargado('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteEncargado('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let ini = row.n ? row.n.charAt(0).toUpperCase() : "?"; let rol = row.p || "Equipo"; let tel = row.t ? `<div class="enc-contact" onclick="window.copyToClip('${row.t}')"><div><span class="enc-contact-label"><i class="fa-solid fa-phone"></i> Teléfono</span><span class="enc-contact-value">${row.t}</span></div><button class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</button></div>` : ``; let cor = row.c ? `<div class="enc-contact" onclick="window.copyToClip('${row.c}')"><div><span class="enc-contact-label"><i class="fa-solid fa-envelope"></i> Correo</span><span class="enc-contact-value">${row.c}</span></div><button class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</button></div>` : ``; html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${row.n||'Sin Nombre'}</div><div class="enc-role">${row.p||'Equipo'}</div></div></div></div><div class="enc-body">${tel}${cor}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`; }); html += `</div>`; }); cont.innerHTML = html;
   };
   window.editEncargado = async (id) => { EDITING_ENC_ID = id; const d = DB.enc.find(x => x.id === id); document.getElementById('modalTitleEnc').innerText = "Editar Contacto"; document.getElementById('encCat').value = d.g || "Otro"; document.getElementById('encNom').value = d.n; document.getElementById('encTel').value = d.t; document.getElementById('encCor').value = d.c; document.getElementById('encPuesto').value = d.p; window.openModal('modalAddEnc', true); };
   window.saveEncargado = async () => { const data = { g: document.getElementById('encCat').value, n: document.getElementById('encNom').value.trim(), t: document.getElementById('encTel').value.trim(), c: document.getElementById('encCor').value.trim(), p: document.getElementById('encPuesto').value.trim() }; if(!data.n) return; if(EDITING_ENC_ID) await updateDoc(doc(db, "encargados", EDITING_ENC_ID), data); else await addDoc(collection(db, "encargados"), data); window.closeModal('modalAddEnc'); };
@@ -1131,7 +1283,7 @@
   window.handleImportCob = function(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar?`)) return; for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { const keys = Object.keys(row); const getVal = (possible) => { for(let k of keys) if(possible.includes(k.toLowerCase().trim())) return String(row[k] || ""); return ""; }; let s = "Sin Datos"; let rawS = getVal(["estado", "cobertura", "est"]).toLowerCase(); if (rawS.includes("sin")) s = "Sin Cobertura"; else if (rawS.includes("cobertura")) s = "Cobertura"; else if (rawS.includes("consultar")) s = "Consultar"; batch.set(doc(collection(db, "coberturas")), { m: getVal(["municipio", "mun"]).trim(), n: getVal(["nombre", "colonia", "nom"]).trim(), c: getVal(["categoria", "categoría", "cat"]).trim(), z: getVal(["zona", "z"]).trim(), r: getVal(["referencia", "ref"]).trim(), s: s }); }); await batch.commit(); } alert("Éxito"); e.target.value = ""; }; r.readAsBinaryString(f); };
   window.handleImportTec = function(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar?`)) return; for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { const keys = Object.keys(row); const getVal = (possible) => { for(let k of keys) if(possible.includes(k.toLowerCase().trim())) return String(row[k] || ""); return ""; }; batch.set(doc(collection(db, "tecnicos")), { n: getVal(["nombre", "tecnico", "técnico", "tec"]).trim(), t1: getVal(["telefono", "teléfono", "tel1", "celular"]).trim(), t2: getVal(["telefono 2", "teléfono 2", "tel2", "otro"]).trim(), a: getVal(["area", "área", "zona"]).trim(), d: getVal(["dpi", "identificacion"]).trim(), p: getVal(["placa", "vehiculo"]).trim() }); }); await batch.commit(); } alert("Éxito"); e.target.value = ""; }; r.readAsBinaryString(f); };
   window.handleImportEnc = function(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar?`)) return; for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { const keys = Object.keys(row); const getVal = (possible) => { for(let k of keys) if(possible.includes(k.toLowerCase().trim())) return String(row[k] || ""); return ""; }; batch.set(doc(collection(db, "encargados")), { n: getVal(["nombre", "encargado"]).trim(), t: getVal(["número", "numero", "teléfono", "telefono"]).trim(), c: getVal(["correo", "email"]).trim(), p: getVal(["puesto", "marcas", "encarga", "responsabilidad"]).trim(), g: getVal(["categoria", "categoría", "grupo"]).trim() || "Otro" }); }); await batch.commit(); } alert("Éxito"); e.target.value = ""; }; r.readAsBinaryString(f); };
-  window.handleImportUsr = function(e) { alert("Importación de usuarios requiere formato especial."); e.target.value = ""; };
+  window.handleImportUsr = function(e) { alert("Importación requiere formato especial."); e.target.value = ""; };
   window.handleImportDyn = function(e) { if(!CURRENT_DYN_CONFIG) return; const f = e.target.files[0]; if(!f) return; const reader = new FileReader(); reader.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar a ${CURRENT_DYN_CONFIG.nombre}?`)) return; try { const colRef = collection(db, "modulos_data"); for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { let dataToSave = { modId: CURRENT_DYN_CONFIG.id }; CURRENT_DYN_CONFIG.columnas.forEach((colName, index) => { let val = ""; for(let key of Object.keys(row)) { if(key.toLowerCase().trim() === colName.toLowerCase().trim()) val = row[key]; } dataToSave['c'+index] = String(val).trim(); }); batch.set(doc(colRef), dataToSave); }); await batch.commit(); } alert("¡Importados!"); e.target.value = ""; } catch(err) { alert("Error"); } }; reader.readAsBinaryString(f); };
 </script>
 </body>
