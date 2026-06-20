@@ -94,7 +94,7 @@
   /* CONTENIDO PRINCIPAL */
   .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
   
-  /* HEADER SUPERIOR (SOLO USUARIO) */
+  /* HEADER SUPERIOR */
   header { 
       height: 60px; 
       background: white; 
@@ -192,10 +192,10 @@
   .proc-item-link.active { background: #e0eaf5; color: var(--blue); font-weight: bold; border-left-color: var(--light-blue); }
   
   .proc-viewer { flex: 1; background: var(--bg); overflow-y: auto; padding: 40px; display: flex; justify-content: center; align-items: flex-start; scrollbar-width: thin; }
-  .proc-document { background: white; width: 100%; max-width: 900px; min-height: 100%; padding: 60px 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border-radius: 8px; box-sizing: border-box; border: 1px solid var(--border-soft);}
+  .proc-document { background: white; width: 100%; max-width: 900px; min-height: 100%; padding: 50px 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border-radius: 8px; box-sizing: border-box; border: 1px solid var(--border-soft);}
   .proc-document img { max-width: 100%; }
 
-  /* NUEVO: CONTENEDOR INTERACTIVO PROFESIONAL PARA ADJUNTOS DRIVE */
+  /* ADJUNTOS DRIVE */
   .proc-attachments-container { background: #ffffff; border: 1px solid var(--border-soft); border-radius: 8px; margin-bottom: 25px; padding: 15px; }
   .proc-attachments-title { font-size: 12px; font-weight: 800; color: var(--blue); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border-soft); padding-bottom: 8px; }
   .proc-files-grid { display: flex; flex-direction: column; gap: 8px; }
@@ -294,12 +294,8 @@
 </div>
 
 <div id="viewApp" class="hidden app-layout">
-    
   <aside class="sidebar" id="appSidebar">
-    <div class="sidebar-header">
-        <i class="fa-solid fa-location-dot" style="color: var(--light-blue); font-size: 22px;"></i> 
-        <span>ST - Intranet</span>
-    </div>
+    <div class="sidebar-header"><i class="fa-solid fa-location-dot" style="color: var(--light-blue); font-size: 22px;"></i> <span>ST - Intranet</span></div>
     <div class="sidebar-menu" id="mainTabsContainer">
         <div id="tabInicio" class="tab-btn active" onclick="window.switchModule('inicio')"><i class="fa-solid fa-house"></i> <span>Inicio</span></div>
         <div id="tabCob" class="tab-btn" onclick="window.switchModule('cob')"><i class="fa-solid fa-map-location-dot"></i> <span id="txtTabCob">Cobertura</span></div>
@@ -315,17 +311,10 @@
         <button class="btn btn-o hide-desktop" style="padding: 8px 12px; border:none; color:var(--blue);" onclick="document.getElementById('appSidebar').classList.toggle('open')"><i class="fa-solid fa-bars fa-lg"></i></button>
         <div class="header-actions">
           <div id="notifBell" class="hidden" style="position: relative; cursor: pointer; color: var(--blue); font-size: 20px; transition: 0.2s;" onclick="window.openPendingUsers()">
-            <i class="fa-solid fa-bell"></i>
-            <span id="notifBadge" class="hidden" style="position: absolute; top: -5px; right: -8px; background: #e63946; color: white; border-radius: 50%; font-size: 10px; width: 18px; height: 18px; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 2px solid white;">0</span>
+            <i class="fa-solid fa-bell"></i><span id="notifBadge" class="hidden" style="position: absolute; top: -5px; right: -8px; background: #e63946; color: white; border-radius: 50%; font-size: 10px; width: 18px; height: 18px; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 2px solid white;">0</span>
           </div>
-          <div id="onlineMonitor" class="hidden online-indicator">
-            <i class="fa-solid fa-circle" style="font-size: 8px;"></i> <span class="hide-mobile">Online:</span> <span id="onlineCount" style="margin-left:3px;">0</span>
-            <div id="onlineList" class="online-list-popup">Cargando...</div>
-          </div>
-          <div class="user-info">
-            <div id="lblUser" style="font-weight: 800; color:var(--blue); font-size: 14px;">Usuario</div>
-            <div id="lblRol" style="color: var(--light-blue); text-transform: uppercase; font-size: 11px; font-weight: bold;">Rol</div>
-          </div>
+          <div id="onlineMonitor" class="hidden online-indicator"><i class="fa-solid fa-circle" style="font-size: 8px;"></i> <span class="hide-mobile">Online:</span> <span id="onlineCount" style="margin-left:3px;">0</span><div id="onlineList" class="online-list-popup">Cargando...</div></div>
+          <div class="user-info"><div id="lblUser" style="font-weight: 800; color:var(--blue); font-size: 14px;">Usuario</div><div id="lblRol" style="color: var(--light-blue); text-transform: uppercase; font-size: 11px; font-weight: bold;">Rol</div></div>
           <button onclick="window.logout()" class="btn btn-o" title="Salir" style="padding: 8px 12px; border-color: var(--border-soft);"><i class="fa-solid fa-power-off"></i></button>
         </div>
       </header>
@@ -341,80 +330,44 @@
                     <h3 style="margin: 0; color: var(--blue); font-size: 18px;"><i class="fa-solid fa-bullhorn" style="color: var(--light-blue);"></i> Últimos Procedimientos Publicados</h3>
                     <button onclick="window.switchModule('proc')" class="btn btn-o" style="padding: 6px 12px; font-size: 12px;">Ver todos</button>
                 </div>
-                <div id="homeRecientesContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px;">
-                    <div style="color:var(--mid-gray); font-size:13px; font-style:italic;">Cargando publicaciones recientes...</div>
-                </div>
+                <div id="homeRecientesContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px;"></div>
             </div>
         </div>
 
         <div id="moduloCobertura" class="hidden">
             <div class="tools">
               <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchBox" class="search-inp" placeholder="Buscar colinas, milagro z6..." onkeyup="window.renderTable(true)"></div>
-              <div class="action-btns">
-                <button id="btnAdd" onclick="window.openModal('modalAdd')" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i> Nuevo</button>
-                <button id="btnImpCob" onclick="document.getElementById('fileImportCob').click()" class="btn btn-o hidden"><i class="fa-solid fa-file-import"></i> Importar</button>
-                <button id="btnExp" onclick="window.exportToExcel()" class="btn btn-x hidden"><i class="fa-solid fa-file-excel"></i> Exportar</button>
-              </div>
+              <div class="action-btns"><button id="btnAdd" onclick="window.openModal('modalAdd')" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i> Nuevo</button><button id="btnImpCob" onclick="document.getElementById('fileImportCob').click()" class="btn btn-o hidden"><i class="fa-solid fa-file-import"></i> Importar</button><button id="btnExp" onclick="window.exportToExcel()" class="btn btn-x hidden"><i class="fa-solid fa-file-excel"></i> Exportar</button></div>
             </div>
             <div class="card">
-              <div class="table-responsive">
-                <table>
-                  <thead><tr><th width="15%">Municipio</th><th width="20%">Nombre</th><th width="12%">Categoría</th><th width="8%">Zona</th><th width="22%">Referencia</th><th width="23%">Estado / Acción</th></tr></thead>
-                  <tbody id="tableBody"></tbody>
-                </table>
-              </div>
-              <div style="padding: 15px; display: flex; justify-content: center; align-items: center; gap: 20px; background: #f8fafc; border-top: 1px solid var(--border-soft);">
-                <button onclick="window.changePage(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabel" style="font-weight: bold; font-size: 13px; color: var(--blue);">1 / 1</span><button onclick="window.changePage(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button>
-              </div>
+              <div class="table-responsive"><table><thead><tr><th width="15%">Municipio</th><th width="20%">Nombre</th><th width="12%">Categoría</th><th width="8%">Zona</th><th width="22%">Referencia</th><th width="23%">Estado / Acción</th></tr></thead><tbody id="tableBody"></tbody></table></div>
+              <div style="padding: 15px; display: flex; justify-content: center; align-items: center; gap: 20px; background: #f8fafc; border-top: 1px solid var(--border-soft);"><button onclick="window.changePage(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabel" style="font-weight: bold; font-size: 13px; color: var(--blue);">1 / 1</span><button onclick="window.changePage(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button></div>
             </div>
         </div>
 
         <div id="moduloTecnicos" class="hidden">
             <div class="tools">
               <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchTecBox" class="search-inp" placeholder="Buscar técnico, placa, DPI..." onkeyup="window.renderTecnicosTable(true)"></div>
-              <div class="action-btns">
-                <button id="btnAddTec" onclick="window.openModal('modalAddTec')" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i> Nuevo</button>
-                <button id="btnImpTec" onclick="document.getElementById('fileImportTec').click()" class="btn btn-o hidden"><i class="fa-solid fa-file-import"></i> Importar</button>
-                <button id="btnExpTec" onclick="window.exportTecnicosToExcel()" class="btn btn-x hidden"><i class="fa-solid fa-file-excel"></i> Exportar</button>
-              </div>
+              <div class="action-btns"><button id="btnAddTec" onclick="window.openModal('modalAddTec')" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i> Nuevo</button><button id="btnImpTec" onclick="document.getElementById('fileImportTec').click()" class="btn btn-o hidden"><i class="fa-solid fa-file-import"></i> Importar</button><button id="btnExpTec" onclick="window.exportTecnicosToExcel()" class="btn btn-x hidden"><i class="fa-solid fa-file-excel"></i> Exportar</button></div>
             </div>
             <div class="card">
-              <div class="table-responsive">
-                <table>
-                  <thead><tr><th width="20%">Técnico</th><th width="15%">Teléfonos</th><th width="20%">Área</th><th width="15%">DPI</th><th width="15%">Placa</th><th width="15%">Acciones</th></tr></thead>
-                  <tbody id="tableTecnicosBody"></tbody>
-                </table>
-              </div>
-              <div style="padding: 15px; display: flex; justify-content: center; align-items: center; gap: 20px; background: #f8fafc; border-top: 1px solid var(--border-soft);">
-                <button onclick="window.changePageTec(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabelTec" style="font-weight: bold; font-size: 13px; color: var(--blue);">1 / 1</span><button onclick="window.changePageTec(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button>
-              </div>
+              <div class="table-responsive"><table><thead><tr><th width="20%">Técnico</th><th width="15%">Teléfonos</th><th width="20%">Área</th><th width="15%">DPI</th><th width="15%">Placa</th><th width="15%">Acciones</th></tr></thead><tbody id="tableTecnicosBody"></tbody></table></div>
+              <div style="padding: 15px; display: flex; justify-content: center; align-items: center; gap: 20px; background: #f8fafc; border-top: 1px solid var(--border-soft);"><button onclick="window.changePageTec(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabelTec" style="font-weight: bold; font-size: 13px; color: var(--blue);">1 / 1</span><button onclick="window.changePageTec(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button></div>
             </div>
         </div>
         
         <div id="moduloEncargados" class="hidden">
             <div class="tools">
               <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchEncBox" class="search-inp" placeholder="Buscar por nombre, área o correo..." onkeyup="window.renderEncargadosTable(true)"></div>
-              <div class="action-btns">
-                <button id="btnAddEnc" onclick="window.openModal('modalAddEnc')" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i> Nuevo</button>
-                <button id="btnImpEnc" onclick="document.getElementById('fileImportEnc').click()" class="btn btn-o hidden"><i class="fa-solid fa-file-import"></i> Importar</button>
-                <button id="btnExpEnc" onclick="window.exportEncargadosToExcel()" class="btn btn-x hidden"><i class="fa-solid fa-file-excel"></i> Exportar</button>
-              </div>
+              <div class="action-btns"><button id="btnAddEnc" onclick="window.openModal('modalAddEnc')" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i> Nuevo</button><button id="btnImpEnc" onclick="document.getElementById('fileImportEnc').click()" class="btn btn-o hidden"><i class="fa-solid fa-file-import"></i> Importar</button><button id="btnExpEnc" onclick="window.exportEncargadosToExcel()" class="btn btn-x hidden"><i class="fa-solid fa-file-excel"></i> Exportar</button></div>
             </div>
             <div id="gridEncargadosContainer"></div>
-            <div style="padding: 20px 15px; display: flex; justify-content: center; align-items: center; gap: 20px; clear:both;">
-              <button onclick="window.changePageEnc(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabelEnc" style="font-weight: bold; font-size: 13px; background: white; padding: 6px 18px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: var(--blue);">1 / 1</span><button onclick="window.changePageEnc(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button>
-            </div>
+            <div style="padding: 20px 15px; display: flex; justify-content: center; align-items: center; gap: 20px; clear:both;"><button onclick="window.changePageEnc(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabelEnc" style="font-weight: bold; font-size: 13px; background: white; padding: 6px 18px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: var(--blue);">1 / 1</span><button onclick="window.changePageEnc(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button></div>
         </div>
 
         <div id="moduloProcedimientos" class="hidden">
             <div class="proc-sidebar">
-                <div class="proc-sidebar-header">
-                    <h3 style="margin:0 0 15px 0; color:var(--blue); font-size: 18px;"><i class="fa-solid fa-book-bookmark"></i> <span id="lblProcSidebar">Procedimientos</span></h3>
-                    <div style="position:relative;">
-                        <i class="fa-solid fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--light-blue); font-size:14px;"></i>
-                        <input type="text" id="searchProcBox" class="proc-search-inp search-inp" placeholder="Buscar documento..." onkeyup="window.renderProcMenu(true)">
-                    </div>
-                </div>
+                <div class="proc-sidebar-header"><h3 style="margin:0 0 15px 0; color:var(--blue); font-size: 18px;"><i class="fa-solid fa-book-bookmark"></i> <span id="lblProcSidebar">Procedimientos</span></h3><div style="position:relative;"><i class="fa-solid fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--light-blue); font-size:14px;"></i><input type="text" id="searchProcBox" class="proc-search-inp search-inp" placeholder="Buscar documento..." onkeyup="window.renderProcMenu(true)"></div></div>
                 <div class="proc-list" id="procSidebarMenu"></div>
             </div>
             <div class="proc-viewer" id="procViewerScrollArea">
@@ -431,16 +384,10 @@
         <div id="moduloDinamico" class="hidden">
             <div class="tools">
               <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchDynBox" class="search-inp" placeholder="Buscar en este módulo..." onkeyup="window.renderDynData(true)"></div>
-              <div class="action-btns">
-                <button id="btnAddDyn" onclick="window.openModalDyn()" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i> Nuevo Registro</button>
-                <button id="btnImpDyn" onclick="document.getElementById('fileImportDyn').click()" class="btn btn-o hidden"><i class="fa-solid fa-file-import"></i> Importar</button>
-                <button id="btnExpDyn" onclick="window.exportDynToExcel()" class="btn btn-x hidden"><i class="fa-solid fa-file-excel"></i> Exportar</button>
-              </div>
+              <div class="action-btns"><button id="btnAddDyn" onclick="window.openModalDyn()" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i> Nuevo Registro</button><button id="btnImpDyn" onclick="document.getElementById('fileImportDyn').click()" class="btn btn-o hidden"><i class="fa-solid fa-file-import"></i> Importar</button><button id="btnExpDyn" onclick="window.exportDynToExcel()" class="btn btn-x hidden"><i class="fa-solid fa-file-excel"></i> Exportar</button></div>
             </div>
             <div id="dynContentContainer"></div>
-            <div style="padding: 15px; display: flex; justify-content: center; align-items: center; gap: 20px;">
-              <button onclick="window.changePageDyn(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabelDyn" style="font-weight: bold; font-size: 13px; color: var(--blue); background: white; padding: 6px 18px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">1 / 1</span><button onclick="window.changePageDyn(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button>
-            </div>
+            <div style="padding: 15px; display: flex; justify-content: center; align-items: center; gap: 20px;"><button onclick="window.changePageDyn(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabelDyn" style="font-weight: bold; font-size: 13px; color: var(--blue); background: white; padding: 6px 18px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">1 / 1</span><button onclick="window.changePageDyn(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button></div>
         </div>
 
         <div id="moduloAjustes" class="hidden">
@@ -458,9 +405,7 @@
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-users"></i> Gestión de Accesos</h3>
                         <div class="action-btns" style="margin-bottom: 15px; justify-content: flex-end;"><button onclick="document.getElementById('fileImportUsr').click()" class="btn btn-o"><i class="fa-solid fa-file-import"></i> Importar CSV</button><button onclick="window.exportUsersToExcel()" class="btn btn-x"><i class="fa-solid fa-file-export"></i> Exportar Excel</button></div>
                         <div class="form-inline"><input id="uUser" class="inp" placeholder="Usuario"><input id="uPass" class="inp" placeholder="Clave">
-                          <select id="uRol" class="inp">
-                            <option value="agente">Agente (Default)</option><option value="invitado">Invitado (Lector)</option><option value="pendiente">Pendiente (Bloqueado)</option>
-                          </select>
+                          <select id="uRol" class="inp"><option value="agente">Agente (Default)</option><option value="invitado">Invitado (Lector)</option><option value="pendiente">Pendiente (Bloqueado)</option></select>
                           <div style="display: flex; gap: 10px; width: 100%;"><button id="btnUserAction" onclick="window.submitUser()" class="btn btn-s" style="flex: 1; color:white;"><i class="fa-solid fa-plus"></i></button><button onclick="window.clearUserForm()" class="btn btn-d" style="flex: 1;"><i class="fa-solid fa-eraser"></i></button></div>
                         </div>
                         <div class="search-wrap" style="margin-bottom: 10px;"><i class="fa-solid fa-search"></i><input id="searchUserBox" class="search-inp" placeholder="Buscar usuario o rol..." onkeyup="window.renderUserList()"></div>
@@ -507,10 +452,24 @@
 
                     <div id="ajsViewMod" class="hidden">
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-layer-group"></i> Creador y Editor de Módulos</h3>
-                        <p style="font-size:13px; color:var(--mid-gray);">Agrega nuevas pestañas o personaliza el nombre de las funciones del sistema.</p>
+                        <p style="font-size:13px; color:var(--mid-gray);">Agrega nuevas pestañas personalizadas o renombra las herramientas por defecto.</p>
+                        
                         <div class="form-grid" style="background:#f8fafc; padding:20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--border-soft);">
                             <div class="span-2" style="border-bottom: 2px solid var(--border-soft); padding-bottom: 10px; margin-bottom: 5px;">
-                                <h4 style="margin:0; color:var(--blue); font-size: 16px;"><i class="fa-solid fa-plus" style="color: var(--light-blue);"></i> Crear Nuevo Módulo Personalizado</h4>
+                                <h4 style="margin:0; color:var(--blue); font-size: 14px;"><i class="fa-solid fa-lock" style="color: var(--light-blue);"></i> Renombrar Módulos del Sistema</h4>
+                            </div>
+                            <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Cobertura</label><input id="sysNomCob" class="inp" value="Cobertura"></div>
+                            <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Técnicos</label><input id="sysNomTec" class="inp" value="Técnicos"></div>
+                            <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Directorio</label><input id="sysNomEnc" class="inp" value="Directorio"></div>
+                            <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Procedimientos</label><input id="sysNomProc" class="inp" value="Procedimientos"></div>
+                            <div class="span-2" style="text-align:right;">
+                                <button onclick="window.saveSysMods()" class="btn btn-s" style="color:white; padding: 10px 20px;"><i class="fa-solid fa-save"></i> Guardar Nombres</button>
+                            </div>
+                        </div>
+
+                        <div class="form-grid" style="background:#ffffff; padding:20px; border-radius:8px; margin-bottom:25px; border:1px solid var(--border-soft); box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
+                            <div class="span-2" style="border-bottom: 2px solid var(--border-soft); padding-bottom: 10px; margin-bottom: 5px;">
+                                <h4 style="margin:0; color:var(--blue); font-size: 16px;"><i class="fa-solid fa-plus" style="color: var(--light-blue);"></i> Crear Módulo Personalizado</h4>
                             </div>
                             <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Nombre del Módulo</label><input id="confModName" class="inp" placeholder="Ej: Matriz de Garantías"></div>
                             <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Tipo de Diseño (Vista)</label>
@@ -533,6 +492,8 @@
                                 <button onclick="window.guardarModuloDinamico()" id="btnSaveMod" class="btn btn-s" style="color:white; padding: 10px 20px;"><i class="fa-solid fa-layer-group"></i> Generar Módulo</button>
                             </div>
                         </div>
+
+                        <h4 style="color:var(--blue); margin-bottom: 15px; border-bottom: 2px solid var(--border-soft); padding-bottom: 8px;"><i class="fa-solid fa-puzzle-piece" style="color:var(--light-blue)"></i> Módulos Personalizados Creados</h4>
                         <div id="listaModulosCreados"></div>
                     </div>
 
@@ -661,7 +622,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, setDoc, addDoc, deleteDoc, query, where, onSnapshot, writeBatch, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, setDoc, addDoc, deleteDoc, query, where, onSnapshot, writeBatch, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = { apiKey: "AIzaSyBsFKRDAYoCjGlr-np2Cqtjb-SIOLznPzY", authDomain: "coberturast-ab44c.firebaseapp.com", projectId: "coberturast-ab44c", storageBucket: "coberturast-ab44c.firebasestorage.app", messagingSenderId: "762980124389", appId: "1:762980124389:web:9d7a8b1ed7c7f259fbb60c" };
   const app = initializeApp(firebaseConfig); 
@@ -943,8 +904,16 @@
 
   // ================= NOMBRES DE MÓDULOS DEL SISTEMA =================
   function listenToSysMods() { onSnapshot(doc(db, "configuracion", "nombres_modulos"), (docSnap) => { if (docSnap.exists()) { Object.assign(SYS_MOD_NAMES, docSnap.data()); } window.updateSysModUI(); }); }
-  window.updateSysModUI = function() { document.getElementById('txtTabCob').innerText = SYS_MOD_NAMES.cob; document.getElementById('txtTabTec').innerText = SYS_MOD_NAMES.tec; document.getElementById('txtTabEnc').innerText = SYS_MOD_NAMES.enc; document.getElementById('txtTabProc').innerText = SYS_MOD_NAMES.proc; const lblProc = document.getElementById('lblProcSidebar'); if(lblProc) lblProc.innerText = SYS_MOD_NAMES.proc; if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewMod').classList.contains('hidden')) window.renderListaModulos(); };
-  window.saveSysMods = async function() { const data = { cob: document.getElementById('sysNomCob').value.trim() || "Cobertura", tec: document.getElementById('sysNomTec').value.trim() || "Técnicos", enc: document.getElementById('sysNomEnc').value.trim() || "Directorio", proc: document.getElementById('sysNomProc').value.trim() || "Procedimientos" }; try { await setDoc(doc(db, "configuracion", "nombres_modulos"), data, { merge: true }); window.showToastSuccess("Nombres updated"); } catch(e) { alert("Error"); } };
+  window.updateSysModUI = function() { document.getElementById('txtTabCob').innerText = SYS_MOD_NAMES.cob || 'Cobertura'; document.getElementById('txtTabTec').innerText = SYS_MOD_NAMES.tec || 'Técnicos'; document.getElementById('txtTabEnc').innerText = SYS_MOD_NAMES.enc || 'Directorio'; document.getElementById('txtTabProc').innerText = SYS_MOD_NAMES.proc || 'Procedimientos'; const lblProc = document.getElementById('lblProcSidebar'); if(lblProc) lblProc.innerText = SYS_MOD_NAMES.proc || 'Procedimientos'; 
+  
+      if (document.getElementById('sysNomCob')) document.getElementById('sysNomCob').value = SYS_MOD_NAMES.cob || 'Cobertura';
+      if (document.getElementById('sysNomTec')) document.getElementById('sysNomTec').value = SYS_MOD_NAMES.tec || 'Técnicos';
+      if (document.getElementById('sysNomEnc')) document.getElementById('sysNomEnc').value = SYS_MOD_NAMES.enc || 'Directorio';
+      if (document.getElementById('sysNomProc')) document.getElementById('sysNomProc').value = SYS_MOD_NAMES.proc || 'Procedimientos';
+  
+      if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewMod').classList.contains('hidden')) window.renderListaModulos(); 
+  };
+  window.saveSysMods = async function() { const data = { cob: document.getElementById('sysNomCob').value.trim() || "Cobertura", tec: document.getElementById('sysNomTec').value.trim() || "Técnicos", enc: document.getElementById('sysNomEnc').value.trim() || "Directorio", proc: document.getElementById('sysNomProc').value.trim() || "Procedimientos" }; try { await setDoc(doc(db, "configuracion", "nombres_modulos"), data, { merge: true }); window.showToastSuccess("Nombres actualizados"); } catch(e) { alert("Error al guardar"); } };
 
   // ================= CREADOR DE MÓDULOS DINÁMICOS =================
   function listenToConfigModulos() { onSnapshot(collection(db, "modulos_config"), (snapshot) => { DB.configModulos = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); window.buildDynamicTabs(); if(CURRENT_MODULE === 'ajs') window.renderListaModulos(); }); }
@@ -983,6 +952,14 @@
   window.cancelarEdicionModulo = function() { EDITING_MOD_ID = null; document.getElementById('confModName').value = ''; document.getElementById('confModVista').value = 'tabla'; document.getElementById('confModCols').value = ''; document.getElementById('confModHtml').value = ''; window.toggleModType(); const btnSave = document.getElementById('btnSaveMod'); btnSave.innerHTML = '<i class="fa-solid fa-layer-group"></i> Generar Módulo'; btnSave.classList.replace('btn-p', 'btn-s'); document.getElementById('btnCancelMod').classList.add('hidden'); };
   window.eliminarModuloDinamico = async function(id) { if(!confirm("¿Eliminar módulo y todos sus datos?")) return; try { await deleteDoc(doc(db, "modulos_config", id)); const batch = writeBatch(db); DB.dynData.filter(d => d.modId === id).forEach(d => batch.delete(doc(db, "modulos_data", d.id))); await batch.commit(); if (EDITING_MOD_ID === id) window.cancelarEdicionModulo(); if (CURRENT_MODULE === 'dyn_'+id) window.switchModule('cob'); } catch(e) { alert("Error al eliminar"); } };
 
+  window.renderListaModulos = function() {
+    let dynHtml = DB.configModulos.map(m => { 
+        let desc = m.vista === 'html' ? `<i class="fa-solid fa-code"></i> Contenido HTML Personalizado` : (m.columnas||[]).join(', '); 
+        return `<div class="mod-list-item"><div><b style="color:var(--blue);">${m.nombre}</b> <span style="font-size:11px;color:var(--light-blue); font-weight:bold;">(${m.vista})</span> <br><small style="color:var(--mid-gray);">${desc}</small></div><div><button onclick="window.editarModuloDinamico('${m.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarModuloDinamico('${m.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`; 
+    }).join('');
+    document.getElementById('listaModulosCreados').innerHTML = dynHtml || '<p style="font-size:13px; color:var(--mid-gray); padding:10px; text-align:center; background:#f8fafc; border-radius:6px; border:1px dashed #dce4ec;">Aún no has creado ningún módulo personalizado.</p>';
+  };
+
   window.renderDynData = function(reset = false) {
       if (reset) PAGE_DYN = 1; if(!CURRENT_DYN_CONFIG) return; 
       const isHtml = CURRENT_DYN_CONFIG.vista === 'html'; const toolsDiv = document.querySelector('#moduloDinamico .tools'); const pageDiv = document.getElementById('pageLabelDyn').parentElement; const container = document.getElementById('dynContentContainer');
@@ -1000,7 +977,76 @@
   };
 
   // ================= MÓDULO PROCEDIMIENTOS E INICIO =================
-  function listenToProcedimientos() { onSnapshot(collection(db, "procedimientos_html"), (snapshot) => { DB.proc = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); LOAD_STATE.proc = true; if(CURRENT_MODULE === 'proc') window.renderProcMenu(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewProc').classList.contains('hidden')) window.renderAdminProcList(); window.renderInicioRecientes(); }); }
+  window.toggleLikeProc = async function(id) {
+      if(!SESION || !SESION.id) return alert("Debes iniciar sesión para reaccionar.");
+      const p = DB.proc.find(x => x.id === id);
+      if(!p) return;
+      const likesArray = p.likes || [];
+      const hasLiked = likesArray.includes(SESION.id);
+      
+      try {
+          const docRef = doc(db, "procedimientos_html", id);
+          if (hasLiked) {
+              await updateDoc(docRef, { likes: arrayRemove(SESION.id) });
+          } else {
+              await updateDoc(docRef, { likes: arrayUnion(SESION.id) });
+          }
+      } catch(e) {
+          console.error("Error al registrar el Me gusta", e);
+      }
+  };
+
+  window.getLikeButtonHtml = function(proc) {
+      const likes = proc.likes || [];
+      const hasLiked = SESION && SESION.id ? likes.includes(SESION.id) : false;
+      const btnClass = hasLiked ? 'btn-s' : 'btn-o';
+      const iconColor = hasLiked ? 'white' : 'var(--light-blue)';
+      const textColor = hasLiked ? 'white' : 'var(--blue)';
+      
+      return `
+          <button id="btnLikeProc" onclick="window.toggleLikeProc('${proc.id}')" class="btn ${btnClass}" style="padding: 8px 15px; font-size: 13px; color: ${textColor}; transition: all 0.2s ease; display:flex; align-items:center; gap:8px;">
+              <i class="fa-solid fa-thumbs-up" style="color: ${iconColor};"></i> 
+              <span id="lblLikeCount">${likes.length}</span> <span class="hide-mobile">Me gusta</span>
+          </button>
+      `;
+  };
+
+  function listenToProcedimientos() { 
+      onSnapshot(collection(db, "procedimientos_html"), (snapshot) => { 
+          DB.proc = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); 
+          LOAD_STATE.proc = true; 
+          
+          if(CURRENT_MODULE === 'proc') {
+              window.renderProcMenu();
+              // Actualizar el botón de like en vivo si el visor está abierto
+              const viewer = document.getElementById('procViewerContainer');
+              if(viewer && viewer.dataset.activeId) {
+                  const activeP = DB.proc.find(p => p.id === viewer.dataset.activeId);
+                  if(activeP) {
+                      const btnLike = document.getElementById('btnLikeProc');
+                      const lblCount = document.getElementById('lblLikeCount');
+                      if(btnLike && lblCount) {
+                          const likes = activeP.likes || [];
+                          const hasLiked = SESION && SESION.id ? likes.includes(SESION.id) : false;
+                          lblCount.innerText = likes.length;
+                          
+                          if(hasLiked) {
+                              btnLike.className = 'btn btn-s';
+                              btnLike.style.color = 'white';
+                              btnLike.querySelector('i').style.color = 'white';
+                          } else {
+                              btnLike.className = 'btn btn-o';
+                              btnLike.style.color = 'var(--blue)';
+                              btnLike.querySelector('i').style.color = 'var(--light-blue)';
+                          }
+                      }
+                  }
+              }
+          }
+          if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewProc').classList.contains('hidden')) window.renderAdminProcList(); 
+          window.renderInicioRecientes(); 
+      }); 
+  }
   
   window.renderInicioRecientes = function() {
       const container = document.getElementById('homeRecientesContainer'); if(!container) return;
@@ -1012,7 +1058,26 @@
           let dateStr = p.fecha ? new Date(p.fecha).toLocaleDateString() : "Reciente";
           let icon = '<i class="fa-solid fa-file-lines" style="color:var(--light-blue); font-size: 24px; margin-right: 15px;"></i>';
           if(p.modo === 'drive') icon = '<i class="fa-brands fa-google-drive" style="color:#00A65A; font-size: 24px; margin-right: 15px;"></i>';
-          html += `<div class="proc-card-home" onclick="window.goToProc('${p.id}')"><div style="display:flex; align-items:flex-start;">${icon}<div><div class="cat"><i class="fa-solid fa-folder-open"></i> ${p.cat || 'General'}</div><h4 class="tit">${p.tit}</h4></div></div><div class="date"><span>Publicado:</span> <span>${dateStr}</span></div></div>`;
+          
+          let likes = p.likes || [];
+          let hasLiked = SESION && SESION.id ? likes.includes(SESION.id) : false;
+          let likeColor = hasLiked ? 'var(--light-blue)' : '#adb5bd';
+
+          html += `<div class="proc-card-home" onclick="window.goToProc('${p.id}')">
+                      <div style="display:flex; align-items:flex-start;">
+                          ${icon}
+                          <div>
+                              <div class="cat"><i class="fa-solid fa-folder-open"></i> ${p.cat || 'General'}</div>
+                              <h4 class="tit">${p.tit}</h4>
+                          </div>
+                      </div>
+                      <div class="date">
+                          <span>Publicado: ${dateStr}</span>
+                          <span style="display:flex; align-items:center; gap:5px; color: ${likeColor}; font-weight: bold; font-size: 12px;" title="${likes.length} me gusta">
+                              <i class="fa-solid fa-thumbs-up"></i> ${likes.length}
+                          </span>
+                      </div>
+                  </div>`;
       });
       container.innerHTML = html;
   };
@@ -1023,7 +1088,6 @@
       const qInput = document.getElementById('searchProcBox'); const query = qInput ? window.normStr(qInput.value) : ''; let f = DB.proc; if(query) { f = DB.proc.filter(p => window.normStr(p.tit).includes(query) || window.normStr(p.cat).includes(query)); } if (f.length === 0) { container.innerHTML = `<p style="padding:20px; color:var(--light-blue); font-size:13px; font-weight:bold; text-align:center;">No se encontraron resultados.</p>`; return; } const grupos = {}; f.forEach(p => { let cat = p.cat || "General"; if(!grupos[cat]) grupos[cat] = []; grupos[cat].push(p); }); let html = ""; Object.keys(grupos).sort().forEach(cat => { html += `<div class="proc-cat-header"><i class="fa-solid fa-folder-open"></i> ${cat}</div>`; grupos[cat].sort((a,b)=>a.tit.localeCompare(b.tit)).forEach(p => { let icon = '<i class="fa-regular fa-file-lines" style="color:var(--light-blue); font-size: 16px;"></i>'; html += `<a class="proc-item-link" id="linkProc_${p.id}" onclick="window.abrirProcedimiento('${p.id}')">${icon} <span style="flex:1;">${p.tit}</span></a>`; }); }); container.innerHTML = html; const viewer = document.getElementById('procViewerContainer'); if(viewer.dataset.activeId) { let act = document.getElementById(`linkProc_${viewer.dataset.activeId}`); if(act) act.classList.add('active'); }
   };
 
-  // NUEVA FUNCIÓN INTERACTIVA CON CLASES REESTRUCTURADAS (MÓDULO PROFESIONAL DE ADJUNTOS)
   window.visualizeDriveFile = function(url, idx) {
       document.getElementById('procDriveIframe').src = url;
       document.querySelectorAll('.proc-file-card').forEach(card => card.classList.remove('active-file'));
@@ -1035,6 +1099,7 @@
       document.querySelectorAll('.proc-item-link').forEach(el => el.classList.remove('active')); const activeLink = document.getElementById(`linkProc_${id}`); if(activeLink) activeLink.classList.add('active'); const proc = DB.proc.find(p => p.id === id); const viewer = document.getElementById('procViewerContainer');
       if(proc) {
           viewer.dataset.activeId = id; let contentHtml = "";
+          
           if (proc.modo === 'drive') {
               let links = [];
               try { 
@@ -1081,8 +1146,9 @@
                   filesGridHtml += `</div>`;
 
                   contentHtml = `<div style="background: white; border-radius: 8px; border: 1px solid var(--border-soft); padding: 25px;">
-                      <div style="margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 15px;">
+                      <div style="margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
                           <h3 style="margin: 0; color: var(--blue); font-size: 20px;"><i class="fa-brands fa-google-drive" style="color: #00A65A;"></i> ${proc.tit}</h3>
+                          ${window.getLikeButtonHtml(proc)}
                       </div>
                       
                       <div class="proc-attachments-container">
@@ -1097,7 +1163,14 @@
               } else { 
                   contentHtml = `<div style="text-align:center; padding: 50px; color:#e63946; font-weight:bold;">No hay enlaces válidos para mostrar.</div>`; 
               }
-          } else if(proc.modo === 'visual' || !proc.modo) { contentHtml = `<div class="ql-editor" style="padding:0; overflow-y:visible;">${proc.html || ''}</div>`; } else { contentHtml = `<div style="padding:0; overflow-y:visible;">${proc.html || ''}</div>`; }
+          } else { 
+              contentHtml = `
+              <div style="margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
+                  <h3 style="margin: 0; color: var(--blue); font-size: 24px;">${proc.tit}</h3>
+                  ${window.getLikeButtonHtml(proc)}
+              </div>
+              <div class="ql-editor" style="padding:0; overflow-y:visible; font-size:15px; color: var(--dark-gray); line-height: 1.6;">${proc.html || ''}</div>`;
+          }
           if(!proc.html && proc.modo !== 'drive') contentHtml = "<i style='color:var(--mid-gray);'>El documento está vacío.</i>"; viewer.innerHTML = contentHtml;
           const scripts = viewer.querySelectorAll('script'); scripts.forEach(oldScript => { const newScript = document.createElement('script'); Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value)); newScript.appendChild(document.createTextNode(oldScript.innerHTML)); oldScript.parentNode.replaceChild(newScript, oldScript); });
           document.getElementById('procViewerScrollArea').scrollTo({ top: 0, behavior: 'smooth' });
@@ -1134,6 +1207,7 @@
               window.cancelarEdicionProc(); 
           } else { 
               payload.fecha = Date.now(); 
+              payload.likes = []; // Inicializar arreglo vacío de likes
               await addDoc(collection(db, "procedimientos_html"), payload); 
               alert("Procedimiento creado."); 
               window.cancelarEdicionProc(); 
