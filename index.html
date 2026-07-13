@@ -7,9 +7,11 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
+<!-- QUILL JS PARA EL EDITOR DE TEXTO ENRIQUECIDO -->
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
+<!-- SORTABLE JS PARA ARRASTRAR PESTAÑAS -->
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
 <style>
@@ -320,6 +322,7 @@
       </header>
 
       <div id="mainContainer">
+        <!-- 0. MÓDULO INICIO -->
         <div id="moduloInicio">
             <div class="welcome-banner">
                 <h2>Hola, <span id="lblUserHome">Usuario</span> 👋</h2>
@@ -334,6 +337,7 @@
             </div>
         </div>
 
+        <!-- 1. MÓDULO COBERTURA -->
         <div id="moduloCobertura" class="hidden">
             <div class="tools">
               <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchBox" class="search-inp" placeholder="Buscar colinas, milagro z6..." onkeyup="window.renderTable(true)"></div>
@@ -345,6 +349,7 @@
             </div>
         </div>
 
+        <!-- 2. MÓDULO TÉCNICOS -->
         <div id="moduloTecnicos" class="hidden">
             <div class="tools">
               <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchTecBox" class="search-inp" placeholder="Buscar técnico, placa, DPI..." onkeyup="window.renderTecnicosTable(true)"></div>
@@ -356,6 +361,7 @@
             </div>
         </div>
         
+        <!-- 3. MÓDULO ENCARGADOS -->
         <div id="moduloEncargados" class="hidden">
             <div class="tools">
               <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchEncBox" class="search-inp" placeholder="Buscar por nombre, área o correo..." onkeyup="window.renderEncargadosTable(true)"></div>
@@ -365,6 +371,7 @@
             <div style="padding: 20px 15px; display: flex; justify-content: center; align-items: center; gap: 20px; clear:both;"><button onclick="window.changePageEnc(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabelEnc" style="font-weight: bold; font-size: 13px; background: white; padding: 6px 18px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: var(--blue);">1 / 1</span><button onclick="window.changePageEnc(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button></div>
         </div>
 
+        <!-- 4. MÓDULO PROCEDIMIENTOS -->
         <div id="moduloProcedimientos" class="hidden">
             <div class="proc-sidebar">
                 <div class="proc-sidebar-header"><h3 style="margin:0 0 15px 0; color:var(--blue); font-size: 18px;"><i class="fa-solid fa-book-bookmark"></i> <span id="lblProcSidebar">Procedimientos</span></h3><div style="position:relative;"><i class="fa-solid fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--light-blue); font-size:14px;"></i><input type="text" id="searchProcBox" class="proc-search-inp search-inp" placeholder="Buscar documento..." onkeyup="window.renderProcMenu(true)"></div></div>
@@ -381,6 +388,7 @@
             </div>
         </div>
 
+        <!-- 5. CONTENEDOR DINÁMICO -->
         <div id="moduloDinamico" class="hidden">
             <div class="tools">
               <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchDynBox" class="search-inp" placeholder="Buscar en este módulo..." onkeyup="window.renderDynData(true)"></div>
@@ -390,6 +398,7 @@
             <div style="padding: 15px; display: flex; justify-content: center; align-items: center; gap: 20px;"><button onclick="window.changePageDyn(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabelDyn" style="font-weight: bold; font-size: 13px; color: var(--blue); background: white; padding: 6px 18px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">1 / 1</span><button onclick="window.changePageDyn(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button></div>
         </div>
 
+        <!-- 6. PANEL DE AJUSTES MAESTRO -->
         <div id="moduloAjustes" class="hidden">
             <div class="ajs-layout">
                 <div class="ajs-sidebar">
@@ -401,6 +410,7 @@
                 </div>
 
                 <div class="ajs-content">
+                    <!-- VISTA: USUARIOS -->
                     <div id="ajsViewUsr" class="hidden">
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-users"></i> Gestión de Accesos</h3>
                         <div class="action-btns" style="margin-bottom: 15px; justify-content: flex-end;"><button onclick="document.getElementById('fileImportUsr').click()" class="btn btn-o"><i class="fa-solid fa-file-import"></i> Importar CSV</button><button onclick="window.exportUsersToExcel()" class="btn btn-x"><i class="fa-solid fa-file-export"></i> Exportar Excel</button></div>
@@ -412,6 +422,7 @@
                         <div id="userListContainer" style="max-height: 350px; overflow-y: auto; border: 1px solid var(--border-soft); border-radius: 6px;"></div>
                     </div>
 
+                    <!-- VISTA: ROLES Y PERMISOS -->
                     <div id="ajsViewRol" class="hidden">
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-user-shield"></i> Roles y Permisos</h3>
                         <p style="font-size:13px; color:var(--mid-gray);">Crea roles a la medida o edita los permisos de los roles predeterminados (Agente / Invitado).</p>
@@ -450,10 +461,12 @@
                         <div id="rolesListContainer"></div>
                     </div>
 
+                    <!-- VISTA: CREADOR DE MÓDULOS -->
                     <div id="ajsViewMod" class="hidden">
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-layer-group"></i> Creador y Editor de Módulos</h3>
                         <p style="font-size:13px; color:var(--mid-gray);">Agrega nuevas pestañas personalizadas o renombra las herramientas por defecto.</p>
                         
+                        <!-- FORMULARIO 1: RENOMBRAR SISTEMA -->
                         <div class="form-grid" style="background:#f8fafc; padding:20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--border-soft);">
                             <div class="span-2" style="border-bottom: 2px solid var(--border-soft); padding-bottom: 10px; margin-bottom: 5px;">
                                 <h4 style="margin:0; color:var(--blue); font-size: 14px;"><i class="fa-solid fa-lock" style="color: var(--light-blue);"></i> Renombrar Módulos del Sistema</h4>
@@ -467,6 +480,7 @@
                             </div>
                         </div>
 
+                        <!-- FORMULARIO 2: CREAR MÓDULO NUEVO -->
                         <div class="form-grid" style="background:#ffffff; padding:20px; border-radius:8px; margin-bottom:25px; border:1px solid var(--border-soft); box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
                             <div class="span-2" style="border-bottom: 2px solid var(--border-soft); padding-bottom: 10px; margin-bottom: 5px;">
                                 <h4 style="margin:0; color:var(--blue); font-size: 16px;"><i class="fa-solid fa-plus" style="color: var(--light-blue);"></i> Crear Módulo Personalizado</h4>
@@ -493,10 +507,12 @@
                             </div>
                         </div>
 
+                        <!-- LISTA DE MÓDULOS AISLADA -->
                         <h4 style="color:var(--blue); margin-bottom: 15px; border-bottom: 2px solid var(--border-soft); padding-bottom: 8px;"><i class="fa-solid fa-puzzle-piece" style="color:var(--light-blue)"></i> Módulos Personalizados Creados</h4>
                         <div id="listaModulosCreados"></div>
                     </div>
 
+                    <!-- VISTA: GESTOR PROCEDIMIENTOS -->
                     <div id="ajsViewProc" class="hidden">
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-file-code"></i> Gestor de Procedimientos</h3>
                         <p style="font-size:13px; color:var(--mid-gray);">Crea procedimientos usando el editor visual, código HTML o incrustando archivos de Drive.</p>
@@ -545,6 +561,7 @@
                         <div id="adminProcListContainer" style="max-height:400px; overflow-y:auto; border: 1px solid var(--border-soft); border-radius: 6px; padding: 5px;"></div>
                     </div>
 
+                    <!-- VISTA: COLORES COBERTURA -->
                     <div id="ajsViewCol" class="hidden">
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-palette"></i> Colores de Cobertura</h3>
                         <p style="font-size:13px; color:var(--mid-gray);">Elige el color exacto que quieres que se muestre en la tabla para cada tipo de estado.</p>
@@ -577,6 +594,28 @@
   </div>
 </div>
 
+<!-- NUEVO POP-UP PARA NOVEDADES -->
+<div id="modalNovedad" class="modal-backdrop hidden" style="z-index: 9999;">
+  <div class="modal" style="max-width: 450px; text-align: center; border-top: 5px solid var(--light-blue); padding: 35px 25px;">
+    <div style="font-size: 40px; color: var(--light-blue); margin-bottom: 10px;">
+        <i class="fa-solid fa-bullhorn fa-shake"></i>
+    </div>
+    <h3 style="margin: 0 0 10px 0; color: var(--blue); font-size: 22px;">¡Nueva Publicación!</h3>
+    <p style="font-size: 14px; color: var(--mid-gray); margin-bottom: 20px;">Se ha subido un nuevo procedimiento a la Intranet que debes revisar.</p>
+    
+    <div style="background: #f8fafc; border: 1px solid var(--border-soft); border-radius: 8px; padding: 15px; margin-bottom: 25px; text-align: left;">
+        <div style="font-size: 11px; color: var(--light-blue); font-weight: 800; text-transform: uppercase; margin-bottom: 5px;" id="novCat"><i class="fa-solid fa-folder-open"></i> Categoría</div>
+        <div style="font-size: 16px; font-weight: bold; color: var(--blue); line-height: 1.3;" id="novTit">Título del procedimiento</div>
+    </div>
+
+    <div style="display: flex; gap: 10px;">
+        <button onclick="window.cerrarNovedad(false)" class="btn btn-o" style="flex: 1;">En otro momento</button>
+        <button id="btnVerNovedad" class="btn btn-s" style="flex: 1; color: white;">Ver ahora <i class="fa-solid fa-arrow-right" style="margin-left:5px;"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- MODALES RESTANTES -->
 <div id="modalAdd" class="modal-backdrop hidden">
   <div class="modal"><div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><h3 id="modalTitle" style="margin:0; color:var(--blue)">Nueva Ubicación</h3><button onclick="window.closeModal('modalAdd')" class="btn btn-o" style="border:none; color:var(--mid-gray);"><i class="fa-solid fa-times fa-lg"></i></button></div>
     <div class="form-grid"><input id="newMun" class="inp" placeholder="Municipio"><input id="newNom" class="inp" placeholder="Nombre"><input id="newCat" class="inp" placeholder="Categoría"><input id="newZon" class="inp" placeholder="Zona"><input id="newRef" class="inp span-2" placeholder="Referencia">
@@ -637,6 +676,7 @@
   let EDITING_USER_ID = null, EDITING_LOCATION_ID = null, EDITING_TEC_ID = null, EDITING_ENC_ID = null, EDITING_DYN_ID = null, EDITING_ROLE_ID = null, EDITING_MOD_ID = null, EDITING_PROC_ID = null;
   let CURRENT_MODULE = 'inicio'; let CURRENT_DYN_CONFIG = null;
   let isFirstUserLoad = true; let knownPendingIds = new Set(); let heartbeatInterval;
+  let LATEST_PROC_ID = null; // Variable nueva para rastrear la alerta del pop-up
   
   let LOAD_STATE = { cob: false, tec: false, enc: false, proc: false, dyn: false };
   let SYS_MOD_NAMES = { cob: "Cobertura", tec: "Técnicos", enc: "Directorio", proc: "Procedimientos" };
@@ -644,7 +684,6 @@
   
   let quillEditor; let PROC_MODE = 'visual';
 
-  // NUEVA LÓGICA INTELIGENTE DE BÚSQUEDA
   window.normStr = (s) => (s || '').toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   
   window.matchSearch = (rawText, rawQuery) => {
@@ -1021,11 +1060,42 @@
       `;
   };
 
+  // NUEVA LÓGICA DE VENTANA EMERGENTE (POP-UP)
+  window.mostrarNovedad = function(proc) {
+      document.getElementById('novCat').innerHTML = `<i class="fa-solid fa-folder-open" style="color:var(--light-blue); margin-right:5px;"></i> ${proc.cat || 'General'}`;
+      document.getElementById('novTit').innerText = proc.tit;
+      document.getElementById('btnVerNovedad').onclick = () => { window.cerrarNovedad(true, proc.id); };
+      document.getElementById('modalNovedad').classList.remove('hidden');
+  };
+
+  window.cerrarNovedad = function(goTo = false, procId = null) {
+      document.getElementById('modalNovedad').classList.add('hidden');
+      if(LATEST_PROC_ID && SESION && SESION.id) {
+          localStorage.setItem('distelsa_last_seen_proc_' + SESION.id, LATEST_PROC_ID);
+      }
+      if(goTo && procId) window.goToProc(procId);
+  };
+
   function listenToProcedimientos() { 
       onSnapshot(collection(db, "procedimientos_html"), (snapshot) => { 
           DB.proc = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); 
           LOAD_STATE.proc = true; 
           
+          // LÓGICA DE POP-UP (NOVEDADES)
+          let sortedProcs = [...DB.proc].sort((a, b) => (b.fecha || 0) - (a.fecha || 0));
+          if(sortedProcs.length > 0 && SESION && SESION.id) {
+              let latest = sortedProcs[0];
+              LATEST_PROC_ID = latest.id;
+              
+              // Se lee en el disco si el usuario ya vió este procedimiento
+              let lastSeen = localStorage.getItem('distelsa_last_seen_proc_' + SESION.id);
+              
+              // Si no lo ha visto y tiene permisos, lanzamos el POP-UP
+              if (lastSeen !== latest.id && window.hasPerm('proc_view')) {
+                  setTimeout(() => { window.mostrarNovedad(latest); }, 1500);
+              }
+          }
+
           if(CURRENT_MODULE === 'proc') {
               window.renderProcMenu();
               const viewer = document.getElementById('procViewerContainer');
