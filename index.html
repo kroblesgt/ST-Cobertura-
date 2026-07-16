@@ -1255,12 +1255,13 @@
                   contentHtml = `<div style="text-align:center; padding: 50px; color:#e63946; font-weight:bold;">No hay enlaces válidos para mostrar.</div>`; 
               }
           } else { 
+              let claseEditor = proc.modo === 'codigo' ? '' : 'ql-editor';
               contentHtml = `
               <div style="margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
                   <h3 style="margin: 0; color: var(--blue); font-size: 24px;">${proc.tit}</h3>
                   ${window.getLikeButtonHtml(proc)}
               </div>
-              <div class="ql-editor" style="padding:0; overflow-y:visible; font-size:15px; color: var(--dark-gray); line-height: 1.6;">${proc.html || ''}</div>`;
+              <div class="${claseEditor}" style="padding:0; overflow-y:visible; font-size:15px; color: var(--dark-gray); line-height: 1.6;">${proc.html || ''}</div>`;
           }
           if(!proc.html && proc.modo !== 'drive') contentHtml = "<i style='color:var(--mid-gray);'>El documento está vacío.</i>"; viewer.innerHTML = contentHtml;
           const scripts = viewer.querySelectorAll('script'); scripts.forEach(oldScript => { const newScript = document.createElement('script'); Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value)); newScript.appendChild(document.createTextNode(oldScript.innerHTML)); oldScript.parentNode.replaceChild(newScript, oldScript); });
