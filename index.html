@@ -44,16 +44,7 @@
   .app-layout { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
   
   /* SIDEBAR (MENÚ LATERAL) */
-  .sidebar { 
-      width: 260px; 
-      background: white; 
-      border-right: 1px solid var(--border-soft); 
-      display: flex; 
-      flex-direction: column; 
-      flex-shrink: 0; 
-      z-index: 1000;
-      transition: all 0.3s ease;
-  }
+  .sidebar { width: 260px; background: white; border-right: 1px solid var(--border-soft); display: flex; flex-direction: column; flex-shrink: 0; z-index: 1000; transition: all 0.3s ease; }
   .sidebar-header { height: 60px; display: flex; align-items: center; padding: 0 20px; border-bottom: 1px solid var(--border-soft); font-size: 18px; font-weight: 800; color: var(--blue); gap: 10px; white-space: nowrap; }
   .sidebar-menu { padding: 15px; display: flex; flex-direction: column; gap: 5px; flex: 1; overflow-y: auto; scrollbar-width: thin; }
   .sidebar-menu::-webkit-scrollbar { width: 4px; }
@@ -112,6 +103,19 @@
   .btn-mini { border: none; border-radius: 4px; padding: 4px 8px; font-size: 11px; cursor: pointer; font-weight: bold; margin-left: 5px; color: white; transition: 0.2s;}
   .btn-mini:hover { opacity: 0.8; }
 
+  /* MÓDULO DE AVISOS Y SWITCH */
+  .aviso-card { background: #ffffff; border-left: 4px solid var(--light-blue); border-radius: 6px; padding: 15px 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: flex-start; border-right: 1px solid var(--border-soft); border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft);}
+  .aviso-content h4 { margin: 0 0 5px 0; color: var(--blue); font-size: 16px; }
+  .aviso-content p { margin: 0; color: #555; font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word;}
+  .aviso-date { font-size: 11px; color: var(--mid-gray); white-space: nowrap; margin-left: 15px; text-align: right;}
+  
+  .switch { position: relative; display: inline-block; width: 46px; height: 24px; flex-shrink: 0;}
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+  .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+  input:checked + .slider { background-color: var(--green); }
+  input:checked + .slider:before { transform: translateX(22px); }
+
   /* TABLAS */
   .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; display: block;}
   table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; min-width: 900px; }
@@ -149,7 +153,17 @@
   .proc-search-inp { width: 100%; padding: 12px 15px 12px 35px; border: 1px solid var(--border-soft); border-radius: 6px; font-size: 13px; box-sizing: border-box; background: #f8fafc; transition: 0.2s; }
   .proc-search-inp:focus { background: white; border-color: var(--light-blue); box-shadow: 0 0 0 3px rgba(0,159,227,0.1); outline: none; }
   .proc-list { flex: 1; overflow-y: auto; padding: 10px 0; scrollbar-width: thin; }
-  .proc-cat-header { padding: 15px 20px 8px; font-weight: 800; font-size: 11px; color: var(--light-blue); text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; display: flex; align-items: center; gap: 8px; }
+  
+  /* ESTILOS PARA MENÚ DESPLEGABLE (ACORDEÓN) Y PROCEDIMIENTOS */
+  .proc-cat-wrapper { margin-bottom: 2px; }
+  .proc-cat-header { padding: 15px 20px 8px; font-weight: 800; font-size: 11px; color: var(--light-blue); text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; transition: background 0.2s; }
+  .proc-cat-header:hover { background: #e0eaf5; border-radius: 4px; }
+  .chevron-icon { transition: transform 0.3s ease; font-size: 12px; color: var(--light-blue); }
+  .chevron-icon.rotate { transform: rotate(-180deg); }
+  .proc-cat-items { display: none; } 
+  .proc-cat-items.open { display: block; animation: slideDown 0.3s ease-out; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
   .proc-item-link { padding: 10px 20px 10px 30px; font-size: 14px; color: var(--dark-gray); cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 12px; border-left: 3px solid transparent; text-decoration: none;}
   .proc-item-link:hover { background: #e0eaf5; color: var(--blue); }
   .proc-item-link.active { background: #e0eaf5; color: var(--blue); font-weight: bold; border-left-color: var(--light-blue); }
@@ -203,7 +217,7 @@
   .perm-item input { cursor: pointer; width: 16px; height: 16px; accent-color: var(--light-blue);}
   .mod-list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid var(--border-soft); background: #f8fafc; border-radius: 6px; margin-bottom: 10px;}
 
-  /* 📱 RESPONSIVE MOBILE (Mejorado) */
+  /* 📱 RESPONSIVE MOBILE */
   @media (max-width: 768px) {
     .app-layout { flex-direction: column; }
     .sidebar { position: fixed; left: -280px; height: 100%; box-shadow: 0 0 20px rgba(0,0,0,0.3); z-index: 1000; }
@@ -289,6 +303,7 @@
         <div id="tabTec" class="tab-btn" onclick="window.switchModule('tec')"><i class="fa-solid fa-screwdriver-wrench"></i> <span id="txtTabTec">Técnicos</span></div>
         <div id="tabEnc" class="tab-btn" onclick="window.switchModule('enc')"><i class="fa-regular fa-address-card"></i> <span id="txtTabEnc">Directorio</span></div>
         <div id="tabProc" class="tab-btn" onclick="window.switchModule('proc')"><i class="fa-solid fa-book-open"></i> <span id="txtTabProc">Procedimientos</span></div>
+        <div id="tabAvisos" class="tab-btn" onclick="window.switchModule('avisos')"><i class="fa-solid fa-bullhorn"></i> <span id="txtTabAvisos">Avisos</span></div>
         <div id="tabAjs" class="tab-btn hidden" onclick="window.switchModule('ajs')" style="margin-top: auto;"><i class="fa-solid fa-gear"></i> Ajustes</div>
     </div>
   </aside>
@@ -315,7 +330,7 @@
             </div>
             <div class="card" style="padding: 25px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 10px;">
-                    <h3 style="margin: 0; color: var(--blue); font-size: 18px;"><i class="fa-solid fa-bullhorn" style="color: var(--light-blue);"></i> Últimos Procedimientos Publicados</h3>
+                    <h3 style="margin: 0; color: var(--blue); font-size: 18px;"><i class="fa-solid fa-file-code" style="color: var(--light-blue);"></i> Últimos Procedimientos Publicados</h3>
                     <button onclick="window.switchModule('proc')" class="btn btn-o" style="padding: 6px 12px; font-size: 12px;">Ver todos</button>
                 </div>
                 <div id="homeRecientesContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px;"></div>
@@ -373,7 +388,17 @@
             </div>
         </div>
 
-        <!-- 5. CONTENEDOR DINÁMICO -->
+        <!-- 5. MÓDULO AVISOS -->
+        <div id="moduloAvisos" class="hidden">
+            <div class="card" style="padding: 25px; border-top: 5px solid var(--light-blue);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 10px;">
+                    <h3 style="margin: 0; color: var(--blue); font-size: 20px;"><i class="fa-solid fa-bullhorn" style="color: var(--light-blue);"></i> Tablero de Avisos</h3>
+                </div>
+                <div id="avisosMuroContainer" style="max-width: 900px; margin: 0 auto;"></div>
+            </div>
+        </div>
+
+        <!-- 6. CONTENEDOR DINÁMICO -->
         <div id="moduloDinamico" class="hidden">
             <div class="tools">
               <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchDynBox" class="search-inp" placeholder="Buscar en este módulo..." onkeyup="window.renderDynData(true)"></div>
@@ -383,7 +408,7 @@
             <div style="padding: 15px; display: flex; justify-content: center; align-items: center; gap: 20px;"><button onclick="window.changePageDyn(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabelDyn" style="font-weight: bold; font-size: 13px; color: var(--blue); background: white; padding: 6px 18px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">1 / 1</span><button onclick="window.changePageDyn(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button></div>
         </div>
 
-        <!-- 6. PANEL DE AJUSTES MAESTRO -->
+        <!-- 7. PANEL DE AJUSTES MAESTRO -->
         <div id="moduloAjustes" class="hidden">
             <div class="ajs-layout">
                 <div class="ajs-sidebar">
@@ -392,6 +417,7 @@
                     <button id="menuAjsRol" class="ajs-menu-btn hidden" onclick="window.showAjsView('rol')"><i class="fa-solid fa-user-shield" style="width:20px;"></i> Permisos</button>
                     <button id="menuAjsMod" class="ajs-menu-btn hidden" onclick="window.showAjsView('mod')"><i class="fa-solid fa-layer-group" style="width:20px;"></i> Módulos</button>
                     <button id="menuAjsProc" class="ajs-menu-btn hidden" onclick="window.showAjsView('proc')"><i class="fa-solid fa-file-code" style="width:20px;"></i> Procedimientos</button>
+                    <button id="menuAjsAvi" class="ajs-menu-btn hidden" onclick="window.showAjsView('avi')"><i class="fa-solid fa-bullhorn" style="width:20px;"></i> Avisos</button>
                     <button id="menuAjsCol" class="ajs-menu-btn hidden" onclick="window.showAjsView('col')"><i class="fa-solid fa-palette" style="width:20px;"></i> Colores</button>
                 </div>
 
@@ -447,6 +473,7 @@
                                 <label class="perm-item"><input type="checkbox" id="p_dyn_edit"> Editar Mods. Creados</label>
                                 <label class="perm-item"><input type="checkbox" id="p_dyn_exp"> Exportar Mods. Creados</label>
                                 <label class="perm-item"><input type="checkbox" id="p_proc_view" checked> Ver Procedimientos</label>
+                                <label class="perm-item"><input type="checkbox" id="p_avi_view" checked> Ver Avisos</label>
                             </div>
                             <h4 style="margin: 20px 0 10px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">Permisos de Ajustes</h4>
                             <div class="perm-grid">
@@ -455,6 +482,7 @@
                                 <label class="perm-item"><input type="checkbox" id="p_ajs_rol"> Roles y Permisos</label>
                                 <label class="perm-item"><input type="checkbox" id="p_ajs_mod"> Creador de Módulos</label>
                                 <label class="perm-item"><input type="checkbox" id="p_ajs_proc"> Gestor Procedimientos</label>
+                                <label class="perm-item"><input type="checkbox" id="p_ajs_avi"> Gestor de Avisos</label>
                                 <label class="perm-item"><input type="checkbox" id="p_ajs_col"> Colores Cobertura</label>
                             </div>
                             <div style="text-align:right; margin-top:20px;">
@@ -521,6 +549,7 @@
                     <div id="ajsViewProc" class="hidden">
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-file-code"></i> Gestor de Procedimientos</h3>
                         <p style="font-size:13px; color:var(--mid-gray);">Crea procedimientos usando el editor visual, código HTML o incrustando archivos de Drive.</p>
+                        
                         <div class="form-grid" style="background:#f8fafc; padding:20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--border-soft);">
                             <div>
                                 <label style="font-size:12px; font-weight:bold; color:var(--blue);">Submódulo / Categoría</label>
@@ -530,6 +559,19 @@
                                 <label style="font-size:12px; font-weight:bold; color:var(--blue);">Título del Procedimiento</label>
                                 <input id="admProcTit" class="inp" placeholder="Ej: ¿Cómo crear boleta?">
                             </div>
+                            
+                            <!-- NUEVOS CAMPOS: CADUCIDAD Y FIJAR -->
+                            <div>
+                                <label style="font-size:12px; font-weight:bold; color:var(--blue);">Fecha de Caducidad (Opcional)</label>
+                                <input type="date" id="admProcCaducidad" class="inp" title="El procedimiento se ocultará automáticamente al pasar esta fecha.">
+                            </div>
+                            <div style="display: flex; align-items: center; padding-top: 25px;">
+                                <label style="cursor:pointer; display:flex; align-items:center; gap:8px; font-weight:bold; color:var(--blue); font-size: 13px;">
+                                    <input type="checkbox" id="admProcFija" style="width:18px; height:18px; accent-color:var(--light-blue);"> 
+                                    📌 Fijar al principio de la categoría
+                                </label>
+                            </div>
+
                             <div class="span-2" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: -10px; flex-wrap: wrap; gap:10px;">
                                 <label style="font-size:12px; font-weight:bold; color:var(--blue);">Contenido del Procedimiento</label>
                                 <div style="display: flex; gap:5px; flex-wrap: wrap;">
@@ -561,9 +603,53 @@
                                 <button onclick="window.guardarProc()" id="btnSaveProc" class="btn btn-s" style="color:white; padding: 10px 20px;"><i class="fa-solid fa-save"></i> Guardar Procedimiento</button>
                             </div>
                         </div>
-                        <h4 style="color:var(--blue); border-bottom:2px solid var(--border-soft); padding-bottom:8px; margin-bottom: 15px;">Procedimientos Guardados</h4>
+                        
+                        <!-- BARRA SUPERIOR CON BOTÓN DE PAPELERA -->
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid var(--border-soft); padding-bottom:8px; margin-bottom: 15px;">
+                            <h4 style="color:var(--blue); margin: 0;">Procedimientos Guardados</h4>
+                            <button id="btnTogglePapelera" onclick="window.togglePapelera()" class="btn btn-o" style="padding: 6px 12px; font-size:12px;"><i class="fa-solid fa-trash-can"></i> Ver Papelera</button>
+                        </div>
+
                         <div class="search-wrap" style="margin-bottom: 15px;"><i class="fa-solid fa-search"></i><input id="searchProcAdmBox" class="search-inp" placeholder="Buscar título o categoría..." onkeyup="window.renderAdminProcList()"></div>
                         <div id="adminProcListContainer" style="max-height:400px; overflow-y:auto; border: 1px solid var(--border-soft); border-radius: 6px; padding: 5px;"></div>
+                    </div>
+
+                    <!-- VISTA: GESTOR DE AVISOS -->
+                    <div id="ajsViewAvi" class="hidden">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid var(--border-soft); padding-bottom: 10px;">
+                            <div>
+                                <h3 style="margin:0; color:var(--blue);"><i class="fa-solid fa-bullhorn"></i> Gestor de Avisos (Recordatorios)</h3>
+                                <p style="font-size:13px; color:var(--mid-gray); margin-top: 5px;">Publica recordatorios rápidos para el equipo sin necesidad de crear un manual completo.</p>
+                            </div>
+                            <div style="background: #e0eaf5; padding: 10px 15px; border-radius: 6px; border: 1px solid #cce0f5; display: flex; align-items: center; gap: 15px;">
+                                <div style="font-size: 13px;">
+                                    <b style="color: var(--blue); display: block;">Lanzar Notificación Push</b>
+                                    <span style="color: var(--mid-gray); font-size: 11px;">Alerta al equipo del nuevo aviso</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="toggleAvisoAlert">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-grid" style="background:#f8fafc; padding:20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--border-soft);">
+                            <div class="span-2">
+                                <label style="font-size:12px; font-weight:bold; color:var(--blue);">Título del Aviso</label>
+                                <input id="admAviTit" class="inp" placeholder="Ej: Falla masiva en herramienta WS">
+                            </div>
+                            <div class="span-2">
+                                <label style="font-size:12px; font-weight:bold; color:var(--blue);">Contenido del Mensaje</label>
+                                <textarea id="admAviCont" class="inp" style="height: 100px; resize: vertical; font-family: inherit;" placeholder="Escribe tu recordatorio o aviso urgente aquí..."></textarea>
+                            </div>
+                            <div class="span-2" style="text-align:right; margin-top: 10px;">
+                                <button onclick="window.cancelarEdicionAviso()" id="btnCancelAviso" class="btn btn-d hidden" style="margin-right: 5px;"><i class="fa-solid fa-times"></i> Cancelar</button>
+                                <button onclick="window.guardarAviso()" id="btnSaveAviso" class="btn btn-s" style="color:white; padding: 10px 20px;"><i class="fa-solid fa-paper-plane"></i> Publicar Aviso</button>
+                            </div>
+                        </div>
+
+                        <h4 style="color:var(--blue); margin-bottom: 10px;">Avisos Publicados</h4>
+                        <div id="adminAvisosListContainer" style="max-height:350px; overflow-y:auto; border: 1px solid var(--border-soft); border-radius: 6px; padding: 5px;"></div>
                     </div>
 
                     <!-- VISTA: COLORES COBERTURA -->
@@ -599,18 +685,18 @@
   </div>
 </div>
 
-<!-- NUEVO POP-UP PARA NOVEDADES -->
+<!-- NUEVO POP-UP PARA NOVEDADES (Procedimientos y Avisos) -->
 <div id="modalNovedad" class="modal-backdrop hidden" style="z-index: 9999;">
   <div class="modal" style="max-width: 450px; text-align: center; border-top: 5px solid var(--light-blue); padding: 35px 25px;">
-    <div style="font-size: 40px; color: var(--light-blue); margin-bottom: 10px;">
+    <div style="font-size: 40px; color: var(--light-blue); margin-bottom: 10px;" id="novIconBox">
         <i class="fa-solid fa-bullhorn fa-shake"></i>
     </div>
-    <h3 style="margin: 0 0 10px 0; color: var(--blue); font-size: 22px;">¡Nueva Publicación!</h3>
-    <p style="font-size: 14px; color: var(--mid-gray); margin-bottom: 20px;">Se ha subido un nuevo procedimiento a la Intranet que debes revisar.</p>
+    <h3 style="margin: 0 0 10px 0; color: var(--blue); font-size: 22px;" id="novMainTitle">¡Nueva Publicación!</h3>
+    <p style="font-size: 14px; color: var(--mid-gray); margin-bottom: 20px;" id="novSubTitle">Se ha subido un nuevo procedimiento a la Intranet que debes revisar.</p>
     
     <div style="background: #f8fafc; border: 1px solid var(--border-soft); border-radius: 8px; padding: 15px; margin-bottom: 25px; text-align: left;">
         <div style="font-size: 11px; color: var(--light-blue); font-weight: 800; text-transform: uppercase; margin-bottom: 5px;" id="novCat"><i class="fa-solid fa-folder-open"></i> Categoría</div>
-        <div style="font-size: 16px; font-weight: bold; color: var(--blue); line-height: 1.3;" id="novTit">Título del procedimiento</div>
+        <div style="font-size: 16px; font-weight: bold; color: var(--blue); line-height: 1.3;" id="novTit">Título</div>
     </div>
 
     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
@@ -620,7 +706,7 @@
   </div>
 </div>
 
-<!-- MODALES RESTANTES -->
+<!-- MODALES RESTANTES (Ubicaciones, Técnicos, Encargados, Dinámicos) -->
 <div id="modalAdd" class="modal-backdrop hidden">
   <div class="modal"><div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><h3 id="modalTitle" style="margin:0; color:var(--blue)">Nueva Ubicación</h3><button onclick="window.closeModal('modalAdd')" class="btn btn-o" style="border:none; color:var(--mid-gray);"><i class="fa-solid fa-times fa-lg"></i></button></div>
     <div class="form-grid"><input id="newMun" class="inp" placeholder="Municipio"><input id="newNom" class="inp" placeholder="Nombre"><input id="newCat" class="inp" placeholder="Categoría"><input id="newZon" class="inp" placeholder="Zona"><input id="newRef" class="inp span-2" placeholder="Referencia">
@@ -675,15 +761,16 @@
     localCache: persistentLocalCache({tabManager: persistentMultipleTabManager()})
   });
 
-  let DB = { cob: [], tec: [], enc: [], proc: [], configModulos: [], dynData: [], roles: [], logs: [] };
+  let DB = { cob: [], tec: [], enc: [], proc: [], avisos: [], configModulos: [], dynData: [], roles: [], logs: [] };
   let DB_USERS = []; let SESION = { id: null, u: null, r: null, t: null };
   let PAGE = 1, PAGE_TEC = 1, PAGE_ENC = 1, PAGE_DYN = 1; let ITEMS_PER_PAGE_ENC = 16;
-  let EDITING_USER_ID = null, EDITING_LOCATION_ID = null, EDITING_TEC_ID = null, EDITING_ENC_ID = null, EDITING_DYN_ID = null, EDITING_ROLE_ID = null, EDITING_MOD_ID = null, EDITING_PROC_ID = null;
+  let EDITING_USER_ID = null, EDITING_LOCATION_ID = null, EDITING_TEC_ID = null, EDITING_ENC_ID = null, EDITING_DYN_ID = null, EDITING_ROLE_ID = null, EDITING_MOD_ID = null, EDITING_PROC_ID = null, EDITING_AVISO_ID = null;
   let CURRENT_MODULE = 'inicio'; let CURRENT_DYN_CONFIG = null;
   let isFirstUserLoad = true; let knownPendingIds = new Set(); let heartbeatInterval;
-  let LATEST_PROC_ID = null; let isInitialProcLoad = true; 
+  let LATEST_PROC_ID = null; let LATEST_AVISO_ID = null; let isInitialProcLoad = true; let isInitialAvisoLoad = true; 
+  let SHOW_PAPELERA = false; 
   
-  let LOAD_STATE = { cob: false, tec: false, enc: false, proc: false, dyn: false };
+  let LOAD_STATE = { cob: false, tec: false, enc: false, proc: false, avisos: false, dyn: false };
   let SYS_MOD_NAMES = { cob: "Cobertura", tec: "Técnicos", enc: "Directorio", proc: "Procedimientos" };
   let STATUS_COLORS = { "Cobertura": "#00A65A", "Sin Cobertura": "#e63946", "Consultar": "#009FE3", "Sin Datos": "#6c757d" };
   
@@ -721,12 +808,11 @@
   window.logAct = async function(modulo, accion, detalle) {
       if(!SESION || !SESION.u) return;
       try {
-          // El log se hace de forma asíncrona pero sin trabar la UI con awaits fuertes.
           await addDoc(collection(db, "activity_logs"), { u: SESION.u, mod: modulo, act: accion, det: detalle, ts: Date.now() });
       } catch(e) { console.warn("No se guardó el log:", e); }
   };
 
-  // ================= NOTIFICACIONES NATIVAS CHROME =================
+  // ================= NOTIFICACIONES =================
   window.solicitarPermisosChrome = function() {
       if ("Notification" in window) {
           if (Notification.permission !== "granted" && Notification.permission !== "denied") {
@@ -744,6 +830,7 @@
       }
   };
 
+  // ================= UTILIDADES =================
   window.addDriveLinkRow = function(name = '', url = '') {
       const container = document.getElementById('driveLinksContainer');
       const row = document.createElement('div');
@@ -771,8 +858,8 @@
       if(SESION.r === 'pendiente') return false;
       const rolData = DB.roles.find(r => (r.nombre||'').toLowerCase() === (SESION.r||'').toLowerCase());
       if(rolData && rolData.perms) return rolData.perms.includes(perm);
-      if(SESION.r === 'agente') { return ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view'].includes(perm); }
-      if(SESION.r === 'invitado') { return ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view'].includes(perm); }
+      if(SESION.r === 'agente') { return ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view'].includes(perm); }
+      if(SESION.r === 'invitado') { return ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view'].includes(perm); }
       return false;
   };
 
@@ -781,9 +868,10 @@
       document.getElementById('tabTec').classList.toggle('hidden', !window.hasPerm('tec_view'));
       document.getElementById('tabEnc').classList.toggle('hidden', !window.hasPerm('enc_view'));
       document.getElementById('tabProc').classList.toggle('hidden', !window.hasPerm('proc_view'));
+      document.getElementById('tabAvisos').classList.toggle('hidden', !window.hasPerm('avi_view'));
       document.querySelectorAll('.tab-dyn').forEach(t => t.classList.toggle('hidden', !window.hasPerm('dyn_view')));
       
-      const hasAjs = window.hasPerm('ajs_usr') || window.hasPerm('ajs_rol') || window.hasPerm('ajs_mod') || window.hasPerm('ajs_proc') || window.hasPerm('ajs_col') || window.hasPerm('ajs_mon');
+      const hasAjs = window.hasPerm('ajs_usr') || window.hasPerm('ajs_rol') || window.hasPerm('ajs_mod') || window.hasPerm('ajs_proc') || window.hasPerm('ajs_col') || window.hasPerm('ajs_mon') || window.hasPerm('ajs_avi');
       document.getElementById('tabAjs').classList.toggle('hidden', !hasAjs);
       document.getElementById('notifBell').classList.toggle('hidden', !window.hasPerm('ajs_usr'));
 
@@ -792,6 +880,7 @@
       if(document.getElementById('menuAjsRol')) document.getElementById('menuAjsRol').classList.toggle('hidden', !window.hasPerm('ajs_rol'));
       if(document.getElementById('menuAjsMod')) document.getElementById('menuAjsMod').classList.toggle('hidden', !window.hasPerm('ajs_mod'));
       if(document.getElementById('menuAjsProc')) document.getElementById('menuAjsProc').classList.toggle('hidden', !window.hasPerm('ajs_proc'));
+      if(document.getElementById('menuAjsAvi')) document.getElementById('menuAjsAvi').classList.toggle('hidden', !window.hasPerm('ajs_avi'));
       if(document.getElementById('menuAjsCol')) document.getElementById('menuAjsCol').classList.toggle('hidden', !window.hasPerm('ajs_col'));
 
       if(document.getElementById('btnAdd')) document.getElementById('btnAdd').classList.toggle('hidden', !window.hasPerm('cob_edit'));
@@ -809,6 +898,7 @@
       if(document.getElementById('btnAddDyn')) document.getElementById('btnAddDyn').classList.toggle('hidden', !window.hasPerm('dyn_edit'));
       if(document.getElementById('btnExpDyn')) document.getElementById('btnExpDyn').classList.toggle('hidden', !window.hasPerm('dyn_exp'));
       if(document.getElementById('btnImpDyn')) document.getElementById('btnImpDyn').classList.toggle('hidden', !window.hasPerm('dyn_exp'));
+      
       window.renderInicioRecientes();
   };
 
@@ -831,43 +921,38 @@
     let activeTab = document.getElementById(mod.startsWith('dyn_') ? 'tab_' + mod : 'tab' + mod.charAt(0).toUpperCase() + mod.slice(1));
     if(activeTab) activeTab.classList.add('active');
     
-    // Cierra sidebar en móvil
     document.getElementById('appSidebar').classList.remove('open');
     document.getElementById('mobileOverlay').classList.add('hidden');
     
-    if(mod === 'proc' || mod === 'ajs' || mod === 'inicio') { 
+    if(mod === 'proc' || mod === 'ajs' || mod === 'inicio' || mod === 'avisos') { 
         document.getElementById('mainContainer').style.maxWidth = '100%'; 
-        document.getElementById('mainContainer').style.padding = mod === 'inicio' ? '20px 30px' : '0'; 
+        document.getElementById('mainContainer').style.padding = (mod === 'inicio' || mod === 'avisos') ? '20px 30px' : '0'; 
     } else { 
         document.getElementById('mainContainer').style.maxWidth = '1300px'; 
         document.getElementById('mainContainer').style.padding = window.innerWidth <= 768 ? '10px' : '20px'; 
     }
 
-    ['moduloInicio', 'moduloCobertura', 'moduloTecnicos', 'moduloEncargados', 'moduloProcedimientos', 'moduloAjustes', 'moduloDinamico'].forEach(id => { document.getElementById(id).classList.add('hidden'); });
+    ['moduloInicio', 'moduloCobertura', 'moduloTecnicos', 'moduloEncargados', 'moduloProcedimientos', 'moduloAvisos', 'moduloAjustes', 'moduloDinamico'].forEach(id => { document.getElementById(id).classList.add('hidden'); });
 
     if(mod === 'inicio') { document.getElementById('moduloInicio').classList.remove('hidden'); }
     else if(mod === 'cob') { document.getElementById('moduloCobertura').classList.remove('hidden'); window.renderTable(); }
     else if(mod === 'tec') { document.getElementById('moduloTecnicos').classList.remove('hidden'); window.renderTecnicosTable(); }
     else if(mod === 'enc') { document.getElementById('moduloEncargados').classList.remove('hidden'); window.renderEncargadosTable(); }
     else if(mod === 'proc') { document.getElementById('moduloProcedimientos').classList.remove('hidden'); window.renderProcMenu(); }
+    else if(mod === 'avisos') { document.getElementById('moduloAvisos').classList.remove('hidden'); window.renderAvisosMuro(); }
     else if(mod === 'ajs') { 
         document.getElementById('moduloAjustes').classList.remove('hidden'); 
-        if(window.hasPerm('ajs_mon')) window.showAjsView('mon'); else if(window.hasPerm('ajs_usr')) window.showAjsView('usr'); else if(window.hasPerm('ajs_rol')) window.showAjsView('rol'); else if(window.hasPerm('ajs_mod')) window.showAjsView('mod'); else if(window.hasPerm('ajs_proc')) window.showAjsView('proc'); else if(window.hasPerm('ajs_col')) window.showAjsView('col');
+        if(window.hasPerm('ajs_mon')) window.showAjsView('mon'); else if(window.hasPerm('ajs_usr')) window.showAjsView('usr'); else if(window.hasPerm('ajs_rol')) window.showAjsView('rol'); else if(window.hasPerm('ajs_mod')) window.showAjsView('mod'); else if(window.hasPerm('ajs_proc')) window.showAjsView('proc'); else if(window.hasPerm('ajs_avi')) window.showAjsView('avi'); else if(window.hasPerm('ajs_col')) window.showAjsView('col');
     }
     else if(mod.startsWith('dyn_')) { document.getElementById('moduloDinamico').classList.remove('hidden'); CURRENT_DYN_CONFIG = DB.configModulos.find(m => m.id === mod.replace('dyn_', '')); window.renderDynData(); }
-  };
-
-  window.goToProc = function(id) {
-      window.switchModule('proc');
-      setTimeout(() => { window.abrirProcedimiento(id); }, 100);
   };
 
   window.showAjsView = function(view) {
       document.querySelectorAll('.ajs-menu-btn').forEach(b => b.classList.remove('active'));
       const btn = document.getElementById('menuAjs' + view.charAt(0).toUpperCase() + view.slice(1)); if(btn) btn.classList.add('active');
-      ['mon', 'usr', 'rol', 'mod', 'proc', 'col'].forEach(v => document.getElementById('ajsView' + v.charAt(0).toUpperCase() + v.slice(1)).classList.add('hidden'));
+      ['mon', 'usr', 'rol', 'mod', 'proc', 'avi', 'col'].forEach(v => document.getElementById('ajsView' + v.charAt(0).toUpperCase() + v.slice(1)).classList.add('hidden'));
       const targetView = document.getElementById('ajsView' + view.charAt(0).toUpperCase() + view.slice(1)); if(targetView) targetView.classList.remove('hidden');
-      if(view === 'mon') window.renderAdminMonitor(); if(view === 'usr') window.renderUserList(); if(view === 'rol') window.renderRolesList(); if(view === 'mod') window.renderListaModulos(); if(view === 'proc') window.renderAdminProcList(); if(view === 'col') window.renderColorView();
+      if(view === 'mon') window.renderAdminMonitor(); if(view === 'usr') window.renderUserList(); if(view === 'rol') window.renderRolesList(); if(view === 'mod') window.renderListaModulos(); if(view === 'proc') window.renderAdminProcList(); if(view === 'avi') window.renderAdminAvisos(); if(view === 'col') window.renderColorView();
   };
 
   window.toggleAuthBoxes = (s) => { document.getElementById('boxLogin').classList.toggle('hidden', s); document.getElementById('boxRegister').classList.toggle('hidden', !s); };
@@ -936,7 +1021,7 @@
     window.solicitarPermisosChrome();
 
     listenToSysMods(); window.listenToRoles(); window.listenToUsers(); window.listenToLogs(); setInterval(window.updateOnlineUI, 5000); listenToColors();
-    listenToCoberturas(); listenToTecnicos(); listenToEncargados(); listenToConfigModulos(); listenToDynData(); listenToProcedimientos();
+    listenToCoberturas(); listenToTecnicos(); listenToEncargados(); listenToConfigModulos(); listenToDynData(); listenToProcedimientos(); window.listenToAvisos();
     
     window.switchModule('inicio'); 
     window.initSortableTabs(); 
@@ -973,26 +1058,16 @@
 
   // MONITOR DE ACTIVIDAD
   window.renderAdminMonitor = function() {
-      // 1. Usuarios Conectados
       const now = Date.now(); 
       let online = DB_USERS.filter(u => u.lastActive && (now - u.lastActive < 190000) && u.r !== 'pendiente');
       document.getElementById('adminOnlineList').innerHTML = online.map(u => `<div style="padding: 12px; border-bottom: 1px solid var(--border-soft); display: flex; justify-content: space-between; align-items: center;"><div style="font-weight: 600; color: var(--blue);"><i class="fa-solid fa-circle fa-beat" style="color:var(--green); font-size:8px; margin-right:8px;"></i> ${u.u}</div><span style="font-size:11px; background:white; border: 1px solid var(--border-soft); color:var(--mid-gray); padding:3px 8px; border-radius:4px; font-weight:bold; text-transform:uppercase;">${u.r}</span></div>`).join('') || '<div style="padding:15px; color:var(--mid-gray); font-size:13px; text-align:center;">Nadie conectado en este momento.</div>';
-      
-      // 2. Historial de Actividad
       document.getElementById('adminUpdatesLog').innerHTML = DB.logs.map(l => {
           let dateStr = l.ts ? new Date(l.ts).toLocaleString() : "Fecha Desconocida";
-          let color = l.act === 'Crear' ? 'var(--green)' : (l.act === 'Eliminar' ? '#e63946' : 'var(--light-blue)');
+          let color = l.act === 'Crear' ? 'var(--green)' : (l.act === 'Eliminar' || l.act === 'Papelera' || l.act === 'Eliminar Permanente' ? '#e63946' : 'var(--light-blue)');
           return `<div style="padding: 12px; border-bottom: 1px solid var(--border-soft); transition:0.2s;" onmouseover="this.style.background='white'" onmouseout="this.style.background='transparent'">
-                    <div style="font-weight: 700; color: var(--blue); font-size:13px; margin-bottom:4px;">
-                        <span style="color:${color};">[${l.act}]</span> ${l.mod}
-                    </div>
-                    <div style="font-size: 12px; color: var(--dark-gray); margin-bottom: 6px; line-height:1.3;">
-                        ${l.det}
-                    </div>
-                    <div style="font-size: 11px; color: var(--mid-gray); display:flex; justify-content:space-between;">
-                        <span><i class="fa-solid fa-user" style="color:var(--light-blue);"></i> ${l.u}</span>
-                        <span><i class="fa-regular fa-clock"></i> ${dateStr}</span>
-                    </div>
+                    <div style="font-weight: 700; color: var(--blue); font-size:13px; margin-bottom:4px;"><span style="color:${color};">[${l.act}]</span> ${l.mod}</div>
+                    <div style="font-size: 12px; color: var(--dark-gray); margin-bottom: 6px; line-height:1.3;">${l.det}</div>
+                    <div style="font-size: 11px; color: var(--mid-gray); display:flex; justify-content:space-between;"><span><i class="fa-solid fa-user" style="color:var(--light-blue);"></i> ${l.u}</span><span><i class="fa-regular fa-clock"></i> ${dateStr}</span></div>
                   </div>`;
       }).join('') || '<div style="padding:15px; color:var(--mid-gray); font-size:13px; text-align:center;">No hay actividad reciente.</div>';
   };
@@ -1000,8 +1075,8 @@
   window.listenToRoles = function() { 
       onSnapshot(collection(db, "roles_config"), (snapshot) => { 
           DB.roles = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); 
-          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) { DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view'] }); }
-          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) { DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view'] }); }
+          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) { DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view'] }); }
+          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) { DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view'] }); }
           window.updateRolesSelect(); window.applyPermissionsToUI(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList(); 
       }); 
   };
@@ -1116,53 +1191,170 @@
       }
   };
 
-  // ================= MÓDULO PROCEDIMIENTOS E INICIO =================
-  window.toggleLikeProc = async function(id) {
-      if(!SESION || !SESION.id) return alert("Debes iniciar sesión para reaccionar.");
-      const p = DB.proc.find(x => x.id === id);
-      if(!p) return;
-      const likesArray = p.likes || [];
-      const hasLiked = likesArray.includes(SESION.id);
-      
-      try {
-          const docRef = doc(db, "procedimientos_html", id);
-          if (hasLiked) {
-              await updateDoc(docRef, { likes: arrayRemove(SESION.id) });
-          } else {
-              await updateDoc(docRef, { likes: arrayUnion(SESION.id) });
+  // ================= AVISOS =================
+  window.listenToAvisos = function() {
+      const qAvisos = query(collection(db, "avisos"), orderBy("fecha", "desc"));
+      onSnapshot(qAvisos, (snapshot) => {
+          snapshot.docChanges().forEach((change) => {
+              if (change.type === "added" && !isInitialAvisoLoad && window.hasPerm('avi_view')) {
+                  const a = change.doc.data();
+                  if(a.alerta === true) {
+                      window.notificarChrome("Nuevo Aviso", a.tit);
+                      window.showToast(`<b>Nuevo Aviso:</b> ${a.tit}`);
+                  }
+              }
+          });
+          isInitialAvisoLoad = false;
+          DB.avisos = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); 
+          LOAD_STATE.avisos = true;
+          
+          if(DB.avisos.length > 0 && SESION && SESION.id) {
+              let latest = DB.avisos[0];
+              LATEST_AVISO_ID = latest.id;
+              let lastSeen = localStorage.getItem('distelsa_last_seen_aviso_' + SESION.id);
+              if (lastSeen !== latest.id && latest.alerta === true && window.hasPerm('avi_view')) {
+                  setTimeout(() => { window.mostrarNovedadAviso(latest); }, 2500);
+              }
           }
-      } catch(e) { console.error("Error", e); }
+
+          if(CURRENT_MODULE === 'avisos') window.renderAvisosMuro();
+          if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewAvi').classList.contains('hidden')) window.renderAdminAvisos();
+      });
   };
 
-  window.getLikeButtonHtml = function(proc) {
-      const likes = proc.likes || [];
-      const hasLiked = SESION && SESION.id ? likes.includes(SESION.id) : false;
-      const btnClass = hasLiked ? 'btn-s' : 'btn-o';
-      const iconColor = hasLiked ? 'white' : 'var(--light-blue)';
-      const textColor = hasLiked ? 'white' : 'var(--blue)';
+  window.guardarAviso = async function() {
+      const btn = document.getElementById('btnSaveAviso');
+      const tit = document.getElementById('admAviTit').value.trim();
+      const cont = document.getElementById('admAviCont').value.trim();
+      const alerta = document.getElementById('toggleAvisoAlert').checked;
+
+      if(!tit || !cont) return alert("Completa el título y el contenido.");
+      btn.disabled = true; btn.innerHTML = "Publicando...";
+      try {
+          let payload = { tit: tit, cont: cont, alerta: alerta };
+          if(EDITING_AVISO_ID) {
+              await updateDoc(doc(db, "avisos", EDITING_AVISO_ID), payload);
+              window.logAct("Avisos", "Editar", "Se actualizó el aviso: " + tit);
+          } else {
+              payload.fecha = Date.now();
+              await addDoc(collection(db, "avisos"), payload);
+              window.logAct("Avisos", "Crear", "Nuevo aviso: " + tit);
+          }
+          window.showToastSuccess("Aviso guardado" + (alerta ? " con notificación." : " de forma silenciosa."));
+          window.cancelarEdicionAviso();
+      } catch(e) { alert("Error al publicar aviso."); }
+      btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publicar Aviso';
+  };
+
+  window.editarAviso = function(id) {
+      EDITING_AVISO_ID = id;
+      const a = DB.avisos.find(x => x.id === id);
+      document.getElementById('admAviTit').value = a.tit;
+      document.getElementById('admAviCont').value = a.cont;
+      document.getElementById('toggleAvisoAlert').checked = a.alerta || false;
       
-      return `
-          <button id="btnLikeProc" onclick="window.toggleLikeProc('${proc.id}')" class="btn ${btnClass}" style="padding: 8px 15px; font-size: 13px; color: ${textColor}; transition: all 0.2s ease; display:flex; align-items:center; gap:8px;">
-              <i class="fa-solid fa-thumbs-up" style="color: ${iconColor};"></i> 
-              <span id="lblLikeCount">${likes.length}</span> <span class="hide-mobile">Me gusta</span>
-          </button>
-      `;
+      const btnSave = document.getElementById('btnSaveAviso');
+      btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios';
+      btnSave.classList.replace('btn-s', 'btn-p');
+      document.getElementById('btnCancelAviso').classList.remove('hidden');
+      document.querySelector('.ajs-content').scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  window.mostrarNovedad = function(proc) {
-      document.getElementById('novCat').innerHTML = `<i class="fa-solid fa-folder-open" style="color:var(--light-blue); margin-right:5px;"></i> ${proc.cat || 'General'}`;
-      document.getElementById('novTit').innerText = proc.tit;
-      document.getElementById('btnVerNovedad').onclick = () => { window.cerrarNovedad(true, proc.id); };
+  window.cancelarEdicionAviso = function() {
+      EDITING_AVISO_ID = null;
+      document.getElementById('admAviTit').value = '';
+      document.getElementById('admAviCont').value = '';
+      document.getElementById('toggleAvisoAlert').checked = false;
+      const btnSave = document.getElementById('btnSaveAviso');
+      btnSave.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publicar Aviso';
+      btnSave.classList.replace('btn-p', 'btn-s');
+      document.getElementById('btnCancelAviso').classList.add('hidden');
+  };
+
+  window.eliminarAviso = async function(id) {
+      if(!confirm("¿Eliminar aviso permanentemente?")) return;
+      try {
+          const a = DB.avisos.find(x => x.id === id);
+          await deleteDoc(doc(db, "avisos", id));
+          window.logAct("Avisos", "Eliminar", "Aviso eliminado: " + (a?a.tit:''));
+          if(EDITING_AVISO_ID === id) window.cancelarEdicionAviso();
+      } catch(e) { alert("Error al eliminar."); }
+  };
+
+  window.renderAdminAvisos = function() {
+      const container = document.getElementById('adminAvisosListContainer');
+      container.innerHTML = DB.avisos.map(a => {
+          let dateStr = a.fecha ? new Date(a.fecha).toLocaleString() : '';
+          let badge = a.alerta ? `<span style="background:#fff3cd; color:#856404; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px;"><i class="fa-solid fa-bell"></i> Con Notificación</span>` : `<span style="background:#e9ecef; color:#6c757d; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px;"><i class="fa-solid fa-bell-slash"></i> Silencioso</span>`;
+          return `<div class="mod-list-item"><div><b style="color:var(--blue);">${a.tit}</b> ${badge}<br><small style="color:var(--mid-gray);">${dateStr}</small></div><div><button onclick="window.editarAviso('${a.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarAviso('${a.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`;
+      }).join('') || '<p style="font-size:13px; color:var(--mid-gray);">No hay avisos registrados.</p>';
+  };
+
+  window.renderAvisosMuro = function() {
+      const container = document.getElementById('avisosMuroContainer');
+      if(!LOAD_STATE.avisos) { container.innerHTML = `<div class="spinner-container"><div class="spinner"></div><div class="loading-text">Cargando avisos...</div></div>`; return; }
+      if(DB.avisos.length === 0) { container.innerHTML = `<p style="text-align:center; color:var(--mid-gray); padding: 30px;">No hay avisos recientes.</p>`; return; }
+      
+      let html = '';
+      DB.avisos.forEach(a => {
+          let dateStr = a.fecha ? new Date(a.fecha).toLocaleDateString() + ' ' + new Date(a.fecha).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
+          html += `
+          <div class="aviso-card">
+              <div class="aviso-content">
+                  <h4>${a.tit}</h4>
+                  <p>${a.cont}</p>
+              </div>
+              <div class="aviso-date"><i class="fa-regular fa-clock"></i> ${dateStr}</div>
+          </div>`;
+      });
+      container.innerHTML = html;
+  };
+
+  window.mostrarNovedadAviso = function(aviso) {
+      document.getElementById('novIconBox').innerHTML = '<i class="fa-solid fa-message fa-bounce" style="color:var(--light-blue);"></i>';
+      document.getElementById('novMainTitle').innerText = '¡Nuevo Aviso!';
+      document.getElementById('novSubTitle').innerText = 'Hay un aviso importante que requiere tu atención.';
+      document.getElementById('novCat').innerHTML = `<i class="fa-solid fa-bullhorn" style="color:var(--light-blue); margin-right:5px;"></i> Recordatorio`;
+      document.getElementById('novTit').innerText = aviso.tit;
+      document.getElementById('btnVerNovedad').onclick = () => { window.cerrarNovedad(true, null, 'avisos'); };
       document.getElementById('modalNovedad').classList.remove('hidden');
   };
 
-  window.cerrarNovedad = function(goTo = false, procId = null) {
-      document.getElementById('modalNovedad').classList.add('hidden');
-      if(LATEST_PROC_ID && SESION && SESION.id) {
-          localStorage.setItem('distelsa_last_seen_proc_' + SESION.id, LATEST_PROC_ID);
-      }
-      if(goTo && procId) window.goToProc(procId);
+  // ================= PROCEDIMIENTOS (CON CADUCIDAD, PAPELERA, FIJOS Y ACORDEÓN) =================
+  window.toggleLikeProc = async function(id) {
+      if(!SESION || !SESION.id) return alert("Debes iniciar sesión para reaccionar.");
+      const p = DB.proc.find(x => x.id === id); if(!p) return;
+      const likesArray = p.likes || []; const hasLiked = likesArray.includes(SESION.id);
+      try { const docRef = doc(db, "procedimientos_html", id); if (hasLiked) { await updateDoc(docRef, { likes: arrayRemove(SESION.id) }); } else { await updateDoc(docRef, { likes: arrayUnion(SESION.id) }); } } catch(e) {}
   };
+
+  window.getLikeButtonHtml = function(proc) {
+      const likes = proc.likes || []; const hasLiked = SESION && SESION.id ? likes.includes(SESION.id) : false;
+      const btnClass = hasLiked ? 'btn-s' : 'btn-o'; const iconColor = hasLiked ? 'white' : 'var(--light-blue)'; const textColor = hasLiked ? 'white' : 'var(--blue)';
+      return `<button id="btnLikeProc" onclick="window.toggleLikeProc('${proc.id}')" class="btn ${btnClass}" style="padding: 8px 15px; font-size: 13px; color: ${textColor}; transition: all 0.2s ease; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-thumbs-up" style="color: ${iconColor};"></i> <span id="lblLikeCount">${likes.length}</span> <span class="hide-mobile">Me gusta</span></button>`;
+  };
+
+  window.mostrarNovedadProc = function(proc) {
+      document.getElementById('novIconBox').innerHTML = '<i class="fa-solid fa-bullhorn fa-shake" style="color:var(--light-blue);"></i>';
+      document.getElementById('novMainTitle').innerText = '¡Nueva Publicación!';
+      document.getElementById('novSubTitle').innerText = 'Se ha subido un nuevo procedimiento a la Intranet.';
+      document.getElementById('novCat').innerHTML = `<i class="fa-solid fa-folder-open" style="color:var(--light-blue); margin-right:5px;"></i> ${proc.cat || 'General'}`;
+      document.getElementById('novTit').innerText = proc.tit;
+      document.getElementById('btnVerNovedad').onclick = () => { window.cerrarNovedad(true, proc.id, 'proc'); };
+      document.getElementById('modalNovedad').classList.remove('hidden');
+  };
+
+  window.cerrarNovedad = function(goTo = false, idTarget = null, moduleTarget = null) {
+      document.getElementById('modalNovedad').classList.add('hidden');
+      if(moduleTarget === 'proc' && LATEST_PROC_ID && SESION && SESION.id) { localStorage.setItem('distelsa_last_seen_proc_' + SESION.id, LATEST_PROC_ID); }
+      if(moduleTarget === 'avisos' && LATEST_AVISO_ID && SESION && SESION.id) { localStorage.setItem('distelsa_last_seen_aviso_' + SESION.id, LATEST_AVISO_ID); }
+      if(goTo) {
+          if(moduleTarget === 'proc' && idTarget) window.goToProc(idTarget);
+          if(moduleTarget === 'avisos') window.switchModule('avisos');
+      }
+  };
+
+  window.goToProc = function(id) { window.switchModule('proc'); setTimeout(() => { window.abrirProcedimiento(id); }, 100); };
 
   function listenToProcedimientos() { 
       onSnapshot(collection(db, "procedimientos_html"), (snapshot) => { 
@@ -1173,7 +1365,6 @@
               }
           });
           isInitialProcLoad = false;
-
           DB.proc = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); 
           LOAD_STATE.proc = true; 
           
@@ -1183,7 +1374,7 @@
               LATEST_PROC_ID = latest.id;
               let lastSeen = localStorage.getItem('distelsa_last_seen_proc_' + SESION.id);
               if (lastSeen !== latest.id && window.hasPerm('proc_view')) {
-                  setTimeout(() => { window.mostrarNovedad(latest); }, 1500);
+                  setTimeout(() => { window.mostrarNovedadProc(latest); }, 1500);
               }
           }
 
@@ -1193,22 +1384,11 @@
               if(viewer && viewer.dataset.activeId) {
                   const activeP = DB.proc.find(p => p.id === viewer.dataset.activeId);
                   if(activeP) {
-                      const btnLike = document.getElementById('btnLikeProc');
-                      const lblCount = document.getElementById('lblLikeCount');
+                      const btnLike = document.getElementById('btnLikeProc'); const lblCount = document.getElementById('lblLikeCount');
                       if(btnLike && lblCount) {
-                          const likes = activeP.likes || [];
-                          const hasLiked = SESION && SESION.id ? likes.includes(SESION.id) : false;
-                          lblCount.innerText = likes.length;
-                          
-                          if(hasLiked) {
-                              btnLike.className = 'btn btn-s';
-                              btnLike.style.color = 'white';
-                              btnLike.querySelector('i').style.color = 'white';
-                          } else {
-                              btnLike.className = 'btn btn-o';
-                              btnLike.style.color = 'var(--blue)';
-                              btnLike.querySelector('i').style.color = 'var(--light-blue)';
-                          }
+                          const likes = activeP.likes || []; const hasLiked = SESION && SESION.id ? likes.includes(SESION.id) : false; lblCount.innerText = likes.length;
+                          if(hasLiked) { btnLike.className = 'btn btn-s'; btnLike.style.color = 'white'; btnLike.querySelector('i').style.color = 'white'; } 
+                          else { btnLike.className = 'btn btn-o'; btnLike.style.color = 'var(--blue)'; btnLike.querySelector('i').style.color = 'var(--light-blue)'; }
                       }
                   }
               }
@@ -1221,33 +1401,26 @@
   window.renderInicioRecientes = function() {
       const container = document.getElementById('homeRecientesContainer'); if(!container) return;
       if (!window.hasPerm('proc_view')) { container.innerHTML = `<div style="grid-column: 1 / -1; background: #ffe3e3; color: #e63946; padding: 15px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 13px;">No tienes permisos para ver el contenido de la Intranet.</div>`; return; }
-      let sorted = [...DB.proc].sort((a, b) => (b.fecha || 0) - (a.fecha || 0)); let recent = sorted.slice(0, 6);
+      
+      const now = new Date();
+      let f = DB.proc.filter(p => {
+          if ((p.estado || 'activo') === 'eliminado') return false; 
+          if (p.caducidad && new Date(p.caducidad + 'T23:59:59') < now) return false; 
+          return true;
+      });
+
+      let sorted = [...f].sort((a, b) => (b.fecha || 0) - (a.fecha || 0)); let recent = sorted.slice(0, 6);
       if(recent.length === 0) { container.innerHTML = `<div style="grid-column: 1 / -1; color: var(--mid-gray); font-size: 13px; text-align: center; padding: 20px;">Aún no se ha publicado ningún procedimiento.</div>`; return; }
+      
       let html = "";
       recent.forEach(p => {
           let dateStr = p.fecha ? new Date(p.fecha).toLocaleDateString() : "Reciente";
           let icon = '<i class="fa-solid fa-file-lines" style="color:var(--light-blue); font-size: 24px; margin-right: 15px;"></i>';
           if(p.modo === 'drive') icon = '<i class="fa-brands fa-google-drive" style="color:#00A65A; font-size: 24px; margin-right: 15px;"></i>';
           
-          let likes = p.likes || [];
-          let hasLiked = SESION && SESION.id ? likes.includes(SESION.id) : false;
-          let likeColor = hasLiked ? 'var(--light-blue)' : '#adb5bd';
-
-          html += `<div class="proc-card-home" onclick="window.goToProc('${p.id}')">
-                      <div style="display:flex; align-items:flex-start;">
-                          ${icon}
-                          <div>
-                              <div class="cat"><i class="fa-solid fa-folder-open"></i> ${p.cat || 'General'}</div>
-                              <h4 class="tit">${p.tit}</h4>
-                          </div>
-                      </div>
-                      <div class="date">
-                          <span>Publicado: ${dateStr}</span>
-                          <span style="display:flex; align-items:center; gap:5px; color: ${likeColor}; font-weight: bold; font-size: 12px;" title="${likes.length} me gusta">
-                              <i class="fa-solid fa-thumbs-up"></i> ${likes.length}
-                          </span>
-                      </div>
-                  </div>`;
+          let fIcon = p.fija ? '<span title="Fijado">📌</span> ' : '';
+          let likes = p.likes || []; let hasLiked = SESION && SESION.id ? likes.includes(SESION.id) : false; let likeColor = hasLiked ? 'var(--light-blue)' : '#adb5bd';
+          html += `<div class="proc-card-home" onclick="window.goToProc('${p.id}')"><div style="display:flex; align-items:flex-start;">${icon}<div><div class="cat"><i class="fa-solid fa-folder-open"></i> ${p.cat || 'General'}</div><h4 class="tit">${fIcon}${p.tit}</h4></div></div><div class="date"><span>Publicado: ${dateStr}</span><span style="display:flex; align-items:center; gap:5px; color: ${likeColor}; font-weight: bold; font-size: 12px;" title="${likes.length} me gusta"><i class="fa-solid fa-thumbs-up"></i> ${likes.length}</span></div></div>`;
       });
       container.innerHTML = html;
   };
@@ -1255,18 +1428,54 @@
   window.setProcMode = function(mode, autoSync = true) { PROC_MODE = mode; const btnV = document.getElementById('btnModoVisual'); const btnC = document.getElementById('btnModoCodigo'); const btnD = document.getElementById('btnModoDrive'); const boxV = document.getElementById('boxProcVisual'); const boxC = document.getElementById('boxProcCodigo'); const boxD = document.getElementById('boxProcDrive'); btnV.style.background = 'var(--mid-gray)'; boxV.classList.add('hidden'); btnC.style.background = 'var(--mid-gray)'; boxC.classList.add('hidden'); if(btnD) { btnD.style.background = 'var(--mid-gray)'; boxD.classList.add('hidden'); } if (mode === 'visual') { btnV.style.background = 'var(--blue)'; boxV.classList.remove('hidden'); } else if (mode === 'codigo') { btnC.style.background = 'var(--blue)'; boxC.classList.remove('hidden'); } else if (mode === 'drive') { btnD.style.background = 'var(--blue)'; boxD.classList.remove('hidden'); } };
   
   window.renderProcMenu = function(isSearch = false) {
-      const container = document.getElementById('procSidebarMenu'); if (!LOAD_STATE.proc) { container.innerHTML = `<div class="spinner-container" style="padding: 20px;"><div class="spinner" style="width:30px; height:30px;"></div><div class="loading-text" style="font-size:12px;">Cargando...</div></div>`; return; }
-      const qInput = document.getElementById('searchProcBox'); const query = qInput ? qInput.value : ''; let f = DB.proc; 
-      if(query) { 
-          f = DB.proc.filter(p => {
-              let tempDiv = document.createElement("div");
-              tempDiv.innerHTML = p.html || "";
-              let plainText = tempDiv.textContent || tempDiv.innerText || "";
-              return window.matchSearch(`${p.tit} ${p.cat} ${plainText}`, query);
-          }); 
-      } 
+      const container = document.getElementById('procSidebarMenu'); 
+      if (!LOAD_STATE.proc) { container.innerHTML = `<div class="spinner-container" style="padding: 20px;"><div class="spinner" style="width:30px; height:30px;"></div><div class="loading-text" style="font-size:12px;">Cargando...</div></div>`; return; }
+      const qInput = document.getElementById('searchProcBox'); const query = qInput ? qInput.value : ''; 
+      
+      const now = new Date();
+      let f = DB.proc.filter(p => {
+          if ((p.estado || 'activo') === 'eliminado') return false; 
+          if (p.caducidad && new Date(p.caducidad + 'T23:59:59') < now) return false; 
+          return true;
+      });
+
+      if(query) { f = f.filter(p => { let tempDiv = document.createElement("div"); tempDiv.innerHTML = p.html || ""; let plainText = tempDiv.textContent || tempDiv.innerText || ""; return window.matchSearch(`${p.tit} ${p.cat} ${plainText}`, query); }); } 
       if (f.length === 0) { container.innerHTML = `<p style="padding:20px; color:var(--light-blue); font-size:13px; font-weight:bold; text-align:center;">No se encontraron resultados.</p>`; return; } 
-      const grupos = {}; f.forEach(p => { let cat = p.cat || "General"; if(!grupos[cat]) grupos[cat] = []; grupos[cat].push(p); }); let html = ""; Object.keys(grupos).sort().forEach(cat => { html += `<div class="proc-cat-header"><i class="fa-solid fa-folder-open"></i> ${cat}</div>`; grupos[cat].sort((a,b)=>a.tit.localeCompare(b.tit)).forEach(p => { let icon = '<i class="fa-regular fa-file-lines" style="color:var(--light-blue); font-size: 16px;"></i>'; html += `<a class="proc-item-link" id="linkProc_${p.id}" onclick="window.abrirProcedimiento('${p.id}')">${icon} <span style="flex:1;">${p.tit}</span></a>`; }); }); container.innerHTML = html; const viewer = document.getElementById('procViewerContainer'); if(viewer && viewer.dataset.activeId) { let act = document.getElementById(`linkProc_${viewer.dataset.activeId}`); if(act) act.classList.add('active'); }
+      
+      const grupos = {}; 
+      f.forEach(p => { let cat = p.cat || "General"; if(!grupos[cat]) grupos[cat] = []; grupos[cat].push(p); }); 
+      
+      let html = ""; 
+      const viewer = document.getElementById('procViewerContainer');
+      const activeId = viewer ? viewer.dataset.activeId : null;
+
+      Object.keys(grupos).sort().forEach((cat, index) => { 
+          let hasActive = activeId && grupos[cat].some(p => p.id === activeId);
+          let isOpen = query !== '' || hasActive || index === 0; 
+          
+          html += `
+          <div class="proc-cat-wrapper">
+              <div class="proc-cat-header" onclick="this.nextElementSibling.classList.toggle('open'); this.querySelector('.chevron-icon').classList.toggle('rotate')">
+                  <span><i class="fa-solid fa-folder-open"></i> ${cat}</span>
+                  <i class="fa-solid fa-chevron-down chevron-icon ${isOpen ? 'rotate' : ''}"></i>
+              </div>
+              <div class="proc-cat-items ${isOpen ? 'open' : ''}">
+          `; 
+          
+          grupos[cat].sort((a,b) => {
+              if(a.fija && !b.fija) return -1;
+              if(!a.fija && b.fija) return 1;
+              return a.tit.localeCompare(b.tit);
+          }).forEach(p => { 
+              let icon = p.fija ? '📌' : '<i class="fa-regular fa-file-lines" style="color:var(--light-blue); font-size: 16px;"></i>'; 
+              let txtStyle = p.fija ? 'font-weight:700; color:var(--blue);' : '';
+              html += `<a class="proc-item-link" id="linkProc_${p.id}" onclick="window.abrirProcedimiento('${p.id}')"><span style="width:20px; display:inline-block; text-align:center;">${icon}</span> <span style="flex:1; ${txtStyle}">${p.tit}</span></a>`; 
+          }); 
+          html += `</div></div>`;
+      }); 
+      container.innerHTML = html; 
+      
+      if(activeId) { let act = document.getElementById(`linkProc_${activeId}`); if(act) act.classList.add('active'); }
   };
 
   window.visualizeDriveFile = function(url, idx) {
@@ -1280,78 +1489,21 @@
       document.querySelectorAll('.proc-item-link').forEach(el => el.classList.remove('active')); const activeLink = document.getElementById(`linkProc_${id}`); if(activeLink) activeLink.classList.add('active'); const proc = DB.proc.find(p => p.id === id); const viewer = document.getElementById('procViewerContainer');
       if(proc) {
           viewer.dataset.activeId = id; let contentHtml = "";
-          
           if (proc.modo === 'drive') {
-              let links = [];
-              try { 
-                  links = JSON.parse(proc.driveLink || "[]"); 
-              } catch(e) { 
-                  let rawLinks = (proc.driveLink || "").split(/[\n,]+/).map(l => l.trim()).filter(l => l !== "");
-                  links = rawLinks.map((url, idx) => ({ n: "Documento " + (idx+1), u: url }));
-              }
-              
+              let links = []; try { links = JSON.parse(proc.driveLink || "[]"); } catch(e) { let rawLinks = (proc.driveLink || "").split(/[\n,]+/).map(l => l.trim()).filter(l => l !== ""); links = rawLinks.map((url, idx) => ({ n: "Documento " + (idx+1), u: url })); }
               if(links.length > 0) {
-                  let filesGridHtml = `<div class="proc-files-grid">`;
-                  let firstUrl = "";
-                  
+                  let filesGridHtml = `<div class="proc-files-grid">`; let firstUrl = "";
                   links.forEach((linkObj, idx) => {
-                      let url = linkObj.u;
-                      let title = linkObj.n || ("Documento " + (idx+1));
-                      let previewUrl = url;
-                      let downloadUrl = url;
-                      
-                      let fileMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-                      let folderMatch = url.match(/\/folders\/([a-zA-Z0-9_-]+)/);
-                      
-                      if(fileMatch) {
-                          previewUrl = `https://drive.google.com/file/d/${fileMatch[1]}/preview`;
-                          downloadUrl = `https://drive.google.com/uc?export=download&id=${fileMatch[1]}`;
-                      } else if(folderMatch) {
-                          previewUrl = `https://drive.google.com/embeddedfolderview?id=${folderMatch[1]}#grid`;
-                      }
-
+                      let url = linkObj.u; let title = linkObj.n || ("Documento " + (idx+1)); let previewUrl = url; let downloadUrl = url; let fileMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/); let folderMatch = url.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+                      if(fileMatch) { previewUrl = `https://drive.google.com/file/d/${fileMatch[1]}/preview`; downloadUrl = `https://drive.google.com/uc?export=download&id=${fileMatch[1]}`; } else if(folderMatch) { previewUrl = `https://drive.google.com/embeddedfolderview?id=${folderMatch[1]}#grid`; }
                       if(idx === 0) firstUrl = previewUrl;
-
-                      filesGridHtml += `
-                      <div class="proc-file-card ${idx === 0 ? 'active-file' : ''}" id="fileCard_${idx}">
-                          <div class="proc-file-meta">
-                              <div class="proc-file-badge"><i class="fa-solid fa-file-pdf"></i></div>
-                              <div class="proc-file-title">${title}</div>
-                          </div>
-                          <div class="proc-file-btn-group">
-                              <button class="btn btn-p" style="padding: 6px 14px; font-size:11px; box-shadow:none;" onclick="window.visualizeDriveFile('${previewUrl}', ${idx})" title="Leer documento integrado"><i class="fa-solid fa-eye"></i> Leer</button>
-                              <a href="${downloadUrl}" target="_blank" class="btn btn-o" style="padding: 6px 14px; font-size:11px; border-color:var(--border-soft); box-shadow:none;" title="Descargar PDF en equipo local"><i class="fa-solid fa-download"></i> Descargar</a>
-                          </div>
-                      </div>`;
-                  });
-                  filesGridHtml += `</div>`;
-
-                  contentHtml = `<div style="background: white; border-radius: 8px; border: 1px solid var(--border-soft); padding: 25px;">
-                      <div style="margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
-                          <h3 style="margin: 0; color: var(--blue); font-size: 20px;"><i class="fa-brands fa-google-drive" style="color: #00A65A;"></i> ${proc.tit}</h3>
-                          ${window.getLikeButtonHtml(proc)}
-                      </div>
-                      
-                      <div class="proc-attachments-container">
-                          <div class="proc-attachments-title"><i class="fa-solid fa-paperclip" style="color:var(--light-blue)"></i> Documentación de Consulta Rápida</div>
-                          ${filesGridHtml}
-                      </div>
-
-                      <div style="width: 100%; height: 75vh; min-height: 600px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border-soft); background: #f8fafc;">
-                          <iframe id="procDriveIframe" src="${firstUrl}" width="100%" height="100%" style="border: none;" allow="autoplay"></iframe>
-                      </div>
-                  </div>`;
-              } else { 
-                  contentHtml = `<div style="text-align:center; padding: 50px; color:#e63946; font-weight:bold;">No hay enlaces válidos para mostrar.</div>`; 
-              }
+                      filesGridHtml += `<div class="proc-file-card ${idx === 0 ? 'active-file' : ''}" id="fileCard_${idx}"><div class="proc-file-meta"><div class="proc-file-badge"><i class="fa-solid fa-file-pdf"></i></div><div class="proc-file-title">${title}</div></div><div class="proc-file-btn-group"><button class="btn btn-p" style="padding: 6px 14px; font-size:11px; box-shadow:none;" onclick="window.visualizeDriveFile('${previewUrl}', ${idx})" title="Leer documento integrado"><i class="fa-solid fa-eye"></i> Leer</button><a href="${downloadUrl}" target="_blank" class="btn btn-o" style="padding: 6px 14px; font-size:11px; border-color:var(--border-soft); box-shadow:none;" title="Descargar PDF en equipo local"><i class="fa-solid fa-download"></i> Descargar</a></div></div>`;
+                  }); filesGridHtml += `</div>`;
+                  contentHtml = `<div style="background: white; border-radius: 8px; border: 1px solid var(--border-soft); padding: 25px;"><div style="margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 15px; display:flex; justify-content:space-between; align-items:center;"><h3 style="margin: 0; color: var(--blue); font-size: 20px;"><i class="fa-brands fa-google-drive" style="color: #00A65A;"></i> ${proc.tit}</h3>${window.getLikeButtonHtml(proc)}</div><div class="proc-attachments-container"><div class="proc-attachments-title"><i class="fa-solid fa-paperclip" style="color:var(--light-blue)"></i> Documentación de Consulta Rápida</div>${filesGridHtml}</div><div style="width: 100%; height: 75vh; min-height: 600px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border-soft); background: #f8fafc;"><iframe id="procDriveIframe" src="${firstUrl}" width="100%" height="100%" style="border: none;" allow="autoplay"></iframe></div></div>`;
+              } else { contentHtml = `<div style="text-align:center; padding: 50px; color:#e63946; font-weight:bold;">No hay enlaces válidos para mostrar.</div>`; }
           } else { 
               let claseEditor = proc.modo === 'codigo' ? '' : 'ql-editor';
-              contentHtml = `
-              <div style="margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
-                  <h3 style="margin: 0; color: var(--blue); font-size: 24px;">${proc.tit}</h3>
-                  ${window.getLikeButtonHtml(proc)}
-              </div>
-              <div class="${claseEditor}" style="padding:0; overflow-y:visible; font-size:15px; color: var(--dark-gray); line-height: 1.6;">${proc.html || ''}</div>`;
+              contentHtml = `<div style="margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 15px; display:flex; justify-content:space-between; align-items:center;"><h3 style="margin: 0; color: var(--blue); font-size: 24px;">${proc.tit}</h3>${window.getLikeButtonHtml(proc)}</div><div class="${claseEditor}" style="padding:0; overflow-y:visible; font-size:15px; color: var(--dark-gray); line-height: 1.6;">${proc.html || ''}</div>`;
           }
           if(!proc.html && proc.modo !== 'drive') contentHtml = "<i style='color:var(--mid-gray);'>El documento está vacío.</i>"; viewer.innerHTML = contentHtml;
           const scripts = viewer.querySelectorAll('script'); scripts.forEach(oldScript => { const newScript = document.createElement('script'); Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value)); newScript.appendChild(document.createTextNode(oldScript.innerHTML)); oldScript.parentNode.replaceChild(newScript, oldScript); });
@@ -1363,137 +1515,117 @@
       const btnSave = document.getElementById('btnSaveProc'); 
       const cat = document.getElementById('admProcCat').value.trim() || "General"; 
       const tit = document.getElementById('admProcTit').value.trim(); 
-      let htmlContent = ""; 
-      let driveLink = ""; 
+      const caducidad = document.getElementById('admProcCaducidad').value;
+      const fija = document.getElementById('admProcFija').checked;
+      let htmlContent = ""; let driveLink = ""; 
       
-      if (PROC_MODE === 'visual') { 
-          htmlContent = quillEditor.root.innerHTML; 
-          if(htmlContent === '<p><br></p>') htmlContent = ""; 
-      } else if (PROC_MODE === 'codigo') { 
-          htmlContent = document.getElementById('admProcHtml').value.trim(); 
-      } else if (PROC_MODE === 'drive') { 
-          const linksJson = window.getDriveLinks();
-          if(linksJson === "[]") return alert("Debes colocar al menos un enlace de Drive.");
-          driveLink = linksJson;
-      } 
+      if (PROC_MODE === 'visual') { htmlContent = quillEditor.root.innerHTML; if(htmlContent === '<p><br></p>') htmlContent = ""; } 
+      else if (PROC_MODE === 'codigo') { htmlContent = document.getElementById('admProcHtml').value.trim(); } 
+      else if (PROC_MODE === 'drive') { const linksJson = window.getDriveLinks(); if(linksJson === "[]") return alert("Debes colocar al menos un enlace de Drive."); driveLink = linksJson; } 
       
       if(!tit) return alert("El título es obligatorio."); 
       if(PROC_MODE !== 'drive' && !htmlContent) return alert("Debes escribir contenido en el procedimiento."); 
       
       btnSave.disabled = true; btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...'; 
       try { 
-          let payload = { cat, tit, html: htmlContent, driveLink: driveLink, modo: PROC_MODE }; 
+          let payload = { cat, tit, html: htmlContent, driveLink: driveLink, modo: PROC_MODE, caducidad, fija, estado: 'activo' }; 
           if (EDITING_PROC_ID) { 
               await updateDoc(doc(db, "procedimientos_html", EDITING_PROC_ID), payload); 
-              window.logAct("Procedimientos", "Editar", "Se actualizó: " + tit);
-              alert("Procedimiento actualizado."); 
-              window.cancelarEdicionProc(); 
+              window.logAct("Procedimientos", "Editar", "Se actualizó: " + tit); alert("Procedimiento actualizado."); 
           } else { 
-              payload.fecha = Date.now(); 
-              payload.likes = []; 
+              payload.fecha = Date.now(); payload.likes = []; 
               await addDoc(collection(db, "procedimientos_html"), payload); 
-              window.logAct("Procedimientos", "Crear", "Nuevo manual: " + tit);
-              alert("Procedimiento creado."); 
-              window.cancelarEdicionProc(); 
+              window.logAct("Procedimientos", "Crear", "Nuevo manual: " + tit); alert("Procedimiento creado."); 
           } 
-      } catch(e) { 
-          alert("Error al guardar."); console.error(e); 
-      } finally { 
-          btnSave.disabled = false; btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Procedimiento'; 
-      } 
+          window.cancelarEdicionProc();
+      } catch(e) { alert("Error al guardar."); } finally { btnSave.disabled = false; btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Procedimiento'; } 
   };
   
   window.editarProc = function(id) { 
-      EDITING_PROC_ID = id; 
-      const p = DB.proc.find(x => x.id === id); 
+      EDITING_PROC_ID = id; const p = DB.proc.find(x => x.id === id); 
       document.getElementById('admProcCat').value = p.cat || ''; 
       document.getElementById('admProcTit').value = p.tit || ''; 
-      
+      document.getElementById('admProcCaducidad').value = p.caducidad || '';
+      document.getElementById('admProcFija').checked = p.fija || false;
       document.getElementById('driveLinksContainer').innerHTML = '';
-      if(p.modo === 'drive' && p.driveLink) {
-          try {
-              let parsed = JSON.parse(p.driveLink);
-              if(Array.isArray(parsed)) {
-                  parsed.forEach(link => window.addDriveLinkRow(link.n, link.u));
-              } else {
-                  window.addDriveLinkRow('Documento', p.driveLink);
-              }
-          } catch(e) { 
-              let rawLinks = (p.driveLink || "").split(/[\n,]+/).map(l => l.trim()).filter(l => l !== "");
-              rawLinks.forEach((l, i) => window.addDriveLinkRow('Documento '+(i+1), l));
-          }
-      } else {
-          window.addDriveLinkRow(); 
-      }
-
-      const modoGuardado = p.modo || 'visual'; 
-      window.setProcMode(modoGuardado, false); 
-      
-      if(modoGuardado === 'visual') { 
-          quillEditor.root.innerHTML = p.html || ''; 
-          document.getElementById('admProcHtml').value = ''; 
-      } else { 
-          quillEditor.root.innerHTML = ''; 
-          document.getElementById('admProcHtml').value = p.html || ''; 
-      } 
-      
-      const btnSave = document.getElementById('btnSaveProc'); 
-      btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios'; 
-      btnSave.classList.replace('btn-s', 'btn-p'); 
-      document.getElementById('btnCancelProc').classList.remove('hidden'); 
-      document.querySelector('.ajs-content').scrollTo({ top: 0, behavior: 'smooth' }); 
+      if(p.modo === 'drive' && p.driveLink) { try { let parsed = JSON.parse(p.driveLink); if(Array.isArray(parsed)) { parsed.forEach(link => window.addDriveLinkRow(link.n, link.u)); } else { window.addDriveLinkRow('Documento', p.driveLink); } } catch(e) { let rawLinks = (p.driveLink || "").split(/[\n,]+/).map(l => l.trim()).filter(l => l !== ""); rawLinks.forEach((l, i) => window.addDriveLinkRow('Documento '+(i+1), l)); } } else { window.addDriveLinkRow(); }
+      const modoGuardado = p.modo || 'visual'; window.setProcMode(modoGuardado, false); 
+      if(modoGuardado === 'visual') { quillEditor.root.innerHTML = p.html || ''; document.getElementById('admProcHtml').value = ''; } else { quillEditor.root.innerHTML = ''; document.getElementById('admProcHtml').value = p.html || ''; } 
+      const btnSave = document.getElementById('btnSaveProc'); btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios'; btnSave.classList.replace('btn-s', 'btn-p'); document.getElementById('btnCancelProc').classList.remove('hidden'); document.querySelector('.ajs-content').scrollTo({ top: 0, behavior: 'smooth' }); 
   };
   
   window.cancelarEdicionProc = function() { 
-      EDITING_PROC_ID = null; 
-      document.getElementById('admProcTit').value = ''; 
-      document.getElementById('admProcCat').value = ''; 
-      quillEditor.root.innerHTML = ''; 
-      document.getElementById('admProcHtml').value = ''; 
-      document.getElementById('driveLinksContainer').innerHTML = '';
-      window.addDriveLinkRow(); 
-      window.setProcMode('visual', false); 
-      const btnSave = document.getElementById('btnSaveProc'); 
-      btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Procedimiento'; 
-      btnSave.classList.replace('btn-p', 'btn-s'); 
-      document.getElementById('btnCancelProc').classList.add('hidden'); 
+      EDITING_PROC_ID = null; document.getElementById('admProcTit').value = ''; document.getElementById('admProcCat').value = ''; document.getElementById('admProcCaducidad').value = ''; document.getElementById('admProcFija').checked = false; quillEditor.root.innerHTML = ''; document.getElementById('admProcHtml').value = ''; document.getElementById('driveLinksContainer').innerHTML = ''; window.addDriveLinkRow(); window.setProcMode('visual', false); 
+      const btnSave = document.getElementById('btnSaveProc'); btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Procedimiento'; btnSave.classList.replace('btn-p', 'btn-s'); document.getElementById('btnCancelProc').classList.add('hidden'); 
   };
   
   window.eliminarProc = async function(id) { 
-      if(!confirm("¿Estás seguro de eliminar este procedimiento de forma permanente?")) return; 
-      try {
-          const p = DB.proc.find(x => x.id === id);
-          await deleteDoc(doc(db, "procedimientos_html", id)); 
-          window.logAct("Procedimientos", "Eliminar", "Documento eliminado: " + (p?p.tit:''));
+      if(!confirm("¿Enviar este procedimiento a la papelera? (Podrás restaurarlo después)")) return; 
+      try { 
+          await updateDoc(doc(db, "procedimientos_html", id), { estado: 'eliminado', fecha_eliminacion: Date.now() }); 
+          window.logAct("Procedimientos", "Papelera", "Documento enviado a la papelera"); 
+          window.showToast("Movido a la papelera");
           if(EDITING_PROC_ID === id) window.cancelarEdicionProc(); 
-          window.showToastSuccess("Procedimiento eliminado con éxito");
           
-          DB.proc = DB.proc.filter(p => p.id !== id);
-          window.renderAdminProcList();
-          window.renderProcMenu();
-          window.renderInicioRecientes();
-          
-          const viewer = document.getElementById('procViewerContainer');
-          if(viewer.dataset.activeId === id) {
-              viewer.innerHTML = '<div style="text-align:center; padding: 100px 0; color: #adb5bd;"><i class="fa-solid fa-file-signature" style="font-size: 60px; margin-bottom:20px; color:#dce4ec;"></i><h2 style="color: var(--blue); margin-top: 0;">Documento Eliminado</h2><p style="font-size: 15px;">Selecciona otro documento de la lista.</p></div>';
-              delete viewer.dataset.activeId;
+          const viewer = document.getElementById('procViewerContainer'); 
+          if(viewer && viewer.dataset.activeId === id) { 
+              viewer.innerHTML = '<div style="text-align:center; padding: 100px 0; color: #adb5bd;"><i class="fa-solid fa-file-signature" style="font-size: 60px; margin-bottom:20px; color:#dce4ec;"></i><h2 style="color: var(--blue); margin-top: 0;">Selecciona un documento</h2></div>'; 
+              delete viewer.dataset.activeId; 
           }
-      } catch(e) {
-          alert("Error: " + e.message);
-      } 
+      } catch(e) { alert("Error: " + e.message); } 
+  };
+
+  window.togglePapelera = function() {
+      SHOW_PAPELERA = !SHOW_PAPELERA;
+      const btn = document.getElementById('btnTogglePapelera');
+      if(SHOW_PAPELERA) {
+          btn.innerHTML = '<i class="fa-solid fa-arrow-left"></i> Volver a Activos';
+          btn.classList.replace('btn-o', 'btn-d');
+      } else {
+          btn.innerHTML = '<i class="fa-solid fa-trash-can"></i> Ver Papelera';
+          btn.classList.replace('btn-d', 'btn-o');
+      }
+      window.renderAdminProcList();
+  };
+
+  window.restaurarProc = async function(id) {
+      await updateDoc(doc(db, "procedimientos_html", id), { estado: 'activo' });
+      window.logAct("Procedimientos", "Restaurar", "Documento restaurado");
+      window.showToastSuccess("Procedimiento restaurado");
+  };
+
+  window.eliminarProcDefinitivo = async function(id) {
+      if(!confirm("⚠️ ¿Eliminar DEFINITIVAMENTE? Esta acción no se puede deshacer.")) return;
+      await deleteDoc(doc(db, "procedimientos_html", id));
+      window.logAct("Procedimientos", "Eliminar Permanente", "Documento borrado del sistema");
+      window.showToast("Documento eliminado permanentemente");
   };
   
   window.renderAdminProcList = function() { 
-      const q = document.getElementById('searchProcAdmBox').value; let f = DB.proc; 
-      if (q) {
-          f = f.filter(p => {
-              let tempDiv = document.createElement("div");
-              tempDiv.innerHTML = p.html || "";
-              let plainText = tempDiv.textContent || tempDiv.innerText || "";
-              return window.matchSearch(`${p.tit} ${p.cat} ${plainText}`, q);
-          });
-      }
-      const container = document.getElementById('adminProcListContainer'); container.innerHTML = f.map(p => { let badgeModo = ""; if(p.modo === 'codigo') badgeModo = `<span style="background:var(--mid-gray); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-code"></i> HTML</span>`; else if(p.modo === 'drive') badgeModo = `<span style="background:var(--green); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-brands fa-google-drive"></i> Drive</span>`; else badgeModo = `<span style="background:var(--blue); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-pen-nib"></i> Visual</span>`; return `<div class="mod-list-item"><div><b style="color:var(--blue);">${p.tit}</b> ${badgeModo}<br><small style="color:var(--light-blue); font-weight:bold;"><i class="fa-solid fa-folder-open"></i> ${p.cat || "General"}</small></div><div><button onclick="window.editarProc('${p.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarProc('${p.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>` }).join('') || '<p style="font-size:13px; color:var(--mid-gray);">No hay procedimientos registrados.</p>'; 
+      const q = document.getElementById('searchProcAdmBox').value; 
+      let f = DB.proc.filter(p => (p.estado || 'activo') === (SHOW_PAPELERA ? 'eliminado' : 'activo'));
+      
+      if (q) { f = f.filter(p => { let tempDiv = document.createElement("div"); tempDiv.innerHTML = p.html || ""; let plainText = tempDiv.textContent || tempDiv.innerText || ""; return window.matchSearch(`${p.tit} ${p.cat} ${plainText}`, q); }); }
+      
+      const container = document.getElementById('adminProcListContainer'); 
+      container.innerHTML = f.map(p => { 
+          let badgeModo = p.modo === 'codigo' ? `<span style="background:var(--mid-gray); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-code"></i> HTML</span>` : (p.modo === 'drive' ? `<span style="background:var(--green); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-brands fa-google-drive"></i> Drive</span>` : `<span style="background:var(--blue); color:white; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;"><i class="fa-solid fa-pen-nib"></i> Visual</span>`); 
+          
+          let badgeFija = p.fija ? `<span title="Publicación Fija">📌</span> ` : '';
+          let isCaducado = p.caducidad && new Date(p.caducidad + 'T23:59:59') < new Date();
+          let badgeCaducidad = p.caducidad ? `<span style="font-size:10px; font-weight:bold; color:${isCaducado ? '#e63946' : 'var(--mid-gray)'}; margin-left:5px;"><i class="fa-regular fa-clock"></i> Exp: ${p.caducidad} ${isCaducado ? '(Vencido)' : ''}</span>` : '';
+
+          let actions = '';
+          if(SHOW_PAPELERA) {
+              actions = `<button onclick="window.restaurarProc('${p.id}')" class="btn btn-s" style="padding: 4px 8px; font-size:11px;" title="Restaurar a Intranet"><i class="fa-solid fa-rotate-left"></i></button>
+                         <button onclick="window.eliminarProcDefinitivo('${p.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;" title="Borrar Permanente"><i class="fa-solid fa-trash"></i></button>`;
+          } else {
+              actions = `<button onclick="window.editarProc('${p.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button>
+                         <button onclick="window.eliminarProc('${p.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;" title="Enviar a Papelera"><i class="fa-solid fa-trash-can"></i></button>`;
+          }
+
+          return `<div class="mod-list-item"><div><b style="color:var(--blue);">${badgeFija}${p.tit}</b> ${badgeModo} ${badgeCaducidad}<br><small style="color:var(--light-blue); font-weight:bold;"><i class="fa-solid fa-folder-open"></i> ${p.cat || "General"}</small></div><div>${actions}</div></div>` 
+      }).join('') || `<p style="font-size:13px; color:var(--mid-gray); text-align:center; padding: 20px;">No hay procedimientos en esta vista.</p>`; 
   };
 
   // ================= MODALES ESTÁTICOS Y CONFIG COLORES =================
