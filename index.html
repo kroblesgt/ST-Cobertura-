@@ -44,22 +44,22 @@
   .app-layout { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
   
   /* SIDEBAR (MENÚ LATERAL) */
-  .sidebar { width: 260px; background: white; border-right: 1px solid var(--border-soft); display: flex; flex-direction: column; flex-shrink: 0; z-index: 1000; transition: all 0.3s ease; }
-  .sidebar-header { height: 60px; display: flex; align-items: center; padding: 0 20px; border-bottom: 1px solid var(--border-soft); font-size: 18px; font-weight: 800; color: var(--blue); gap: 10px; white-space: nowrap; }
+  .sidebar { width: 260px; background: linear-gradient(195deg, var(--blue) 0%, #081a30 100%); border-right: none; display: flex; flex-direction: column; flex-shrink: 0; z-index: 1000; transition: all 0.3s ease; box-shadow: 4px 0 20px rgba(0,0,0,0.08); }
+  .sidebar-header { height: 60px; display: flex; align-items: center; padding: 0 20px; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 18px; font-weight: 800; color: white; gap: 10px; white-space: nowrap; }
   .sidebar-menu { padding: 15px; display: flex; flex-direction: column; gap: 5px; flex: 1; overflow-y: auto; scrollbar-width: thin; }
   .sidebar-menu::-webkit-scrollbar { width: 4px; }
-  .sidebar-menu::-webkit-scrollbar-thumb { background: #ced4da; border-radius: 10px; }
+  .sidebar-menu::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
 
-  .tab-btn { padding: 12px 15px; font-weight: 600; font-size: 13px; color: var(--mid-gray); cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 12px; border-radius: 8px; border: 1px solid transparent; user-select: none; }
+  .tab-btn { padding: 12px 15px; font-weight: 600; font-size: 13px; color: #a9bdd6; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 12px; border-radius: 8px; border: 1px solid transparent; user-select: none; }
   .tab-btn i { width: 20px; text-align: center; font-size: 16px; }
-  .tab-btn:hover { background: #f8fafc; color: var(--blue); }
-  .tab-btn.active { background: #e0eaf5; color: var(--light-blue); font-weight: 700; border: 1px solid #cce0f5;}
+  .tab-btn:hover { background: rgba(255,255,255,0.06); color: white; }
+  .tab-btn.active { background: linear-gradient(135deg, var(--light-blue) 0%, #0088c9 100%); color: white; font-weight: 700; border: 1px solid transparent; box-shadow: 0 4px 12px rgba(0,159,227,0.35);}
 
   /* CONTENIDO PRINCIPAL */
   .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
   
   /* HEADER SUPERIOR */
-  header { height: 60px; background: white; display: flex; align-items: center; justify-content: flex-end; padding: 0 30px; border-bottom: 1px solid var(--border-soft); box-shadow: 0 2px 10px rgba(0,0,0,0.02); flex-shrink: 0; }
+  header { height: 60px; background: linear-gradient(90deg, #ffffff 0%, #f7fbfe 100%); display: flex; align-items: center; justify-content: flex-end; padding: 0 30px; border-bottom: 1px solid var(--border-soft); box-shadow: 0 2px 10px rgba(10,34,64,0.04); flex-shrink: 0; }
   .header-actions { display: flex; align-items: center; gap: 20px; }
   .user-info { text-align: right; font-size: 13px; line-height: 1.2; }
   
@@ -81,14 +81,14 @@
   .proc-card-home .date { font-size: 11px; color: var(--mid-gray); margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border-soft); display: flex; justify-content: space-between; align-items: center;}
 
   /* LOGIN */
-  .login-wrapper { height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, var(--bg) 0%, #ffffff 100%); padding: 15px; box-sizing: border-box; }
-  .login-box { background: white; padding: 40px; width: 100%; max-width: 340px; border-radius: 8px; box-shadow: 0 10px 40px rgba(10,34,64,0.1); border-top: 5px solid var(--blue); text-align: center; box-sizing: border-box;}
+  .login-wrapper { height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, var(--blue) 0%, #0d3a66 45%, var(--light-blue) 100%); padding: 15px; box-sizing: border-box; }
+  .login-box { background: white; padding: 40px; width: 100%; max-width: 340px; border-radius: 10px; box-shadow: 0 25px 60px rgba(0,0,0,0.25); border-top: 5px solid var(--light-blue); text-align: center; box-sizing: border-box;}
   .inp { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border-soft); border-radius: 4px; box-sizing: border-box; font-size: 14px; font-family: inherit; transition: 0.2s;}
   .inp:focus { border-color: var(--light-blue); box-shadow: 0 0 0 3px rgba(0,159,227,0.1); outline: none; }
   .inp:disabled { background: #e9ecef; color: #6c757d; cursor: not-allowed; }
   
   /* APP TOOLS */
-  .card { background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 20px; border: 1px solid var(--border-soft);}
+  .card { background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); overflow: hidden; margin-bottom: 20px; border: 1px solid var(--border-soft); border-top: 3px solid var(--light-blue);}
   .tools { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; justify-content: space-between; align-items: center; }
   .search-wrap { flex: 1; position: relative; min-width: 250px; }
   .search-wrap i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--light-blue); font-size: 16px;}
@@ -119,9 +119,10 @@
   /* TABLAS */
   .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; display: block;}
   table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; min-width: 900px; }
-  th { text-align: left; padding: 14px 15px; background: #f8fafc; color: var(--blue); border-bottom: 2px solid var(--border-soft); font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px;}
+  th { text-align: left; padding: 14px 15px; background: linear-gradient(180deg, #eef4fb 0%, #e3edf7 100%); color: var(--blue); border-bottom: 2px solid #cfe0f2; font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px;}
   td { padding: 12px 15px; border-bottom: 1px solid var(--border-soft); vertical-align: middle; word-wrap: break-word; }
-  tr:hover td { background-color: #f8fafc; }
+  tr:nth-child(even) td { background-color: #fafcfe; }
+  tr:hover td { background-color: #eaf3fb; }
   .badge { display: block; padding: 6px 0; text-align: center; border-radius: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; color: white; width: 100%; text-shadow: 0 1px 2px rgba(0,0,0,0.2); letter-spacing: 0.5px;}
   .badge-tag { display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; color: var(--blue); background: #e0eaf5; }
 
@@ -147,7 +148,7 @@
   .enc-footer { padding: 10px 15px; border-top: 1px solid var(--border-soft); display: flex; justify-content: flex-end; gap: 8px; background: white;}
   
   /* PROCEDIMIENTOS WIKI FULL WIDTH */
-  #moduloProcedimientos { display: flex; height: 100%; background: #fff; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); overflow: hidden; border: 1px solid var(--border-soft); }
+  #moduloProcedimientos, .dyn-proc-wrap { display: flex; height: 100%; background: #fff; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); overflow: hidden; border: 1px solid var(--border-soft); }
   .proc-sidebar { width: 320px; background: #f8fafc; border-right: 1px solid var(--border-soft); display: flex; flex-direction: column; flex-shrink: 0; }
   .proc-sidebar-header { padding: 20px; border-bottom: 1px solid var(--border-soft); background: white; }
   .proc-search-inp { width: 100%; padding: 12px 15px 12px 35px; border: 1px solid var(--border-soft); border-radius: 6px; font-size: 13px; box-sizing: border-box; background: #f8fafc; transition: 0.2s; }
@@ -202,7 +203,7 @@
   .modal-backdrop { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(10,34,64,0.7); display: flex; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(3px); padding: 15px; box-sizing: border-box;}
   .modal { background: white; width: 100%; max-width: 700px; padding: 30px; border-radius: 12px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; box-sizing: border-box; }
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; } .span-2 { grid-column: span 2; }
-  .form-inline { background: #f8fafc; padding: 15px; border-radius: 8px; display: flex; gap: 10px; margin-bottom: 15px; align-items: center; border: 1px solid var(--border-soft);}
+  .form-inline { background: #eef3f8; padding: 15px; border-radius: 8px; display: flex; gap: 10px; margin-bottom: 15px; align-items: center; border: 1px solid var(--border-soft);}
   .user-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #f1f3f5; }
 
   /* DASHBOARD DE AJUSTES */
@@ -212,10 +213,10 @@
   .ajs-menu-btn:hover { background: #f8fafc; color: var(--blue); }
   .ajs-menu-btn.active { background: #e0eaf5; color: var(--blue); border-left-color: var(--light-blue); }
   .ajs-content { flex: 1; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 30px; min-width: 0; position: relative; border: 1px solid var(--border-soft); height: 100%; overflow-y: auto;}
-  .perm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-top: 10px; background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid var(--border-soft);}
+  .perm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-top: 10px; background: #eef3f8; padding: 15px; border-radius: 6px; border: 1px solid var(--border-soft);}
   .perm-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--blue); font-weight: 500;}
   .perm-item input { cursor: pointer; width: 16px; height: 16px; accent-color: var(--light-blue);}
-  .mod-list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid var(--border-soft); background: #f8fafc; border-radius: 6px; margin-bottom: 10px;}
+  .mod-list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid var(--border-soft); background: #eef3f8; border-left: 3px solid var(--light-blue); border-radius: 6px; margin-bottom: 10px;}
 
   /* 📱 RESPONSIVE MOBILE */
   @media (max-width: 768px) {
@@ -226,6 +227,7 @@
     
     header { justify-content: space-between; padding: 0 15px; }
     .user-info { display: none; } 
+    #ambienteSwitcherBox select { max-width: 100px !important; font-size: 11px !important; }
     
     #mainContainer { padding: 10px; }
     
@@ -250,7 +252,7 @@
     .form-inline { flex-direction: column; align-items: stretch; }
     
     /* Layout de Procedimientos en móvil */
-    #moduloProcedimientos { flex-direction: column; height: calc(100vh - 140px); border:none; box-shadow:none;}
+    #moduloProcedimientos, .dyn-proc-wrap { flex-direction: column; height: calc(100vh - 140px); border:none; box-shadow:none;}
     .proc-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border-soft); height: 40%; overflow-y: auto; border-radius: 8px 8px 0 0;}
     .proc-viewer { padding: 15px; height: 60%; }
     .proc-document { padding: 20px 15px; min-height: auto; }
@@ -312,6 +314,10 @@
       <header>
         <button class="btn btn-o hide-desktop" style="padding: 8px 12px; border:none; color:var(--blue);" onclick="document.getElementById('appSidebar').classList.add('open'); document.getElementById('mobileOverlay').classList.remove('hidden');"><i class="fa-solid fa-bars fa-lg"></i></button>
         <div class="header-actions">
+          <div id="ambienteSwitcherBox" class="hidden" style="display:flex; align-items:center; gap:6px;">
+            <i class="fa-solid fa-building" style="color:var(--light-blue); font-size:14px;"></i>
+            <select id="selAmbienteActual" class="inp" style="margin:0; padding:6px 10px; font-size:12px; width:auto; max-width:170px;" onchange="window.setAmbienteActual(this.value)"></select>
+          </div>
           <div id="notifBell" class="hidden" style="position: relative; cursor: pointer; color: var(--blue); font-size: 20px; transition: 0.2s;" onclick="window.openPendingUsers()">
             <i class="fa-solid fa-bell"></i><span id="notifBadge" class="hidden" style="position: absolute; top: -5px; right: -8px; background: #e63946; color: white; border-radius: 50%; font-size: 10px; width: 18px; height: 18px; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 2px solid white;">0</span>
           </div>
@@ -345,7 +351,7 @@
             </div>
             <div class="card">
               <div class="table-responsive"><table><thead><tr><th width="15%">Municipio</th><th width="20%">Nombre</th><th width="12%">Categoría</th><th width="8%">Zona</th><th width="22%">Referencia</th><th width="23%">Estado / Acción</th></tr></thead><tbody id="tableBody"></tbody></table></div>
-              <div style="padding: 15px; display: flex; justify-content: center; align-items: center; gap: 20px; background: #f8fafc; border-top: 1px solid var(--border-soft);"><button onclick="window.changePage(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabel" style="font-weight: bold; font-size: 13px; color: var(--blue);">1 / 1</span><button onclick="window.changePage(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button></div>
+              <div style="padding: 15px; display: flex; justify-content: center; align-items: center; gap: 20px; background: #eef3f8; border-top: 1px solid var(--border-soft);"><button onclick="window.changePage(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabel" style="font-weight: bold; font-size: 13px; color: var(--blue);">1 / 1</span><button onclick="window.changePage(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button></div>
             </div>
         </div>
 
@@ -355,9 +361,9 @@
               <div class="search-wrap"><i class="fa-solid fa-search"></i><input id="searchTecBox" class="search-inp" placeholder="Buscar técnico, placa, DPI..." onkeyup="window.renderTecnicosTable(true)"></div>
               <div class="action-btns"><button id="btnAddTec" onclick="window.openModal('modalAddTec')" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i> Nuevo</button><button id="btnImpTec" onclick="document.getElementById('fileImportTec').click()" class="btn btn-o hidden"><i class="fa-solid fa-file-import"></i> Importar</button><button id="btnExpTec" onclick="window.exportTecnicosToExcel()" class="btn btn-x hidden"><i class="fa-solid fa-file-excel"></i> Exportar</button></div>
             </div>
-            <div class="card">
+            <div class="card" style="border-top-color: var(--green);">
               <div class="table-responsive"><table><thead><tr><th width="20%">Técnico</th><th width="15%">Teléfonos</th><th width="20%">Área</th><th width="15%">DPI</th><th width="15%">Placa</th><th width="15%">Acciones</th></tr></thead><tbody id="tableTecnicosBody"></tbody></table></div>
-              <div style="padding: 15px; display: flex; justify-content: center; align-items: center; gap: 20px; background: #f8fafc; border-top: 1px solid var(--border-soft);"><button onclick="window.changePageTec(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabelTec" style="font-weight: bold; font-size: 13px; color: var(--blue);">1 / 1</span><button onclick="window.changePageTec(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button></div>
+              <div style="padding: 15px; display: flex; justify-content: center; align-items: center; gap: 20px; background: #eef3f8; border-top: 1px solid var(--border-soft);"><button onclick="window.changePageTec(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabelTec" style="font-weight: bold; font-size: 13px; color: var(--blue);">1 / 1</span><button onclick="window.changePageTec(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button></div>
             </div>
         </div>
         
@@ -368,7 +374,7 @@
               <div class="action-btns"><button id="btnAddEnc" onclick="window.openModal('modalAddEnc')" class="btn btn-s hidden"><i class="fa-solid fa-plus"></i> Nuevo</button><button id="btnImpEnc" onclick="document.getElementById('fileImportEnc').click()" class="btn btn-o hidden"><i class="fa-solid fa-file-import"></i> Importar</button><button id="btnExpEnc" onclick="window.exportEncargadosToExcel()" class="btn btn-x hidden"><i class="fa-solid fa-file-excel"></i> Exportar</button></div>
             </div>
             <div id="gridEncargadosContainer"></div>
-            <div style="padding: 20px 15px; display: flex; justify-content: center; align-items: center; gap: 20px; clear:both;"><button onclick="window.changePageEnc(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabelEnc" style="font-weight: bold; font-size: 13px; background: white; padding: 6px 18px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: var(--blue);">1 / 1</span><button onclick="window.changePageEnc(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button></div>
+            <div style="padding: 20px 15px; display: flex; justify-content: center; align-items: center; gap: 20px; clear:both;"><button onclick="window.changePageEnc(-1)" class="btn btn-p"><i class="fa-solid fa-chevron-left"></i></button><span id="pageLabelEnc" style="font-weight: bold; font-size: 13px; background: white; padding: 6px 18px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.08); border: 1px solid var(--border-soft); color: var(--blue);">1 / 1</span><button onclick="window.changePageEnc(1)" class="btn btn-p"><i class="fa-solid fa-chevron-right"></i></button></div>
         </div>
 
         <!-- 4. MÓDULO PROCEDIMIENTOS -->
@@ -412,6 +418,7 @@
         <div id="moduloAjustes" class="hidden">
             <div class="ajs-layout">
                 <div class="ajs-sidebar">
+                    <button id="menuAjsAmb" class="ajs-menu-btn hidden" onclick="window.showAjsView('amb')"><i class="fa-solid fa-building" style="width:20px;"></i> Ambientes</button>
                     <button id="menuAjsMon" class="ajs-menu-btn hidden" onclick="window.showAjsView('mon')"><i class="fa-solid fa-desktop" style="width:20px;"></i> Actividad</button>
                     <button id="menuAjsUsr" class="ajs-menu-btn hidden" onclick="window.showAjsView('usr')"><i class="fa-solid fa-users" style="width:20px;"></i> Usuarios</button>
                     <button id="menuAjsRol" class="ajs-menu-btn hidden" onclick="window.showAjsView('rol')"><i class="fa-solid fa-user-shield" style="width:20px;"></i> Permisos</button>
@@ -423,6 +430,52 @@
 
                 <div class="ajs-content">
                     
+                    <!-- VISTA: AMBIENTES -->
+                    <div id="ajsViewAmb" class="hidden">
+                        <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-building"></i> Ambientes (Intranets Independientes)</h3>
+                        <p style="font-size:13px; color:var(--mid-gray);">Cada ambiente tiene su propia Cobertura, Técnicos, Directorio, Procedimientos y Avisos — completamente separados entre sí. Un usuario puede tener acceso a uno o varios ambientes; el rol Administrador siempre ve todos.</p>
+                        <div class="form-grid" style="background:#f8fafc; padding:20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--border-soft);">
+                            <div>
+                                <label style="font-size:12px; font-weight:bold; color:var(--blue);">Nombre del Ambiente</label>
+                                <input id="ambNombre" class="inp" placeholder="Ej: Servicio Técnico a Domicilio">
+                            </div>
+                            <div>
+                                <label style="font-size:12px; font-weight:bold; color:var(--blue);">Ícono (Font Awesome, opcional)</label>
+                                <input id="ambIcono" class="inp" placeholder="Ej: fa-solid fa-truck-medical">
+                            </div>
+                            <div class="span-2">
+                                <label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulos Fijos activos en este ambiente</label>
+                                <p style="font-size:11px; color:var(--mid-gray); margin:3px 0 8px 0;">Desmarca los que no apliquen (ej. Servicio Técnico podría no necesitar "Directorio").</p>
+                                <div class="perm-grid" id="ambModulosContainer">
+                                    <label class="perm-item"><input type="checkbox" id="am_cob" checked> Cobertura</label>
+                                    <label class="perm-item"><input type="checkbox" id="am_tec" checked> Técnicos</label>
+                                    <label class="perm-item"><input type="checkbox" id="am_enc" checked> Directorio</label>
+                                    <label class="perm-item"><input type="checkbox" id="am_proc" checked> Procedimientos</label>
+                                    <label class="perm-item"><input type="checkbox" id="am_avisos" checked> Avisos</label>
+                                </div>
+                            </div>
+                            <div class="span-2">
+                                <label style="font-size:12px; font-weight:bold; color:var(--blue);">Compartir estos módulos con "Principal" (mismos datos, en vez de datos propios)</label>
+                                <p style="font-size:11px; color:var(--mid-gray); margin:3px 0 8px 0;">Márcalo si quieres que, por ejemplo, la Cobertura que mantienes en Principal se vea igual aquí — editar desde cualquiera de los dos actualiza el mismo dato en ambos.</p>
+                                <div class="perm-grid" id="ambCompartidosContainer">
+                                    <label class="perm-item"><input type="checkbox" id="ac_cob"> Cobertura</label>
+                                    <label class="perm-item"><input type="checkbox" id="ac_tec"> Técnicos</label>
+                                    <label class="perm-item"><input type="checkbox" id="ac_enc"> Directorio</label>
+                                    <label class="perm-item"><input type="checkbox" id="ac_avisos"> Avisos</label>
+                                </div>
+                            </div>
+                            <div class="span-2" style="text-align:right; margin-top: 5px;">
+                                <button onclick="window.cancelarEdicionAmbiente()" id="btnCancelAmb" class="btn btn-d hidden" style="margin-right: 5px;"><i class="fa-solid fa-times"></i> Cancelar</button>
+                                <button onclick="window.guardarAmbiente()" id="btnSaveAmb" class="btn btn-s" style="color:white; padding: 10px 20px;"><i class="fa-solid fa-save"></i> Guardar Ambiente</button>
+                            </div>
+                        </div>
+                        <h4 style="color:var(--blue); margin-bottom: 10px;">Ambientes Creados</h4>
+                        <div id="adminAmbientesListContainer"></div>
+                        <p style="font-size:11px; color:var(--mid-gray); margin-top:15px;">El ambiente <b>"Principal"</b> es el que ya tenías (tus datos actuales de Call Center), siempre existe con todos los módulos activos, y no necesitas crearlo.</p>
+                    </div>
+
+
+
                     <!-- VISTA: MONITOR DE ACTIVIDAD -->
                     <div id="ajsViewMon" class="hidden">
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-desktop"></i> Monitor de Actividad y Auditoría</h3>
@@ -443,9 +496,13 @@
                     <!-- VISTA: USUARIOS -->
                     <div id="ajsViewUsr" class="hidden">
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-users"></i> Gestión de Accesos</h3>
-                        <div class="action-btns" style="margin-bottom: 15px; justify-content: flex-end;"><button onclick="document.getElementById('fileImportUsr').click()" class="btn btn-o"><i class="fa-solid fa-file-import"></i> Importar CSV</button><button onclick="window.exportUsersToExcel()" class="btn btn-x"><i class="fa-solid fa-file-export"></i> Exportar Excel</button></div>
+                        <div class="action-btns" style="margin-bottom: 15px; justify-content: flex-end;"><button onclick="window.repararAmbientesUsuarios()" class="btn btn-o" title="Corrige automáticamente usuarios que quedaron apuntando a un ambiente eliminado o inexistente"><i class="fa-solid fa-wrench"></i> Reparar Accesos</button><button onclick="document.getElementById('fileImportUsr').click()" class="btn btn-o"><i class="fa-solid fa-file-import"></i> Importar CSV</button><button onclick="window.exportUsersToExcel()" class="btn btn-x"><i class="fa-solid fa-file-export"></i> Exportar Excel</button></div>
                         <div class="form-inline"><input id="uUser" class="inp" placeholder="Usuario"><input id="uPass" class="inp" placeholder="Clave">
                           <select id="uRol" class="inp"><option value="agente">Agente (Default)</option><option value="invitado">Invitado (Lector)</option><option value="pendiente">Pendiente (Bloqueado)</option></select>
+                          <div style="width:100%;">
+                            <label style="font-size:11px; font-weight:bold; color:var(--blue);">Ambiente(s) con acceso</label>
+                            <div id="uAmbList" class="perm-grid" style="margin-top:4px; max-height:110px; overflow-y:auto;"><label class="perm-item"><input type="checkbox" value="" checked> Principal</label></div>
+                          </div>
                           <div style="display: flex; gap: 10px; width: 100%;"><button id="btnUserAction" onclick="window.submitUser()" class="btn btn-s" style="flex: 1; color:white;"><i class="fa-solid fa-plus"></i></button><button onclick="window.clearUserForm()" class="btn btn-d" style="flex: 1;"><i class="fa-solid fa-eraser"></i></button></div>
                         </div>
                         <div class="search-wrap" style="margin-bottom: 10px;"><i class="fa-solid fa-search"></i><input id="searchUserBox" class="search-inp" placeholder="Buscar usuario o rol..." onkeyup="window.renderUserList()"></div>
@@ -455,10 +512,15 @@
                     <!-- VISTA: ROLES Y PERMISOS -->
                     <div id="ajsViewRol" class="hidden">
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-user-shield"></i> Roles y Permisos</h3>
-                        <p style="font-size:13px; color:var(--mid-gray);">Crea roles a la medida o edita los permisos de los roles predeterminados (Agente / Invitado).</p>
+                        <p style="font-size:13px; color:var(--mid-gray);">Crea roles a la medida o edita los permisos de los roles predeterminados (Agente / Invitado, disponibles en todos los ambientes). Los roles personalizados que crees aquí quedan asociados al ambiente que tengas seleccionado arriba en el encabezado.</p>
                         <div style="background:#f8fafc; padding:20px; border-radius:8px; border:1px solid var(--border-soft); margin-bottom:20px;">
-                            <input id="rolName" class="inp" placeholder="Nombre del nuevo Rol (Ej: Mesa de Control)">
-                            <h4 style="margin: 15px 0 10px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">Permisos Generales</h4>
+                            <input id="rolName" class="inp" placeholder="Nombre del nuevo Rol (Ej: Servicio Técnico)">
+
+                            <h4 style="margin: 15px 0 10px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">Ambiente(s) donde aplica este rol</h4>
+                            <p style="font-size:11px; color:var(--mid-gray); margin: 0 0 10px 0;">Marca varios si el rol debe funcionar igual en más de un ambiente (ej. un líder que supervisa Principal y Servicio Técnico).</p>
+                            <div id="rolAmbList" class="perm-grid"><label class="perm-item"><input type="checkbox" value="" checked> Principal</label></div>
+                            
+                            <h4 style="margin: 15px 0 10px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">Módulos del Sistema</h4>
                             <div class="perm-grid">
                                 <label class="perm-item"><input type="checkbox" id="p_cob_view" checked> Ver Cobertura</label>
                                 <label class="perm-item"><input type="checkbox" id="p_cob_edit"> Editar Cobertura</label>
@@ -469,13 +531,15 @@
                                 <label class="perm-item"><input type="checkbox" id="p_enc_view" checked> Ver Directorio</label>
                                 <label class="perm-item"><input type="checkbox" id="p_enc_edit"> Editar Directorio</label>
                                 <label class="perm-item"><input type="checkbox" id="p_enc_exp"> Exportar/Importar Dir</label>
-                                <label class="perm-item"><input type="checkbox" id="p_dyn_view" checked> Ver Mods. Creados</label>
-                                <label class="perm-item"><input type="checkbox" id="p_dyn_edit"> Editar Mods. Creados</label>
-                                <label class="perm-item"><input type="checkbox" id="p_dyn_exp"> Exportar Mods. Creados</label>
                                 <label class="perm-item"><input type="checkbox" id="p_proc_view" checked> Ver Procedimientos</label>
                                 <label class="perm-item"><input type="checkbox" id="p_avi_view" checked> Ver Avisos</label>
                             </div>
-                            <h4 style="margin: 20px 0 10px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">Permisos de Ajustes</h4>
+
+                            <h4 style="margin: 20px 0 5px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">Módulos Personalizados (Por Área)</h4>
+                            <p style="font-size:11px; color:var(--mid-gray); margin: 0 0 10px 0;">Selecciona a qué módulos específicos tiene acceso este rol.</p>
+                            <div id="dynPermsContainer" class="perm-grid" style="grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));"></div>
+
+                            <h4 style="margin: 20px 0 10px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">Permisos de Ajustes (Solo Administradores)</h4>
                             <div class="perm-grid">
                                 <label class="perm-item"><input type="checkbox" id="p_ajs_mon"> Actividad y Logs</label>
                                 <label class="perm-item"><input type="checkbox" id="p_ajs_usr"> Usuarios y Accesos</label>
@@ -523,6 +587,7 @@
                                 <select id="confModVista" class="inp" onchange="window.toggleModType()">
                                     <option value="tabla">Vista Tabla (Registros e Inventarios)</option>
                                     <option value="directorio">Vista Directorio (Tarjetas de Contactos)</option>
+                                    <option value="procedimientos">Vista Procedimientos (Documentos y Guías)</option>
                                     <option value="html">Vista HTML (Código libre o Iframes)</option>
                                 </select>
                             </div>
@@ -533,6 +598,11 @@
                             <div id="divConfModHtml" class="span-2 hidden">
                                 <label style="font-size:12px; font-weight:bold; color:var(--blue);">Código HTML Libre</label>
                                 <textarea id="confModHtml" class="inp" style="height: 150px; font-family: monospace; resize:vertical; font-size:13px;" placeholder="Pega aquí tu código HTML personalizado..."></textarea>
+                            </div>
+                            <div class="span-2">
+                                <label style="font-size:12px; font-weight:bold; color:var(--blue);">Ambiente(s) donde aparece este módulo</label>
+                                <div id="confModAmbList" class="perm-grid" style="margin-top:4px; max-height:130px; overflow-y:auto;"><label class="perm-item"><input type="checkbox" value="" checked> Principal</label></div>
+                                <p style="font-size:11px; color:var(--mid-gray); margin:3px 0 0 2px;">Si marcas más de uno, este módulo y sus datos se comparten entre esos ambientes.</p>
                             </div>
                             <div class="span-2" style="text-align:right; margin-top: 10px;">
                                 <button onclick="window.cancelarEdicionModulo()" id="btnCancelMod" class="btn btn-d hidden" style="margin-right: 5px;"><i class="fa-solid fa-times"></i> Cancelar</button>
@@ -549,6 +619,13 @@
                     <div id="ajsViewProc" class="hidden">
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-file-code"></i> Gestor de Procedimientos</h3>
                         <p style="font-size:13px; color:var(--mid-gray);">Crea procedimientos usando el editor visual, código HTML o incrustando archivos de Drive.</p>
+
+                        <div class="span-2" style="background:#eef6fc; border:1px solid #cce0f5; border-radius:8px; padding:12px 15px; margin-bottom:15px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                            <label style="font-size:12px; font-weight:bold; color:var(--blue); white-space:nowrap;"><i class="fa-solid fa-layer-group"></i> Administrando:</label>
+                            <select id="admProcTargetMod" class="inp" style="max-width:320px; margin:0;" onchange="window.changeAdminProcTarget()">
+                                <option value="">Procedimientos (Principal)</option>
+                            </select>
+                        </div>
                         
                         <div class="form-grid" style="background:#f8fafc; padding:20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--border-soft);">
                             <div>
@@ -761,14 +838,40 @@
     localCache: persistentLocalCache({tabManager: persistentMultipleTabManager()})
   });
 
-  let DB = { cob: [], tec: [], enc: [], proc: [], avisos: [], configModulos: [], dynData: [], roles: [], logs: [] };
-  let DB_USERS = []; let SESION = { id: null, u: null, r: null, t: null };
+  let DB = { cob: [], tec: [], enc: [], proc: [], avisos: [], configModulos: [], dynData: [], roles: [], logs: [], ambientes: [] };
+  let DB_RAW = { cob: [], tec: [], enc: [], proc: [], avisos: [], configModulos: [], roles: [] };
+  let DB_USERS = []; let SESION = { id: null, u: null, r: null, t: null, a: null };
+  let AMBIENTE_ACTUAL = null;
+
+  // ================= SEGURIDAD: HASH DE CONTRASEÑAS (Web Crypto, sin librerías) =================
+  // Formato guardado: "h:<salt>:<hashHex>". Las contraseñas antiguas en texto plano (sin el prefijo "h:")
+  // se siguen aceptando UNA vez y se migran automáticamente a hash en ese mismo login.
+  async function sha256Hex(text) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+  window.hashPassword = async function(plain) {
+      const salt = Array.from(crypto.getRandomValues(new Uint8Array(8))).map(b => b.toString(16).padStart(2, '0')).join('');
+      const hash = await sha256Hex(salt + plain);
+      return `h:${salt}:${hash}`;
+  };
+  // Devuelve { ok: boolean, legacy: boolean } — legacy=true significa que coincidió contra una contraseña vieja en texto plano.
+  window.verifyPassword = async function(stored, plain) {
+      if (!stored) return { ok: false, legacy: false };
+      if (stored.startsWith('h:')) {
+          const parts = stored.split(':'); const salt = parts[1]; const hash = parts[2];
+          const check = await sha256Hex(salt + plain);
+          return { ok: check === hash, legacy: false };
+      }
+      return { ok: stored === plain, legacy: true };
+  };
+  window.inAmb = function(x) { return (x.ambienteId || null) === (AMBIENTE_ACTUAL || null); };
   let PAGE = 1, PAGE_TEC = 1, PAGE_ENC = 1, PAGE_DYN = 1; let ITEMS_PER_PAGE_ENC = 16;
-  let EDITING_USER_ID = null, EDITING_LOCATION_ID = null, EDITING_TEC_ID = null, EDITING_ENC_ID = null, EDITING_DYN_ID = null, EDITING_ROLE_ID = null, EDITING_MOD_ID = null, EDITING_PROC_ID = null, EDITING_AVISO_ID = null;
-  let CURRENT_MODULE = 'inicio'; let CURRENT_DYN_CONFIG = null;
+  let EDITING_USER_ID = null, EDITING_LOCATION_ID = null, EDITING_TEC_ID = null, EDITING_ENC_ID = null, EDITING_DYN_ID = null, EDITING_ROLE_ID = null, EDITING_MOD_ID = null, EDITING_PROC_ID = null, EDITING_AVISO_ID = null, EDITING_AMB_ID = null;
+  let CURRENT_MODULE = 'inicio'; let CURRENT_DYN_CONFIG = null; let DYN_PROC_ACTIVE_ID = null;
   let isFirstUserLoad = true; let knownPendingIds = new Set(); let heartbeatInterval;
   let LATEST_PROC_ID = null; let LATEST_AVISO_ID = null; let isInitialProcLoad = true; let isInitialAvisoLoad = true; 
-  let SHOW_PAPELERA = false; 
+  let SHOW_PAPELERA = false; let ADMIN_PROC_TARGET_MODID = null; 
   
   let LOAD_STATE = { cob: false, tec: false, enc: false, proc: false, avisos: false, dyn: false };
   let SYS_MOD_NAMES = { cob: "Cobertura", tec: "Técnicos", enc: "Directorio", proc: "Procedimientos" };
@@ -856,25 +959,51 @@
   window.hasPerm = function(perm) {
       if(SESION.r === 'admin') return true;
       if(SESION.r === 'pendiente') return false;
-      const rolData = DB.roles.find(r => (r.nombre||'').toLowerCase() === (SESION.r||'').toLowerCase());
-      if(rolData && rolData.perms) return rolData.perms.includes(perm);
-      if(SESION.r === 'agente') { return ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view'].includes(perm); }
-      if(SESION.r === 'invitado') { return ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view'].includes(perm); }
-      return false;
+      
+      // Los roles predeterminados (agente/invitado) son globales: se buscan en DB.roles (siempre inyectados).
+      // Los roles personalizados se resuelven contra los ambientes A LOS QUE EL USUARIO TIENE ACCESO (SESION.ambs),
+      // no contra el ambiente que se esté navegando en este momento (AMBIENTE_ACTUAL) — así el rol de un usuario
+      // multi-ambiente sigue funcionando aunque cambie de ambiente con el selector.
+      let rolData;
+      if(SESION.r === 'agente' || SESION.r === 'invitado') {
+          rolData = DB.roles.find(r => (r.nombre||'').toLowerCase() === SESION.r);
+      } else {
+          const misAmbs = ((SESION.ambs && SESION.ambs.length) ? SESION.ambs : [SESION.a]).map(window.ambKey);
+          rolData = (DB_RAW.roles || []).find(r => (r.nombre||'').toLowerCase() === (SESION.r||'').toLowerCase() && misAmbs.some(id => window.roleInAmb(r, id)));
+      }
+      let basePerms = rolData && rolData.perms ? rolData.perms : [];
+      
+      if(!rolData) {
+          if(SESION.r === 'agente') { basePerms = ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'proc_view', 'avi_view', 'dyn_view', 'dyn_edit', 'dyn_exp']; }
+          if(SESION.r === 'invitado') { basePerms = ['cob_view', 'tec_view', 'enc_view', 'proc_view', 'avi_view', 'dyn_view']; }
+      }
+
+      if(perm.startsWith('view_mod_') && basePerms.includes('dyn_view')) return true;
+      if(perm.startsWith('edit_mod_') && basePerms.includes('dyn_edit')) return true;
+      if(perm.startsWith('exp_mod_') && basePerms.includes('dyn_exp')) return true;
+
+      return basePerms.includes(perm);
   };
 
   window.applyPermissionsToUI = function() {
-      document.getElementById('tabCob').classList.toggle('hidden', !window.hasPerm('cob_view'));
-      document.getElementById('tabTec').classList.toggle('hidden', !window.hasPerm('tec_view'));
-      document.getElementById('tabEnc').classList.toggle('hidden', !window.hasPerm('enc_view'));
-      document.getElementById('tabProc').classList.toggle('hidden', !window.hasPerm('proc_view'));
-      document.getElementById('tabAvisos').classList.toggle('hidden', !window.hasPerm('avi_view'));
-      document.querySelectorAll('.tab-dyn').forEach(t => t.classList.toggle('hidden', !window.hasPerm('dyn_view')));
+      const mios = window.misAmbientes ? window.misAmbientes() : [""];
+      if(document.getElementById('ambienteSwitcherBox')) document.getElementById('ambienteSwitcherBox').classList.toggle('hidden', SESION.r !== 'admin' && mios.length <= 1);
+      document.getElementById('tabCob').classList.toggle('hidden', !window.hasPerm('cob_view') || !window.fixedModEnabled('cob'));
+      document.getElementById('tabTec').classList.toggle('hidden', !window.hasPerm('tec_view') || !window.fixedModEnabled('tec'));
+      document.getElementById('tabEnc').classList.toggle('hidden', !window.hasPerm('enc_view') || !window.fixedModEnabled('enc'));
+      document.getElementById('tabProc').classList.toggle('hidden', !window.hasPerm('proc_view') || !window.fixedModEnabled('proc'));
+      document.getElementById('tabAvisos').classList.toggle('hidden', !window.hasPerm('avi_view') || !window.fixedModEnabled('avisos'));
       
-      const hasAjs = window.hasPerm('ajs_usr') || window.hasPerm('ajs_rol') || window.hasPerm('ajs_mod') || window.hasPerm('ajs_proc') || window.hasPerm('ajs_col') || window.hasPerm('ajs_mon') || window.hasPerm('ajs_avi');
+      document.querySelectorAll('.tab-dyn').forEach(t => {
+          let modId = t.id.replace('tab_dyn_', '');
+          t.classList.toggle('hidden', !window.hasPerm('view_mod_' + modId));
+      });
+      
+      const hasAjs = window.hasPerm('ajs_usr') || window.hasPerm('ajs_rol') || window.hasPerm('ajs_mod') || window.hasPerm('ajs_proc') || window.hasPerm('ajs_col') || window.hasPerm('ajs_mon') || window.hasPerm('ajs_avi') || SESION.r === 'admin';
       document.getElementById('tabAjs').classList.toggle('hidden', !hasAjs);
       document.getElementById('notifBell').classList.toggle('hidden', !window.hasPerm('ajs_usr'));
 
+      if(document.getElementById('menuAjsAmb')) document.getElementById('menuAjsAmb').classList.toggle('hidden', SESION.r !== 'admin');
       if(document.getElementById('menuAjsMon')) document.getElementById('menuAjsMon').classList.toggle('hidden', !window.hasPerm('ajs_mon'));
       if(document.getElementById('menuAjsUsr')) document.getElementById('menuAjsUsr').classList.toggle('hidden', !window.hasPerm('ajs_usr'));
       if(document.getElementById('menuAjsRol')) document.getElementById('menuAjsRol').classList.toggle('hidden', !window.hasPerm('ajs_rol'));
@@ -895,11 +1024,21 @@
       if(document.getElementById('btnExpEnc')) document.getElementById('btnExpEnc').classList.toggle('hidden', !window.hasPerm('enc_exp'));
       if(document.getElementById('btnImpEnc')) document.getElementById('btnImpEnc').classList.toggle('hidden', !window.hasPerm('enc_exp'));
 
-      if(document.getElementById('btnAddDyn')) document.getElementById('btnAddDyn').classList.toggle('hidden', !window.hasPerm('dyn_edit'));
-      if(document.getElementById('btnExpDyn')) document.getElementById('btnExpDyn').classList.toggle('hidden', !window.hasPerm('dyn_exp'));
-      if(document.getElementById('btnImpDyn')) document.getElementById('btnImpDyn').classList.toggle('hidden', !window.hasPerm('dyn_exp'));
-      
+      window.updateDynToolsVisibility();
       window.renderInicioRecientes();
+  };
+
+  window.updateDynToolsVisibility = function() {
+      if(!CURRENT_MODULE || !CURRENT_MODULE.startsWith('dyn_') || !CURRENT_DYN_CONFIG) return;
+      const modId = CURRENT_DYN_CONFIG.id; const isProc = CURRENT_DYN_CONFIG.vista === 'procedimientos'; const canEdit = window.hasPerm('edit_mod_' + modId);
+      const btnAdd = document.getElementById('btnAddDyn');
+      if(btnAdd) {
+          btnAdd.classList.toggle('hidden', !canEdit);
+          if(isProc) { btnAdd.innerHTML = '<i class="fa-solid fa-gear"></i> Gestionar Documentos'; btnAdd.onclick = () => window.goToProcAdmin(modId); }
+          else { btnAdd.innerHTML = '<i class="fa-solid fa-plus"></i> Nuevo Registro'; btnAdd.onclick = () => window.openModalDyn(); }
+      }
+      if(document.getElementById('btnExpDyn')) document.getElementById('btnExpDyn').classList.toggle('hidden', isProc || !window.hasPerm('exp_mod_' + modId));
+      if(document.getElementById('btnImpDyn')) document.getElementById('btnImpDyn').classList.toggle('hidden', isProc || !window.hasPerm('exp_mod_' + modId));
   };
 
   window.copyToClip = function(text) { if(!text) return; navigator.clipboard.writeText(text).then(() => { window.showToastSuccess(`Texto Copiado`); }).catch(err => alert("Error al copiar")); };
@@ -942,17 +1081,17 @@
     else if(mod === 'avisos') { document.getElementById('moduloAvisos').classList.remove('hidden'); window.renderAvisosMuro(); }
     else if(mod === 'ajs') { 
         document.getElementById('moduloAjustes').classList.remove('hidden'); 
-        if(window.hasPerm('ajs_mon')) window.showAjsView('mon'); else if(window.hasPerm('ajs_usr')) window.showAjsView('usr'); else if(window.hasPerm('ajs_rol')) window.showAjsView('rol'); else if(window.hasPerm('ajs_mod')) window.showAjsView('mod'); else if(window.hasPerm('ajs_proc')) window.showAjsView('proc'); else if(window.hasPerm('ajs_avi')) window.showAjsView('avi'); else if(window.hasPerm('ajs_col')) window.showAjsView('col');
+        if(window.hasPerm('ajs_mon')) window.showAjsView('mon'); else if(window.hasPerm('ajs_usr')) window.showAjsView('usr'); else if(window.hasPerm('ajs_rol')) window.showAjsView('rol'); else if(window.hasPerm('ajs_mod')) window.showAjsView('mod'); else if(window.hasPerm('ajs_proc')) window.showAjsView('proc'); else if(window.hasPerm('ajs_avi')) window.showAjsView('avi'); else if(window.hasPerm('ajs_col')) window.showAjsView('col'); else if(SESION.r === 'admin') window.showAjsView('amb');
     }
-    else if(mod.startsWith('dyn_')) { document.getElementById('moduloDinamico').classList.remove('hidden'); CURRENT_DYN_CONFIG = DB.configModulos.find(m => m.id === mod.replace('dyn_', '')); window.renderDynData(); }
+    else if(mod.startsWith('dyn_')) { document.getElementById('moduloDinamico').classList.remove('hidden'); const prevDynId = CURRENT_DYN_CONFIG ? CURRENT_DYN_CONFIG.id : null; CURRENT_DYN_CONFIG = DB.configModulos.find(m => m.id === mod.replace('dyn_', '')); if(!CURRENT_DYN_CONFIG || CURRENT_DYN_CONFIG.id !== prevDynId) DYN_PROC_ACTIVE_ID = null; window.renderDynData(); window.updateDynToolsVisibility(); }
   };
 
   window.showAjsView = function(view) {
       document.querySelectorAll('.ajs-menu-btn').forEach(b => b.classList.remove('active'));
       const btn = document.getElementById('menuAjs' + view.charAt(0).toUpperCase() + view.slice(1)); if(btn) btn.classList.add('active');
-      ['mon', 'usr', 'rol', 'mod', 'proc', 'avi', 'col'].forEach(v => document.getElementById('ajsView' + v.charAt(0).toUpperCase() + v.slice(1)).classList.add('hidden'));
+      ['amb', 'mon', 'usr', 'rol', 'mod', 'proc', 'avi', 'col'].forEach(v => document.getElementById('ajsView' + v.charAt(0).toUpperCase() + v.slice(1)).classList.add('hidden'));
       const targetView = document.getElementById('ajsView' + view.charAt(0).toUpperCase() + view.slice(1)); if(targetView) targetView.classList.remove('hidden');
-      if(view === 'mon') window.renderAdminMonitor(); if(view === 'usr') window.renderUserList(); if(view === 'rol') window.renderRolesList(); if(view === 'mod') window.renderListaModulos(); if(view === 'proc') window.renderAdminProcList(); if(view === 'avi') window.renderAdminAvisos(); if(view === 'col') window.renderColorView();
+      if(view === 'amb') window.renderAdminAmbientesList(); if(view === 'mon') window.renderAdminMonitor(); if(view === 'usr') { window.renderUserAmbienteSelect(); window.renderUserList(); } if(view === 'rol') { window.renderRoleAmbienteSelect(); window.renderRolesList(); } if(view === 'mod') { window.renderModAmbienteSelect(); window.renderListaModulos(); } if(view === 'proc') { window.renderAdminProcTargetSelect(); window.renderAdminProcList(); } if(view === 'avi') window.renderAdminAvisos(); if(view === 'col') window.renderColorView();
   };
 
   window.toggleAuthBoxes = (s) => { document.getElementById('boxLogin').classList.toggle('hidden', s); document.getElementById('boxRegister').classList.toggle('hidden', !s); };
@@ -965,31 +1104,31 @@
       const snap = await getDocs(collection(db, "usuarios"));
       const exists = snap.docs.some(d => (d.data().u || "").toLowerCase() === u.toLowerCase());
       if(exists) { alert("Usuario en uso."); btn.innerText = 'ENVIAR SOLICITUD'; btn.disabled = false; return; }
-      await addDoc(collection(db, "usuarios"), { u, p, r: "pendiente", lastActive: 0, token: null, createdAt: Date.now() });
+      await addDoc(collection(db, "usuarios"), { u, p: await window.hashPassword(p), r: "pendiente", lastActive: 0, token: null, createdAt: Date.now() });
       alert("¡Solicitud enviada!"); window.toggleAuthBoxes(false);
     } catch(e) { alert("Error de conexión al enviar la solicitud."); } btn.innerText = 'ENVIAR SOLICITUD'; btn.disabled = false;
   };
 
   window.login = async function() {
     const u = document.getElementById('txtUser').value.trim(); const p = document.getElementById('txtPass').value.trim(); const btn = document.getElementById('btnLogin');
-    if (u.toLowerCase() === "admin" && p === "distelsa") {
-        SESION = { id: "master_admin", u: "Administrador Maestro", r: "admin", t: "bypass_token" };
-        localStorage.setItem('distelsa_pro_fb', JSON.stringify(SESION)); window.startApp(); return;
-    }
     if(!u || !p) return alert("Ingrese usuario y contraseña");
     btn.innerText = 'Cargando...'; btn.disabled = true;
     try {
       const snap = await getDocs(collection(db, "usuarios"));
-      const uDoc = snap.docs.find(d => (d.data().u || "").toLowerCase() === u.toLowerCase() && d.data().p === p);
-      if (uDoc) {
-        const uData = uDoc.data();
+      const uDoc = snap.docs.find(d => (d.data().u || "").toLowerCase() === u.toLowerCase());
+      const uData = uDoc ? uDoc.data() : null;
+      const check = uData ? await window.verifyPassword(uData.p, p) : { ok: false };
+      if (uDoc && check.ok) {
         if(uData.r === 'pendiente') { alert("Tu cuenta está en estado PENDIENTE. Pide al admin que te apruebe."); } 
         else {
             const token = Math.random().toString(36).substring(2) + Date.now().toString(36);
             let rolFinal = uData.r === 'lider' ? 'agente' : uData.r;
-            SESION = { id: uDoc.id, u: uData.u, r: rolFinal, t: token };
+            const ambs = Array.isArray(uData.ambs) && uData.ambs.length ? uData.ambs : [uData.a || null];
+            SESION = { id: uDoc.id, u: uData.u, r: rolFinal, t: token, a: ambs[0] || null, ambs };
             localStorage.setItem('distelsa_pro_fb', JSON.stringify(SESION));
-            updateDoc(doc(db, "usuarios", uDoc.id), { token: token, lastActive: Date.now(), r: rolFinal }).catch(e => console.log("Login offline")); 
+            let updatePayload = { token: token, lastActive: Date.now(), r: rolFinal };
+            if (check.legacy) { updatePayload.p = await window.hashPassword(p); } // migración silenciosa a hash
+            updateDoc(doc(db, "usuarios", uDoc.id), updatePayload).catch(e => console.log("Login offline")); 
             window.startApp(); return;
         }
       } else { alert("Datos incorrectos. Verifica bien tu usuario y contraseña."); }
@@ -1001,12 +1140,12 @@
     const nombre = prompt("Ingresa tu nombre para el registro de visitantes:"); if(!nombre || nombre.trim() === "") return;
     const uName = "Invitado - " + nombre.trim(); const token = Math.random().toString(36).substring(2) + Date.now().toString(36); const now = Date.now();
     try {
-      const snap = await getDocs(collection(db, "usuarios")); const uDoc = snap.docs.find(d => (d.data().u || "").toLowerCase() === uName.toLowerCase()); let docId;
+      const snap = await getDocs(collection(db, "usuarios")); const uDoc = snap.docs.find(d => (d.data().u || "").toLowerCase() === uName.toLowerCase()); let docId; let ambienteInvitado = null;
       if (uDoc) {
-        const uData = uDoc.data(); if (uData.createdAt && (now - uData.createdAt > 86400000)) { alert("Acceso expirado (Pide uno nuevo)."); return; } docId = uDoc.id; 
+        const uData = uDoc.data(); if (uData.createdAt && (now - uData.createdAt > 86400000)) { alert("Acceso expirado (Pide uno nuevo)."); return; } docId = uDoc.id; ambienteInvitado = uData.a || null;
         updateDoc(doc(db, "usuarios", docId), { token: token, lastActive: now, r: "invitado" }).catch(e=>console.log("offline"));
-      } else { const docRef = await addDoc(collection(db, "usuarios"), { u: uName, p: "", r: "invitado", token: token, lastActive: now, createdAt: now }); docId = docRef.id; }
-      SESION = { id: docId, u: uName, r: "invitado", t: token }; localStorage.setItem('distelsa_pro_fb', JSON.stringify(SESION)); window.startApp();
+      } else { const docRef = await addDoc(collection(db, "usuarios"), { u: uName, p: "", r: "invitado", token: token, lastActive: now, createdAt: now, a: null }); docId = docRef.id; }
+      SESION = { id: docId, u: uName, r: "invitado", t: token, a: ambienteInvitado, ambs: [ambienteInvitado] }; localStorage.setItem('distelsa_pro_fb', JSON.stringify(SESION)); window.startApp();
     } catch(e) { alert("Error: Problemas conectando con el servidor. Intenta de nuevo."); }
   };
 
@@ -1017,10 +1156,11 @@
     document.getElementById('lblUserHome').innerText = SESION.u.split(" - ")[1] || SESION.u; 
     document.getElementById('lblRol').innerText = SESION.r;
     document.getElementById('onlineMonitor').classList.remove('hidden');
+    AMBIENTE_ACTUAL = SESION.a || null;
     
     window.solicitarPermisosChrome();
 
-    listenToSysMods(); window.listenToRoles(); window.listenToUsers(); window.listenToLogs(); setInterval(window.updateOnlineUI, 5000); listenToColors();
+    listenToSysMods(); window.listenToRoles(); window.listenToUsers(); window.listenToLogs(); setInterval(window.updateOnlineUI, 5000); listenToColors(); listenToAmbientes();
     listenToCoberturas(); listenToTecnicos(); listenToEncargados(); listenToConfigModulos(); listenToDynData(); listenToProcedimientos(); window.listenToAvisos();
     
     window.switchModule('inicio'); 
@@ -1072,13 +1212,169 @@
       }).join('') || '<div style="padding:15px; color:var(--mid-gray); font-size:13px; text-align:center;">No hay actividad reciente.</div>';
   };
 
+  // ================= AMBIENTES (INTRANETS INDEPENDIENTES) =================
+  window.ambKey = function(id) { return id || ""; };
+  window.getCheckedValues = function(containerId) { const c = document.getElementById(containerId); if(!c) return []; return Array.from(c.querySelectorAll('input[type="checkbox"]:checked')).map(i => i.value); };
+  window.setCheckedValues = function(containerId, values) { const c = document.getElementById(containerId); if(!c) return; c.querySelectorAll('input[type="checkbox"]').forEach(i => { i.checked = values.includes(i.value); }); };
+  const FIXED_MODS_DEFAULT = ['cob', 'tec', 'enc', 'proc', 'avisos'];
+  const SHARED_MODS_KEYS = ['cob', 'tec', 'enc', 'avisos'];
+  window.fixedModEnabled = function(key) {
+      if (!AMBIENTE_ACTUAL) return true; // Principal: siempre todos activos
+      const amb = DB.ambientes.find(a => a.id === AMBIENTE_ACTUAL);
+      if (!amb) return true;
+      return (amb.modulos || FIXED_MODS_DEFAULT).includes(key);
+  };
+  // Ambiente "real" del que se leen/escriben los datos de un módulo, considerando si este ambiente
+  // lo tiene marcado como "compartido con Principal" (mismos datos, no una copia).
+  window.effectiveAmb = function(key) {
+      if (!AMBIENTE_ACTUAL) return "";
+      const amb = DB.ambientes.find(a => a.id === AMBIENTE_ACTUAL);
+      if (amb && Array.isArray(amb.shared) && amb.shared.includes(key)) return "";
+      return window.ambKey(AMBIENTE_ACTUAL);
+  };
+  // Ambientes a los que la sesión actual tiene acceso (admin = todos; usuario multi-ambiente = los suyos)
+  window.misAmbientes = function() {
+      if (SESION.r === 'admin') return [""].concat(DB.ambientes.map(a => a.id));
+      const arr = (SESION.ambs && SESION.ambs.length) ? SESION.ambs : [window.ambKey(SESION.a)];
+      return arr.map(window.ambKey);
+  };
+  // Normaliza los ambientes de un usuario (admite el campo nuevo "ambs" array y el viejo "a" single)
+  window.userAmbList = function(u) {
+      if (Array.isArray(u.ambs) && u.ambs.length) return u.ambs.map(window.ambKey);
+      return [window.ambKey(u.a)];
+  };
+
+  function listenToAmbientes() {
+      onSnapshot(collection(db, "ambientes"), (snapshot) => {
+          DB.ambientes = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (a.fecha||0) - (b.fecha||0));
+          window.renderAmbienteSwitcher();
+          if(document.getElementById('uAmbList')) window.renderUserAmbienteSelect();
+          if(document.getElementById('confModAmbList')) window.renderModAmbienteSelect();
+          window.recomputeAmbienteScopedData();
+          window.applyPermissionsToUI();
+          if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewAmb').classList.contains('hidden')) window.renderAdminAmbientesList();
+      });
+  }
+
+  window.renderAmbienteSwitcher = function() {
+      const sel = document.getElementById('selAmbienteActual'); if(!sel) return;
+      const mios = window.misAmbientes();
+      let html = "";
+      if (mios.includes("")) html += `<option value="">Principal</option>`;
+      DB.ambientes.filter(a => mios.includes(a.id)).forEach(a => { html += `<option value="${a.id}">${a.nombre}</option>`; });
+      sel.innerHTML = html; sel.value = AMBIENTE_ACTUAL || "";
+  };
+
+  window.setAmbienteActual = function(id) {
+      AMBIENTE_ACTUAL = id || null;
+      window.recomputeAmbienteScopedData();
+      window.buildDynamicTabs(); window.renderDynPermsUi(); window.applyPermissionsToUI();
+      const sel = document.getElementById('selAmbienteActual'); if(sel) sel.value = AMBIENTE_ACTUAL || "";
+      if(document.getElementById('ajsViewUsr') && !document.getElementById('ajsViewUsr').classList.contains('hidden')) { window.renderUserAmbienteSelect(); window.renderUserList(); }
+      window.switchModule('inicio');
+  };
+
+  window.recomputeAmbienteScopedData = function() {
+      const k = window.ambKey(AMBIENTE_ACTUAL);
+      DB.cob = DB_RAW.cob.filter(x => window.ambKey(x.ambienteId) === window.effectiveAmb('cob'));
+      DB.tec = DB_RAW.tec.filter(x => window.ambKey(x.ambienteId) === window.effectiveAmb('tec'));
+      DB.enc = DB_RAW.enc.filter(x => window.ambKey(x.ambienteId) === window.effectiveAmb('enc'));
+      DB.avisos = DB_RAW.avisos.filter(x => window.ambKey(x.ambienteId) === window.effectiveAmb('avisos'));
+      DB.configModulos = DB_RAW.configModulos.filter(m => (m.ambienteIds || [window.ambKey(m.ambienteId)]).includes(k));
+      // Procedimientos: el módulo principal (sin modId) sí se filtra por ambiente; los módulos dinámicos de procedimientos
+      // ya quedan controlados por qué módulo (modId) es visible en este ambiente, así que sus documentos no se filtran aquí.
+      DB.proc = DB_RAW.proc.filter(p => p.modId ? true : window.inAmb(p));
+      DB.roles = DB_RAW.roles.filter(r => window.roleInAmb(r, k));
+      if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) { DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view'] }); }
+      if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) { DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view'] }); }
+      window.updateRolesSelect(); if(CURRENT_MODULE === 'ajs' && document.getElementById('ajsViewRol') && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList();
+  };
+
+  window.renderModAmbienteSelect = function() {
+      const c = document.getElementById('confModAmbList'); if(!c) return;
+      const k = window.ambKey(AMBIENTE_ACTUAL);
+      let html = `<label class="perm-item"><input type="checkbox" value="" ${k === "" ? 'checked' : ''}> Principal</label>`;
+      DB.ambientes.forEach(a => { html += `<label class="perm-item"><input type="checkbox" value="${a.id}" ${k === a.id ? 'checked' : ''}> ${a.nombre}</label>`; });
+      c.innerHTML = html;
+  };
+
+  window.guardarAmbiente = async function() {
+      const nombre = document.getElementById('ambNombre').value.trim(); const icono = document.getElementById('ambIcono').value.trim();
+      if(!nombre) return alert("Ingresa el nombre del ambiente.");
+      const modulos = FIXED_MODS_DEFAULT.filter(k => document.getElementById('am_' + k).checked);
+      const shared = SHARED_MODS_KEYS.filter(k => document.getElementById('ac_' + k).checked);
+      try {
+          let payload = { nombre, icono, modulos, shared };
+          const wasEditingId = EDITING_AMB_ID;
+          if(EDITING_AMB_ID) { await updateDoc(doc(db, "ambientes", EDITING_AMB_ID), payload); window.logAct("Ambientes", "Editar", "Ambiente actualizado: " + nombre); }
+          else { payload.fecha = Date.now(); await addDoc(collection(db, "ambientes"), payload); window.logAct("Ambientes", "Crear", "Nuevo ambiente: " + nombre); }
+          window.cancelarEdicionAmbiente();
+          if (wasEditingId === AMBIENTE_ACTUAL) window.recomputeAmbienteScopedData();
+      } catch(e) { alert("Error al guardar el ambiente."); }
+  };
+
+  window.editarAmbiente = function(id) {
+      EDITING_AMB_ID = id; const a = DB.ambientes.find(x => x.id === id); if(!a) return;
+      document.getElementById('ambNombre').value = a.nombre || ''; document.getElementById('ambIcono').value = a.icono || '';
+      const modulos = a.modulos || FIXED_MODS_DEFAULT; const shared = a.shared || [];
+      FIXED_MODS_DEFAULT.forEach(k => { document.getElementById('am_' + k).checked = modulos.includes(k); });
+      SHARED_MODS_KEYS.forEach(k => { document.getElementById('ac_' + k).checked = shared.includes(k); });
+      document.getElementById('btnSaveAmb').innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios'; document.getElementById('btnCancelAmb').classList.remove('hidden');
+  };
+
+  window.cancelarEdicionAmbiente = function() {
+      EDITING_AMB_ID = null; document.getElementById('ambNombre').value = ''; document.getElementById('ambIcono').value = '';
+      FIXED_MODS_DEFAULT.forEach(k => { document.getElementById('am_' + k).checked = true; });
+      SHARED_MODS_KEYS.forEach(k => { document.getElementById('ac_' + k).checked = false; });
+      document.getElementById('btnSaveAmb').innerHTML = '<i class="fa-solid fa-save"></i> Guardar Ambiente'; document.getElementById('btnCancelAmb').classList.add('hidden');
+  };
+
+  window.eliminarAmbiente = async function(id) {
+      const a = DB.ambientes.find(x => x.id === id);
+      if(!confirm(`¿Eliminar el ambiente "${a?a.nombre:''}"? Sus datos (Cobertura, Técnicos, etc.) NO se borrarán, pero quedarán inaccesibles desde el menú a menos que crees el ambiente de nuevo.`)) return;
+      try { await deleteDoc(doc(db, "ambientes", id)); window.logAct("Ambientes", "Eliminar", "Ambiente: " + (a?a.nombre:'')); if(AMBIENTE_ACTUAL === id) window.setAmbienteActual(null); } catch(e) { alert("Error al eliminar."); }
+  };
+
+  window.renderAdminAmbientesList = function() {
+      const c = document.getElementById('adminAmbientesListContainer'); if(!c) return;
+      let html = `<div class="mod-list-item"><div><b style="color:var(--blue);">Principal</b> <span style="background:var(--light-blue); color:white; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px;"><i class="fa-solid fa-lock"></i> Predeterminado</span><br><small style="color:var(--mid-gray);">Tus datos actuales (Call Center) — todos los módulos activos</small></div><div></div></div>`;
+      html += DB.ambientes.map(a => { const shared = a.shared || []; const sharedTxt = shared.length ? `<br><small style="color:var(--green); font-weight:bold;"><i class="fa-solid fa-arrows-rotate"></i> Compartido con Principal: ${shared.join(', ')}</small>` : ''; return `<div class="mod-list-item"><div><b style="color:var(--blue);">${a.nombre}</b><br><small style="color:var(--mid-gray);">Módulos: ${(a.modulos||FIXED_MODS_DEFAULT).join(', ') || 'ninguno'}</small>${sharedTxt}</div><div><button onclick="window.editarAmbiente('${a.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarAmbiente('${a.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`; }).join('');
+      c.innerHTML = html;
+  };
+
+  window.renderUserAmbienteSelect = function() {
+      const c = document.getElementById('uAmbList'); if(!c) return;
+      const k = window.ambKey(AMBIENTE_ACTUAL);
+      let html = `<label class="perm-item"><input type="checkbox" value="" ${k === "" ? 'checked' : ''}> Principal</label>`;
+      DB.ambientes.forEach(a => { html += `<label class="perm-item"><input type="checkbox" value="${a.id}" ${k === a.id ? 'checked' : ''}> ${a.nombre}</label>`; });
+      c.innerHTML = html;
+  };
+
   window.listenToRoles = function() { 
       onSnapshot(collection(db, "roles_config"), (snapshot) => { 
-          DB.roles = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); 
+          DB_RAW.roles = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); 
+          const k = window.ambKey(AMBIENTE_ACTUAL);
+          DB.roles = DB_RAW.roles.filter(r => window.roleInAmb(r, k));
           if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) { DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view'] }); }
           if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) { DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view'] }); }
-          window.updateRolesSelect(); window.applyPermissionsToUI(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList(); 
+          window.updateRolesSelect(); window.applyPermissionsToUI(); if(document.getElementById('rolAmbList')) window.renderRoleAmbienteSelect(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList(); 
       }); 
+  };
+  
+  // Un rol es visible en el ambiente k si lo tiene asignado. Los roles creados ANTES de que existieran
+  // los ambientes (sin ambienteIds ni ambienteId) se tratan como globales, igual que funcionaban antes.
+  window.roleInAmb = function(r, k) {
+      if (r.ambienteIds && r.ambienteIds.length) return r.ambienteIds.includes(k);
+      if (r.ambienteId !== undefined && r.ambienteId !== null) return window.ambKey(r.ambienteId) === k;
+      return true; // legacy: global
+  };
+
+  window.renderRoleAmbienteSelect = function() {
+      const c = document.getElementById('rolAmbList'); if(!c) return;
+      const k = window.ambKey(AMBIENTE_ACTUAL);
+      let html = `<label class="perm-item"><input type="checkbox" value="" ${k === "" ? 'checked' : ''}> Principal</label>`;
+      DB.ambientes.forEach(a => { html += `<label class="perm-item"><input type="checkbox" value="${a.id}" ${k === a.id ? 'checked' : ''}> ${a.nombre}</label>`; });
+      c.innerHTML = html;
   };
   
   window.updateRolesSelect = function() { 
@@ -1090,32 +1386,51 @@
   };
   
   window.saveRole = async function() { 
-      const nombre = document.getElementById('rolName').value.trim(); if(!nombre) return alert("Ingresa nombre"); const perms = []; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { if(chk.checked) perms.push(chk.id.replace('p_', '')); }); 
+      const nombre = document.getElementById('rolName').value.trim(); if(!nombre) return alert("Ingresa nombre"); const perms = []; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { if(chk.id.startsWith('p_') && chk.checked) perms.push(chk.id.replace('p_', '')); }); 
+      let ambienteIds = window.getCheckedValues('rolAmbList'); if(ambienteIds.length === 0) ambienteIds = [window.ambKey(AMBIENTE_ACTUAL)];
+      const payload = { nombre, perms, ambienteIds, ambienteId: ambienteIds[0] };
       try { 
-          if(EDITING_ROLE_ID) { if (EDITING_ROLE_ID.startsWith('default_')) { await addDoc(collection(db, "roles_config"), { nombre: nombre.toLowerCase(), perms }); } else { await updateDoc(doc(db, "roles_config", EDITING_ROLE_ID), { nombre, perms }); } window.logAct("Roles", "Editar", "Rol actualizado: " + nombre); alert("Permisos actualizados correctamente"); } 
-          else { if(DB.roles.some(r => r.nombre.toLowerCase() === nombre.toLowerCase() && !r.id.startsWith('default_'))) { return alert("Ya existe un rol con ese nombre."); } await addDoc(collection(db, "roles_config"), { nombre, perms }); window.logAct("Roles", "Crear", "Nuevo rol: " + nombre); alert("Nuevo rol creado exitosamente"); window.cancelarEdicionRol(); }
+          if(EDITING_ROLE_ID) { 
+              if (EDITING_ROLE_ID.startsWith('default_')) { 
+                  // Rol predeterminado (existe solo en memoria): si ya hay un documento real con ese nombre, se ACTUALIZA
+                  // en lugar de crear otro — así se evita generar duplicados en cada edición.
+                  const existente = (DB_RAW.roles || []).find(r => (r.nombre||'').toLowerCase() === nombre.toLowerCase());
+                  if (existente) { await updateDoc(doc(db, "roles_config", existente.id), { ...payload, nombre: nombre.toLowerCase() }); }
+                  else { await addDoc(collection(db, "roles_config"), { ...payload, nombre: nombre.toLowerCase() }); }
+              } else { await updateDoc(doc(db, "roles_config", EDITING_ROLE_ID), payload); } 
+              window.logAct("Roles", "Editar", "Rol actualizado: " + nombre); alert("Permisos actualizados correctamente"); window.cancelarEdicionRol();
+          } 
+          else { if((DB_RAW.roles || []).some(r => (r.nombre||'').toLowerCase() === nombre.toLowerCase())) { return alert("Ya existe un rol con ese nombre."); } await addDoc(collection(db, "roles_config"), payload); window.logAct("Roles", "Crear", "Nuevo rol: " + nombre); alert("Nuevo rol creado exitosamente"); window.cancelarEdicionRol(); }
       } catch(e) { alert("Error al guardar rol"); } 
   };
   
   window.editRole = function(id) { 
-      EDITING_ROLE_ID = id; const r = DB.roles.find(x => x.id === id); document.getElementById('rolName').value = r.nombre; const isDefault = r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado'; document.getElementById('rolName').disabled = isDefault; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { chk.checked = r.perms.includes(chk.id.replace('p_', '')); }); document.getElementById('btnRoleAction').innerHTML = '<i class="fa-solid fa-save"></i> Actualizar Permisos'; document.getElementById('btnCancelRole').classList.remove('hidden'); const container = document.querySelector('.ajs-content'); if(container) container.scrollTo({ top: 0, behavior: 'smooth' });
+      EDITING_ROLE_ID = id; const r = DB.roles.find(x => x.id === id); document.getElementById('rolName').value = r.nombre; const isDefault = r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado'; document.getElementById('rolName').disabled = isDefault; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { if(chk.id.startsWith('p_')) chk.checked = r.perms.includes(chk.id.replace('p_', '')); }); window.renderRoleAmbienteSelect(); const rIsLegacy = !(r.ambienteIds && r.ambienteIds.length) && (r.ambienteId === undefined || r.ambienteId === null); window.setCheckedValues('rolAmbList', rIsLegacy ? [""].concat(DB.ambientes.map(a => a.id)) : (r.ambienteIds || [window.ambKey(r.ambienteId)])); document.getElementById('btnRoleAction').innerHTML = '<i class="fa-solid fa-save"></i> Actualizar Permisos'; document.getElementById('btnCancelRole').classList.remove('hidden'); const container = document.querySelector('.ajs-content'); if(container) container.scrollTo({ top: 0, behavior: 'smooth' });
   };
   
-  window.cancelarEdicionRol = function() { EDITING_ROLE_ID = null; document.getElementById('rolName').value = ''; document.getElementById('rolName').disabled = false; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => chk.checked = false); document.getElementById('btnRoleAction').innerText = "Guardar Rol"; document.getElementById('btnCancelRole').classList.add('hidden'); };
-  window.deleteRole = async function(id) { if(id.startsWith('default_')) return; if(confirm("¿Eliminar este rol? Los usuarios con este rol podrían perder acceso.")) { const r = DB.roles.find(x => x.id === id); await deleteDoc(doc(db, "roles_config", id)); window.logAct("Roles", "Eliminar", "Rol: " + (r?r.nombre:'')); } };
+  window.cancelarEdicionRol = function() { EDITING_ROLE_ID = null; document.getElementById('rolName').value = ''; document.getElementById('rolName').disabled = false; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { if(chk.id.startsWith('p_')) chk.checked = false; }); window.renderRoleAmbienteSelect(); document.getElementById('btnRoleAction').innerText = "Guardar Rol"; document.getElementById('btnCancelRole').classList.add('hidden'); };
+  window.deleteRole = async function(id) { if(id.startsWith('default_')) return; const r = DB.roles.find(x => x.id === id); const esBase = r && (r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado'); const msg = esBase ? `¿Eliminar esta copia del rol "${r.nombre}"?\n\nSi eliminas TODAS las copias, el rol vuelve a sus permisos predeterminados de fábrica (no desaparece).` : "¿Eliminar este rol? Los usuarios con este rol podrían perder acceso."; if(confirm(msg)) { await deleteDoc(doc(db, "roles_config", id)); window.logAct("Roles", "Eliminar", "Rol: " + (r?r.nombre:'')); } };
   
   window.renderRolesList = function() { 
+      const nameCount = {}; DB.roles.forEach(r => { const n = (r.nombre||'').toLowerCase(); nameCount[n] = (nameCount[n] || 0) + 1; });
       document.getElementById('rolesListContainer').innerHTML = DB.roles.map(r => {
-          let isDefault = r.id.startsWith('default_') || r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado';
-          let delBtn = isDefault ? '' : `<button onclick="window.deleteRole('${r.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`;
-          let badge = isDefault ? `<span style="background:var(--light-blue); color:white; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px;"><i class="fa-solid fa-lock"></i> Predeterminado</span>` : '';
-          return `<div class="mod-list-item"><div><b style="color:var(--blue); text-transform:capitalize;">${r.nombre}</b> ${badge}<br><small style="color:var(--mid-gray);">${r.perms.join(', ')}</small></div><div><button onclick="window.editRole('${r.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;" title="Editar Permisos"><i class="fa-solid fa-pencil"></i></button>${delBtn}</div></div>`;
+          let isDefaultName = r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado';
+          let isVirtual = r.id.startsWith('default_');
+          let isDup = nameCount[(r.nombre||'').toLowerCase()] > 1;
+          // Se puede borrar cualquier rol guardado en la base que NO sea el generado en memoria.
+          // Esto permite limpiar duplicados de "Agente"/"Invitado" creados por error.
+          let delBtn = isVirtual ? '' : `<button onclick="window.deleteRole('${r.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`;
+          let isLegacy = !(r.ambienteIds && r.ambienteIds.length) && (r.ambienteId === undefined || r.ambienteId === null);
+          let ambNoms = isLegacy ? 'Todos los ambientes' : (r.ambienteIds || [window.ambKey(r.ambienteId)]).map(id => id ? (DB.ambientes.find(a=>a.id===id)||{nombre:'?'}).nombre : 'Principal').join(', ');
+          let badge = isDefaultName ? `<span style="background:var(--light-blue); color:white; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px;"><i class="fa-solid fa-lock"></i> Predeterminado (todos los ambientes)</span>` : `<span style="background:#eef6fc; color:var(--blue); font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px; border:1px solid #cce0f5;"><i class="fa-solid fa-building"></i> ${ambNoms}</span>`;
+          let dupBadge = isDup ? `<span style="background:#ffe3e3; color:#e63946; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px; border:1px solid #ffc9c9; font-weight:bold;"><i class="fa-solid fa-triangle-exclamation"></i> Duplicado</span>` : '';
+          return `<div class="mod-list-item" style="${isDup ? 'border-left-color:#e63946;' : ''}"><div><b style="color:var(--blue); text-transform:capitalize;">${r.nombre}</b> ${badge}${dupBadge}<br><small style="color:var(--mid-gray);">${r.perms.join(', ')}</small></div><div><button onclick="window.editRole('${r.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;" title="Editar Permisos"><i class="fa-solid fa-pencil"></i></button>${delBtn}</div></div>`;
       }).join('') || '<p style="font-size:13px;">No hay roles.</p>'; 
   };
 
-  window.renderUserList = function() { const c = document.getElementById('userListContainer'); const q = document.getElementById('searchUserBox').value; let f = DB_USERS; if (SESION.r !== 'admin') f = f.filter(u => u.r !== 'admin'); if (q) f = f.filter(u => window.matchSearch(`${u.u} ${u.r}`, q)); f.sort((a, b) => { if (a.r === 'pendiente' && b.r !== 'pendiente') return -1; if (a.r !== 'pendiente' && b.r === 'pendiente') return 1; return (a.u||"").localeCompare(b.u||""); }); c.innerHTML = f.map(u => { const isP = u.r === 'pendiente'; return `<div class="user-row" style="${isP ? 'background:#ffe3e3; border-left:5px solid #e63946;' : ''}"><div><b style="color:var(--blue);">${u.u}</b> <br><small style="text-transform:uppercase; font-weight:bold; color: ${isP?'#e63946':'var(--light-blue)'}">${u.r}</small></div><div><button onclick="window.editUser('${u.id}','${u.u}','${u.p}','${u.r}')" class="btn btn-p" style="padding:4px"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteUser('${u.id}')" class="btn btn-d" style="padding:4px"><i class="fa-solid fa-trash"></i></button></div></div>`; }).join('') || `<p align="center" style="padding:15px; color:var(--mid-gray);">No hay usuarios</p>`; };
-  window.submitUser = async function() { const u = document.getElementById('uUser').value, p = document.getElementById('uPass').value, r = document.getElementById('uRol').value; if(!u || (!p && r !== 'invitado' && r !== 'pendiente')) return; if(EDITING_USER_ID) { await updateDoc(doc(db, "usuarios", EDITING_USER_ID), { u, p, r }); window.logAct("Usuarios", "Editar", "Usuario editado: " + u); } else { await addDoc(collection(db, "usuarios"), { u, p, r, createdAt: Date.now() }); window.logAct("Usuarios", "Crear", "Nuevo usuario: " + u); } window.clearUserForm(); };
-  window.editUser = function(id, u, p, r) { EDITING_USER_ID = id; document.getElementById('uUser').value = u; document.getElementById('uPass').value = p; document.getElementById('uRol').value = r; document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-save"></i>'; }; window.clearUserForm = function() { EDITING_USER_ID = null; document.getElementById('uUser').value = ''; document.getElementById('uPass').value = ''; document.getElementById('uRol').value = 'agente'; document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-plus"></i>'; }; window.deleteUser = async function(id) { if(confirm("¿Eliminar usuario?")) { const u = DB_USERS.find(x => x.id === id); await deleteDoc(doc(db, "usuarios", id)); window.logAct("Usuarios", "Eliminar", "Usuario eliminado: " + (u?u.u:'')); } };
+  window.renderUserList = function() { const c = document.getElementById('userListContainer'); const q = document.getElementById('searchUserBox').value; let f = DB_USERS; if (SESION.r !== 'admin') f = f.filter(u => u.r !== 'admin'); const k = window.ambKey(AMBIENTE_ACTUAL); f = f.filter(u => u.r === 'admin' || u.r === 'pendiente' || window.userAmbList(u).includes(k)); if (q) f = f.filter(u => window.matchSearch(`${u.u} ${u.r}`, q)); f.sort((a, b) => { if (a.r === 'pendiente' && b.r !== 'pendiente') return -1; if (a.r !== 'pendiente' && b.r === 'pendiente') return 1; return (a.u||"").localeCompare(b.u||""); }); c.innerHTML = f.map(u => { const isP = u.r === 'pendiente'; const ambList = window.userAmbList(u); const ambNoms = ambList.map(id => id ? (DB.ambientes.find(x=>x.id===id)||{nombre:'?'}).nombre : 'Principal').join(', ') || 'Principal'; return `<div class="user-row" style="${isP ? 'background:#ffe3e3; border-left:5px solid #e63946;' : ''}"><div><b style="color:var(--blue);">${u.u}</b> <br><small style="text-transform:uppercase; font-weight:bold; color: ${isP?'#e63946':'var(--light-blue)'}">${u.r}</small> <small style="color:var(--mid-gray); font-weight:bold;"><i class="fa-solid fa-building"></i> ${ambNoms}</small></div><div><button onclick="window.editUser('${u.id}')" class="btn btn-p" style="padding:4px"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteUser('${u.id}')" class="btn btn-d" style="padding:4px"><i class="fa-solid fa-trash"></i></button></div></div>`; }).join('') || `<p align="center" style="padding:15px; color:var(--mid-gray);">No hay usuarios</p>`; };
+  window.submitUser = async function() { const u = document.getElementById('uUser').value, p = document.getElementById('uPass').value, r = document.getElementById('uRol').value; let ambs = window.getCheckedValues('uAmbList'); if(ambs.length === 0) ambs = [window.ambKey(AMBIENTE_ACTUAL)]; if(!u) return; if(EDITING_USER_ID) { let payload = { u, r, ambs, a: ambs[0] }; if(p) payload.p = await window.hashPassword(p); await updateDoc(doc(db, "usuarios", EDITING_USER_ID), payload); window.logAct("Usuarios", "Editar", "Usuario editado: " + u); } else { if(!p && r !== 'invitado' && r !== 'pendiente') return alert("La contraseña es obligatoria para un usuario nuevo."); await addDoc(collection(db, "usuarios"), { u, p: p ? await window.hashPassword(p) : '', r, ambs, a: ambs[0], createdAt: Date.now() }); window.logAct("Usuarios", "Crear", "Nuevo usuario: " + u); } window.clearUserForm(); };
+  window.editUser = function(id) { const u = DB_USERS.find(x => x.id === id); if(!u) return; EDITING_USER_ID = id; document.getElementById('uUser').value = u.u; document.getElementById('uPass').value = ''; document.getElementById('uPass').placeholder = 'Dejar en blanco para no cambiarla'; document.getElementById('uRol').value = u.r; window.renderUserAmbienteSelect(); window.setCheckedValues('uAmbList', window.userAmbList(u)); document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-save"></i>'; }; window.clearUserForm = function() { EDITING_USER_ID = null; document.getElementById('uUser').value = ''; document.getElementById('uPass').value = ''; document.getElementById('uPass').placeholder = 'Clave'; document.getElementById('uRol').value = 'agente'; if(document.getElementById('uAmbList')) window.renderUserAmbienteSelect(); document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-plus"></i>'; }; window.deleteUser = async function(id) { if(confirm("¿Eliminar usuario?")) { const u = DB_USERS.find(x => x.id === id); await deleteDoc(doc(db, "usuarios", id)); window.logAct("Usuarios", "Eliminar", "Usuario eliminado: " + (u?u.u:'')); } };
 
   // ================= NOMBRES DE MÓDULOS DEL SISTEMA =================
   function listenToSysMods() { onSnapshot(doc(db, "configuracion", "nombres_modulos"), (docSnap) => { if (docSnap.exists()) { Object.assign(SYS_MOD_NAMES, docSnap.data()); } window.updateSysModUI(); }); }
@@ -1131,8 +1446,34 @@
   window.saveSysMods = async function() { const data = { cob: document.getElementById('sysNomCob').value.trim() || "Cobertura", tec: document.getElementById('sysNomTec').value.trim() || "Técnicos", enc: document.getElementById('sysNomEnc').value.trim() || "Directorio", proc: document.getElementById('sysNomProc').value.trim() || "Procedimientos" }; try { await setDoc(doc(db, "configuracion", "nombres_modulos"), data, { merge: true }); window.logAct("Módulos", "Editar", "Nombres del sistema actualizados"); window.showToastSuccess("Nombres actualizados"); } catch(e) { alert("Error al guardar"); } };
 
   // ================= CREADOR DE MÓDULOS DINÁMICOS =================
-  function listenToConfigModulos() { onSnapshot(collection(db, "modulos_config"), (snapshot) => { DB.configModulos = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); window.buildDynamicTabs(); if(CURRENT_MODULE === 'ajs') window.renderListaModulos(); }); }
+  function listenToConfigModulos() { 
+      onSnapshot(collection(db, "modulos_config"), (snapshot) => { 
+          DB_RAW.configModulos = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); DB.configModulos = DB_RAW.configModulos.filter(window.inAmb);
+          window.buildDynamicTabs(); 
+          window.renderDynPermsUi(); 
+          if(CURRENT_MODULE === 'ajs') window.renderListaModulos(); 
+          if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewProc').classList.contains('hidden')) window.renderAdminProcTargetSelect();
+          if(CURRENT_MODULE.startsWith('dyn_') && CURRENT_DYN_CONFIG) { const updated = DB.configModulos.find(m => m.id === CURRENT_DYN_CONFIG.id); if(updated) { CURRENT_DYN_CONFIG = updated; window.renderDynData(); } }
+      }); 
+  }
   function listenToDynData() { onSnapshot(collection(db, "modulos_data"), (snapshot) => { DB.dynData = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); LOAD_STATE.dyn = true; if(CURRENT_MODULE.startsWith('dyn_')) window.renderDynData(); }); }
+
+  window.renderDynPermsUi = function() {
+      const container = document.getElementById('dynPermsContainer');
+      if(!container) return;
+      let html = '';
+      DB.configModulos.forEach(mod => {
+          html += `
+          <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid var(--border-soft); display:flex; flex-direction:column; gap:6px;">
+              <b style="color:var(--blue); font-size:12px; border-bottom:1px solid #eee; padding-bottom:4px;"><i class="fa-solid fa-puzzle-piece" style="color:var(--light-blue)"></i> ${mod.nombre}</b>
+              <label class="perm-item" style="font-size:11px;"><input type="checkbox" id="p_view_mod_${mod.id}"> Ver Módulo</label>
+              <label class="perm-item" style="font-size:11px;"><input type="checkbox" id="p_edit_mod_${mod.id}"> Editar / Agregar</label>
+              <label class="perm-item" style="font-size:11px;"><input type="checkbox" id="p_exp_mod_${mod.id}"> Exportar Data</label>
+          </div>
+          `;
+      });
+      container.innerHTML = html || '<p style="font-size:12px; color:var(--mid-gray); grid-column: span 2;">No hay módulos personalizados creados.</p>';
+  };
 
   window.buildDynamicTabs = function() {
     document.querySelectorAll('.tab-dyn').forEach(e => e.remove()); const container = document.getElementById('mainTabsContainer'); const tabAjustes = document.getElementById('tabAjs');
@@ -1147,24 +1488,30 @@
   window.toggleModType = function() {
       const v = document.getElementById('confModVista').value;
       if(v === 'html') { document.getElementById('divConfModCols').classList.add('hidden'); document.getElementById('divConfModHtml').classList.remove('hidden'); } 
+      else if(v === 'procedimientos') { document.getElementById('divConfModCols').classList.add('hidden'); document.getElementById('divConfModHtml').classList.add('hidden'); }
       else { document.getElementById('divConfModCols').classList.remove('hidden'); document.getElementById('divConfModHtml').classList.add('hidden'); }
   };
 
   window.guardarModuloDinamico = async function() { 
       const nombre = document.getElementById('confModName').value.trim(); const vista = document.getElementById('confModVista').value; const colsRaw = document.getElementById('confModCols').value.trim(); const htmlCode = document.getElementById('confModHtml').value.trim();
+      let ambienteIds = window.getCheckedValues('confModAmbList');
+      if(ambienteIds.length === 0) ambienteIds = [window.ambKey(AMBIENTE_ACTUAL)];
       if(!nombre) return alert("Completa el nombre del módulo"); let cols = [];
-      if(vista !== 'html') { cols = colsRaw.split(',').map(c => c.trim()).filter(c => c !== ''); if(cols.length === 0) return alert("Debes agregar al menos una columna válida"); } else { if(!htmlCode) return alert("El código HTML no puede estar vacío"); }
+      if(vista === 'procedimientos') { cols = ['Título', 'Categoría', 'Contenido']; }
+      else if(vista !== 'html') { cols = colsRaw.split(',').map(c => c.trim()).filter(c => c !== ''); if(cols.length === 0) return alert("Debes agregar al menos una columna válida"); } else { if(!htmlCode) return alert("El código HTML no puede estar vacío"); }
       try { 
-          let payload = { nombre, vista, columnas: cols, htmlContent: htmlCode };
+          let payload = { nombre, vista, columnas: cols, htmlContent: htmlCode, ambienteIds };
           if (EDITING_MOD_ID) { await updateDoc(doc(db, "modulos_config", EDITING_MOD_ID), payload); window.logAct("Módulos", "Editar", "Módulo dinámico: " + nombre); alert("¡Módulo Actualizado!"); window.cancelarEdicionModulo(); } 
-          else { await addDoc(collection(db, "modulos_config"), payload); window.logAct("Módulos", "Crear", "Módulo dinámico: " + nombre); alert("¡Módulo Creado!"); document.getElementById('confModName').value = ''; document.getElementById('confModCols').value = ''; document.getElementById('confModHtml').value = ''; } 
+          else { await addDoc(collection(db, "modulos_config"), payload); window.logAct("Módulos", "Crear", "Módulo dinámico: " + nombre); alert("¡Módulo Creado!"); document.getElementById('confModName').value = ''; document.getElementById('confModCols').value = ''; document.getElementById('confModHtml').value = ''; window.renderModAmbienteSelect(); } 
       } catch(e) { alert("Error al guardar módulo dinámico"); } 
   };
   
   window.editarModuloDinamico = function(id) { 
-      EDITING_MOD_ID = id; const mod = DB.configModulos.find(m => m.id === id); document.getElementById('confModName').value = mod.nombre; document.getElementById('confModVista').value = mod.vista; document.getElementById('confModCols').value = (mod.columnas||[]).join(', '); document.getElementById('confModHtml').value = mod.htmlContent || ''; window.toggleModType(); const btnSave = document.getElementById('btnSaveMod'); btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios'; btnSave.classList.replace('btn-s', 'btn-p'); document.getElementById('btnCancelMod').classList.remove('hidden'); const container = document.querySelector('.ajs-content'); if(container) container.scrollTo({ top: 0, behavior: 'smooth' }); 
+      EDITING_MOD_ID = id; const mod = DB.configModulos.find(m => m.id === id); document.getElementById('confModName').value = mod.nombre; document.getElementById('confModVista').value = mod.vista; document.getElementById('confModCols').value = (mod.columnas||[]).join(', '); document.getElementById('confModHtml').value = mod.htmlContent || ''; window.toggleModType(); 
+      window.renderModAmbienteSelect(); window.setCheckedValues('confModAmbList', mod.ambienteIds || [window.ambKey(mod.ambienteId)]);
+      const btnSave = document.getElementById('btnSaveMod'); btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios'; btnSave.classList.replace('btn-s', 'btn-p'); document.getElementById('btnCancelMod').classList.remove('hidden'); const container = document.querySelector('.ajs-content'); if(container) container.scrollTo({ top: 0, behavior: 'smooth' }); 
   };
-  window.cancelarEdicionModulo = function() { EDITING_MOD_ID = null; document.getElementById('confModName').value = ''; document.getElementById('confModVista').value = 'tabla'; document.getElementById('confModCols').value = ''; document.getElementById('confModHtml').value = ''; window.toggleModType(); const btnSave = document.getElementById('btnSaveMod'); btnSave.innerHTML = '<i class="fa-solid fa-layer-group"></i> Generar Módulo'; btnSave.classList.replace('btn-p', 'btn-s'); document.getElementById('btnCancelMod').classList.add('hidden'); };
+  window.cancelarEdicionModulo = function() { EDITING_MOD_ID = null; document.getElementById('confModName').value = ''; document.getElementById('confModVista').value = 'tabla'; document.getElementById('confModCols').value = ''; document.getElementById('confModHtml').value = ''; window.toggleModType(); window.renderModAmbienteSelect(); const btnSave = document.getElementById('btnSaveMod'); btnSave.innerHTML = '<i class="fa-solid fa-layer-group"></i> Generar Módulo'; btnSave.classList.replace('btn-p', 'btn-s'); document.getElementById('btnCancelMod').classList.add('hidden'); };
   window.eliminarModuloDinamico = async function(id) { if(!confirm("¿Eliminar módulo y todos sus datos?")) return; try { const m = DB.configModulos.find(x => x.id === id); await deleteDoc(doc(db, "modulos_config", id)); const batch = writeBatch(db); DB.dynData.filter(d => d.modId === id).forEach(d => batch.delete(doc(db, "modulos_data", d.id))); await batch.commit(); window.logAct("Módulos", "Eliminar", "Módulo dinámico: " + (m?m.nombre:'')); if (EDITING_MOD_ID === id) window.cancelarEdicionModulo(); if (CURRENT_MODULE === 'dyn_'+id) window.switchModule('cob'); } catch(e) { alert("Error al eliminar"); } };
 
   window.renderListaModulos = function() {
@@ -1177,11 +1524,45 @@
 
   window.renderDynData = function(reset = false) {
       if (reset) PAGE_DYN = 1; if(!CURRENT_DYN_CONFIG) return; 
-      const isHtml = CURRENT_DYN_CONFIG.vista === 'html'; const toolsDiv = document.querySelector('#moduloDinamico .tools'); const pageDiv = document.getElementById('pageLabelDyn').parentElement; const container = document.getElementById('dynContentContainer');
-      if (!isHtml && !LOAD_STATE.dyn) { container.innerHTML = `<div class="card spinner-container"><div class="spinner"></div><div class="loading-text">Cargando registros...</div></div>`; return; }
-      if (isHtml) { toolsDiv.classList.add('hidden'); pageDiv.classList.add('hidden'); container.innerHTML = `<div class="card" style="padding: 0; min-height: 75vh; border:none; box-shadow:none;">${CURRENT_DYN_CONFIG.htmlContent || ''}</div>`; const scripts = container.querySelectorAll('script'); scripts.forEach(oldScript => { const newScript = document.createElement('script'); Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value)); newScript.appendChild(document.createTextNode(oldScript.innerHTML)); oldScript.parentNode.replaceChild(newScript, oldScript); }); return; } else { toolsDiv.classList.remove('hidden'); pageDiv.classList.remove('hidden'); }
+      const isHtml = CURRENT_DYN_CONFIG.vista === 'html'; const isProc = CURRENT_DYN_CONFIG.vista === 'procedimientos'; const toolsDiv = document.querySelector('#moduloDinamico .tools'); const pageDiv = document.getElementById('pageLabelDyn').parentElement; const container = document.getElementById('dynContentContainer');
+      if (!isHtml && !isProc && !LOAD_STATE.dyn) { container.innerHTML = `<div class="card spinner-container"><div class="spinner"></div><div class="loading-text">Cargando registros...</div></div>`; return; }
+      if (isProc && !LOAD_STATE.proc) { container.innerHTML = `<div class="card spinner-container"><div class="spinner"></div><div class="loading-text">Cargando documentos...</div></div>`; return; }
+      if (isHtml) { toolsDiv.classList.add('hidden'); pageDiv.classList.add('hidden'); container.innerHTML = `<div class="card" style="padding: 0; min-height: 75vh; border:none; box-shadow:none;">${CURRENT_DYN_CONFIG.htmlContent || ''}</div>`; const scripts = container.querySelectorAll('script'); scripts.forEach(oldScript => { const newScript = document.createElement('script'); Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value)); newScript.appendChild(document.createTextNode(oldScript.innerHTML)); oldScript.parentNode.replaceChild(newScript, oldScript); }); return; } else { toolsDiv.classList.remove('hidden'); if(isProc) pageDiv.classList.add('hidden'); else pageDiv.classList.remove('hidden'); }
+      
+      const canEdit = window.hasPerm('edit_mod_' + CURRENT_DYN_CONFIG.id); 
+      const isAdmin = (SESION.r === 'admin');
+
+      if (isProc) {
+          const rawQ = document.getElementById('searchDynBox').value; const now = new Date();
+          let filtered = DB.proc.filter(p => p.modId === CURRENT_DYN_CONFIG.id && (p.estado || 'activo') === 'activo' && !(p.caducidad && new Date(p.caducidad + 'T23:59:59') < now));
+          if (rawQ) { filtered = filtered.filter(p => { let tempDiv = document.createElement("div"); tempDiv.innerHTML = p.html || ""; let plainText = tempDiv.textContent || tempDiv.innerText || ""; return window.matchSearch(`${p.tit} ${p.cat} ${plainText}`, rawQ); }); }
+          if (filtered.length === 0) { container.innerHTML = `<div class="card" style="text-align:center; padding: 40px; color:var(--light-blue); font-weight:bold; font-size: 16px;">${rawQ ? 'No se encontraron documentos.' : 'Aún no hay documentos en este módulo.' + (canEdit ? ' Usa "Gestionar Documentos" para crear el primero.' : '')}</div>`; return; }
+          const grupos = {}; filtered.forEach(p => { const cat = p.cat || "General"; if(!grupos[cat]) grupos[cat] = []; grupos[cat].push(p); });
+          let activeDoc = filtered.find(p => p.id === DYN_PROC_ACTIVE_ID) || filtered[0]; DYN_PROC_ACTIVE_ID = activeDoc ? activeDoc.id : null;
+          let menuHtml = "";
+          Object.keys(grupos).sort().forEach((cat, idx) => {
+              let hasActive = activeDoc && grupos[cat].some(p => p.id === activeDoc.id); let isOpen = rawQ !== '' || hasActive || idx === 0;
+              menuHtml += `<div class="proc-cat-wrapper"><div class="proc-cat-header" onclick="this.nextElementSibling.classList.toggle('open'); this.querySelector('.chevron-icon').classList.toggle('rotate')"><span><i class="fa-solid fa-folder-open"></i> ${cat}</span><i class="fa-solid fa-chevron-down chevron-icon ${isOpen ? 'rotate' : ''}"></i></div><div class="proc-cat-items ${isOpen ? 'open' : ''}">`;
+              grupos[cat].sort((a,b) => { if(a.fija && !b.fija) return -1; if(!a.fija && b.fija) return 1; return (a.tit||'').localeCompare(b.tit||''); }).forEach(p => {
+                  let icon = p.fija ? '📌' : '<i class="fa-regular fa-file-lines" style="color:var(--light-blue); font-size: 16px;"></i>';
+                  menuHtml += `<a class="proc-item-link ${activeDoc && p.id === activeDoc.id ? 'active' : ''}" onclick="window.abrirDynProcedimiento('${p.id}')"><span style="width:20px; display:inline-block; text-align:center;">${icon}</span> <span style="flex:1;">${p.tit || 'Sin título'}</span></a>`;
+              });
+              menuHtml += `</div></div>`;
+          });
+          let viewerHtml;
+          if (activeDoc) {
+              let act = ""; if (canEdit) act += `<button onclick="window.goToProcAdmin('${CURRENT_DYN_CONFIG.id}','${activeDoc.id}')" class="btn btn-p" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += ` <button onclick="window.eliminarProc('${activeDoc.id}')" class="btn btn-d" title="Enviar a papelera"><i class="fa-solid fa-trash-can"></i></button>`;
+              let headerBar = act ? `<div style="display:flex; justify-content:flex-end; gap:6px; margin-bottom:10px;">${act}</div>` : '';
+              viewerHtml = headerBar + window.buildProcContentHtml(activeDoc);
+          } else { viewerHtml = `<div style="text-align:center; padding: 100px 0; color: #adb5bd;"><i class="fa-solid fa-file-signature" style="font-size: 60px; margin-bottom:20px; color:#dce4ec;"></i><h2 style="color: var(--blue); margin-top: 0;">Selecciona un documento</h2></div>`; }
+          container.innerHTML = `<div class="dyn-proc-wrap" style="height:75vh;"><div class="proc-sidebar" style="width:280px;"><div class="proc-list">${menuHtml}</div></div><div class="proc-viewer"><div class="proc-document" id="dynProcViewer">${viewerHtml}</div></div></div>`;
+          const scripts = document.getElementById('dynProcViewer').querySelectorAll('script'); scripts.forEach(oldScript => { const newScript = document.createElement('script'); Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value)); newScript.appendChild(document.createTextNode(oldScript.innerHTML)); oldScript.parentNode.replaceChild(newScript, oldScript); });
+          return;
+      }
+
       const rawQ = document.getElementById('searchDynBox').value; let filtered = DB.dynData.filter(d => d.modId === CURRENT_DYN_CONFIG.id); if (rawQ) { filtered = filtered.filter(row => { let fStr = ""; CURRENT_DYN_CONFIG.columnas.forEach((_, i) => fStr += (row['c'+i]||"")+" "); return window.matchSearch(fStr, rawQ); }); }
-      const isDir = CURRENT_DYN_CONFIG.vista === 'directorio'; const perPage = isDir ? ITEMS_PER_PAGE_ENC : 10; const totalPages = Math.ceil(filtered.length / perPage) || 1; if (PAGE_DYN > totalPages) PAGE_DYN = totalPages; document.getElementById('pageLabelDyn').innerText = `${PAGE_DYN} / ${totalPages}`; const chunk = filtered.slice((PAGE_DYN - 1) * perPage, PAGE_DYN * perPage); const canEdit = window.hasPerm('dyn_edit'); const isAdmin = (SESION.r === 'admin');
+      const isDir = CURRENT_DYN_CONFIG.vista === 'directorio'; const perPage = isDir ? ITEMS_PER_PAGE_ENC : 10; const totalPages = Math.ceil(filtered.length / perPage) || 1; if (PAGE_DYN > totalPages) PAGE_DYN = totalPages; document.getElementById('pageLabelDyn').innerText = `${PAGE_DYN} / ${totalPages}`; const chunk = filtered.slice((PAGE_DYN - 1) * perPage, PAGE_DYN * perPage); 
+      
       if (chunk.length === 0) { container.innerHTML = `<div class="card" style="text-align:center; padding: 40px; color:var(--light-blue); font-weight:bold; font-size: 16px;">No se encontraron registros.</div>`; return; }
       if (isDir) {
           let html = `<div class="enc-grid">`; chunk.forEach(row => { let title = row.c0 || "Sin Título"; let ini = title.charAt(0).toUpperCase(); let role = row.c1 || ""; let act = ""; if (canEdit) act += `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let bodyHtml = ""; CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => { if(i < 2) return; let val = row['c'+i]; if(val) { bodyHtml += `<div class="enc-contact" onclick="window.copyToClip('${val}')"><div><span class="enc-contact-label">${colName}</span><span class="enc-contact-value">${val}</span></div><button class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</button></div>`; } }); html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${title}</div><div class="enc-role">${role}</div></div></div></div><div class="enc-body">${bodyHtml}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`; }); html += `</div>`; container.innerHTML = html;
@@ -1196,7 +1577,7 @@
       const qAvisos = query(collection(db, "avisos"), orderBy("fecha", "desc"));
       onSnapshot(qAvisos, (snapshot) => {
           snapshot.docChanges().forEach((change) => {
-              if (change.type === "added" && !isInitialAvisoLoad && window.hasPerm('avi_view')) {
+              if (change.type === "added" && !isInitialAvisoLoad && window.hasPerm('avi_view') && window.ambKey(change.doc.data().ambienteId) === window.effectiveAmb('avisos')) {
                   const a = change.doc.data();
                   if(a.alerta === true) {
                       window.notificarChrome("Nuevo Aviso", a.tit);
@@ -1205,7 +1586,7 @@
               }
           });
           isInitialAvisoLoad = false;
-          DB.avisos = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); 
+          DB_RAW.avisos = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); DB.avisos = DB_RAW.avisos.filter(x => window.ambKey(x.ambienteId) === window.effectiveAmb('avisos'));
           LOAD_STATE.avisos = true;
           
           if(DB.avisos.length > 0 && SESION && SESION.id) {
@@ -1236,7 +1617,7 @@
               await updateDoc(doc(db, "avisos", EDITING_AVISO_ID), payload);
               window.logAct("Avisos", "Editar", "Se actualizó el aviso: " + tit);
           } else {
-              payload.fecha = Date.now();
+              payload.fecha = Date.now(); payload.ambienteId = window.effectiveAmb('avisos');
               await addDoc(collection(db, "avisos"), payload);
               window.logAct("Avisos", "Crear", "Nuevo aviso: " + tit);
           }
@@ -1359,16 +1740,16 @@
   function listenToProcedimientos() { 
       onSnapshot(collection(db, "procedimientos_html"), (snapshot) => { 
           snapshot.docChanges().forEach((change) => {
-              if (change.type === "added" && !isInitialProcLoad && window.hasPerm('proc_view')) {
+              if (change.type === "added" && !isInitialProcLoad && window.hasPerm('proc_view') && !change.doc.data().modId && window.inAmb(change.doc.data())) {
                   const p = change.doc.data();
                   window.notificarChrome("Nuevo Procedimiento", `${p.tit} (${p.cat || 'General'})`);
               }
           });
           isInitialProcLoad = false;
-          DB.proc = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); 
+          DB_RAW.proc = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); DB.proc = DB_RAW.proc.filter(window.inAmb);
           LOAD_STATE.proc = true; 
           
-          let sortedProcs = [...DB.proc].sort((a, b) => (b.fecha || 0) - (a.fecha || 0));
+          let sortedProcs = DB.proc.filter(p => !p.modId).sort((a, b) => (b.fecha || 0) - (a.fecha || 0));
           if(sortedProcs.length > 0 && SESION && SESION.id) {
               let latest = sortedProcs[0];
               LATEST_PROC_ID = latest.id;
@@ -1404,6 +1785,7 @@
       
       const now = new Date();
       let f = DB.proc.filter(p => {
+          if (p.modId) return false;
           if ((p.estado || 'activo') === 'eliminado') return false; 
           if (p.caducidad && new Date(p.caducidad + 'T23:59:59') < now) return false; 
           return true;
@@ -1425,6 +1807,25 @@
       container.innerHTML = html;
   };
 
+  window.renderAdminProcTargetSelect = function() {
+      const sel = document.getElementById('admProcTargetMod'); if(!sel) return;
+      let opts = `<option value="">Procedimientos (Principal)</option>`;
+      DB.configModulos.filter(m => m.vista === 'procedimientos').sort((a,b) => (a.nombre||'').localeCompare(b.nombre||'')).forEach(m => { opts += `<option value="${m.id}">${m.nombre}</option>`; });
+      sel.innerHTML = opts; sel.value = ADMIN_PROC_TARGET_MODID || "";
+  };
+  window.changeAdminProcTarget = function(presetId) {
+      const sel = document.getElementById('admProcTargetMod'); const val = presetId !== undefined ? presetId : (sel ? sel.value : "");
+      ADMIN_PROC_TARGET_MODID = val || null; if(sel) sel.value = val || "";
+      window.cancelarEdicionProc(); window.renderAdminProcList();
+  };
+  window.goToProcAdmin = function(modId, editId) {
+      window.switchModule('ajs');
+      setTimeout(() => {
+          window.showAjsView('proc'); window.renderAdminProcTargetSelect(); window.changeAdminProcTarget(modId || "");
+          if(editId) setTimeout(() => window.editarProc(editId), 150);
+      }, 100);
+  };
+
   window.setProcMode = function(mode, autoSync = true) { PROC_MODE = mode; const btnV = document.getElementById('btnModoVisual'); const btnC = document.getElementById('btnModoCodigo'); const btnD = document.getElementById('btnModoDrive'); const boxV = document.getElementById('boxProcVisual'); const boxC = document.getElementById('boxProcCodigo'); const boxD = document.getElementById('boxProcDrive'); btnV.style.background = 'var(--mid-gray)'; boxV.classList.add('hidden'); btnC.style.background = 'var(--mid-gray)'; boxC.classList.add('hidden'); if(btnD) { btnD.style.background = 'var(--mid-gray)'; boxD.classList.add('hidden'); } if (mode === 'visual') { btnV.style.background = 'var(--blue)'; boxV.classList.remove('hidden'); } else if (mode === 'codigo') { btnC.style.background = 'var(--blue)'; boxC.classList.remove('hidden'); } else if (mode === 'drive') { btnD.style.background = 'var(--blue)'; boxD.classList.remove('hidden'); } };
   
   window.renderProcMenu = function(isSearch = false) {
@@ -1434,6 +1835,7 @@
       
       const now = new Date();
       let f = DB.proc.filter(p => {
+          if (p.modId) return false;
           if ((p.estado || 'activo') === 'eliminado') return false; 
           if (p.caducidad && new Date(p.caducidad + 'T23:59:59') < now) return false; 
           return true;
@@ -1485,27 +1887,31 @@
       if(selectedCard) selectedCard.classList.add('active-file');
   };
 
+  window.buildProcContentHtml = function(proc) {
+      let contentHtml = "";
+      if (proc.modo === 'drive') {
+          let links = []; try { links = JSON.parse(proc.driveLink || "[]"); } catch(e) { let rawLinks = (proc.driveLink || "").split(/[\n,]+/).map(l => l.trim()).filter(l => l !== ""); links = rawLinks.map((url, idx) => ({ n: "Documento " + (idx+1), u: url })); }
+          if(links.length > 0) {
+              let filesGridHtml = `<div class="proc-files-grid">`; let firstUrl = "";
+              links.forEach((linkObj, idx) => {
+                  let url = linkObj.u; let title = linkObj.n || ("Documento " + (idx+1)); let previewUrl = url; let downloadUrl = url; let fileMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/); let folderMatch = url.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+                  if(fileMatch) { previewUrl = `https://drive.google.com/file/d/${fileMatch[1]}/preview`; downloadUrl = `https://drive.google.com/uc?export=download&id=${fileMatch[1]}`; } else if(folderMatch) { previewUrl = `https://drive.google.com/embeddedfolderview?id=${folderMatch[1]}#grid`; }
+                  if(idx === 0) firstUrl = previewUrl;
+                  filesGridHtml += `<div class="proc-file-card ${idx === 0 ? 'active-file' : ''}" id="fileCard_${idx}"><div class="proc-file-meta"><div class="proc-file-badge"><i class="fa-solid fa-file-pdf"></i></div><div class="proc-file-title">${title}</div></div><div class="proc-file-btn-group"><button class="btn btn-p" style="padding: 6px 14px; font-size:11px; box-shadow:none;" onclick="window.visualizeDriveFile('${previewUrl}', ${idx})" title="Leer documento integrado"><i class="fa-solid fa-eye"></i> Leer</button><a href="${downloadUrl}" target="_blank" class="btn btn-o" style="padding: 6px 14px; font-size:11px; border-color:var(--border-soft); box-shadow:none;" title="Descargar PDF en equipo local"><i class="fa-solid fa-download"></i> Descargar</a></div></div>`;
+              }); filesGridHtml += `</div>`;
+              contentHtml = `<div style="background: white; border-radius: 8px; border: 1px solid var(--border-soft); padding: 25px;"><div style="margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 15px; display:flex; justify-content:space-between; align-items:center;"><h3 style="margin: 0; color: var(--blue); font-size: 20px;"><i class="fa-brands fa-google-drive" style="color: #00A65A;"></i> ${proc.tit}</h3>${window.getLikeButtonHtml(proc)}</div><div class="proc-attachments-container"><div class="proc-attachments-title"><i class="fa-solid fa-paperclip" style="color:var(--light-blue)"></i> Documentación de Consulta Rápida</div>${filesGridHtml}</div><div style="width: 100%; height: 75vh; min-height: 600px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border-soft); background: #f8fafc;"><iframe id="procDriveIframe" src="${firstUrl}" width="100%" height="100%" style="border: none;" allow="autoplay"></iframe></div></div>`;
+          } else { contentHtml = `<div style="text-align:center; padding: 50px; color:#e63946; font-weight:bold;">No hay enlaces válidos para mostrar.</div>`; }
+      } else { 
+          let claseEditor = proc.modo === 'codigo' ? '' : 'ql-editor';
+          contentHtml = `<div style="margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 15px; display:flex; justify-content:space-between; align-items:center;"><h3 style="margin: 0; color: var(--blue); font-size: 24px;">${proc.tit}</h3>${window.getLikeButtonHtml(proc)}</div><div class="${claseEditor}" style="padding:0; overflow-y:visible; font-size:15px; color: var(--dark-gray); line-height: 1.6;">${proc.html || ''}</div>`;
+      }
+      if(!proc.html && proc.modo !== 'drive') contentHtml = "<i style='color:var(--mid-gray);'>El documento está vacío.</i>";
+      return contentHtml;
+  };
   window.abrirProcedimiento = function(id) {
       document.querySelectorAll('.proc-item-link').forEach(el => el.classList.remove('active')); const activeLink = document.getElementById(`linkProc_${id}`); if(activeLink) activeLink.classList.add('active'); const proc = DB.proc.find(p => p.id === id); const viewer = document.getElementById('procViewerContainer');
       if(proc) {
-          viewer.dataset.activeId = id; let contentHtml = "";
-          if (proc.modo === 'drive') {
-              let links = []; try { links = JSON.parse(proc.driveLink || "[]"); } catch(e) { let rawLinks = (proc.driveLink || "").split(/[\n,]+/).map(l => l.trim()).filter(l => l !== ""); links = rawLinks.map((url, idx) => ({ n: "Documento " + (idx+1), u: url })); }
-              if(links.length > 0) {
-                  let filesGridHtml = `<div class="proc-files-grid">`; let firstUrl = "";
-                  links.forEach((linkObj, idx) => {
-                      let url = linkObj.u; let title = linkObj.n || ("Documento " + (idx+1)); let previewUrl = url; let downloadUrl = url; let fileMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/); let folderMatch = url.match(/\/folders\/([a-zA-Z0-9_-]+)/);
-                      if(fileMatch) { previewUrl = `https://drive.google.com/file/d/${fileMatch[1]}/preview`; downloadUrl = `https://drive.google.com/uc?export=download&id=${fileMatch[1]}`; } else if(folderMatch) { previewUrl = `https://drive.google.com/embeddedfolderview?id=${folderMatch[1]}#grid`; }
-                      if(idx === 0) firstUrl = previewUrl;
-                      filesGridHtml += `<div class="proc-file-card ${idx === 0 ? 'active-file' : ''}" id="fileCard_${idx}"><div class="proc-file-meta"><div class="proc-file-badge"><i class="fa-solid fa-file-pdf"></i></div><div class="proc-file-title">${title}</div></div><div class="proc-file-btn-group"><button class="btn btn-p" style="padding: 6px 14px; font-size:11px; box-shadow:none;" onclick="window.visualizeDriveFile('${previewUrl}', ${idx})" title="Leer documento integrado"><i class="fa-solid fa-eye"></i> Leer</button><a href="${downloadUrl}" target="_blank" class="btn btn-o" style="padding: 6px 14px; font-size:11px; border-color:var(--border-soft); box-shadow:none;" title="Descargar PDF en equipo local"><i class="fa-solid fa-download"></i> Descargar</a></div></div>`;
-                  }); filesGridHtml += `</div>`;
-                  contentHtml = `<div style="background: white; border-radius: 8px; border: 1px solid var(--border-soft); padding: 25px;"><div style="margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 15px; display:flex; justify-content:space-between; align-items:center;"><h3 style="margin: 0; color: var(--blue); font-size: 20px;"><i class="fa-brands fa-google-drive" style="color: #00A65A;"></i> ${proc.tit}</h3>${window.getLikeButtonHtml(proc)}</div><div class="proc-attachments-container"><div class="proc-attachments-title"><i class="fa-solid fa-paperclip" style="color:var(--light-blue)"></i> Documentación de Consulta Rápida</div>${filesGridHtml}</div><div style="width: 100%; height: 75vh; min-height: 600px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border-soft); background: #f8fafc;"><iframe id="procDriveIframe" src="${firstUrl}" width="100%" height="100%" style="border: none;" allow="autoplay"></iframe></div></div>`;
-              } else { contentHtml = `<div style="text-align:center; padding: 50px; color:#e63946; font-weight:bold;">No hay enlaces válidos para mostrar.</div>`; }
-          } else { 
-              let claseEditor = proc.modo === 'codigo' ? '' : 'ql-editor';
-              contentHtml = `<div style="margin-bottom: 20px; border-bottom: 2px solid var(--border-soft); padding-bottom: 15px; display:flex; justify-content:space-between; align-items:center;"><h3 style="margin: 0; color: var(--blue); font-size: 24px;">${proc.tit}</h3>${window.getLikeButtonHtml(proc)}</div><div class="${claseEditor}" style="padding:0; overflow-y:visible; font-size:15px; color: var(--dark-gray); line-height: 1.6;">${proc.html || ''}</div>`;
-          }
-          if(!proc.html && proc.modo !== 'drive') contentHtml = "<i style='color:var(--mid-gray);'>El documento está vacío.</i>"; viewer.innerHTML = contentHtml;
+          viewer.dataset.activeId = id; viewer.innerHTML = window.buildProcContentHtml(proc);
           const scripts = viewer.querySelectorAll('script'); scripts.forEach(oldScript => { const newScript = document.createElement('script'); Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value)); newScript.appendChild(document.createTextNode(oldScript.innerHTML)); oldScript.parentNode.replaceChild(newScript, oldScript); });
           document.getElementById('procViewerScrollArea').scrollTo({ top: 0, behavior: 'smooth' });
       }
@@ -1528,12 +1934,12 @@
       
       btnSave.disabled = true; btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...'; 
       try { 
-          let payload = { cat, tit, html: htmlContent, driveLink: driveLink, modo: PROC_MODE, caducidad, fija, estado: 'activo' }; 
+          let payload = { cat, tit, html: htmlContent, driveLink: driveLink, modo: PROC_MODE, caducidad, fija, estado: 'activo', modId: ADMIN_PROC_TARGET_MODID }; 
           if (EDITING_PROC_ID) { 
               await updateDoc(doc(db, "procedimientos_html", EDITING_PROC_ID), payload); 
               window.logAct("Procedimientos", "Editar", "Se actualizó: " + tit); alert("Procedimiento actualizado."); 
           } else { 
-              payload.fecha = Date.now(); payload.likes = []; 
+              payload.fecha = Date.now(); payload.likes = []; payload.ambienteId = AMBIENTE_ACTUAL;
               await addDoc(collection(db, "procedimientos_html"), payload); 
               window.logAct("Procedimientos", "Crear", "Nuevo manual: " + tit); alert("Procedimiento creado."); 
           } 
@@ -1603,7 +2009,7 @@
   
   window.renderAdminProcList = function() { 
       const q = document.getElementById('searchProcAdmBox').value; 
-      let f = DB.proc.filter(p => (p.estado || 'activo') === (SHOW_PAPELERA ? 'eliminado' : 'activo'));
+      let f = DB.proc.filter(p => (p.estado || 'activo') === (SHOW_PAPELERA ? 'eliminado' : 'activo') && ((p.modId || null) === ADMIN_PROC_TARGET_MODID));
       
       if (q) { f = f.filter(p => { let tempDiv = document.createElement("div"); tempDiv.innerHTML = p.html || ""; let plainText = tempDiv.textContent || tempDiv.innerText || ""; return window.matchSearch(`${p.tit} ${p.cat} ${plainText}`, q); }); }
       
@@ -1631,6 +2037,7 @@
   // ================= MODALES ESTÁTICOS Y CONFIG COLORES =================
   window.openModal = (id, isEdit = false) => { document.getElementById(id).classList.remove('hidden'); if(!isEdit) { if(id==='modalAdd'){EDITING_LOCATION_ID=null;document.querySelectorAll('#modalAdd input').forEach(i=>i.value='');} if(id==='modalAddTec'){EDITING_TEC_ID=null;document.querySelectorAll('#modalAddTec input').forEach(i=>i.value='');} if(id==='modalAddEnc'){EDITING_ENC_ID=null;document.querySelectorAll('#modalAddEnc input').forEach(i=>i.value='');} } };
   window.closeModal = id => document.getElementById(id).classList.add('hidden');
+  window.abrirDynProcedimiento = function(id) { DYN_PROC_ACTIVE_ID = id; window.renderDynData(); };
   window.openModalDyn = function() { EDITING_DYN_ID = null; document.getElementById('modalTitleDyn').innerText = "Nuevo Registro - " + CURRENT_DYN_CONFIG.nombre; document.getElementById('formGridDyn').innerHTML = CURRENT_DYN_CONFIG.columnas.map((col, i) => `<div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">${col}</label><input id="dynInp_${i}" class="inp" placeholder="Ingresar ${col}"></div>`).join(''); window.openModal('modalDyn', false); };
   window.editDynRecord = function(id) { EDITING_DYN_ID = id; const data = DB.dynData.find(d => d.id === id); document.getElementById('modalTitleDyn').innerText = "Editar Registro - " + CURRENT_DYN_CONFIG.nombre; document.getElementById('formGridDyn').innerHTML = CURRENT_DYN_CONFIG.columnas.map((col, i) => `<div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">${col}</label><input id="dynInp_${i}" class="inp" value="${data['c'+i] || ''}"></div>`).join(''); window.openModal('modalDyn', true); };
   window.saveDynRecord = async function() { let payload = { modId: CURRENT_DYN_CONFIG.id }; CURRENT_DYN_CONFIG.columnas.forEach((_, i) => payload['c'+i] = document.getElementById('dynInp_'+i).value.trim()); if(!payload['c0']) return alert("El primer campo es obligatorio"); try { if(EDITING_DYN_ID) { await updateDoc(doc(db, "modulos_data", EDITING_DYN_ID), payload); window.logAct(CURRENT_DYN_CONFIG.nombre, "Editar", "Fila: " + payload['c0']); } else { await addDoc(collection(db, "modulos_data"), payload); window.logAct(CURRENT_DYN_CONFIG.nombre, "Crear", "Nueva Fila: " + payload['c0']); } window.closeModal('modalDyn'); } catch(e) { alert("Error al guardar"); } };
@@ -1641,9 +2048,9 @@
   window.saveColors = async function() { const btnSave = document.getElementById('btnSaveColors'); btnSave.disabled = true; btnSave.innerHTML = "Guardando..."; const data = { "Cobertura": document.getElementById('colCob').value, "Sin Cobertura": document.getElementById('colSinCob').value, "Consultar": document.getElementById('colCon').value, "Sin Datos": document.getElementById('colSinDat').value }; try { await setDoc(doc(db, "configuracion", "colores_cobertura"), data, { merge: true }); window.logAct("Ajustes", "Editar", "Colores de cobertura actualizados"); window.showToastSuccess("Colores guardados"); } catch(e) { alert("Error al guardar los colores"); } btnSave.disabled = false; btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Colores'; };
 
   // ================= MÓDULOS ESTÁTICOS ORIGINALES =================
-  function listenToCoberturas() { onSnapshot(collection(db, "coberturas"), (snap) => { DB.cob = snap.docs.map(d => ({ id: d.id, ...d.data() })); LOAD_STATE.cob = true; if(CURRENT_MODULE === 'cob') window.renderTable(); }); }
-  function listenToTecnicos() { onSnapshot(collection(db, "tecnicos"), (snap) => { DB.tec = snap.docs.map(d => ({ id: d.id, ...d.data() })); LOAD_STATE.tec = true; if(CURRENT_MODULE === 'tec') window.renderTecnicosTable(); }); }
-  function listenToEncargados() { onSnapshot(collection(db, "encargados"), (snap) => { DB.enc = snap.docs.map(d => ({ id: d.id, ...d.data() })); LOAD_STATE.enc = true; if(CURRENT_MODULE === 'enc') window.renderEncargadosTable(); }); }
+  function listenToCoberturas() { onSnapshot(collection(db, "coberturas"), (snap) => { DB_RAW.cob = snap.docs.map(d => ({ id: d.id, ...d.data() })); DB.cob = DB_RAW.cob.filter(x => window.ambKey(x.ambienteId) === window.effectiveAmb('cob')); LOAD_STATE.cob = true; if(CURRENT_MODULE === 'cob') window.renderTable(); }); }
+  function listenToTecnicos() { onSnapshot(collection(db, "tecnicos"), (snap) => { DB_RAW.tec = snap.docs.map(d => ({ id: d.id, ...d.data() })); DB.tec = DB_RAW.tec.filter(x => window.ambKey(x.ambienteId) === window.effectiveAmb('tec')); LOAD_STATE.tec = true; if(CURRENT_MODULE === 'tec') window.renderTecnicosTable(); }); }
+  function listenToEncargados() { onSnapshot(collection(db, "encargados"), (snap) => { DB_RAW.enc = snap.docs.map(d => ({ id: d.id, ...d.data() })); DB.enc = DB_RAW.enc.filter(x => window.ambKey(x.ambienteId) === window.effectiveAmb('enc')); LOAD_STATE.enc = true; if(CURRENT_MODULE === 'enc') window.renderEncargadosTable(); }); }
 
   window.renderTable = function(r=false) { 
     if (r) PAGE = 1; const tbody = document.getElementById('tableBody'); if (!LOAD_STATE.cob) { tbody.innerHTML = `<tr><td colspan="6"><div class="spinner-container"><div class="spinner"></div><div class="loading-text">Cargando coberturas...</div></div></td></tr>`; return; }
@@ -1653,7 +2060,7 @@
   };
   window.saveStatus = async (id, sel, nombreUbi) => { await updateDoc(doc(db, "coberturas", id), { s: sel.value }); window.logAct("Cobertura", "Editar", `Cambio de estado a "${sel.value}" en: ${nombreUbi}`); };
   window.editLocation = async (id) => { EDITING_LOCATION_ID = id; const d = DB.cob.find(x => x.id === id); document.getElementById('modalTitle').innerText = "Editar Ubicación"; document.getElementById('newMun').value = d.m; document.getElementById('newNom').value = d.n; document.getElementById('newCat').value = d.c; document.getElementById('newZon').value = d.z; document.getElementById('newRef').value = d.r; document.getElementById('newCob').value = d.s || "Sin Datos"; window.openModal('modalAdd', true); };
-  window.saveLocation = async () => { const data = { m: document.getElementById('newMun').value, n: document.getElementById('newNom').value, c: document.getElementById('newCat').value, z: document.getElementById('newZon').value, r: document.getElementById('newRef').value, s: document.getElementById('newCob').value }; if(!data.n) return; if(EDITING_LOCATION_ID) { await updateDoc(doc(db, "coberturas", EDITING_LOCATION_ID), data); window.logAct("Cobertura", "Editar", "Se modificó: " + data.n); } else { await addDoc(collection(db, "coberturas"), data); window.logAct("Cobertura", "Crear", "Nueva ubicación: " + data.n); } window.closeModal('modalAdd'); };
+  window.saveLocation = async () => { const data = { m: document.getElementById('newMun').value, n: document.getElementById('newNom').value, c: document.getElementById('newCat').value, z: document.getElementById('newZon').value, r: document.getElementById('newRef').value, s: document.getElementById('newCob').value }; if(!data.n) return; if(EDITING_LOCATION_ID) { await updateDoc(doc(db, "coberturas", EDITING_LOCATION_ID), data); window.logAct("Cobertura", "Editar", "Se modificó: " + data.n); } else { await addDoc(collection(db, "coberturas"), { ...data, ambienteId: window.effectiveAmb('cob') }); window.logAct("Cobertura", "Crear", "Nueva ubicación: " + data.n); } window.closeModal('modalAdd'); };
   window.deleteLocation = async (id) => { if(confirm("¿Eliminar?")) { const d = DB.cob.find(x => x.id === id); await deleteDoc(doc(db, "coberturas", id)); window.logAct("Cobertura", "Eliminar", "Ubicación eliminada: " + (d?d.n:'')); } }; window.changePage = d => { PAGE += d; window.renderTable(); };
 
   window.renderTecnicosTable = function(r=false) {
@@ -1663,7 +2070,7 @@
     chunk.forEach(row => { let act = ""; if (canEdit) act += `<button onclick="window.editTecnico('${row.id}')" class="btn btn-p" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += ` <button onclick="window.deleteTecnico('${row.id}')" class="btn btn-d" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let tels = row.t1 || ""; if(row.t2) tels += `<br><span style="color:var(--mid-gray); font-size:11px;">${row.t2}</span>`; tbody.innerHTML += `<tr><td><b style="color:var(--blue);">${row.n||''}</b></td><td>${tels}</td><td>${row.a||''}</td><td>${row.d||''}</td><td><span class="badge-tag">${row.p||'-'}</span></td><td>${act}</td></tr>`; });
   };
   window.editTecnico = async (id) => { EDITING_TEC_ID = id; const d = DB.tec.find(x => x.id === id); document.getElementById('modalTitleTec').innerText = "Editar Técnico"; document.getElementById('tecNom').value = d.n; document.getElementById('tecTel1').value = d.t1; document.getElementById('tecTel2').value = d.t2; document.getElementById('tecArea').value = d.a; document.getElementById('tecDPI').value = d.d; document.getElementById('tecPlaca').value = d.p; window.openModal('modalAddTec', true); };
-  window.saveTecnico = async () => { const data = { n: document.getElementById('tecNom').value.trim(), t1: document.getElementById('tecTel1').value.trim(), t2: document.getElementById('tecTel2').value.trim(), a: document.getElementById('tecArea').value.trim(), d: document.getElementById('tecDPI').value.trim(), p: document.getElementById('tecPlaca').value.trim() }; if(!data.n) return; if(EDITING_TEC_ID) { await updateDoc(doc(db, "tecnicos", EDITING_TEC_ID), data); window.logAct("Técnicos", "Editar", "Se actualizó al técnico: " + data.n); } else { await addDoc(collection(db, "tecnicos"), data); window.logAct("Técnicos", "Crear", "Nuevo técnico: " + data.n); } window.closeModal('modalAddTec'); };
+  window.saveTecnico = async () => { const data = { n: document.getElementById('tecNom').value.trim(), t1: document.getElementById('tecTel1').value.trim(), t2: document.getElementById('tecTel2').value.trim(), a: document.getElementById('tecArea').value.trim(), d: document.getElementById('tecDPI').value.trim(), p: document.getElementById('tecPlaca').value.trim() }; if(!data.n) return; if(EDITING_TEC_ID) { await updateDoc(doc(db, "tecnicos", EDITING_TEC_ID), data); window.logAct("Técnicos", "Editar", "Se actualizó al técnico: " + data.n); } else { await addDoc(collection(db, "tecnicos"), { ...data, ambienteId: window.effectiveAmb('tec') }); window.logAct("Técnicos", "Crear", "Nuevo técnico: " + data.n); } window.closeModal('modalAddTec'); };
   window.deleteTecnico = async (id) => { if(confirm("¿Eliminar?")) { const d = DB.tec.find(x => x.id === id); await deleteDoc(doc(db, "tecnicos", id)); window.logAct("Técnicos", "Eliminar", "Técnico eliminado: " + (d?d.n:'')); } }; window.changePageTec = d => { PAGE_TEC += d; window.renderTecnicosTable(); };
 
   window.renderEncargadosTable = function(r=false) {
@@ -1673,18 +2080,44 @@
     let html = ""; cats.forEach(cat => { let ic = "fa-users"; if(cat.toLowerCase().includes('rutas')) ic = "fa-truck-fast"; if(cat.toLowerCase().includes('marca')) ic = "fa-tags"; if(cat.toLowerCase().includes('team')) ic = "fa-user-tie"; if(cat.toLowerCase().includes('factura')) ic = "fa-file-invoice-dollar"; html += `<div class="enc-category-title"><i class="fa-solid ${ic}"></i> ${cat}</div><div class="enc-grid">`; grupos[cat].forEach(row => { let act = ""; if (canEdit) act += `<button onclick="window.editEncargado('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteEncargado('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let ini = row.n ? row.n.charAt(0).toUpperCase() : "?"; let rol = row.p || "Equipo"; let tel = row.t ? `<div class="enc-contact" onclick="window.copyToClip('${row.t}')"><div><span class="enc-contact-label"><i class="fa-solid fa-phone"></i> Teléfono</span><span class="enc-contact-value">${row.t}</span></div><button class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</button></div>` : ``; let cor = row.c ? `<div class="enc-contact" onclick="window.copyToClip('${row.c}')"><div><span class="enc-contact-label"><i class="fa-solid fa-envelope"></i> Correo</span><span class="enc-contact-value">${row.c}</span></div><button class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</button></div>` : ``; html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${row.n||'Sin Nombre'}</div><div class="enc-role">${row.p||'Equipo'}</div></div></div></div><div class="enc-body">${tel}${cor}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`; }); html += `</div>`; }); cont.innerHTML = html;
   };
   window.editEncargado = async (id) => { EDITING_ENC_ID = id; const d = DB.enc.find(x => x.id === id); document.getElementById('modalTitleEnc').innerText = "Editar Contacto"; document.getElementById('encCat').value = d.g || "Otro"; document.getElementById('encNom').value = d.n; document.getElementById('encTel').value = d.t; document.getElementById('encCor').value = d.c; document.getElementById('encPuesto').value = d.p; window.openModal('modalAddEnc', true); };
-  window.saveEncargado = async () => { const data = { g: document.getElementById('encCat').value, n: document.getElementById('encNom').value.trim(), t: document.getElementById('encTel').value.trim(), c: document.getElementById('encCor').value.trim(), p: document.getElementById('encPuesto').value.trim() }; if(!data.n) return; if(EDITING_ENC_ID) { await updateDoc(doc(db, "encargados", EDITING_ENC_ID), data); window.logAct("Directorio", "Editar", "Contacto: " + data.n); } else { await addDoc(collection(db, "encargados"), data); window.logAct("Directorio", "Crear", "Nuevo contacto: " + data.n); } window.closeModal('modalAddEnc'); };
+  window.saveEncargado = async () => { const data = { g: document.getElementById('encCat').value, n: document.getElementById('encNom').value.trim(), t: document.getElementById('encTel').value.trim(), c: document.getElementById('encCor').value.trim(), p: document.getElementById('encPuesto').value.trim() }; if(!data.n) return; if(EDITING_ENC_ID) { await updateDoc(doc(db, "encargados", EDITING_ENC_ID), data); window.logAct("Directorio", "Editar", "Contacto: " + data.n); } else { await addDoc(collection(db, "encargados"), { ...data, ambienteId: window.effectiveAmb('enc') }); window.logAct("Directorio", "Crear", "Nuevo contacto: " + data.n); } window.closeModal('modalAddEnc'); };
   window.deleteEncargado = async (id) => { if(confirm("¿Eliminar?")) { const d = DB.enc.find(x => x.id === id); await deleteDoc(doc(db, "encargados", id)); window.logAct("Directorio", "Eliminar", "Contacto: " + (d?d.n:'')); } }; window.changePageEnc = d => { PAGE_ENC += d; window.renderEncargadosTable(); };
 
   window.exportToExcel = function() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DB.cob.map(r => ({ "Municipio":r.m, "Nombre":r.n, "Categoria":r.c, "Zona":r.z, "Referencia":r.r, "Estado":r.s || "Sin Datos" }))), "Cobertura"); XLSX.writeFile(wb, "Cobertura.xlsx"); };
   window.exportTecnicosToExcel = function() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DB.tec.map(r => ({ "Técnico":r.n, "Teléfono 1":r.t1, "Teléfono 2":r.t2, "Área":r.a, "DPI":r.d, "Placa":r.p }))), "Técnicos"); XLSX.writeFile(wb, "Tecnicos.xlsx"); };
   window.exportEncargadosToExcel = function() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DB.enc.map(r => ({ "Categoría":r.g, "Nombre":r.n, "Teléfono":r.t, "Correo":r.c, "Puesto":r.p }))), "Encargados"); XLSX.writeFile(wb, "Encargados.xlsx"); };
-  window.exportUsersToExcel = function() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DB_USERS.map(u => ({ "Usuario": u.u, "Contraseña": u.p, "Rol": u.r }))), "Usuarios"); XLSX.writeFile(wb, "Usuarios.xlsx"); };
+  window.exportUsersToExcel = function() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DB_USERS.map(u => ({ "Usuario": u.u, "Rol": u.r, "Ambiente(s)": window.userAmbList(u).map(id => id ? (DB.ambientes.find(a=>a.id===id)||{nombre:'?'}).nombre : 'Principal').join(', ') }))), "Usuarios"); XLSX.writeFile(wb, "Usuarios.xlsx"); };
+
+  // Corrige en un solo clic a todos los usuarios que quedaron apuntando a un ambiente eliminado/inexistente (los devuelve a "Principal").
+  window.repararAmbientesUsuarios = async function() {
+      const validIds = new Set(DB.ambientes.map(a => a.id));
+      const brokenUsers = DB_USERS.filter(u => window.userAmbList(u).some(id => id !== "" && !validIds.has(id)));
+      if (brokenUsers.length === 0) { alert("No se encontró ningún usuario con un ambiente inválido. Todo está en orden."); return; }
+      if (!confirm(`Se encontraron ${brokenUsers.length} usuario(s) apuntando a un ambiente que ya no existe:\n\n${brokenUsers.map(u => u.u).join(', ')}\n\nSe les asignará el ambiente "Principal" automáticamente. ¿Continuar?`)) return;
+      try {
+          const batch = writeBatch(db);
+          brokenUsers.forEach(u => {
+              const cleaned = window.userAmbList(u).filter(id => id === "" || validIds.has(id));
+              const finalAmbs = cleaned.length ? cleaned : [""];
+              batch.update(doc(db, "usuarios", u.id), { ambs: finalAmbs, a: finalAmbs[0] || null });
+          });
+          await batch.commit();
+          window.logAct("Usuarios", "Reparar", `Se repararon ${brokenUsers.length} usuario(s) con ambiente inválido.`);
+          alert(`Listo. Se repararon ${brokenUsers.length} usuario(s).`);
+          if (brokenUsers.some(u => u.id === SESION.id)) {
+              const me = brokenUsers.find(u => u.id === SESION.id);
+              const cleaned = window.userAmbList(me).filter(id => id === "" || validIds.has(id));
+              SESION.ambs = cleaned.length ? cleaned : [""]; SESION.a = SESION.ambs[0] || null;
+              localStorage.setItem('distelsa_pro_fb', JSON.stringify(SESION));
+              window.setAmbienteActual(SESION.a);
+          }
+      } catch(e) { alert("Error al reparar usuarios."); }
+  };
   window.exportDynToExcel = function() { if(!CURRENT_DYN_CONFIG || DB.dynData.length === 0) return alert("Sin datos"); let data = DB.dynData.filter(d => d.modId === CURRENT_DYN_CONFIG.id).map(r => { let obj = {}; CURRENT_DYN_CONFIG.columnas.forEach((col, i) => obj[col] = r['c'+i] || ""); return obj; }); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), CURRENT_DYN_CONFIG.nombre); XLSX.writeFile(wb, CURRENT_DYN_CONFIG.nombre+".xlsx"); };
 
-  window.handleImportCob = function(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar?`)) return; for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { const keys = Object.keys(row); const getVal = (possible) => { for(let k of keys) if(possible.includes(k.toLowerCase().trim())) return String(row[k] || ""); return ""; }; let s = "Sin Datos"; let rawS = getVal(["estado", "cobertura", "est"]).toLowerCase(); if (rawS.includes("sin")) s = "Sin Cobertura"; else if (rawS.includes("cobertura")) s = "Cobertura"; else if (rawS.includes("consultar")) s = "Consultar"; batch.set(doc(collection(db, "coberturas")), { m: getVal(["municipio", "mun"]).trim(), n: getVal(["nombre", "colonia", "nom"]).trim(), c: getVal(["categoria", "categoría", "cat"]).trim(), z: getVal(["zona", "z"]).trim(), r: getVal(["referencia", "ref"]).trim(), s: s }); }); await batch.commit(); } window.logAct("Cobertura", "Importación", "Importación masiva desde Excel"); alert("Éxito"); e.target.value = ""; }; r.readAsBinaryString(f); };
-  window.handleImportTec = function(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar?`)) return; for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { const keys = Object.keys(row); const getVal = (possible) => { for(let k of keys) if(possible.includes(k.toLowerCase().trim())) return String(row[k] || ""); return ""; }; batch.set(doc(collection(db, "tecnicos")), { n: getVal(["nombre", "tecnico", "técnico", "tec"]).trim(), t1: getVal(["telefono", "teléfono", "tel1", "celular"]).trim(), t2: getVal(["telefono 2", "teléfono 2", "tel2", "otro"]).trim(), a: getVal(["area", "área", "zona"]).trim(), d: getVal(["dpi", "identificacion"]).trim(), p: getVal(["placa", "vehiculo"]).trim() }); }); await batch.commit(); } window.logAct("Técnicos", "Importación", "Importación masiva desde Excel"); alert("Éxito"); e.target.value = ""; }; r.readAsBinaryString(f); };
-  window.handleImportEnc = function(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar?`)) return; for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { const keys = Object.keys(row); const getVal = (possible) => { for(let k of keys) if(possible.includes(k.toLowerCase().trim())) return String(row[k] || ""); return ""; }; batch.set(doc(collection(db, "encargados")), { n: getVal(["nombre", "encargado"]).trim(), t: getVal(["número", "numero", "teléfono", "telefono"]).trim(), c: getVal(["correo", "email"]).trim(), p: getVal(["puesto", "marcas", "encarga", "responsabilidad"]).trim(), g: getVal(["categoria", "categoría", "grupo"]).trim() || "Otro" }); }); await batch.commit(); } window.logAct("Directorio", "Importación", "Importación masiva desde Excel"); alert("Éxito"); e.target.value = ""; }; r.readAsBinaryString(f); };
+  window.handleImportCob = function(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar?`)) return; for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { const keys = Object.keys(row); const getVal = (possible) => { for(let k of keys) if(possible.includes(k.toLowerCase().trim())) return String(row[k] || ""); return ""; }; let s = "Sin Datos"; let rawS = getVal(["estado", "cobertura", "est"]).toLowerCase(); if (rawS.includes("sin")) s = "Sin Cobertura"; else if (rawS.includes("cobertura")) s = "Cobertura"; else if (rawS.includes("consultar")) s = "Consultar"; batch.set(doc(collection(db, "coberturas")), { m: getVal(["municipio", "mun"]).trim(), n: getVal(["nombre", "colonia", "nom"]).trim(), c: getVal(["categoria", "categoría", "cat"]).trim(), z: getVal(["zona", "z"]).trim(), r: getVal(["referencia", "ref"]).trim(), s: s, ambienteId: window.effectiveAmb('cob') }); }); await batch.commit(); } window.logAct("Cobertura", "Importación", "Importación masiva desde Excel"); alert("Éxito"); e.target.value = ""; }; r.readAsBinaryString(f); };
+  window.handleImportTec = function(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar?`)) return; for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { const keys = Object.keys(row); const getVal = (possible) => { for(let k of keys) if(possible.includes(k.toLowerCase().trim())) return String(row[k] || ""); return ""; }; batch.set(doc(collection(db, "tecnicos")), { n: getVal(["nombre", "tecnico", "técnico", "tec"]).trim(), t1: getVal(["telefono", "teléfono", "tel1", "celular"]).trim(), t2: getVal(["telefono 2", "teléfono 2", "tel2", "otro"]).trim(), a: getVal(["area", "área", "zona"]).trim(), d: getVal(["dpi", "identificacion"]).trim(), p: getVal(["placa", "vehiculo"]).trim(), ambienteId: window.effectiveAmb('tec') }); }); await batch.commit(); } window.logAct("Técnicos", "Importación", "Importación masiva desde Excel"); alert("Éxito"); e.target.value = ""; }; r.readAsBinaryString(f); };
+  window.handleImportEnc = function(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar?`)) return; for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { const keys = Object.keys(row); const getVal = (possible) => { for(let k of keys) if(possible.includes(k.toLowerCase().trim())) return String(row[k] || ""); return ""; }; batch.set(doc(collection(db, "encargados")), { n: getVal(["nombre", "encargado"]).trim(), t: getVal(["número", "numero", "teléfono", "telefono"]).trim(), c: getVal(["correo", "email"]).trim(), p: getVal(["puesto", "marcas", "encarga", "responsabilidad"]).trim(), g: getVal(["categoria", "categoría", "grupo"]).trim() || "Otro", ambienteId: window.effectiveAmb('enc') }); }); await batch.commit(); } window.logAct("Directorio", "Importación", "Importación masiva desde Excel"); alert("Éxito"); e.target.value = ""; }; r.readAsBinaryString(f); };
   window.handleImportUsr = function(e) { alert("Importación requiere formato especial."); e.target.value = ""; };
   window.handleImportDyn = function(e) { if(!CURRENT_DYN_CONFIG) return; const f = e.target.files[0]; if(!f) return; const reader = new FileReader(); reader.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar a ${CURRENT_DYN_CONFIG.nombre}?`)) return; try { const colRef = collection(db, "modulos_data"); for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { let dataToSave = { modId: CURRENT_DYN_CONFIG.id }; CURRENT_DYN_CONFIG.columnas.forEach((colName, index) => { let val = ""; for(let key of Object.keys(row)) { if(key.toLowerCase().trim() === colName.toLowerCase().trim()) val = row[key]; } dataToSave['c'+index] = String(val).trim(); }); batch.set(doc(colRef), dataToSave); }); await batch.commit(); } window.logAct(CURRENT_DYN_CONFIG.nombre, "Importación", "Importación masiva desde Excel"); alert("¡Importados!"); e.target.value = ""; } catch(err) { alert("Error"); } }; reader.readAsBinaryString(f); };
 </script>
