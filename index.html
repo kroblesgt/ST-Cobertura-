@@ -104,10 +104,13 @@
   .btn-mini:hover { opacity: 0.8; }
 
   /* MÓDULO DE AVISOS Y SWITCH */
-  .aviso-card { background: #ffffff; border-left: 4px solid var(--light-blue); border-radius: 6px; padding: 15px 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: flex-start; border-right: 1px solid var(--border-soft); border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft);}
-  .aviso-content h4 { margin: 0 0 5px 0; color: var(--blue); font-size: 16px; }
+  .aviso-card { background: #ffffff; border-left: 5px solid var(--light-blue); border-radius: 8px; padding: 18px 20px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(10,34,64,0.06); display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; border-right: 1px solid var(--border-soft); border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft); transition: box-shadow 0.2s ease, transform 0.2s ease;}
+  .aviso-card:hover { box-shadow: 0 8px 20px rgba(10,34,64,0.1); transform: translateY(-1px); }
+  .aviso-img { width: 130px; height: 100px; object-fit: cover; border-radius: 8px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); order: -1; }
+  .aviso-content { flex: 1; min-width: 0; }
+  .aviso-content h4 { margin: 0 0 6px 0; color: var(--blue); font-size: 16px; }
   .aviso-content p { margin: 0; color: #555; font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word;}
-  .aviso-date { font-size: 11px; color: var(--mid-gray); white-space: nowrap; margin-left: 15px; text-align: right;}
+  .aviso-date { font-size: 11px; color: var(--mid-gray); margin-top: 10px; }
   
   .switch { position: relative; display: inline-block; width: 46px; height: 24px; flex-shrink: 0;}
   .switch input { opacity: 0; width: 0; height: 0; }
@@ -140,11 +143,11 @@
   
   .enc-contact { display: flex; justify-content: space-between; align-items: flex-start; color: var(--dark-gray); text-decoration: none; padding: 12px 15px; background: #f4f8fb; border-radius: 6px; border: 1px solid var(--border-soft); transition: 0.2s; cursor: pointer; user-select: text;}
   .enc-contact > div:first-child { flex: 1; min-width: 0; padding-right: 15px; } 
-  .enc-contact-label { font-size: 11px; color: var(--light-blue); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; display:block; margin-bottom: 4px;}
+  .enc-contact-label { font-size: 11px; color: var(--light-blue); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; display:flex; align-items:center; gap:6px; margin-bottom: 4px;}
   .enc-contact-value { font-size: 14px; display: block; white-space: pre-wrap; word-wrap: break-word; line-height: 1.4; color: var(--blue); font-weight: 500;}
-  .enc-copy-btn { color: white; background: var(--light-blue); font-size: 12px; font-weight: bold; padding: 6px 12px; border-radius: 4px; border: none; transition: 0.2s; flex-shrink:0; margin-top:2px; box-shadow: 0 2px 4px rgba(0,159,227,0.2);}
+  .enc-copy-btn { color: var(--light-blue); background: white; font-size: 14px; padding: 8px 11px; border-radius: 6px; border: 1px solid var(--border-soft); transition: 0.2s; flex-shrink:0; margin-top:2px;}
   .enc-contact:hover { background: white; border-color: var(--light-blue); box-shadow: 0 4px 10px rgba(0,159,227,0.1);}
-  .enc-contact:hover .enc-copy-btn { background: var(--blue); transform: scale(1.05); }
+  .enc-contact:hover .enc-copy-btn { background: var(--light-blue); color: white; border-color: var(--light-blue); transform: scale(1.05); }
   .enc-footer { padding: 10px 15px; border-top: 1px solid var(--border-soft); display: flex; justify-content: flex-end; gap: 8px; background: white;}
   
   /* PROCEDIMIENTOS WIKI FULL WIDTH */
@@ -230,6 +233,8 @@
     #ambienteSwitcherBox select { max-width: 100px !important; font-size: 11px !important; }
     
     #mainContainer { padding: 10px; }
+    .aviso-card { flex-direction: column; }
+    .aviso-img { width: 100%; height: 160px; order: 0; margin-bottom: 4px; }
     
     .tools { flex-direction: column; align-items: stretch; }
     .search-wrap { width: 100%; margin-bottom: 5px; }
@@ -454,7 +459,7 @@
                                     <label class="perm-item"><input type="checkbox" id="am_avisos" checked> Avisos</label>
                                 </div>
                             </div>
-                            <div class="span-2">
+                            <div class="span-2" id="ambCompartidosBox">
                                 <label style="font-size:12px; font-weight:bold; color:var(--blue);">Compartir estos módulos con "Principal" (mismos datos, en vez de datos propios)</label>
                                 <p style="font-size:11px; color:var(--mid-gray); margin:3px 0 8px 0;">Márcalo si quieres que, por ejemplo, la Cobertura que mantienes en Principal se vea igual aquí — editar desde cualquiera de los dos actualiza el mismo dato en ambos.</p>
                                 <div class="perm-grid" id="ambCompartidosContainer">
@@ -719,6 +724,22 @@
                                 <label style="font-size:12px; font-weight:bold; color:var(--blue);">Contenido del Mensaje</label>
                                 <textarea id="admAviCont" class="inp" style="height: 100px; resize: vertical; font-family: inherit;" placeholder="Escribe tu recordatorio o aviso urgente aquí..."></textarea>
                             </div>
+                            <div class="span-2">
+                                <label style="font-size:12px; font-weight:bold; color:var(--blue);">Tipo de Aviso</label>
+                                <div style="display:flex; gap:8px; margin-top:5px; flex-wrap:wrap;">
+                                    <button type="button" id="btnAviTipo_info" onclick="window.setAvisoTipo('info')" class="btn" style="background:var(--light-blue); color:white; padding:8px 14px;"><i class="fa-solid fa-circle-info"></i> Informativo</button>
+                                    <button type="button" id="btnAviTipo_urgente" onclick="window.setAvisoTipo('urgente')" class="btn" style="background:var(--mid-gray); color:white; padding:8px 14px;"><i class="fa-solid fa-triangle-exclamation"></i> Urgente</button>
+                                    <button type="button" id="btnAviTipo_exito" onclick="window.setAvisoTipo('exito')" class="btn" style="background:var(--mid-gray); color:white; padding:8px 14px;"><i class="fa-solid fa-circle-check"></i> Actualización</button>
+                                </div>
+                            </div>
+                            <div class="span-2">
+                                <label style="font-size:12px; font-weight:bold; color:var(--blue);">Imagen (opcional)</label>
+                                <input type="file" id="admAviImgInput" accept="image/*" class="inp" onchange="window.handleAvisoImgSelect(event)">
+                                <div id="admAviImgPreviewBox" class="hidden" style="margin-top:10px; position:relative; display:inline-block;">
+                                    <img id="admAviImgPreview" style="max-width:220px; max-height:140px; border-radius:6px; border:1px solid var(--border-soft); display:block;">
+                                    <button type="button" onclick="window.quitarAvisoImg()" class="btn btn-d" style="position:absolute; top:5px; right:5px; padding:4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
                             <div class="span-2" style="text-align:right; margin-top: 10px;">
                                 <button onclick="window.cancelarEdicionAviso()" id="btnCancelAviso" class="btn btn-d hidden" style="margin-right: 5px;"><i class="fa-solid fa-times"></i> Cancelar</button>
                                 <button onclick="window.guardarAviso()" id="btnSaveAviso" class="btn btn-s" style="color:white; padding: 10px 20px;"><i class="fa-solid fa-paper-plane"></i> Publicar Aviso</button>
@@ -842,6 +863,8 @@
   let DB_RAW = { cob: [], tec: [], enc: [], proc: [], avisos: [], configModulos: [], roles: [] };
   let DB_USERS = []; let SESION = { id: null, u: null, r: null, t: null, a: null };
   let AMBIENTE_ACTUAL = null;
+  const PRINCIPAL_DOC_ID = "__principal__";
+  let PRINCIPAL_CONFIG = { modulos: ['cob','tec','enc','proc','avisos'], nombre: 'Principal', icono: '' };
 
   // ================= SEGURIDAD: HASH DE CONTRASEÑAS (Web Crypto, sin librerías) =================
   // Formato guardado: "h:<salt>:<hashHex>". Las contraseñas antiguas en texto plano (sin el prefijo "h:")
@@ -868,6 +891,7 @@
   window.inAmb = function(x) { return (x.ambienteId || null) === (AMBIENTE_ACTUAL || null); };
   let PAGE = 1, PAGE_TEC = 1, PAGE_ENC = 1, PAGE_DYN = 1; let ITEMS_PER_PAGE_ENC = 16;
   let EDITING_USER_ID = null, EDITING_LOCATION_ID = null, EDITING_TEC_ID = null, EDITING_ENC_ID = null, EDITING_DYN_ID = null, EDITING_ROLE_ID = null, EDITING_MOD_ID = null, EDITING_PROC_ID = null, EDITING_AVISO_ID = null, EDITING_AMB_ID = null;
+  let AVISO_TIPO = 'info'; let AVISO_IMG_DATA = null;
   let CURRENT_MODULE = 'inicio'; let CURRENT_DYN_CONFIG = null; let DYN_PROC_ACTIVE_ID = null;
   let isFirstUserLoad = true; let knownPendingIds = new Set(); let heartbeatInterval;
   let LATEST_PROC_ID = null; let LATEST_AVISO_ID = null; let isInitialProcLoad = true; let isInitialAvisoLoad = true; 
@@ -1042,6 +1066,20 @@
   };
 
   window.copyToClip = function(text) { if(!text) return; navigator.clipboard.writeText(text).then(() => { window.showToastSuccess(`Texto Copiado`); }).catch(err => alert("Error al copiar")); };
+  // Ícono representativo según el nombre del campo (Dirección, Horario, Correo, Teléfono, etc.) para las
+  // tarjetas de directorio — funciona con cualquier módulo tipo directorio, sin configuración extra.
+  window.fieldIcon = function(label) {
+      const l = (label || '').toLowerCase();
+      if (l.includes('direc') || l.includes('ubicaci') || l.includes('local')) return 'fa-location-dot';
+      if (l.includes('horario') || l.includes('hora')) return 'fa-clock';
+      if (l.includes('correo') || l.includes('email') || l.includes('mail')) return 'fa-envelope';
+      if (l.includes('tel') || l.includes('cel') || l.includes('número') || l.includes('numero') || l.includes('whats')) return 'fa-phone';
+      if (l.includes('marca')) return 'fa-tags';
+      if (l.includes('cargo') || l.includes('puesto') || l.includes('responsab') || l.includes('encarg')) return 'fa-id-badge';
+      if (l.includes('web') || l.includes('sitio') || l.includes('link') || l.includes('url')) return 'fa-globe';
+      if (l.includes('precio') || l.includes('costo') || l.includes('q')) return 'fa-tag';
+      return 'fa-circle-info';
+  };
   window.showToastSuccess = function(msg) { const c = document.getElementById('toastContainer'); const t = document.createElement('div'); t.className = 'toast success'; t.innerHTML = `<i class="fa-solid fa-circle-check"></i> <div>${msg}</div>`; c.appendChild(t); setTimeout(() => { t.classList.add('toast-fade'); setTimeout(() => t.remove(), 300); }, 4000); };
   window.showToast = (msg) => { const c = document.getElementById('toastContainer'); const t = document.createElement('div'); t.className = 'toast'; t.innerHTML = `<i class="fa-solid fa-bell" style="color: var(--light-blue);"></i> <div>${msg}</div>`; c.appendChild(t); setTimeout(() => { t.classList.add('toast-fade'); setTimeout(() => t.remove(), 300); }, 6000); };
   window.abrirVerMas = function(idFila, indiceColumna) { const fila = DB.dynData.find(d => d.id === idFila); if(fila) { document.getElementById('verMasContent').innerText = fila['c'+indiceColumna] || ""; document.getElementById('modalVerMas').classList.remove('hidden'); } };
@@ -1160,7 +1198,7 @@
     
     window.solicitarPermisosChrome();
 
-    listenToSysMods(); window.listenToRoles(); window.listenToUsers(); window.listenToLogs(); setInterval(window.updateOnlineUI, 5000); listenToColors(); listenToAmbientes();
+    listenToSysMods(); window.listenToRoles(); window.listenToUsers(); window.listenToLogs(); setInterval(window.updateOnlineUI, 5000); listenToColors(); listenToAmbientes(); listenToPrincipalConfig();
     listenToCoberturas(); listenToTecnicos(); listenToEncargados(); listenToConfigModulos(); listenToDynData(); listenToProcedimientos(); window.listenToAvisos();
     
     window.switchModule('inicio'); 
@@ -1219,7 +1257,7 @@
   const FIXED_MODS_DEFAULT = ['cob', 'tec', 'enc', 'proc', 'avisos'];
   const SHARED_MODS_KEYS = ['cob', 'tec', 'enc', 'avisos'];
   window.fixedModEnabled = function(key) {
-      if (!AMBIENTE_ACTUAL) return true; // Principal: siempre todos activos
+      if (!AMBIENTE_ACTUAL) return (PRINCIPAL_CONFIG.modulos || FIXED_MODS_DEFAULT).includes(key);
       const amb = DB.ambientes.find(a => a.id === AMBIENTE_ACTUAL);
       if (!amb) return true;
       return (amb.modulos || FIXED_MODS_DEFAULT).includes(key);
@@ -1246,13 +1284,25 @@
 
   function listenToAmbientes() {
       onSnapshot(collection(db, "ambientes"), (snapshot) => {
-          DB.ambientes = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (a.fecha||0) - (b.fecha||0));
+          DB.ambientes = snapshot.docs.filter(d => d.id !== PRINCIPAL_DOC_ID).map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (a.fecha||0) - (b.fecha||0));
           window.renderAmbienteSwitcher();
           if(document.getElementById('uAmbList')) window.renderUserAmbienteSelect();
           if(document.getElementById('confModAmbList')) window.renderModAmbienteSelect();
+          if(document.getElementById('rolAmbList')) window.renderRoleAmbienteSelect();
           window.recomputeAmbienteScopedData();
           window.applyPermissionsToUI();
           if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewAmb').classList.contains('hidden')) window.renderAdminAmbientesList();
+      });
+  }
+
+  // Configuración editable del ambiente "Principal" (módulos activos, ícono). No usa un id normal
+  // porque Principal no tiene un documento propio en el modelo de datos existente — este es
+  // exclusivamente para guardar SU configuración, no para el filtrado de datos (que sigue usando "").
+  function listenToPrincipalConfig() {
+      onSnapshot(doc(db, "ambientes", PRINCIPAL_DOC_ID), (snap) => {
+          PRINCIPAL_CONFIG = { modulos: ['cob','tec','enc','proc','avisos'], nombre: 'Principal', icono: '', ...(snap.exists() ? snap.data() : {}) };
+          window.applyPermissionsToUI();
+          if(CURRENT_MODULE === 'ajs' && document.getElementById('ajsViewAmb') && !document.getElementById('ajsViewAmb').classList.contains('hidden')) window.renderAdminAmbientesList();
       });
   }
 
@@ -1304,32 +1354,45 @@
       const modulos = FIXED_MODS_DEFAULT.filter(k => document.getElementById('am_' + k).checked);
       const shared = SHARED_MODS_KEYS.filter(k => document.getElementById('ac_' + k).checked);
       try {
-          let payload = { nombre, icono, modulos, shared };
           const wasEditingId = EDITING_AMB_ID;
-          if(EDITING_AMB_ID) { await updateDoc(doc(db, "ambientes", EDITING_AMB_ID), payload); window.logAct("Ambientes", "Editar", "Ambiente actualizado: " + nombre); }
-          else { payload.fecha = Date.now(); await addDoc(collection(db, "ambientes"), payload); window.logAct("Ambientes", "Crear", "Nuevo ambiente: " + nombre); }
+          if (EDITING_AMB_ID === PRINCIPAL_DOC_ID) {
+              // Principal no comparte consigo mismo, así que ese campo no aplica aquí.
+              await setDoc(doc(db, "ambientes", PRINCIPAL_DOC_ID), { nombre, icono, modulos }, { merge: true });
+              window.logAct("Ambientes", "Editar", "Ambiente Principal actualizado");
+          } else {
+              let payload = { nombre, icono, modulos, shared };
+              if(EDITING_AMB_ID) { await updateDoc(doc(db, "ambientes", EDITING_AMB_ID), payload); window.logAct("Ambientes", "Editar", "Ambiente actualizado: " + nombre); }
+              else { payload.fecha = Date.now(); await addDoc(collection(db, "ambientes"), payload); window.logAct("Ambientes", "Crear", "Nuevo ambiente: " + nombre); }
+          }
           window.cancelarEdicionAmbiente();
-          if (wasEditingId === AMBIENTE_ACTUAL) window.recomputeAmbienteScopedData();
+          if (wasEditingId === AMBIENTE_ACTUAL || (wasEditingId === PRINCIPAL_DOC_ID && !AMBIENTE_ACTUAL)) window.recomputeAmbienteScopedData();
       } catch(e) { alert("Error al guardar el ambiente."); }
   };
 
   window.editarAmbiente = function(id) {
-      EDITING_AMB_ID = id; const a = DB.ambientes.find(x => x.id === id); if(!a) return;
+      EDITING_AMB_ID = id;
+      const a = id === PRINCIPAL_DOC_ID ? PRINCIPAL_CONFIG : DB.ambientes.find(x => x.id === id);
+      if(!a) return;
       document.getElementById('ambNombre').value = a.nombre || ''; document.getElementById('ambIcono').value = a.icono || '';
       const modulos = a.modulos || FIXED_MODS_DEFAULT; const shared = a.shared || [];
       FIXED_MODS_DEFAULT.forEach(k => { document.getElementById('am_' + k).checked = modulos.includes(k); });
       SHARED_MODS_KEYS.forEach(k => { document.getElementById('ac_' + k).checked = shared.includes(k); });
+      // "Compartir con Principal" no aplica cuando se edita el propio Principal.
+      const compartirBox = document.getElementById('ambCompartidosBox'); if(compartirBox) compartirBox.classList.toggle('hidden', id === PRINCIPAL_DOC_ID);
+      document.getElementById('ambNombre').disabled = (id === PRINCIPAL_DOC_ID); // el nombre "Principal" no se renombra para no romper las etiquetas ya existentes en la app
       document.getElementById('btnSaveAmb').innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios'; document.getElementById('btnCancelAmb').classList.remove('hidden');
   };
 
   window.cancelarEdicionAmbiente = function() {
-      EDITING_AMB_ID = null; document.getElementById('ambNombre').value = ''; document.getElementById('ambIcono').value = '';
+      EDITING_AMB_ID = null; document.getElementById('ambNombre').value = ''; document.getElementById('ambIcono').value = ''; document.getElementById('ambNombre').disabled = false;
+      const compartirBox = document.getElementById('ambCompartidosBox'); if(compartirBox) compartirBox.classList.remove('hidden');
       FIXED_MODS_DEFAULT.forEach(k => { document.getElementById('am_' + k).checked = true; });
       SHARED_MODS_KEYS.forEach(k => { document.getElementById('ac_' + k).checked = false; });
       document.getElementById('btnSaveAmb').innerHTML = '<i class="fa-solid fa-save"></i> Guardar Ambiente'; document.getElementById('btnCancelAmb').classList.add('hidden');
   };
 
   window.eliminarAmbiente = async function(id) {
+      if (id === PRINCIPAL_DOC_ID) return; // Principal no se elimina, solo se configura
       const a = DB.ambientes.find(x => x.id === id);
       if(!confirm(`¿Eliminar el ambiente "${a?a.nombre:''}"? Sus datos (Cobertura, Técnicos, etc.) NO se borrarán, pero quedarán inaccesibles desde el menú a menos que crees el ambiente de nuevo.`)) return;
       try { await deleteDoc(doc(db, "ambientes", id)); window.logAct("Ambientes", "Eliminar", "Ambiente: " + (a?a.nombre:'')); if(AMBIENTE_ACTUAL === id) window.setAmbienteActual(null); } catch(e) { alert("Error al eliminar."); }
@@ -1337,7 +1400,7 @@
 
   window.renderAdminAmbientesList = function() {
       const c = document.getElementById('adminAmbientesListContainer'); if(!c) return;
-      let html = `<div class="mod-list-item"><div><b style="color:var(--blue);">Principal</b> <span style="background:var(--light-blue); color:white; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px;"><i class="fa-solid fa-lock"></i> Predeterminado</span><br><small style="color:var(--mid-gray);">Tus datos actuales (Call Center) — todos los módulos activos</small></div><div></div></div>`;
+      let html = `<div class="mod-list-item"><div><b style="color:var(--blue);">Principal</b> <span style="background:var(--light-blue); color:white; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px;"><i class="fa-solid fa-lock"></i> Base</span><br><small style="color:var(--mid-gray);">Módulos: ${(PRINCIPAL_CONFIG.modulos||FIXED_MODS_DEFAULT).join(', ') || 'ninguno'}</small></div><div><button onclick="window.editarAmbiente('${PRINCIPAL_DOC_ID}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button></div></div>`;
       html += DB.ambientes.map(a => { const shared = a.shared || []; const sharedTxt = shared.length ? `<br><small style="color:var(--green); font-weight:bold;"><i class="fa-solid fa-arrows-rotate"></i> Compartido con Principal: ${shared.join(', ')}</small>` : ''; return `<div class="mod-list-item"><div><b style="color:var(--blue);">${a.nombre}</b><br><small style="color:var(--mid-gray);">Módulos: ${(a.modulos||FIXED_MODS_DEFAULT).join(', ') || 'ninguno'}</small>${sharedTxt}</div><div><button onclick="window.editarAmbiente('${a.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarAmbiente('${a.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`; }).join('');
       c.innerHTML = html;
   };
@@ -1565,7 +1628,7 @@
       
       if (chunk.length === 0) { container.innerHTML = `<div class="card" style="text-align:center; padding: 40px; color:var(--light-blue); font-weight:bold; font-size: 16px;">No se encontraron registros.</div>`; return; }
       if (isDir) {
-          let html = `<div class="enc-grid">`; chunk.forEach(row => { let title = row.c0 || "Sin Título"; let ini = title.charAt(0).toUpperCase(); let role = row.c1 || ""; let act = ""; if (canEdit) act += `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let bodyHtml = ""; CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => { if(i < 2) return; let val = row['c'+i]; if(val) { bodyHtml += `<div class="enc-contact" onclick="window.copyToClip('${val}')"><div><span class="enc-contact-label">${colName}</span><span class="enc-contact-value">${val}</span></div><button class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</button></div>`; } }); html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${title}</div><div class="enc-role">${role}</div></div></div></div><div class="enc-body">${bodyHtml}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`; }); html += `</div>`; container.innerHTML = html;
+          let html = `<div class="enc-grid">`; chunk.forEach(row => { let title = row.c0 || "Sin Título"; let ini = title.charAt(0).toUpperCase(); let role = row.c1 || ""; if (role.trim().toLowerCase() === title.trim().toLowerCase()) role = ""; let act = ""; if (canEdit) act += `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let bodyHtml = ""; CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => { if(i < 2) return; let val = row['c'+i]; if(val) { bodyHtml += `<div class="enc-contact" onclick="window.copyToClip('${val}')"><div><span class="enc-contact-label"><i class="fa-solid ${window.fieldIcon(colName)}"></i> ${colName}</span><span class="enc-contact-value">${val}</span></div><button class="enc-copy-btn" title="Copiar"><i class="fa-solid fa-copy"></i></button></div>`; } }); html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${title}</div>${role?`<div class="enc-role">${role}</div>`:''}</div></div></div><div class="enc-body">${bodyHtml}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`; }); html += `</div>`; container.innerHTML = html;
       } else {
           let ths = CURRENT_DYN_CONFIG.columnas.map(c => `<th>${c}</th>`).join(''); if(canEdit) ths += `<th width="15%">Acciones</th>`; let html = `<div class="card"><div class="table-responsive"><table><thead><tr>${ths}</tr></thead><tbody>`;
           chunk.forEach(row => { html += `<tr>`; CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => { let val = row['c'+i] || ""; let displayVal = val; if (val.length > 55) { displayVal = `<span>${val.substring(0, 50)}...</span> <button class="btn-mini" onclick="window.abrirVerMas('${row.id}', ${i})" style="background:var(--blue); margin-top:5px;"><i class="fa-solid fa-eye"></i> Leer completo</button>`; } html += `<td>${i===0?`<b style="color:var(--blue);">${displayVal}</b>`:displayVal}</td>`; }); if(canEdit) { let act = `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:6px 10px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if(isAdmin) act += ` <button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:6px 10px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; html += `<td>${act}</td>`; } html += `</tr>`; }); html += `</tbody></table></div></div>`; container.innerHTML = html;
@@ -1603,6 +1666,33 @@
       });
   };
 
+  window.setAvisoTipo = function(tipo) {
+      AVISO_TIPO = tipo;
+      const colores = { info: 'var(--light-blue)', urgente: '#e63946', exito: 'var(--green)' };
+      ['info', 'urgente', 'exito'].forEach(t => { document.getElementById('btnAviTipo_' + t).style.background = (t === tipo) ? colores[t] : 'var(--mid-gray)'; });
+  };
+  // Comprime y convierte la imagen a base64 (se guarda dentro del propio documento del aviso —
+  // no requiere Firebase Storage). Se reduce a máx. 900px de ancho y calidad 0.7 para no acercarse
+  // al límite de 1MB por documento de Firestore.
+  window.handleAvisoImgSelect = function(ev) {
+      const file = ev.target.files[0]; if(!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+              const maxW = 900; const scale = Math.min(1, maxW / img.width);
+              const canvas = document.createElement('canvas'); canvas.width = img.width * scale; canvas.height = img.height * scale;
+              canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+              AVISO_IMG_DATA = canvas.toDataURL('image/jpeg', 0.7);
+              document.getElementById('admAviImgPreview').src = AVISO_IMG_DATA;
+              document.getElementById('admAviImgPreviewBox').classList.remove('hidden');
+          };
+          img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+  };
+  window.quitarAvisoImg = function() { AVISO_IMG_DATA = null; document.getElementById('admAviImgInput').value = ''; document.getElementById('admAviImgPreviewBox').classList.add('hidden'); document.getElementById('admAviImgPreview').src = ''; };
+
   window.guardarAviso = async function() {
       const btn = document.getElementById('btnSaveAviso');
       const tit = document.getElementById('admAviTit').value.trim();
@@ -1612,7 +1702,7 @@
       if(!tit || !cont) return alert("Completa el título y el contenido.");
       btn.disabled = true; btn.innerHTML = "Publicando...";
       try {
-          let payload = { tit: tit, cont: cont, alerta: alerta };
+          let payload = { tit: tit, cont: cont, alerta: alerta, tipo: AVISO_TIPO, img: AVISO_IMG_DATA || null };
           if(EDITING_AVISO_ID) {
               await updateDoc(doc(db, "avisos", EDITING_AVISO_ID), payload);
               window.logAct("Avisos", "Editar", "Se actualizó el aviso: " + tit);
@@ -1623,7 +1713,7 @@
           }
           window.showToastSuccess("Aviso guardado" + (alerta ? " con notificación." : " de forma silenciosa."));
           window.cancelarEdicionAviso();
-      } catch(e) { alert("Error al publicar aviso."); }
+      } catch(e) { alert("Error al publicar aviso. Si subiste una imagen muy pesada, intenta con una más liviana."); }
       btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publicar Aviso';
   };
 
@@ -1633,6 +1723,10 @@
       document.getElementById('admAviTit').value = a.tit;
       document.getElementById('admAviCont').value = a.cont;
       document.getElementById('toggleAvisoAlert').checked = a.alerta || false;
+      window.setAvisoTipo(a.tipo || 'info');
+      AVISO_IMG_DATA = a.img || null;
+      if(AVISO_IMG_DATA) { document.getElementById('admAviImgPreview').src = AVISO_IMG_DATA; document.getElementById('admAviImgPreviewBox').classList.remove('hidden'); } else { document.getElementById('admAviImgPreviewBox').classList.add('hidden'); }
+      document.getElementById('admAviImgInput').value = '';
       
       const btnSave = document.getElementById('btnSaveAviso');
       btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios';
@@ -1646,6 +1740,7 @@
       document.getElementById('admAviTit').value = '';
       document.getElementById('admAviCont').value = '';
       document.getElementById('toggleAvisoAlert').checked = false;
+      window.setAvisoTipo('info'); window.quitarAvisoImg();
       const btnSave = document.getElementById('btnSaveAviso');
       btnSave.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publicar Aviso';
       btnSave.classList.replace('btn-p', 'btn-s');
@@ -1664,10 +1759,14 @@
 
   window.renderAdminAvisos = function() {
       const container = document.getElementById('adminAvisosListContainer');
+      const tipoInfo = { info: { c: 'var(--light-blue)', l: 'Informativo', i: 'fa-circle-info' }, urgente: { c: '#e63946', l: 'Urgente', i: 'fa-triangle-exclamation' }, exito: { c: 'var(--green)', l: 'Actualización', i: 'fa-circle-check' } };
       container.innerHTML = DB.avisos.map(a => {
           let dateStr = a.fecha ? new Date(a.fecha).toLocaleString() : '';
+          let ti = tipoInfo[a.tipo] || tipoInfo.info;
           let badge = a.alerta ? `<span style="background:#fff3cd; color:#856404; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px;"><i class="fa-solid fa-bell"></i> Con Notificación</span>` : `<span style="background:#e9ecef; color:#6c757d; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px;"><i class="fa-solid fa-bell-slash"></i> Silencioso</span>`;
-          return `<div class="mod-list-item"><div><b style="color:var(--blue);">${a.tit}</b> ${badge}<br><small style="color:var(--mid-gray);">${dateStr}</small></div><div><button onclick="window.editarAviso('${a.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarAviso('${a.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`;
+          let tipoBadge = `<span style="background:${ti.c}; color:white; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px;"><i class="fa-solid ${ti.i}"></i> ${ti.l}</span>`;
+          let thumb = a.img ? `<img src="${a.img}" style="width:44px; height:44px; object-fit:cover; border-radius:6px; margin-right:10px; flex-shrink:0;">` : '';
+          return `<div class="mod-list-item" style="align-items:center;">${thumb}<div style="flex:1;"><b style="color:var(--blue);">${a.tit}</b> ${tipoBadge}${badge}<br><small style="color:var(--mid-gray);">${dateStr}</small></div><div><button onclick="window.editarAviso('${a.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarAviso('${a.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`;
       }).join('') || '<p style="font-size:13px; color:var(--mid-gray);">No hay avisos registrados.</p>';
   };
 
@@ -1676,16 +1775,21 @@
       if(!LOAD_STATE.avisos) { container.innerHTML = `<div class="spinner-container"><div class="spinner"></div><div class="loading-text">Cargando avisos...</div></div>`; return; }
       if(DB.avisos.length === 0) { container.innerHTML = `<p style="text-align:center; color:var(--mid-gray); padding: 30px;">No hay avisos recientes.</p>`; return; }
       
+      const tipoInfo = { info: { c: 'var(--light-blue)', l: 'Informativo', i: 'fa-circle-info' }, urgente: { c: '#e63946', l: 'Urgente', i: 'fa-triangle-exclamation' }, exito: { c: 'var(--green)', l: 'Actualización', i: 'fa-circle-check' } };
       let html = '';
       DB.avisos.forEach(a => {
           let dateStr = a.fecha ? new Date(a.fecha).toLocaleDateString() + ' ' + new Date(a.fecha).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
+          let ti = tipoInfo[a.tipo] || tipoInfo.info;
+          let imgHtml = a.img ? `<img src="${a.img}" class="aviso-img" alt="Imagen del aviso">` : '';
           html += `
-          <div class="aviso-card">
+          <div class="aviso-card" style="border-left-color:${ti.c};">
+              ${imgHtml}
               <div class="aviso-content">
+                  <span style="display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:bold; color:${ti.c}; text-transform:uppercase; margin-bottom:4px;"><i class="fa-solid ${ti.i}"></i> ${ti.l}</span>
                   <h4>${a.tit}</h4>
                   <p>${a.cont}</p>
+                  <div class="aviso-date"><i class="fa-regular fa-clock"></i> ${dateStr}</div>
               </div>
-              <div class="aviso-date"><i class="fa-regular fa-clock"></i> ${dateStr}</div>
           </div>`;
       });
       container.innerHTML = html;
@@ -2077,7 +2181,7 @@
     if (r) PAGE_ENC = 1; const cont = document.getElementById('gridEncargadosContainer'); if (!LOAD_STATE.enc) { cont.innerHTML = `<div class="spinner-container"><div class="spinner"></div><div class="loading-text">Cargando directorio de contactos...</div></div>`; return; }
     const q = document.getElementById('searchEncBox').value; let f = DB.enc; if (q) f = f.filter(row => window.matchSearch(`${row.n} ${row.t} ${row.c} ${row.p} ${row.g}`, q)); const total = Math.ceil(f.length / ITEMS_PER_PAGE_ENC) || 1; if (PAGE_ENC > total) PAGE_ENC = total; document.getElementById('pageLabelEnc').innerText = `${PAGE_ENC} / ${total}`; const chunk = f.slice((PAGE_ENC - 1) * ITEMS_PER_PAGE_ENC, PAGE_ENC * ITEMS_PER_PAGE_ENC); if (chunk.length === 0) { cont.innerHTML = `<div style="text-align:center; padding:50px; background:white; border-radius:8px; color:var(--light-blue); font-weight:bold; font-size:16px;">No se encontraron contactos.</div>`; return; }
     const grupos = {}; chunk.forEach(r => { const c = r.g || "Otros"; if (!grupos[c]) grupos[c] = []; grupos[c].push(r); }); const canEdit = window.hasPerm('enc_edit'); const isAdmin = (SESION.r === 'admin'); const orden = ["Rutas domicilio", "Team Leaders", "Encargadas de marca", "Cambios y facturaciones", "Otro"]; const cats = Object.keys(grupos).sort((a,b) => (orden.indexOf(a)===-1?99:orden.indexOf(a)) - (orden.indexOf(b)===-1?99:orden.indexOf(b)));
-    let html = ""; cats.forEach(cat => { let ic = "fa-users"; if(cat.toLowerCase().includes('rutas')) ic = "fa-truck-fast"; if(cat.toLowerCase().includes('marca')) ic = "fa-tags"; if(cat.toLowerCase().includes('team')) ic = "fa-user-tie"; if(cat.toLowerCase().includes('factura')) ic = "fa-file-invoice-dollar"; html += `<div class="enc-category-title"><i class="fa-solid ${ic}"></i> ${cat}</div><div class="enc-grid">`; grupos[cat].forEach(row => { let act = ""; if (canEdit) act += `<button onclick="window.editEncargado('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteEncargado('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let ini = row.n ? row.n.charAt(0).toUpperCase() : "?"; let rol = row.p || "Equipo"; let tel = row.t ? `<div class="enc-contact" onclick="window.copyToClip('${row.t}')"><div><span class="enc-contact-label"><i class="fa-solid fa-phone"></i> Teléfono</span><span class="enc-contact-value">${row.t}</span></div><button class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</button></div>` : ``; let cor = row.c ? `<div class="enc-contact" onclick="window.copyToClip('${row.c}')"><div><span class="enc-contact-label"><i class="fa-solid fa-envelope"></i> Correo</span><span class="enc-contact-value">${row.c}</span></div><button class="enc-copy-btn"><i class="fa-solid fa-copy"></i> Copiar</button></div>` : ``; html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${row.n||'Sin Nombre'}</div><div class="enc-role">${row.p||'Equipo'}</div></div></div></div><div class="enc-body">${tel}${cor}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`; }); html += `</div>`; }); cont.innerHTML = html;
+    let html = ""; cats.forEach(cat => { let ic = "fa-users"; if(cat.toLowerCase().includes('rutas')) ic = "fa-truck-fast"; if(cat.toLowerCase().includes('marca')) ic = "fa-tags"; if(cat.toLowerCase().includes('team')) ic = "fa-user-tie"; if(cat.toLowerCase().includes('factura')) ic = "fa-file-invoice-dollar"; html += `<div class="enc-category-title"><i class="fa-solid ${ic}"></i> ${cat}</div><div class="enc-grid">`; grupos[cat].forEach(row => { let act = ""; if (canEdit) act += `<button onclick="window.editEncargado('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteEncargado('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let ini = row.n ? row.n.charAt(0).toUpperCase() : "?"; let rol = row.p || "Equipo"; let tel = row.t ? `<div class="enc-contact" onclick="window.copyToClip('${row.t}')"><div><span class="enc-contact-label"><i class="fa-solid fa-phone"></i> Teléfono</span><span class="enc-contact-value">${row.t}</span></div><button class="enc-copy-btn" title="Copiar"><i class="fa-solid fa-copy"></i></button></div>` : ``; let cor = row.c ? `<div class="enc-contact" onclick="window.copyToClip('${row.c}')"><div><span class="enc-contact-label"><i class="fa-solid fa-envelope"></i> Correo</span><span class="enc-contact-value">${row.c}</span></div><button class="enc-copy-btn" title="Copiar"><i class="fa-solid fa-copy"></i></button></div>` : ``; html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${row.n||'Sin Nombre'}</div><div class="enc-role">${row.p||'Equipo'}</div></div></div></div><div class="enc-body">${tel}${cor}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`; }); html += `</div>`; }); cont.innerHTML = html;
   };
   window.editEncargado = async (id) => { EDITING_ENC_ID = id; const d = DB.enc.find(x => x.id === id); document.getElementById('modalTitleEnc').innerText = "Editar Contacto"; document.getElementById('encCat').value = d.g || "Otro"; document.getElementById('encNom').value = d.n; document.getElementById('encTel').value = d.t; document.getElementById('encCor').value = d.c; document.getElementById('encPuesto').value = d.p; window.openModal('modalAddEnc', true); };
   window.saveEncargado = async () => { const data = { g: document.getElementById('encCat').value, n: document.getElementById('encNom').value.trim(), t: document.getElementById('encTel').value.trim(), c: document.getElementById('encCor').value.trim(), p: document.getElementById('encPuesto').value.trim() }; if(!data.n) return; if(EDITING_ENC_ID) { await updateDoc(doc(db, "encargados", EDITING_ENC_ID), data); window.logAct("Directorio", "Editar", "Contacto: " + data.n); } else { await addDoc(collection(db, "encargados"), { ...data, ambienteId: window.effectiveAmb('enc') }); window.logAct("Directorio", "Crear", "Nuevo contacto: " + data.n); } window.closeModal('modalAddEnc'); };
