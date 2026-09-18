@@ -123,6 +123,10 @@
   .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; display: block;}
   table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; min-width: 900px; }
   th { text-align: left; padding: 14px 15px; background: linear-gradient(180deg, #eef4fb 0%, #e3edf7 100%); color: var(--blue); border-bottom: 2px solid #cfe0f2; font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px;}
+  /* Los módulos "HTML libre" y los documentos de Procedimientos pueden traer HTML pegado desde Word/Outlook
+     con sus propias tablas y colores. Sin este reset, nuestros estilos globales de th/td (arriba) se mezclan
+     con los estilos que ya trae ese contenido y pueden dejar texto invisible (ej. blanco sobre blanco). */
+  .raw-html-embed table, .raw-html-embed th, .raw-html-embed td, .raw-html-embed tr { all: revert; }
   td { padding: 12px 15px; border-bottom: 1px solid var(--border-soft); vertical-align: middle; word-wrap: break-word; }
   tr:nth-child(even) td { background-color: #fafcfe; }
   tr:hover td { background-color: #eaf3fb; }
@@ -323,8 +327,21 @@
             <i class="fa-solid fa-building" style="color:var(--light-blue); font-size:14px;"></i>
             <select id="selAmbienteActual" class="inp" style="margin:0; padding:6px 10px; font-size:12px; width:auto; max-width:170px;" onchange="window.setAmbienteActual(this.value)"></select>
           </div>
-          <div id="notifBell" class="hidden" style="position: relative; cursor: pointer; color: var(--blue); font-size: 20px; transition: 0.2s;" onclick="window.openPendingUsers()">
+          <div id="notifBell" class="hidden" style="position: relative; cursor: pointer; color: var(--blue); font-size: 20px; transition: 0.2s;" onclick="window.toggleNotifDropdown()">
             <i class="fa-solid fa-bell"></i><span id="notifBadge" class="hidden" style="position: absolute; top: -5px; right: -8px; background: #e63946; color: white; border-radius: 50%; font-size: 10px; width: 18px; height: 18px; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 2px solid white;">0</span>
+            <div id="notifDropdown" class="hidden" style="position:absolute; top:36px; right:-10px; width:340px; max-width:88vw; background:white; border-radius:10px; box-shadow:0 10px 30px rgba(10,34,64,0.18); border:1px solid var(--border-soft); z-index:2000; cursor:default; color:var(--dark-gray); overflow:hidden;" onclick="event.stopPropagation()">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--border-soft);">
+                    <b style="color:var(--blue); font-size:14px;"><i class="fa-solid fa-bell"></i> Notificaciones</b>
+                    <i class="fa-solid fa-gear" style="cursor:pointer; color:var(--mid-gray); font-size:14px;" onclick="window.toggleNotifSettings(event)" title="Preferencias"></i>
+                </div>
+                <div id="notifSettingsBox" class="hidden" style="padding:12px 16px; border-bottom:1px solid var(--border-soft); background:#f8fafc;">
+                    <p style="font-size:11px; color:var(--mid-gray); margin:0 0 8px 0;">¿Qué quieres ver en tus notificaciones?</p>
+                    <label style="display:flex; align-items:center; gap:8px; font-size:12px; margin-bottom:8px; cursor:pointer;" id="np_avisos_box"><input type="checkbox" id="np_avisos" onchange="window.toggleNotifPref('avisos')"> Avisos publicados</label>
+                    <label style="display:flex; align-items:center; gap:8px; font-size:12px; margin-bottom:8px; cursor:pointer;" id="np_procedimientos_box"><input type="checkbox" id="np_procedimientos" onchange="window.toggleNotifPref('procedimientos')"> Procedimientos nuevos</label>
+                    <label id="np_usuarios_box" style="display:flex; align-items:center; gap:8px; font-size:12px; cursor:pointer;"><input type="checkbox" id="np_usuarios" onchange="window.toggleNotifPref('usuarios')"> Solicitudes de acceso</label>
+                </div>
+                <div id="notifListBox" style="max-height:360px; overflow-y:auto;"></div>
+            </div>
           </div>
           <div id="onlineMonitor" class="hidden online-indicator"><i class="fa-solid fa-circle" style="font-size: 8px;"></i> <span class="hide-mobile">Online:</span> <span id="onlineCount" style="margin-left:3px;">0</span><div id="onlineList" class="online-list-popup">Cargando...</div></div>
           <div class="user-info"><div id="lblUser" style="font-weight: 800; color:var(--blue); font-size: 14px;">Usuario</div><div id="lblRol" style="color: var(--light-blue); text-transform: uppercase; font-size: 11px; font-weight: bold;">Rol</div></div>
@@ -389,7 +406,7 @@
                 <div class="proc-list" id="procSidebarMenu"></div>
             </div>
             <div class="proc-viewer" id="procViewerScrollArea">
-                <div class="proc-document" id="procViewerContainer">
+                <div class="proc-document raw-html-embed" id="procViewerContainer">
                     <div style="text-align:center; padding: 100px 0; color: #adb5bd;">
                         <i class="fa-solid fa-file-signature" style="font-size: 60px; margin-bottom:20px; color:#dce4ec;"></i>
                         <h2 style="color: var(--blue); margin-top: 0;">Selecciona un documento</h2>
@@ -538,6 +555,13 @@
                                 <label class="perm-item"><input type="checkbox" id="p_enc_exp"> Exportar/Importar Dir</label>
                                 <label class="perm-item"><input type="checkbox" id="p_proc_view" checked> Ver Procedimientos</label>
                                 <label class="perm-item"><input type="checkbox" id="p_avi_view" checked> Ver Avisos</label>
+                            </div>
+
+                            <h4 style="margin: 20px 0 5px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">Notificaciones (Campana)</h4>
+                            <p style="font-size:11px; color:var(--mid-gray); margin: 0 0 10px 0;">Qué tipos de notificación puede recibir este rol en la campana. Cada persona luego puede apagar las que no le interesen, pero solo entre las que marques aquí.</p>
+                            <div class="perm-grid">
+                                <label class="perm-item"><input type="checkbox" id="p_notif_avisos" checked> Avisos publicados</label>
+                                <label class="perm-item"><input type="checkbox" id="p_notif_proc" checked> Procedimientos nuevos</label>
                             </div>
 
                             <h4 style="margin: 20px 0 5px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">Módulos Personalizados (Por Área)</h4>
@@ -892,6 +916,7 @@
   let PAGE = 1, PAGE_TEC = 1, PAGE_ENC = 1, PAGE_DYN = 1; let ITEMS_PER_PAGE_ENC = 16;
   let EDITING_USER_ID = null, EDITING_LOCATION_ID = null, EDITING_TEC_ID = null, EDITING_ENC_ID = null, EDITING_DYN_ID = null, EDITING_ROLE_ID = null, EDITING_MOD_ID = null, EDITING_PROC_ID = null, EDITING_AVISO_ID = null, EDITING_AMB_ID = null;
   let AVISO_TIPO = 'info'; let AVISO_IMG_DATA = null;
+  let NOTIF_PREFS = { avisos: true, procedimientos: true, usuarios: true }; let NOTIF_LAST_SEEN = 0; let NOTIF_DROPDOWN_OPEN = false;
   let CURRENT_MODULE = 'inicio'; let CURRENT_DYN_CONFIG = null; let DYN_PROC_ACTIVE_ID = null;
   let isFirstUserLoad = true; let knownPendingIds = new Set(); let heartbeatInterval;
   let LATEST_PROC_ID = null; let LATEST_AVISO_ID = null; let isInitialProcLoad = true; let isInitialAvisoLoad = true; 
@@ -940,6 +965,71 @@
   };
 
   // ================= NOTIFICACIONES =================
+  // ================= CENTRO DE NOTIFICACIONES (estilo Facebook) =================
+  window.loadNotifPrefs = function() {
+      try { const saved = JSON.parse(localStorage.getItem('distelsa_notif_prefs_' + SESION.id) || 'null'); if(saved) NOTIF_PREFS = { avisos: true, procedimientos: true, usuarios: true, ...saved }; } catch(e) {}
+      NOTIF_LAST_SEEN = parseInt(localStorage.getItem('distelsa_notif_seen_' + SESION.id) || '0');
+  };
+
+  window.timeAgo = function(ts) {
+      if(!ts) return '';
+      const diff = Date.now() - ts; const min = Math.floor(diff / 60000);
+      if (min < 1) return 'Justo ahora';
+      if (min < 60) return `Hace ${min} min`;
+      const hr = Math.floor(min / 60); if (hr < 24) return `Hace ${hr} h`;
+      const d = Math.floor(hr / 24); if (d < 7) return `Hace ${d} d`;
+      return new Date(ts).toLocaleDateString();
+  };
+
+  // Arma el feed combinando lo que ya está cargado (avisos, procedimientos, solicitudes pendientes),
+  // respetando qué tipos tiene activados la persona en sus preferencias.
+  window.getNotifFeed = function() {
+      let items = [];
+      if (NOTIF_PREFS.avisos && window.hasPerm('notif_avisos')) DB.avisos.forEach(a => items.push({ tit: a.tit, sub: (a.cont || '').slice(0, 80), fecha: a.fecha || 0, icon: 'fa-bullhorn', color: a.tipo === 'urgente' ? '#e63946' : (a.tipo === 'exito' ? 'var(--green)' : 'var(--light-blue)'), action: "window.switchModule('avisos'); window.closeNotifDropdown();" }));
+      if (NOTIF_PREFS.procedimientos && window.hasPerm('notif_proc')) DB.proc.filter(p => !p.modId).forEach(p => items.push({ tit: p.tit, sub: p.cat || 'General', fecha: p.fecha || 0, icon: 'fa-book', color: 'var(--blue)', action: `window.switchModule('proc'); window.closeNotifDropdown(); setTimeout(() => window.abrirProcedimiento('${p.id}'), 150);` }));
+      if (SESION.r === 'admin' && NOTIF_PREFS.usuarios) DB_USERS.filter(u => u.r === 'pendiente').forEach(u => items.push({ tit: 'Solicitud de acceso', sub: u.u, fecha: u.createdAt || 0, icon: 'fa-user-plus', color: '#e63946', action: "window.switchModule('ajs'); window.showAjsView('usr'); window.closeNotifDropdown();" }));
+      return items.sort((a, b) => (b.fecha || 0) - (a.fecha || 0)).slice(0, 30);
+  };
+
+  window.updateNotifBadge = function() {
+      const badge = document.getElementById('notifBadge'); if(!badge || !SESION.id) return;
+      const unread = window.getNotifFeed().filter(n => (n.fecha || 0) > NOTIF_LAST_SEEN).length;
+      if (unread > 0) { badge.innerText = unread > 9 ? '9+' : unread; badge.classList.remove('hidden'); } else badge.classList.add('hidden');
+  };
+
+  window.renderNotifDropdown = function() {
+      document.getElementById('np_avisos').checked = NOTIF_PREFS.avisos;
+      document.getElementById('np_procedimientos').checked = NOTIF_PREFS.procedimientos;
+      document.getElementById('np_usuarios_box').classList.toggle('hidden', SESION.r !== 'admin');
+      document.getElementById('np_usuarios').checked = NOTIF_PREFS.usuarios;
+      document.getElementById('np_avisos_box').classList.toggle('hidden', !window.hasPerm('notif_avisos'));
+      document.getElementById('np_procedimientos_box').classList.toggle('hidden', !window.hasPerm('notif_proc'));
+      const feed = window.getNotifFeed(); const box = document.getElementById('notifListBox');
+      if (feed.length === 0) { box.innerHTML = `<p style="text-align:center; color:var(--mid-gray); font-size:13px; padding:30px 15px;">No hay notificaciones para mostrar.<br>Revisa tus preferencias con el <i class="fa-solid fa-gear"></i> de arriba.</p>`; return; }
+      box.innerHTML = feed.map(n => `<div onclick="${n.action}" style="display:flex; gap:10px; padding:12px 16px; border-bottom:1px solid var(--border-soft); cursor:pointer; transition:0.15s;" onmouseover="this.style.background='#f4f8fb'" onmouseout="this.style.background='white'">
+          <div style="width:34px; height:34px; border-radius:50%; background:${n.color}; color:white; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:13px;"><i class="fa-solid ${n.icon}"></i></div>
+          <div style="min-width:0; flex:1;"><div style="font-weight:bold; font-size:13px; color:var(--blue);">${n.tit}</div><div style="font-size:12px; color:var(--mid-gray); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${n.sub || ''}</div><div style="font-size:10px; color:#adb5bd; margin-top:3px;">${window.timeAgo(n.fecha)}</div></div>
+      </div>`).join('');
+  };
+
+  window.toggleNotifDropdown = function() {
+      NOTIF_DROPDOWN_OPEN = !NOTIF_DROPDOWN_OPEN;
+      document.getElementById('notifDropdown').classList.toggle('hidden', !NOTIF_DROPDOWN_OPEN);
+      if (NOTIF_DROPDOWN_OPEN) {
+          window.renderNotifDropdown();
+          NOTIF_LAST_SEEN = Date.now(); localStorage.setItem('distelsa_notif_seen_' + SESION.id, String(NOTIF_LAST_SEEN));
+          window.updateNotifBadge();
+      }
+  };
+  window.closeNotifDropdown = function() { NOTIF_DROPDOWN_OPEN = false; document.getElementById('notifDropdown').classList.add('hidden'); document.getElementById('notifSettingsBox').classList.add('hidden'); };
+  window.toggleNotifSettings = function(ev) { if(ev) ev.stopPropagation(); document.getElementById('notifSettingsBox').classList.toggle('hidden'); };
+  window.toggleNotifPref = function(tipo) {
+      NOTIF_PREFS[tipo] = document.getElementById('np_' + tipo).checked;
+      localStorage.setItem('distelsa_notif_prefs_' + SESION.id, JSON.stringify(NOTIF_PREFS));
+      window.renderNotifDropdown(); window.updateNotifBadge();
+  };
+  document.addEventListener('click', (e) => { if (NOTIF_DROPDOWN_OPEN && !e.target.closest('#notifBell')) window.closeNotifDropdown(); });
+
   window.solicitarPermisosChrome = function() {
       if ("Notification" in window) {
           if (Notification.permission !== "granted" && Notification.permission !== "denied") {
@@ -998,8 +1088,8 @@
       let basePerms = rolData && rolData.perms ? rolData.perms : [];
       
       if(!rolData) {
-          if(SESION.r === 'agente') { basePerms = ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'proc_view', 'avi_view', 'dyn_view', 'dyn_edit', 'dyn_exp']; }
-          if(SESION.r === 'invitado') { basePerms = ['cob_view', 'tec_view', 'enc_view', 'proc_view', 'avi_view', 'dyn_view']; }
+          if(SESION.r === 'agente') { basePerms = ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'proc_view', 'avi_view', 'dyn_view', 'dyn_edit', 'dyn_exp', 'notif_avisos', 'notif_proc']; }
+          if(SESION.r === 'invitado') { basePerms = ['cob_view', 'tec_view', 'enc_view', 'proc_view', 'avi_view', 'dyn_view', 'notif_avisos', 'notif_proc']; }
       }
 
       if(perm.startsWith('view_mod_') && basePerms.includes('dyn_view')) return true;
@@ -1025,7 +1115,7 @@
       
       const hasAjs = window.hasPerm('ajs_usr') || window.hasPerm('ajs_rol') || window.hasPerm('ajs_mod') || window.hasPerm('ajs_proc') || window.hasPerm('ajs_col') || window.hasPerm('ajs_mon') || window.hasPerm('ajs_avi') || SESION.r === 'admin';
       document.getElementById('tabAjs').classList.toggle('hidden', !hasAjs);
-      document.getElementById('notifBell').classList.toggle('hidden', !window.hasPerm('ajs_usr'));
+      document.getElementById('notifBell').classList.remove('hidden');
 
       if(document.getElementById('menuAjsAmb')) document.getElementById('menuAjsAmb').classList.toggle('hidden', SESION.r !== 'admin');
       if(document.getElementById('menuAjsMon')) document.getElementById('menuAjsMon').classList.toggle('hidden', !window.hasPerm('ajs_mon'));
@@ -1195,6 +1285,7 @@
     document.getElementById('lblRol').innerText = SESION.r;
     document.getElementById('onlineMonitor').classList.remove('hidden');
     AMBIENTE_ACTUAL = SESION.a || null;
+    window.loadNotifPrefs();
     
     window.solicitarPermisosChrome();
 
@@ -1214,13 +1305,13 @@
       onSnapshot(collection(db, "usuarios"), (snap) => { 
           DB_USERS = snap.docs.map(d => ({ id: d.id, ...d.data() })); 
           if (SESION.r === 'admin') { 
-              let pending = DB_USERS.filter(u => u.r === 'pendiente'); let badge = document.getElementById('notifBadge'); 
-              if (pending.length > 0) { badge.innerText = pending.length; badge.classList.remove('hidden'); } else badge.classList.add('hidden'); 
-              if (!isFirstUserLoad) pending.forEach(u => { if (!knownPendingIds.has(u.id)) window.showToast(`Nueva solicitud: <b>${u.u}</b>. <u style="cursor:pointer; color:var(--blue)" onclick="window.openPendingUsers()">Aprobar</u>`); }); 
+              let pending = DB_USERS.filter(u => u.r === 'pendiente'); 
+              if (!isFirstUserLoad) pending.forEach(u => { if (!knownPendingIds.has(u.id)) window.showToast(`Nueva solicitud: <b>${u.u}</b>. <u style="cursor:pointer; color:var(--blue)" onclick="window.switchModule('ajs'); window.showAjsView('usr');">Aprobar</u>`); }); 
               knownPendingIds = new Set(pending.map(u => u.id)); 
           } 
           isFirstUserLoad = false; 
           window.updateOnlineUI(); 
+          window.updateNotifBadge();
           if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewUsr').classList.contains('hidden') && !EDITING_USER_ID) window.renderUserList(); 
       }); 
   };
@@ -1335,8 +1426,8 @@
       // ya quedan controlados por qué módulo (modId) es visible en este ambiente, así que sus documentos no se filtran aquí.
       DB.proc = DB_RAW.proc.filter(p => p.modId ? true : window.inAmb(p));
       DB.roles = DB_RAW.roles.filter(r => window.roleInAmb(r, k));
-      if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) { DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view'] }); }
-      if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) { DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view'] }); }
+      if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) { DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc'] }); }
+      if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) { DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc'] }); }
       window.updateRolesSelect(); if(CURRENT_MODULE === 'ajs' && document.getElementById('ajsViewRol') && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList();
   };
 
@@ -1418,8 +1509,8 @@
           DB_RAW.roles = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); 
           const k = window.ambKey(AMBIENTE_ACTUAL);
           DB.roles = DB_RAW.roles.filter(r => window.roleInAmb(r, k));
-          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) { DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view'] }); }
-          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) { DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view'] }); }
+          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) { DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc'] }); }
+          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) { DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc'] }); }
           window.updateRolesSelect(); window.applyPermissionsToUI(); if(document.getElementById('rolAmbList')) window.renderRoleAmbienteSelect(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList(); 
       }); 
   };
@@ -1590,7 +1681,7 @@
       const isHtml = CURRENT_DYN_CONFIG.vista === 'html'; const isProc = CURRENT_DYN_CONFIG.vista === 'procedimientos'; const toolsDiv = document.querySelector('#moduloDinamico .tools'); const pageDiv = document.getElementById('pageLabelDyn').parentElement; const container = document.getElementById('dynContentContainer');
       if (!isHtml && !isProc && !LOAD_STATE.dyn) { container.innerHTML = `<div class="card spinner-container"><div class="spinner"></div><div class="loading-text">Cargando registros...</div></div>`; return; }
       if (isProc && !LOAD_STATE.proc) { container.innerHTML = `<div class="card spinner-container"><div class="spinner"></div><div class="loading-text">Cargando documentos...</div></div>`; return; }
-      if (isHtml) { toolsDiv.classList.add('hidden'); pageDiv.classList.add('hidden'); container.innerHTML = `<div class="card" style="padding: 0; min-height: 75vh; border:none; box-shadow:none;">${CURRENT_DYN_CONFIG.htmlContent || ''}</div>`; const scripts = container.querySelectorAll('script'); scripts.forEach(oldScript => { const newScript = document.createElement('script'); Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value)); newScript.appendChild(document.createTextNode(oldScript.innerHTML)); oldScript.parentNode.replaceChild(newScript, oldScript); }); return; } else { toolsDiv.classList.remove('hidden'); if(isProc) pageDiv.classList.add('hidden'); else pageDiv.classList.remove('hidden'); }
+      if (isHtml) { toolsDiv.classList.add('hidden'); pageDiv.classList.add('hidden'); container.innerHTML = `<div class="card" style="padding: 0; border:none; box-shadow:none; overflow:hidden;"><iframe id="dynHtmlFrame" style="width:100%; min-height:75vh; border:none; display:block;" sandbox="allow-scripts allow-forms allow-popups allow-modals allow-same-origin"></iframe></div>`; const frame = document.getElementById('dynHtmlFrame'); frame.onload = () => { try { const h = frame.contentWindow.document.documentElement.scrollHeight; if(h) frame.style.height = h + 'px'; } catch(e) {} }; frame.srcdoc = CURRENT_DYN_CONFIG.htmlContent || '<p style="font-family:sans-serif; padding:20px; color:#888;">Este módulo aún no tiene contenido.</p>'; return; } else { toolsDiv.classList.remove('hidden'); if(isProc) pageDiv.classList.add('hidden'); else pageDiv.classList.remove('hidden'); }
       
       const canEdit = window.hasPerm('edit_mod_' + CURRENT_DYN_CONFIG.id); 
       const isAdmin = (SESION.r === 'admin');
@@ -1618,7 +1709,7 @@
               let headerBar = act ? `<div style="display:flex; justify-content:flex-end; gap:6px; margin-bottom:10px;">${act}</div>` : '';
               viewerHtml = headerBar + window.buildProcContentHtml(activeDoc);
           } else { viewerHtml = `<div style="text-align:center; padding: 100px 0; color: #adb5bd;"><i class="fa-solid fa-file-signature" style="font-size: 60px; margin-bottom:20px; color:#dce4ec;"></i><h2 style="color: var(--blue); margin-top: 0;">Selecciona un documento</h2></div>`; }
-          container.innerHTML = `<div class="dyn-proc-wrap" style="height:75vh;"><div class="proc-sidebar" style="width:280px;"><div class="proc-list">${menuHtml}</div></div><div class="proc-viewer"><div class="proc-document" id="dynProcViewer">${viewerHtml}</div></div></div>`;
+          container.innerHTML = `<div class="dyn-proc-wrap" style="height:75vh;"><div class="proc-sidebar" style="width:280px;"><div class="proc-list">${menuHtml}</div></div><div class="proc-viewer"><div class="proc-document raw-html-embed" id="dynProcViewer">${viewerHtml}</div></div></div>`;
           const scripts = document.getElementById('dynProcViewer').querySelectorAll('script'); scripts.forEach(oldScript => { const newScript = document.createElement('script'); Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value)); newScript.appendChild(document.createTextNode(oldScript.innerHTML)); oldScript.parentNode.replaceChild(newScript, oldScript); });
           return;
       }
@@ -1651,6 +1742,7 @@
           isInitialAvisoLoad = false;
           DB_RAW.avisos = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); DB.avisos = DB_RAW.avisos.filter(x => window.ambKey(x.ambienteId) === window.effectiveAmb('avisos'));
           LOAD_STATE.avisos = true;
+          window.updateNotifBadge();
           
           if(DB.avisos.length > 0 && SESION && SESION.id) {
               let latest = DB.avisos[0];
@@ -1852,6 +1944,7 @@
           isInitialProcLoad = false;
           DB_RAW.proc = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); DB.proc = DB_RAW.proc.filter(window.inAmb);
           LOAD_STATE.proc = true; 
+          window.updateNotifBadge();
           
           let sortedProcs = DB.proc.filter(p => !p.modId).sort((a, b) => (b.fecha || 0) - (a.fecha || 0));
           if(sortedProcs.length > 0 && SESION && SESION.id) {
