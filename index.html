@@ -323,6 +323,15 @@
       <header>
         <button class="btn btn-o hide-desktop" style="padding: 8px 12px; border:none; color:var(--blue);" onclick="document.getElementById('appSidebar').classList.add('open'); document.getElementById('mobileOverlay').classList.remove('hidden');"><i class="fa-solid fa-bars fa-lg"></i></button>
         <div class="header-actions">
+          <div id="globalSearchBox" style="position:relative;">
+            <i class="fa-solid fa-magnifying-glass" style="color:var(--blue); font-size:19px; cursor:pointer;" onclick="window.toggleGlobalSearch()" title="Buscar en toda la intranet"></i>
+            <div id="globalSearchPanel" class="hidden" style="position:absolute; top:34px; left:-10px; width:320px; max-width:88vw; background:white; border-radius:10px; box-shadow:0 10px 30px rgba(10,34,64,0.18); border:1px solid var(--border-soft); z-index:2000; overflow:hidden;" onclick="event.stopPropagation()">
+              <div style="padding:10px 12px; border-bottom:1px solid var(--border-soft);">
+                <input id="globalSearchInput" class="inp" style="margin:0;" placeholder="Buscar en toda la intranet..." oninput="window.renderGlobalSearchResults()">
+              </div>
+              <div id="globalSearchResults" style="max-height:360px; overflow-y:auto;"></div>
+            </div>
+          </div>
           <div id="ambienteSwitcherBox" class="hidden" style="display:flex; align-items:center; gap:6px;">
             <i class="fa-solid fa-building" style="color:var(--light-blue); font-size:14px;"></i>
             <select id="selAmbienteActual" class="inp" style="margin:0; padding:6px 10px; font-size:12px; width:auto; max-width:170px;" onchange="window.setAmbienteActual(this.value)"></select>
@@ -338,6 +347,7 @@
                     <p style="font-size:11px; color:var(--mid-gray); margin:0 0 8px 0;">¿Qué quieres ver en tus notificaciones?</p>
                     <label style="display:flex; align-items:center; gap:8px; font-size:12px; margin-bottom:8px; cursor:pointer;" id="np_avisos_box"><input type="checkbox" id="np_avisos" onchange="window.toggleNotifPref('avisos')"> Avisos publicados</label>
                     <label style="display:flex; align-items:center; gap:8px; font-size:12px; margin-bottom:8px; cursor:pointer;" id="np_procedimientos_box"><input type="checkbox" id="np_procedimientos" onchange="window.toggleNotifPref('procedimientos')"> Procedimientos nuevos</label>
+                    <label style="display:flex; align-items:center; gap:8px; font-size:12px; margin-bottom:8px; cursor:pointer;" id="np_modulos_box"><input type="checkbox" id="np_modulos" onchange="window.toggleNotifPref('modulos')"> Módulos personalizados</label>
                     <label id="np_usuarios_box" style="display:flex; align-items:center; gap:8px; font-size:12px; cursor:pointer;"><input type="checkbox" id="np_usuarios" onchange="window.toggleNotifPref('usuarios')"> Solicitudes de acceso</label>
                 </div>
                 <div id="notifListBox" style="max-height:360px; overflow-y:auto;"></div>
@@ -500,8 +510,13 @@
 
                     <!-- VISTA: MONITOR DE ACTIVIDAD -->
                     <div id="ajsViewMon" class="hidden">
-                        <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-desktop"></i> Monitor de Actividad y Auditoría</h3>
-                        <p style="font-size:13px; color:var(--mid-gray);">Supervisa en tiempo real quién está en línea y revisa el registro de movimientos del sistema.</p>
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+                            <div>
+                                <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-desktop"></i> Monitor de Actividad y Auditoría</h3>
+                                <p style="font-size:13px; color:var(--mid-gray); margin:0;">Supervisa en tiempo real quién está en línea y revisa el registro de movimientos del sistema.</p>
+                            </div>
+                            <button id="btnRespaldoCompleto" onclick="window.exportarRespaldoCompleto()" class="btn btn-x" style="padding:10px 18px;"><i class="fa-solid fa-database"></i> Exportar Todo (Respaldo Completo)</button>
+                        </div>
                         
                         <div class="form-grid" style="margin-top: 15px; grid-template-columns: 1fr 1fr; gap: 20px;">
                             <div style="background:#f8fafc; border: 1px solid var(--border-soft); border-radius: 8px; padding: 15px; display: flex; flex-direction: column;">
@@ -534,56 +549,73 @@
                     <!-- VISTA: ROLES Y PERMISOS -->
                     <div id="ajsViewRol" class="hidden">
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-user-shield"></i> Roles y Permisos</h3>
-                        <p style="font-size:13px; color:var(--mid-gray);">Crea roles a la medida o edita los permisos de los roles predeterminados (Agente / Invitado, disponibles en todos los ambientes). Los roles personalizados que crees aquí quedan asociados al ambiente que tengas seleccionado arriba en el encabezado.</p>
+                        <p style="font-size:13px; color:var(--mid-gray);">Un <b>rol</b> es un "paquete de permisos" que le das a tus usuarios. Puedes editar los roles predeterminados (Agente / Invitado) o crear uno nuevo a la medida.</p>
                         <div style="background:#f8fafc; padding:20px; border-radius:8px; border:1px solid var(--border-soft); margin-bottom:20px;">
-                            <input id="rolName" class="inp" placeholder="Nombre del nuevo Rol (Ej: Servicio Técnico)">
+                            <label style="font-size:12px; font-weight:bold; color:var(--blue);">Nombre del Rol</label>
+                            <input id="rolName" class="inp" placeholder="Ej: Servicio Técnico, Supervisor, Líder...">
 
-                            <h4 style="margin: 15px 0 10px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">Ambiente(s) donde aplica este rol</h4>
-                            <p style="font-size:11px; color:var(--mid-gray); margin: 0 0 10px 0;">Marca varios si el rol debe funcionar igual en más de un ambiente (ej. un líder que supervisa Principal y Servicio Técnico).</p>
+                            <h4 style="margin: 15px 0 10px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">1. ¿En qué ambiente(s) trabaja este rol?</h4>
                             <div id="rolAmbList" class="perm-grid"><label class="perm-item"><input type="checkbox" value="" checked> Principal</label></div>
                             
-                            <h4 style="margin: 15px 0 10px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">Módulos del Sistema</h4>
-                            <div class="perm-grid">
-                                <label class="perm-item"><input type="checkbox" id="p_cob_view" checked> Ver Cobertura</label>
-                                <label class="perm-item"><input type="checkbox" id="p_cob_edit"> Editar Cobertura</label>
-                                <label class="perm-item"><input type="checkbox" id="p_cob_exp"> Exportar/Importar Cob</label>
-                                <label class="perm-item"><input type="checkbox" id="p_tec_view" checked> Ver Técnicos</label>
-                                <label class="perm-item"><input type="checkbox" id="p_tec_edit"> Editar Técnicos</label>
-                                <label class="perm-item"><input type="checkbox" id="p_tec_exp"> Exportar/Importar Tec</label>
-                                <label class="perm-item"><input type="checkbox" id="p_enc_view" checked> Ver Directorio</label>
-                                <label class="perm-item"><input type="checkbox" id="p_enc_edit"> Editar Directorio</label>
-                                <label class="perm-item"><input type="checkbox" id="p_enc_exp"> Exportar/Importar Dir</label>
-                                <label class="perm-item"><input type="checkbox" id="p_proc_view" checked> Ver Procedimientos</label>
-                                <label class="perm-item"><input type="checkbox" id="p_avi_view" checked> Ver Avisos</label>
+                            <h4 style="margin: 20px 0 10px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">2. ¿Qué puede hacer en los módulos principales?</h4>
+                            <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+                                <button type="button" onclick="window.aplicarPlantillaRol('ver')" class="btn btn-o" style="font-size:12px; padding:7px 14px;"><i class="fa-solid fa-eye"></i> Solo puede Ver</button>
+                                <button type="button" onclick="window.aplicarPlantillaRol('editar')" class="btn btn-o" style="font-size:12px; padding:7px 14px;"><i class="fa-solid fa-pen"></i> Puede Ver y Editar</button>
+                                <button type="button" onclick="window.aplicarPlantillaRol('total')" class="btn btn-o" style="font-size:12px; padding:7px 14px;"><i class="fa-solid fa-crown"></i> Control Total</button>
+                            </div>
+                            <p style="font-size:11px; color:var(--mid-gray); margin:0 0 10px 0;">Usa un botón de arriba para llenar todo de un jalón, o marca casilla por casilla abajo.</p>
+                            <div style="overflow-x:auto; border:1px solid var(--border-soft); border-radius:8px;">
+                                <table style="width:100%; border-collapse:collapse; font-size:13px; min-width:420px;">
+                                    <thead><tr><th style="text-align:left;">Módulo</th><th style="text-align:center; width:70px;">Ver</th><th style="text-align:center; width:70px;">Editar</th><th style="text-align:center; width:90px;">Exportar</th></tr></thead>
+                                    <tbody>
+                                        <tr><td><i class="fa-solid fa-map-location-dot" style="color:var(--light-blue); width:18px;"></i> Cobertura</td><td style="text-align:center;"><input type="checkbox" id="p_cob_view" checked></td><td style="text-align:center;"><input type="checkbox" id="p_cob_edit"></td><td style="text-align:center;"><input type="checkbox" id="p_cob_exp"></td></tr>
+                                        <tr><td><i class="fa-solid fa-screwdriver-wrench" style="color:var(--light-blue); width:18px;"></i> Técnicos</td><td style="text-align:center;"><input type="checkbox" id="p_tec_view" checked></td><td style="text-align:center;"><input type="checkbox" id="p_tec_edit"></td><td style="text-align:center;"><input type="checkbox" id="p_tec_exp"></td></tr>
+                                        <tr><td><i class="fa-solid fa-address-card" style="color:var(--light-blue); width:18px;"></i> Directorio</td><td style="text-align:center;"><input type="checkbox" id="p_enc_view" checked></td><td style="text-align:center;"><input type="checkbox" id="p_enc_edit"></td><td style="text-align:center;"><input type="checkbox" id="p_enc_exp"></td></tr>
+                                        <tr><td><i class="fa-solid fa-book" style="color:var(--light-blue); width:18px;"></i> Procedimientos</td><td style="text-align:center;"><input type="checkbox" id="p_proc_view" checked></td><td style="text-align:center; color:#ced4da;">—</td><td style="text-align:center; color:#ced4da;">—</td></tr>
+                                        <tr><td><i class="fa-solid fa-bullhorn" style="color:var(--light-blue); width:18px;"></i> Avisos</td><td style="text-align:center;"><input type="checkbox" id="p_avi_view" checked></td><td style="text-align:center; color:#ced4da;">—</td><td style="text-align:center; color:#ced4da;">—</td></tr>
+                                    </tbody>
+                                </table>
                             </div>
 
-                            <h4 style="margin: 20px 0 5px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">Notificaciones (Campana)</h4>
-                            <p style="font-size:11px; color:var(--mid-gray); margin: 0 0 10px 0;">Qué tipos de notificación puede recibir este rol en la campana. Cada persona luego puede apagar las que no le interesen, pero solo entre las que marques aquí.</p>
-                            <div class="perm-grid">
-                                <label class="perm-item"><input type="checkbox" id="p_notif_avisos" checked> Avisos publicados</label>
-                                <label class="perm-item"><input type="checkbox" id="p_notif_proc" checked> Procedimientos nuevos</label>
-                            </div>
-
-                            <h4 style="margin: 20px 0 5px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">Módulos Personalizados (Por Área)</h4>
-                            <p style="font-size:11px; color:var(--mid-gray); margin: 0 0 10px 0;">Selecciona a qué módulos específicos tiene acceso este rol.</p>
+                            <h4 style="margin: 20px 0 10px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">3. Módulos específicos que le creaste a tu equipo</h4>
+                            <p style="font-size:11px; color:var(--mid-gray); margin: 0 0 10px 0;">Marca a cuáles de tus módulos personalizados (los que hiciste con "Crear Módulo") tiene acceso este rol.</p>
                             <div id="dynPermsContainer" class="perm-grid" style="grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));"></div>
 
-                            <h4 style="margin: 20px 0 10px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">Permisos de Ajustes (Solo Administradores)</h4>
-                            <div class="perm-grid">
-                                <label class="perm-item"><input type="checkbox" id="p_ajs_mon"> Actividad y Logs</label>
-                                <label class="perm-item"><input type="checkbox" id="p_ajs_usr"> Usuarios y Accesos</label>
-                                <label class="perm-item"><input type="checkbox" id="p_ajs_rol"> Roles y Permisos</label>
-                                <label class="perm-item"><input type="checkbox" id="p_ajs_mod"> Creador de Módulos</label>
-                                <label class="perm-item"><input type="checkbox" id="p_ajs_proc"> Gestor Procedimientos</label>
-                                <label class="perm-item"><input type="checkbox" id="p_ajs_avi"> Gestor de Avisos</label>
-                                <label class="perm-item"><input type="checkbox" id="p_ajs_col"> Colores Cobertura</label>
-                            </div>
+                            <details style="margin-top:20px; border:1px solid var(--border-soft); border-radius:8px; overflow:hidden;">
+                                <summary style="cursor:pointer; padding:12px 15px; background:#eef3f8; font-weight:bold; color:var(--blue); font-size:13px;"><i class="fa-solid fa-bell"></i> Notificaciones — qué avisa la campana a este rol</summary>
+                                <div style="padding:15px;">
+                                    <div class="perm-grid">
+                                        <label class="perm-item"><input type="checkbox" id="p_notif_avisos" checked> Avisos publicados</label>
+                                        <label class="perm-item"><input type="checkbox" id="p_notif_proc" checked> Procedimientos nuevos</label>
+                                        <label class="perm-item"><input type="checkbox" id="p_notif_mod" checked> Módulos personalizados</label>
+                                    </div>
+                                </div>
+                            </details>
+
+                            <details style="margin-top:10px; border:1px solid var(--border-soft); border-radius:8px; overflow:hidden;">
+                                <summary style="cursor:pointer; padding:12px 15px; background:#eef3f8; font-weight:bold; color:var(--blue); font-size:13px;"><i class="fa-solid fa-gear"></i> Acceso a Configuración/Ajustes — normalmente solo para supervisores</summary>
+                                <div style="padding:15px;">
+                                    <div class="perm-grid">
+                                        <label class="perm-item"><input type="checkbox" id="p_ajs_mon"> Ver Actividad y Logs</label>
+                                        <label class="perm-item"><input type="checkbox" id="p_ajs_usr"> Gestionar Usuarios</label>
+                                        <label class="perm-item"><input type="checkbox" id="p_ajs_rol"> Gestionar Roles</label>
+                                        <label class="perm-item"><input type="checkbox" id="p_ajs_mod"> Crear Módulos</label>
+                                        <label class="perm-item"><input type="checkbox" id="p_ajs_proc"> Gestionar Procedimientos</label>
+                                        <label class="perm-item"><input type="checkbox" id="p_ajs_avi"> Gestionar Avisos</label>
+                                        <label class="perm-item"><input type="checkbox" id="p_ajs_col"> Colores de Cobertura</label>
+                                    </div>
+                                </div>
+                            </details>
+
                             <div style="text-align:right; margin-top:20px;">
                                 <button id="btnCancelRole" onclick="window.cancelarEdicionRol()" class="btn btn-d hidden" style="margin-right: 5px;"><i class="fa-solid fa-times"></i> Cancelar</button>
                                 <button id="btnRoleAction" onclick="window.saveRole()" class="btn btn-s" style="color:white; font-size: 14px; padding: 10px 20px;">Guardar Rol</button>
                             </div>
                         </div>
-                        <h4 style="color:var(--blue); margin-bottom: 10px;">Roles en el Sistema</h4>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                            <h4 style="color:var(--blue); margin:0;">Roles en el Sistema</h4>
+                            <button onclick="window.repararRolesAmbiente()" class="btn btn-o" style="padding:6px 12px; font-size:12px;" title="Corrige roles que quedaron apuntando a un ambiente eliminado o inexistente"><i class="fa-solid fa-wrench"></i> Reparar Roles</button>
+                        </div>
                         <div id="rolesListContainer"></div>
                     </div>
 
@@ -603,6 +635,27 @@
                             <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Procedimientos</label><input id="sysNomProc" class="inp" value="Procedimientos"></div>
                             <div class="span-2" style="text-align:right;">
                                 <button onclick="window.saveSysMods()" class="btn btn-s" style="color:white; padding: 10px 20px;"><i class="fa-solid fa-save"></i> Guardar Nombres</button>
+                            </div>
+                        </div>
+
+                        <!-- FORMULARIO 1B: ACTIVAR/DESACTIVAR MÓDULOS DEL SISTEMA (por ambiente) -->
+                        <div class="form-grid" style="background:#f8fafc; padding:20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--border-soft);">
+                            <div class="span-2" style="border-bottom: 2px solid var(--border-soft); padding-bottom: 10px; margin-bottom: 5px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:5px;">
+                                <h4 style="margin:0; color:var(--blue); font-size: 14px;"><i class="fa-solid fa-toggle-on" style="color: var(--light-blue);"></i> Activar / Desactivar Módulos</h4>
+                                <span id="lblModsAmbActual" style="font-size:11px; color:white; background:var(--light-blue); padding:3px 10px; border-radius:20px; font-weight:bold;"></span>
+                            </div>
+                            <div class="span-2">
+                                <p style="font-size:12px; color:var(--mid-gray); margin:0 0 10px 0;">Elige cuáles de estos módulos existen en el ambiente que tienes seleccionado arriba (junto a la campana). Funciona igual que un módulo personalizado: si lo desmarcas, deja de aparecer en el menú de ese ambiente — no se borra ningún dato, solo se oculta.</p>
+                                <div class="perm-grid" id="modActivosContainer">
+                                    <label class="perm-item"><input type="checkbox" id="ma_cob" checked> Cobertura</label>
+                                    <label class="perm-item"><input type="checkbox" id="ma_tec" checked> Técnicos</label>
+                                    <label class="perm-item"><input type="checkbox" id="ma_enc" checked> Directorio</label>
+                                    <label class="perm-item"><input type="checkbox" id="ma_proc" checked> Procedimientos</label>
+                                    <label class="perm-item"><input type="checkbox" id="ma_avisos" checked> Avisos</label>
+                                </div>
+                            </div>
+                            <div class="span-2" style="text-align:right; margin-top:10px;">
+                                <button onclick="window.guardarModulosActivos()" class="btn btn-s" style="color:white; padding: 10px 20px;"><i class="fa-solid fa-save"></i> Guardar Módulos Activos</button>
                             </div>
                         </div>
 
@@ -916,7 +969,7 @@
   let PAGE = 1, PAGE_TEC = 1, PAGE_ENC = 1, PAGE_DYN = 1; let ITEMS_PER_PAGE_ENC = 16;
   let EDITING_USER_ID = null, EDITING_LOCATION_ID = null, EDITING_TEC_ID = null, EDITING_ENC_ID = null, EDITING_DYN_ID = null, EDITING_ROLE_ID = null, EDITING_MOD_ID = null, EDITING_PROC_ID = null, EDITING_AVISO_ID = null, EDITING_AMB_ID = null;
   let AVISO_TIPO = 'info'; let AVISO_IMG_DATA = null;
-  let NOTIF_PREFS = { avisos: true, procedimientos: true, usuarios: true }; let NOTIF_LAST_SEEN = 0; let NOTIF_DROPDOWN_OPEN = false;
+  let NOTIF_PREFS = { avisos: true, procedimientos: true, usuarios: true, modulos: true }; let NOTIF_LAST_SEEN = 0; let NOTIF_DROPDOWN_OPEN = false;
   let CURRENT_MODULE = 'inicio'; let CURRENT_DYN_CONFIG = null; let DYN_PROC_ACTIVE_ID = null;
   let isFirstUserLoad = true; let knownPendingIds = new Set(); let heartbeatInterval;
   let LATEST_PROC_ID = null; let LATEST_AVISO_ID = null; let isInitialProcLoad = true; let isInitialAvisoLoad = true; 
@@ -967,7 +1020,7 @@
   // ================= NOTIFICACIONES =================
   // ================= CENTRO DE NOTIFICACIONES (estilo Facebook) =================
   window.loadNotifPrefs = function() {
-      try { const saved = JSON.parse(localStorage.getItem('distelsa_notif_prefs_' + SESION.id) || 'null'); if(saved) NOTIF_PREFS = { avisos: true, procedimientos: true, usuarios: true, ...saved }; } catch(e) {}
+      try { const saved = JSON.parse(localStorage.getItem('distelsa_notif_prefs_' + SESION.id) || 'null'); if(saved) NOTIF_PREFS = { avisos: true, procedimientos: true, usuarios: true, modulos: true, ...saved }; } catch(e) {}
       NOTIF_LAST_SEEN = parseInt(localStorage.getItem('distelsa_notif_seen_' + SESION.id) || '0');
   };
 
@@ -987,6 +1040,7 @@
       let items = [];
       if (NOTIF_PREFS.avisos && window.hasPerm('notif_avisos')) DB.avisos.forEach(a => items.push({ tit: a.tit, sub: (a.cont || '').slice(0, 80), fecha: a.fecha || 0, icon: 'fa-bullhorn', color: a.tipo === 'urgente' ? '#e63946' : (a.tipo === 'exito' ? 'var(--green)' : 'var(--light-blue)'), action: "window.switchModule('avisos'); window.closeNotifDropdown();" }));
       if (NOTIF_PREFS.procedimientos && window.hasPerm('notif_proc')) DB.proc.filter(p => !p.modId).forEach(p => items.push({ tit: p.tit, sub: p.cat || 'General', fecha: p.fecha || 0, icon: 'fa-book', color: 'var(--blue)', action: `window.switchModule('proc'); window.closeNotifDropdown(); setTimeout(() => window.abrirProcedimiento('${p.id}'), 150);` }));
+      if (NOTIF_PREFS.modulos && window.hasPerm('notif_mod')) DB.dynData.filter(d => d.fecha && window.hasPerm('view_mod_' + d.modId)).forEach(d => { const mod = DB.configModulos.find(m => m.id === d.modId); if (!mod) return; items.push({ tit: d.c0 || 'Nuevo registro', sub: mod.nombre, fecha: d.fecha, icon: 'fa-layer-group', color: 'var(--green)', action: `window.switchModule('dyn_${d.modId}'); window.closeNotifDropdown();` }); });
       if (SESION.r === 'admin' && NOTIF_PREFS.usuarios) DB_USERS.filter(u => u.r === 'pendiente').forEach(u => items.push({ tit: 'Solicitud de acceso', sub: u.u, fecha: u.createdAt || 0, icon: 'fa-user-plus', color: '#e63946', action: "window.switchModule('ajs'); window.showAjsView('usr'); window.closeNotifDropdown();" }));
       return items.sort((a, b) => (b.fecha || 0) - (a.fecha || 0)).slice(0, 30);
   };
@@ -1004,12 +1058,59 @@
       document.getElementById('np_usuarios').checked = NOTIF_PREFS.usuarios;
       document.getElementById('np_avisos_box').classList.toggle('hidden', !window.hasPerm('notif_avisos'));
       document.getElementById('np_procedimientos_box').classList.toggle('hidden', !window.hasPerm('notif_proc'));
+      document.getElementById('np_modulos').checked = NOTIF_PREFS.modulos;
+      document.getElementById('np_modulos_box').classList.toggle('hidden', !window.hasPerm('notif_mod'));
       const feed = window.getNotifFeed(); const box = document.getElementById('notifListBox');
       if (feed.length === 0) { box.innerHTML = `<p style="text-align:center; color:var(--mid-gray); font-size:13px; padding:30px 15px;">No hay notificaciones para mostrar.<br>Revisa tus preferencias con el <i class="fa-solid fa-gear"></i> de arriba.</p>`; return; }
       box.innerHTML = feed.map(n => `<div onclick="${n.action}" style="display:flex; gap:10px; padding:12px 16px; border-bottom:1px solid var(--border-soft); cursor:pointer; transition:0.15s;" onmouseover="this.style.background='#f4f8fb'" onmouseout="this.style.background='white'">
           <div style="width:34px; height:34px; border-radius:50%; background:${n.color}; color:white; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:13px;"><i class="fa-solid ${n.icon}"></i></div>
           <div style="min-width:0; flex:1;"><div style="font-weight:bold; font-size:13px; color:var(--blue);">${n.tit}</div><div style="font-size:12px; color:var(--mid-gray); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${n.sub || ''}</div><div style="font-size:10px; color:#adb5bd; margin-top:3px;">${window.timeAgo(n.fecha)}</div></div>
       </div>`).join('');
+  };
+
+  // ================= BÚSQUEDA GLOBAL =================
+  window.toggleGlobalSearch = function() {
+      const p = document.getElementById('globalSearchPanel'); const opening = p.classList.contains('hidden');
+      p.classList.toggle('hidden');
+      if (opening) { document.getElementById('globalSearchInput').value = ''; document.getElementById('globalSearchResults').innerHTML = ''; setTimeout(() => document.getElementById('globalSearchInput').focus(), 50); }
+  };
+  window.closeGlobalSearch = function() { const p = document.getElementById('globalSearchPanel'); if(p) p.classList.add('hidden'); };
+  document.addEventListener('click', (e) => { if (!e.target.closest('#globalSearchBox')) window.closeGlobalSearch(); });
+
+  // Busca solo dentro de lo que el usuario YA tiene permiso de ver (reutiliza los mismos arreglos
+  // DB.* ya filtrados por ambiente y permisos en el resto de la app — no hace falta filtrar de nuevo).
+  window.performGlobalSearch = function(query) {
+      const q = (query || '').trim(); if (q.length < 2) return [];
+      let results = [];
+      if (window.hasPerm('cob_view')) DB.cob.forEach(r => { if (window.matchSearch(`${r.m} ${r.n} ${r.c} ${r.z} ${r.r}`, q)) results.push({ mod: 'Cobertura', icon: 'fa-map-location-dot', color: 'var(--light-blue)', tit: r.n || 'Sin nombre', sub: r.m || '', target: 'cob' }); });
+      if (window.hasPerm('tec_view')) DB.tec.forEach(r => { if (window.matchSearch(`${r.n} ${r.t1} ${r.t2} ${r.a} ${r.d} ${r.p}`, q)) results.push({ mod: 'Técnicos', icon: 'fa-screwdriver-wrench', color: 'var(--green)', tit: r.n || 'Sin nombre', sub: r.a || '', target: 'tec' }); });
+      if (window.hasPerm('enc_view')) DB.enc.forEach(r => { if (window.matchSearch(`${r.n} ${r.t} ${r.c} ${r.p} ${r.g}`, q)) results.push({ mod: 'Directorio', icon: 'fa-address-card', color: 'var(--blue)', tit: r.n || 'Sin nombre', sub: r.p || r.g || '', target: 'enc' }); });
+      if (window.hasPerm('proc_view')) DB.proc.filter(p => !p.modId).forEach(p => { if (window.matchSearch(`${p.tit} ${p.cat}`, q)) results.push({ mod: 'Procedimientos', icon: 'fa-book', color: 'var(--blue)', tit: p.tit, sub: p.cat || '', target: 'proc', procId: p.id }); });
+      if (window.hasPerm('avi_view')) DB.avisos.forEach(a => { if (window.matchSearch(`${a.tit} ${a.cont}`, q)) results.push({ mod: 'Avisos', icon: 'fa-bullhorn', color: '#e63946', tit: a.tit, sub: (a.cont || '').slice(0, 60), target: 'avisos' }); });
+      DB.configModulos.forEach(mod => {
+          if (!window.hasPerm('view_mod_' + mod.id) || mod.vista === 'procedimientos') return;
+          DB.dynData.filter(d => d.modId === mod.id).forEach(row => {
+              let hay = ''; (mod.columnas || []).forEach((_, i) => hay += (row['c' + i] || '') + ' ');
+              if (window.matchSearch(hay, q)) results.push({ mod: mod.nombre, icon: 'fa-layer-group', color: 'var(--green)', tit: row.c0 || 'Sin título', sub: mod.nombre, target: 'dyn_' + mod.id });
+          });
+      });
+      return results.slice(0, 40);
+  };
+  window.renderGlobalSearchResults = function() {
+      const q = document.getElementById('globalSearchInput').value; const box = document.getElementById('globalSearchResults');
+      if ((q || '').trim().length < 2) { box.innerHTML = `<p style="text-align:center; color:var(--mid-gray); font-size:12px; padding:20px;">Escribe al menos 2 letras...</p>`; return; }
+      const results = window.performGlobalSearch(q);
+      if (results.length === 0) { box.innerHTML = `<p style="text-align:center; color:var(--mid-gray); font-size:12px; padding:20px;">Sin resultados para "${q}".</p>`; return; }
+      box.innerHTML = results.map((r, i) => `<div onclick="window.goToGlobalResult(${i})" style="display:flex; gap:10px; padding:10px 12px; border-bottom:1px solid var(--border-soft); cursor:pointer;" onmouseover="this.style.background='#f4f8fb'" onmouseout="this.style.background='white'">
+          <div style="width:30px; height:30px; border-radius:50%; background:${r.color}; color:white; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:12px;"><i class="fa-solid ${r.icon}"></i></div>
+          <div style="min-width:0; flex:1;"><div style="font-weight:bold; font-size:13px; color:var(--blue); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${r.tit}</div><div style="font-size:11px; color:var(--mid-gray);">${r.mod}${r.sub ? ' · ' + r.sub : ''}</div></div>
+      </div>`).join('');
+      window._globalSearchResultsCache = results;
+  };
+  window.goToGlobalResult = function(idx) {
+      const r = (window._globalSearchResultsCache || [])[idx]; if (!r) return;
+      window.closeGlobalSearch(); window.switchModule(r.target);
+      if (r.procId) setTimeout(() => window.abrirProcedimiento(r.procId), 200);
   };
 
   window.toggleNotifDropdown = function() {
@@ -1088,8 +1189,8 @@
       let basePerms = rolData && rolData.perms ? rolData.perms : [];
       
       if(!rolData) {
-          if(SESION.r === 'agente') { basePerms = ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'proc_view', 'avi_view', 'dyn_view', 'dyn_edit', 'dyn_exp', 'notif_avisos', 'notif_proc']; }
-          if(SESION.r === 'invitado') { basePerms = ['cob_view', 'tec_view', 'enc_view', 'proc_view', 'avi_view', 'dyn_view', 'notif_avisos', 'notif_proc']; }
+          if(SESION.r === 'agente') { basePerms = ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'proc_view', 'avi_view', 'dyn_view', 'dyn_edit', 'dyn_exp', 'notif_avisos', 'notif_proc', 'notif_mod']; }
+          if(SESION.r === 'invitado') { basePerms = ['cob_view', 'tec_view', 'enc_view', 'proc_view', 'avi_view', 'dyn_view', 'notif_avisos', 'notif_proc', 'notif_mod']; }
       }
 
       if(perm.startsWith('view_mod_') && basePerms.includes('dyn_view')) return true;
@@ -1119,6 +1220,7 @@
 
       if(document.getElementById('menuAjsAmb')) document.getElementById('menuAjsAmb').classList.toggle('hidden', SESION.r !== 'admin');
       if(document.getElementById('menuAjsMon')) document.getElementById('menuAjsMon').classList.toggle('hidden', !window.hasPerm('ajs_mon'));
+      if(document.getElementById('btnRespaldoCompleto')) document.getElementById('btnRespaldoCompleto').classList.toggle('hidden', SESION.r !== 'admin');
       if(document.getElementById('menuAjsUsr')) document.getElementById('menuAjsUsr').classList.toggle('hidden', !window.hasPerm('ajs_usr'));
       if(document.getElementById('menuAjsRol')) document.getElementById('menuAjsRol').classList.toggle('hidden', !window.hasPerm('ajs_rol'));
       if(document.getElementById('menuAjsMod')) document.getElementById('menuAjsMod').classList.toggle('hidden', !window.hasPerm('ajs_mod'));
@@ -1219,7 +1321,7 @@
       const btn = document.getElementById('menuAjs' + view.charAt(0).toUpperCase() + view.slice(1)); if(btn) btn.classList.add('active');
       ['amb', 'mon', 'usr', 'rol', 'mod', 'proc', 'avi', 'col'].forEach(v => document.getElementById('ajsView' + v.charAt(0).toUpperCase() + v.slice(1)).classList.add('hidden'));
       const targetView = document.getElementById('ajsView' + view.charAt(0).toUpperCase() + view.slice(1)); if(targetView) targetView.classList.remove('hidden');
-      if(view === 'amb') window.renderAdminAmbientesList(); if(view === 'mon') window.renderAdminMonitor(); if(view === 'usr') { window.renderUserAmbienteSelect(); window.renderUserList(); } if(view === 'rol') { window.renderRoleAmbienteSelect(); window.renderRolesList(); } if(view === 'mod') { window.renderModAmbienteSelect(); window.renderListaModulos(); } if(view === 'proc') { window.renderAdminProcTargetSelect(); window.renderAdminProcList(); } if(view === 'avi') window.renderAdminAvisos(); if(view === 'col') window.renderColorView();
+      if(view === 'amb') window.renderAdminAmbientesList(); if(view === 'mon') window.renderAdminMonitor(); if(view === 'usr') { window.renderUserAmbienteSelect(); window.renderUserList(); } if(view === 'rol') { window.renderRoleAmbienteSelect(); window.renderRolesList(); } if(view === 'mod') { window.renderModAmbienteSelect(); window.renderModulosActivosUi(); window.renderListaModulos(); } if(view === 'proc') { window.renderAdminProcTargetSelect(); window.renderAdminProcList(); } if(view === 'avi') window.renderAdminAvisos(); if(view === 'col') window.renderColorView();
   };
 
   window.toggleAuthBoxes = (s) => { document.getElementById('boxLogin').classList.toggle('hidden', s); document.getElementById('boxRegister').classList.toggle('hidden', !s); };
@@ -1426,8 +1528,8 @@
       // ya quedan controlados por qué módulo (modId) es visible en este ambiente, así que sus documentos no se filtran aquí.
       DB.proc = DB_RAW.proc.filter(p => p.modId ? true : window.inAmb(p));
       DB.roles = DB_RAW.roles.filter(r => window.roleInAmb(r, k));
-      if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) { DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc'] }); }
-      if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) { DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc'] }); }
+      if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) { DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] }); }
+      if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) { DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] }); }
       window.updateRolesSelect(); if(CURRENT_MODULE === 'ajs' && document.getElementById('ajsViewRol') && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList();
   };
 
@@ -1499,9 +1601,10 @@
   window.renderUserAmbienteSelect = function() {
       const c = document.getElementById('uAmbList'); if(!c) return;
       const k = window.ambKey(AMBIENTE_ACTUAL);
-      let html = `<label class="perm-item"><input type="checkbox" value="" ${k === "" ? 'checked' : ''}> Principal</label>`;
-      DB.ambientes.forEach(a => { html += `<label class="perm-item"><input type="checkbox" value="${a.id}" ${k === a.id ? 'checked' : ''}> ${a.nombre}</label>`; });
+      let html = `<label class="perm-item"><input type="checkbox" value="" onchange="window.updateRolesSelect()" ${k === "" ? 'checked' : ''}> Principal</label>`;
+      DB.ambientes.forEach(a => { html += `<label class="perm-item"><input type="checkbox" value="${a.id}" onchange="window.updateRolesSelect()" ${k === a.id ? 'checked' : ''}> ${a.nombre}</label>`; });
       c.innerHTML = html;
+      window.updateRolesSelect();
   };
 
   window.listenToRoles = function() { 
@@ -1509,8 +1612,8 @@
           DB_RAW.roles = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); 
           const k = window.ambKey(AMBIENTE_ACTUAL);
           DB.roles = DB_RAW.roles.filter(r => window.roleInAmb(r, k));
-          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) { DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc'] }); }
-          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) { DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc'] }); }
+          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) { DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] }); }
+          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) { DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] }); }
           window.updateRolesSelect(); window.applyPermissionsToUI(); if(document.getElementById('rolAmbList')) window.renderRoleAmbienteSelect(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList(); 
       }); 
   };
@@ -1533,41 +1636,82 @@
   
   window.updateRolesSelect = function() { 
       const sel = document.getElementById('uRol'); if(!sel) return; 
+      const currentVal = sel.value;
+      // Los roles a mostrar dependen de los ambientes marcados para ESTE usuario (no del ambiente que
+      // el admin esté viendo arriba) — así, si el usuario tendrá acceso a "Servicio Técnico", ve los
+      // roles válidos ahí aunque el admin esté parado en "Principal" en ese momento.
+      // OJO: aquí se usan SOLO roles reales (DB_RAW.roles) — "Agente"/"Invitado" ya NO se ofrecen
+      // automáticamente en cualquier ambiente; solo aparecen si de verdad existe ese rol creado
+      // (o editado) para alguno de los ambientes marcados.
+      let checkedAmbs = window.getCheckedValues ? window.getCheckedValues('uAmbList') : [];
+      if (checkedAmbs.length === 0) checkedAmbs = [window.ambKey(AMBIENTE_ACTUAL)];
+      const disponibles = (DB_RAW.roles || []).filter(r => checkedAmbs.some(k => window.roleInAmb(r, k)));
       let adminOpt = SESION.r === 'admin' ? `<option value="admin">Administrador (Total)</option>` : ``; 
       let html = `${adminOpt}<option value="pendiente">Pendiente (Bloqueado)</option>`; 
-      let sortedRoles = [...DB.roles].sort((a,b) => { if(a.nombre.toLowerCase() === 'agente') return -1; if(b.nombre.toLowerCase() === 'agente') return 1; if(a.nombre.toLowerCase() === 'invitado') return -1; if(b.nombre.toLowerCase() === 'invitado') return 1; return a.nombre.localeCompare(b.nombre); });
-      sortedRoles.forEach(r => { let isDef = (r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado'); let lbl = isDef ? `${r.nombre.charAt(0).toUpperCase() + r.nombre.slice(1)} (Predeterminado)` : `Custom: ${r.nombre}`; html += `<option value="${r.nombre}">${lbl}</option>`; }); sel.innerHTML = html; 
+      let sortedRoles = disponibles.sort((a,b) => { if(a.nombre.toLowerCase() === 'agente') return -1; if(b.nombre.toLowerCase() === 'agente') return 1; if(a.nombre.toLowerCase() === 'invitado') return -1; if(b.nombre.toLowerCase() === 'invitado') return 1; return a.nombre.localeCompare(b.nombre); });
+      if (sortedRoles.length === 0) html += `<option value="" disabled>— No hay roles creados para este ambiente —</option>`;
+      sortedRoles.forEach(r => { let isDef = (r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado'); let lbl = isDef ? `${r.nombre.charAt(0).toUpperCase() + r.nombre.slice(1)}` : `Custom: ${r.nombre}`; html += `<option value="${r.nombre}">${lbl}</option>`; }); sel.innerHTML = html; 
+      if (Array.from(sel.options).some(o => o.value === currentVal)) sel.value = currentVal;
   };
   
+  // Botones de plantilla rápida: llenan de un jalón las casillas Ver/Editar/Exportar de los módulos
+  // principales, para no obligar a marcar una por una en el caso más común.
+  window.aplicarPlantillaRol = function(nivel) {
+      const viewKeys = ['p_cob_view', 'p_tec_view', 'p_enc_view', 'p_proc_view', 'p_avi_view'];
+      const editKeys = ['p_cob_edit', 'p_tec_edit', 'p_enc_edit'];
+      const expKeys = ['p_cob_exp', 'p_tec_exp', 'p_enc_exp'];
+      viewKeys.forEach(id => { const el = document.getElementById(id); if(el) el.checked = true; });
+      editKeys.forEach(id => { const el = document.getElementById(id); if(el) el.checked = (nivel !== 'ver'); });
+      expKeys.forEach(id => { const el = document.getElementById(id); if(el) el.checked = (nivel === 'total'); });
+      window.showToastSuccess("Plantilla aplicada — revisa y guarda cuando quieras.");
+  };
+
   window.saveRole = async function() { 
-      const nombre = document.getElementById('rolName').value.trim(); if(!nombre) return alert("Ingresa nombre"); const perms = []; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { if(chk.id.startsWith('p_') && chk.checked) perms.push(chk.id.replace('p_', '')); }); 
+      const nombre = document.getElementById('rolName').value.trim(); if(!nombre) return alert("Ingresa nombre"); const perms = []; document.querySelectorAll('#ajsViewRol input[type="checkbox"]').forEach(chk => { if(chk.id.startsWith('p_') && chk.checked) perms.push(chk.id.replace('p_', '')); }); 
       let ambienteIds = window.getCheckedValues('rolAmbList'); if(ambienteIds.length === 0) ambienteIds = [window.ambKey(AMBIENTE_ACTUAL)];
       const payload = { nombre, perms, ambienteIds, ambienteId: ambienteIds[0] };
       try { 
           if(EDITING_ROLE_ID) { 
               if (EDITING_ROLE_ID.startsWith('default_')) { 
-                  // Rol predeterminado (existe solo en memoria): si ya hay un documento real con ese nombre, se ACTUALIZA
-                  // en lugar de crear otro — así se evita generar duplicados en cada edición.
-                  const existente = (DB_RAW.roles || []).find(r => (r.nombre||'').toLowerCase() === nombre.toLowerCase());
+                  // Plantilla (no es un documento real todavía): si ya existe un rol REAL con ese nombre
+                  // que se cruza con alguno de los ambientes marcados, se ACTUALIZA ese; si no, se crea
+                  // uno nuevo — así "Agente" en Principal y "Agente" en Servicio Técnico pueden ser
+                  // roles totalmente distintos y no se pisan entre sí.
+                  const existente = (DB_RAW.roles || []).find(r => (r.nombre||'').toLowerCase() === nombre.toLowerCase() && ambienteIds.some(k => window.roleInAmb(r, k)));
                   if (existente) { await updateDoc(doc(db, "roles_config", existente.id), { ...payload, nombre: nombre.toLowerCase() }); }
                   else { await addDoc(collection(db, "roles_config"), { ...payload, nombre: nombre.toLowerCase() }); }
               } else { await updateDoc(doc(db, "roles_config", EDITING_ROLE_ID), payload); } 
               window.logAct("Roles", "Editar", "Rol actualizado: " + nombre); alert("Permisos actualizados correctamente"); window.cancelarEdicionRol();
           } 
-          else { if((DB_RAW.roles || []).some(r => (r.nombre||'').toLowerCase() === nombre.toLowerCase())) { return alert("Ya existe un rol con ese nombre."); } await addDoc(collection(db, "roles_config"), payload); window.logAct("Roles", "Crear", "Nuevo rol: " + nombre); alert("Nuevo rol creado exitosamente"); window.cancelarEdicionRol(); }
+          else { 
+              const colisiona = (DB_RAW.roles || []).some(r => (r.nombre||'').toLowerCase() === nombre.toLowerCase() && ambienteIds.some(k => window.roleInAmb(r, k)));
+              if (colisiona) { return alert("Ya existe un rol con ese nombre en alguno de los ambientes que marcaste. Si quieres un rol distinto con el mismo nombre para otra área, asegúrate de no marcar aquí el ambiente donde ya existe."); } 
+              await addDoc(collection(db, "roles_config"), payload); window.logAct("Roles", "Crear", "Nuevo rol: " + nombre); alert("Nuevo rol creado exitosamente"); window.cancelarEdicionRol(); 
+          }
       } catch(e) { alert("Error al guardar rol"); } 
   };
   
+  // Lista COMPLETA de roles, sin filtrar por ambiente — para que Ajustes > Roles nunca "esconda"
+  // un rol que sí existe en Firebase. El filtro por ambiente (DB.roles) sigue aplicando solo para
+  // lo funcional: qué permisos usa cada usuario que inició sesión (ver hasPerm).
+  window.getAllRolesForList = function() {
+      let all = [...(DB_RAW.roles || [])];
+      if (!all.some(r => (r.nombre||'').toLowerCase() === 'agente')) all.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] });
+      if (!all.some(r => (r.nombre||'').toLowerCase() === 'invitado')) all.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] });
+      return all;
+  };
+
   window.editRole = function(id) { 
-      EDITING_ROLE_ID = id; const r = DB.roles.find(x => x.id === id); document.getElementById('rolName').value = r.nombre; const isDefault = r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado'; document.getElementById('rolName').disabled = isDefault; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { if(chk.id.startsWith('p_')) chk.checked = r.perms.includes(chk.id.replace('p_', '')); }); window.renderRoleAmbienteSelect(); const rIsLegacy = !(r.ambienteIds && r.ambienteIds.length) && (r.ambienteId === undefined || r.ambienteId === null); window.setCheckedValues('rolAmbList', rIsLegacy ? [""].concat(DB.ambientes.map(a => a.id)) : (r.ambienteIds || [window.ambKey(r.ambienteId)])); document.getElementById('btnRoleAction').innerHTML = '<i class="fa-solid fa-save"></i> Actualizar Permisos'; document.getElementById('btnCancelRole').classList.remove('hidden'); const container = document.querySelector('.ajs-content'); if(container) container.scrollTo({ top: 0, behavior: 'smooth' });
+      EDITING_ROLE_ID = id; const r = window.getAllRolesForList().find(x => x.id === id); if(!r) return alert("No se encontró ese rol (puede que se haya eliminado). Recarga la lista."); document.getElementById('rolName').value = r.nombre; const isDefault = r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado'; document.getElementById('rolName').disabled = isDefault; document.querySelectorAll('#ajsViewRol input[type="checkbox"]').forEach(chk => { if(chk.id.startsWith('p_')) chk.checked = r.perms.includes(chk.id.replace('p_', '')); }); window.renderRoleAmbienteSelect(); const rIsLegacy = !(r.ambienteIds && r.ambienteIds.length) && (r.ambienteId === undefined || r.ambienteId === null); window.setCheckedValues('rolAmbList', rIsLegacy ? [""].concat(DB.ambientes.map(a => a.id)) : (r.ambienteIds || [window.ambKey(r.ambienteId)])); document.getElementById('btnRoleAction').innerHTML = '<i class="fa-solid fa-save"></i> Actualizar Permisos'; document.getElementById('btnCancelRole').classList.remove('hidden'); const container = document.querySelector('.ajs-content'); if(container) container.scrollTo({ top: 0, behavior: 'smooth' });
   };
   
-  window.cancelarEdicionRol = function() { EDITING_ROLE_ID = null; document.getElementById('rolName').value = ''; document.getElementById('rolName').disabled = false; document.querySelectorAll('.perm-grid input[type="checkbox"]').forEach(chk => { if(chk.id.startsWith('p_')) chk.checked = false; }); window.renderRoleAmbienteSelect(); document.getElementById('btnRoleAction').innerText = "Guardar Rol"; document.getElementById('btnCancelRole').classList.add('hidden'); };
-  window.deleteRole = async function(id) { if(id.startsWith('default_')) return; const r = DB.roles.find(x => x.id === id); const esBase = r && (r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado'); const msg = esBase ? `¿Eliminar esta copia del rol "${r.nombre}"?\n\nSi eliminas TODAS las copias, el rol vuelve a sus permisos predeterminados de fábrica (no desaparece).` : "¿Eliminar este rol? Los usuarios con este rol podrían perder acceso."; if(confirm(msg)) { await deleteDoc(doc(db, "roles_config", id)); window.logAct("Roles", "Eliminar", "Rol: " + (r?r.nombre:'')); } };
+  window.cancelarEdicionRol = function() { EDITING_ROLE_ID = null; document.getElementById('rolName').value = ''; document.getElementById('rolName').disabled = false; document.querySelectorAll('#ajsViewRol input[type="checkbox"]').forEach(chk => { if(chk.id.startsWith('p_')) chk.checked = false; }); window.renderRoleAmbienteSelect(); document.getElementById('btnRoleAction').innerText = "Guardar Rol"; document.getElementById('btnCancelRole').classList.add('hidden'); };
+  window.deleteRole = async function(id) { if(id.startsWith('default_')) return; const r = window.getAllRolesForList().find(x => x.id === id); const esBase = r && (r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado'); const msg = esBase ? `¿Eliminar esta copia del rol "${r.nombre}"?\n\nSi eliminas TODAS las copias, el rol vuelve a sus permisos predeterminados de fábrica (no desaparece).` : "¿Eliminar este rol? Los usuarios con este rol podrían perder acceso."; if(confirm(msg)) { await deleteDoc(doc(db, "roles_config", id)); window.logAct("Roles", "Eliminar", "Rol: " + (r?r.nombre:'')); } };
   
   window.renderRolesList = function() { 
-      const nameCount = {}; DB.roles.forEach(r => { const n = (r.nombre||'').toLowerCase(); nameCount[n] = (nameCount[n] || 0) + 1; });
-      document.getElementById('rolesListContainer').innerHTML = DB.roles.map(r => {
+      const todos = window.getAllRolesForList();
+      const nameCount = {}; todos.forEach(r => { const n = (r.nombre||'').toLowerCase(); nameCount[n] = (nameCount[n] || 0) + 1; });
+      document.getElementById('rolesListContainer').innerHTML = todos.map(r => {
           let isDefaultName = r.nombre.toLowerCase() === 'agente' || r.nombre.toLowerCase() === 'invitado';
           let isVirtual = r.id.startsWith('default_');
           let isDup = nameCount[(r.nombre||'').toLowerCase()] > 1;
@@ -1584,7 +1728,7 @@
 
   window.renderUserList = function() { const c = document.getElementById('userListContainer'); const q = document.getElementById('searchUserBox').value; let f = DB_USERS; if (SESION.r !== 'admin') f = f.filter(u => u.r !== 'admin'); const k = window.ambKey(AMBIENTE_ACTUAL); f = f.filter(u => u.r === 'admin' || u.r === 'pendiente' || window.userAmbList(u).includes(k)); if (q) f = f.filter(u => window.matchSearch(`${u.u} ${u.r}`, q)); f.sort((a, b) => { if (a.r === 'pendiente' && b.r !== 'pendiente') return -1; if (a.r !== 'pendiente' && b.r === 'pendiente') return 1; return (a.u||"").localeCompare(b.u||""); }); c.innerHTML = f.map(u => { const isP = u.r === 'pendiente'; const ambList = window.userAmbList(u); const ambNoms = ambList.map(id => id ? (DB.ambientes.find(x=>x.id===id)||{nombre:'?'}).nombre : 'Principal').join(', ') || 'Principal'; return `<div class="user-row" style="${isP ? 'background:#ffe3e3; border-left:5px solid #e63946;' : ''}"><div><b style="color:var(--blue);">${u.u}</b> <br><small style="text-transform:uppercase; font-weight:bold; color: ${isP?'#e63946':'var(--light-blue)'}">${u.r}</small> <small style="color:var(--mid-gray); font-weight:bold;"><i class="fa-solid fa-building"></i> ${ambNoms}</small></div><div><button onclick="window.editUser('${u.id}')" class="btn btn-p" style="padding:4px"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteUser('${u.id}')" class="btn btn-d" style="padding:4px"><i class="fa-solid fa-trash"></i></button></div></div>`; }).join('') || `<p align="center" style="padding:15px; color:var(--mid-gray);">No hay usuarios</p>`; };
   window.submitUser = async function() { const u = document.getElementById('uUser').value, p = document.getElementById('uPass').value, r = document.getElementById('uRol').value; let ambs = window.getCheckedValues('uAmbList'); if(ambs.length === 0) ambs = [window.ambKey(AMBIENTE_ACTUAL)]; if(!u) return; if(EDITING_USER_ID) { let payload = { u, r, ambs, a: ambs[0] }; if(p) payload.p = await window.hashPassword(p); await updateDoc(doc(db, "usuarios", EDITING_USER_ID), payload); window.logAct("Usuarios", "Editar", "Usuario editado: " + u); } else { if(!p && r !== 'invitado' && r !== 'pendiente') return alert("La contraseña es obligatoria para un usuario nuevo."); await addDoc(collection(db, "usuarios"), { u, p: p ? await window.hashPassword(p) : '', r, ambs, a: ambs[0], createdAt: Date.now() }); window.logAct("Usuarios", "Crear", "Nuevo usuario: " + u); } window.clearUserForm(); };
-  window.editUser = function(id) { const u = DB_USERS.find(x => x.id === id); if(!u) return; EDITING_USER_ID = id; document.getElementById('uUser').value = u.u; document.getElementById('uPass').value = ''; document.getElementById('uPass').placeholder = 'Dejar en blanco para no cambiarla'; document.getElementById('uRol').value = u.r; window.renderUserAmbienteSelect(); window.setCheckedValues('uAmbList', window.userAmbList(u)); document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-save"></i>'; }; window.clearUserForm = function() { EDITING_USER_ID = null; document.getElementById('uUser').value = ''; document.getElementById('uPass').value = ''; document.getElementById('uPass').placeholder = 'Clave'; document.getElementById('uRol').value = 'agente'; if(document.getElementById('uAmbList')) window.renderUserAmbienteSelect(); document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-plus"></i>'; }; window.deleteUser = async function(id) { if(confirm("¿Eliminar usuario?")) { const u = DB_USERS.find(x => x.id === id); await deleteDoc(doc(db, "usuarios", id)); window.logAct("Usuarios", "Eliminar", "Usuario eliminado: " + (u?u.u:'')); } };
+  window.editUser = function(id) { const u = DB_USERS.find(x => x.id === id); if(!u) return; EDITING_USER_ID = id; document.getElementById('uUser').value = u.u; document.getElementById('uPass').value = ''; document.getElementById('uPass').placeholder = 'Dejar en blanco para no cambiarla'; window.renderUserAmbienteSelect(); window.setCheckedValues('uAmbList', window.userAmbList(u)); window.updateRolesSelect(); document.getElementById('uRol').value = u.r; document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-save"></i>'; }; window.clearUserForm = function() { EDITING_USER_ID = null; document.getElementById('uUser').value = ''; document.getElementById('uPass').value = ''; document.getElementById('uPass').placeholder = 'Clave'; document.getElementById('uRol').value = 'agente'; if(document.getElementById('uAmbList')) window.renderUserAmbienteSelect(); document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-plus"></i>'; }; window.deleteUser = async function(id) { if(confirm("¿Eliminar usuario?")) { const u = DB_USERS.find(x => x.id === id); await deleteDoc(doc(db, "usuarios", id)); window.logAct("Usuarios", "Eliminar", "Usuario eliminado: " + (u?u.u:'')); } };
 
   // ================= NOMBRES DE MÓDULOS DEL SISTEMA =================
   function listenToSysMods() { onSnapshot(doc(db, "configuracion", "nombres_modulos"), (docSnap) => { if (docSnap.exists()) { Object.assign(SYS_MOD_NAMES, docSnap.data()); } window.updateSysModUI(); }); }
@@ -1598,6 +1742,24 @@
       if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewMod').classList.contains('hidden')) window.renderListaModulos(); 
   };
   window.saveSysMods = async function() { const data = { cob: document.getElementById('sysNomCob').value.trim() || "Cobertura", tec: document.getElementById('sysNomTec').value.trim() || "Técnicos", enc: document.getElementById('sysNomEnc').value.trim() || "Directorio", proc: document.getElementById('sysNomProc').value.trim() || "Procedimientos" }; try { await setDoc(doc(db, "configuracion", "nombres_modulos"), data, { merge: true }); window.logAct("Módulos", "Editar", "Nombres del sistema actualizados"); window.showToastSuccess("Nombres actualizados"); } catch(e) { alert("Error al guardar"); } };
+  
+  // Refleja, en la pestaña Módulos, qué módulos fijos están activos para el ambiente actualmente
+  // seleccionado (mismo dato que Ajustes > Ambientes, mostrado aquí para no obligar a cambiar de pantalla).
+  window.renderModulosActivosUi = function() {
+      const lbl = document.getElementById('lblModsAmbActual'); if(!lbl) return;
+      const amb = AMBIENTE_ACTUAL ? DB.ambientes.find(a => a.id === AMBIENTE_ACTUAL) : null;
+      lbl.innerText = 'Ambiente: ' + (AMBIENTE_ACTUAL ? (amb ? amb.nombre : '?') : 'Principal');
+      const modulos = AMBIENTE_ACTUAL ? (amb ? (amb.modulos || FIXED_MODS_DEFAULT) : FIXED_MODS_DEFAULT) : (PRINCIPAL_CONFIG.modulos || FIXED_MODS_DEFAULT);
+      FIXED_MODS_DEFAULT.forEach(k => { const el = document.getElementById('ma_' + k); if(el) el.checked = modulos.includes(k); });
+  };
+  window.guardarModulosActivos = async function() {
+      const modulos = FIXED_MODS_DEFAULT.filter(k => document.getElementById('ma_' + k).checked);
+      try {
+          if (!AMBIENTE_ACTUAL) { await setDoc(doc(db, "ambientes", PRINCIPAL_DOC_ID), { modulos }, { merge: true }); window.logAct("Ambientes", "Editar", "Módulos activos de Principal actualizados"); }
+          else { await updateDoc(doc(db, "ambientes", AMBIENTE_ACTUAL), { modulos }); window.logAct("Ambientes", "Editar", "Módulos activos actualizados"); }
+          window.showToastSuccess("Listo — el menú se actualiza al instante para este ambiente.");
+      } catch(e) { alert("Error al guardar los módulos activos."); }
+  };
 
   // ================= CREADOR DE MÓDULOS DINÁMICOS =================
   function listenToConfigModulos() { 
@@ -2237,7 +2399,7 @@
   window.abrirDynProcedimiento = function(id) { DYN_PROC_ACTIVE_ID = id; window.renderDynData(); };
   window.openModalDyn = function() { EDITING_DYN_ID = null; document.getElementById('modalTitleDyn').innerText = "Nuevo Registro - " + CURRENT_DYN_CONFIG.nombre; document.getElementById('formGridDyn').innerHTML = CURRENT_DYN_CONFIG.columnas.map((col, i) => `<div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">${col}</label><input id="dynInp_${i}" class="inp" placeholder="Ingresar ${col}"></div>`).join(''); window.openModal('modalDyn', false); };
   window.editDynRecord = function(id) { EDITING_DYN_ID = id; const data = DB.dynData.find(d => d.id === id); document.getElementById('modalTitleDyn').innerText = "Editar Registro - " + CURRENT_DYN_CONFIG.nombre; document.getElementById('formGridDyn').innerHTML = CURRENT_DYN_CONFIG.columnas.map((col, i) => `<div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">${col}</label><input id="dynInp_${i}" class="inp" value="${data['c'+i] || ''}"></div>`).join(''); window.openModal('modalDyn', true); };
-  window.saveDynRecord = async function() { let payload = { modId: CURRENT_DYN_CONFIG.id }; CURRENT_DYN_CONFIG.columnas.forEach((_, i) => payload['c'+i] = document.getElementById('dynInp_'+i).value.trim()); if(!payload['c0']) return alert("El primer campo es obligatorio"); try { if(EDITING_DYN_ID) { await updateDoc(doc(db, "modulos_data", EDITING_DYN_ID), payload); window.logAct(CURRENT_DYN_CONFIG.nombre, "Editar", "Fila: " + payload['c0']); } else { await addDoc(collection(db, "modulos_data"), payload); window.logAct(CURRENT_DYN_CONFIG.nombre, "Crear", "Nueva Fila: " + payload['c0']); } window.closeModal('modalDyn'); } catch(e) { alert("Error al guardar"); } };
+  window.saveDynRecord = async function() { let payload = { modId: CURRENT_DYN_CONFIG.id }; CURRENT_DYN_CONFIG.columnas.forEach((_, i) => payload['c'+i] = document.getElementById('dynInp_'+i).value.trim()); if(!payload['c0']) return alert("El primer campo es obligatorio"); try { if(EDITING_DYN_ID) { await updateDoc(doc(db, "modulos_data", EDITING_DYN_ID), payload); window.logAct(CURRENT_DYN_CONFIG.nombre, "Editar", "Fila: " + payload['c0']); } else { payload.fecha = Date.now(); await addDoc(collection(db, "modulos_data"), payload); window.logAct(CURRENT_DYN_CONFIG.nombre, "Crear", "Nueva Fila: " + payload['c0']); } window.closeModal('modalDyn'); } catch(e) { alert("Error al guardar"); } };
   window.deleteDynRecord = async (id) => { if(confirm("¿Eliminar registro?")) { const d = DB.dynData.find(x => x.id === id); await deleteDoc(doc(db, "modulos_data", id)); window.logAct(CURRENT_DYN_CONFIG.nombre, "Eliminar", "Fila: " + (d?d.c0:'')); } }; window.changePageDyn = d => { PAGE_DYN += d; window.renderDynData(); };
 
   function listenToColors() { onSnapshot(doc(db, "configuracion", "colores_cobertura"), (docSnap) => { if (docSnap.exists()) { STATUS_COLORS = docSnap.data(); } if(CURRENT_MODULE === 'cob') window.renderTable(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewCol').classList.contains('hidden')) window.renderColorView(); }); }
@@ -2267,7 +2429,12 @@
     chunk.forEach(row => { let act = ""; if (canEdit) act += `<button onclick="window.editTecnico('${row.id}')" class="btn btn-p" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += ` <button onclick="window.deleteTecnico('${row.id}')" class="btn btn-d" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let tels = row.t1 || ""; if(row.t2) tels += `<br><span style="color:var(--mid-gray); font-size:11px;">${row.t2}</span>`; tbody.innerHTML += `<tr><td><b style="color:var(--blue);">${row.n||''}</b></td><td>${tels}</td><td>${row.a||''}</td><td>${row.d||''}</td><td><span class="badge-tag">${row.p||'-'}</span></td><td>${act}</td></tr>`; });
   };
   window.editTecnico = async (id) => { EDITING_TEC_ID = id; const d = DB.tec.find(x => x.id === id); document.getElementById('modalTitleTec').innerText = "Editar Técnico"; document.getElementById('tecNom').value = d.n; document.getElementById('tecTel1').value = d.t1; document.getElementById('tecTel2').value = d.t2; document.getElementById('tecArea').value = d.a; document.getElementById('tecDPI').value = d.d; document.getElementById('tecPlaca').value = d.p; window.openModal('modalAddTec', true); };
-  window.saveTecnico = async () => { const data = { n: document.getElementById('tecNom').value.trim(), t1: document.getElementById('tecTel1').value.trim(), t2: document.getElementById('tecTel2').value.trim(), a: document.getElementById('tecArea').value.trim(), d: document.getElementById('tecDPI').value.trim(), p: document.getElementById('tecPlaca').value.trim() }; if(!data.n) return; if(EDITING_TEC_ID) { await updateDoc(doc(db, "tecnicos", EDITING_TEC_ID), data); window.logAct("Técnicos", "Editar", "Se actualizó al técnico: " + data.n); } else { await addDoc(collection(db, "tecnicos"), { ...data, ambienteId: window.effectiveAmb('tec') }); window.logAct("Técnicos", "Crear", "Nuevo técnico: " + data.n); } window.closeModal('modalAddTec'); };
+  // Validación simple de formato — no bloquea si el campo está vacío (son opcionales), solo si
+  // el usuario escribió algo que claramente no tiene forma de teléfono/correo.
+  window.isValidEmail = function(v) { if (!v || !v.trim()) return true; return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); };
+  window.isValidPhone = function(v) { if (!v || !v.trim()) return true; const digits = v.replace(/[^0-9]/g, ''); return digits.length >= 7 && digits.length <= 15; };
+
+  window.saveTecnico = async () => { const data = { n: document.getElementById('tecNom').value.trim(), t1: document.getElementById('tecTel1').value.trim(), t2: document.getElementById('tecTel2').value.trim(), a: document.getElementById('tecArea').value.trim(), d: document.getElementById('tecDPI').value.trim(), p: document.getElementById('tecPlaca').value.trim() }; if(!data.n) return; if(!window.isValidPhone(data.t1)) return alert("El teléfono principal no parece válido (revisa que tenga al menos 7 dígitos)."); if(!window.isValidPhone(data.t2)) return alert("El teléfono secundario no parece válido (revisa que tenga al menos 7 dígitos)."); if(EDITING_TEC_ID) { await updateDoc(doc(db, "tecnicos", EDITING_TEC_ID), data); window.logAct("Técnicos", "Editar", "Se actualizó al técnico: " + data.n); } else { await addDoc(collection(db, "tecnicos"), { ...data, ambienteId: window.effectiveAmb('tec') }); window.logAct("Técnicos", "Crear", "Nuevo técnico: " + data.n); } window.closeModal('modalAddTec'); };
   window.deleteTecnico = async (id) => { if(confirm("¿Eliminar?")) { const d = DB.tec.find(x => x.id === id); await deleteDoc(doc(db, "tecnicos", id)); window.logAct("Técnicos", "Eliminar", "Técnico eliminado: " + (d?d.n:'')); } }; window.changePageTec = d => { PAGE_TEC += d; window.renderTecnicosTable(); };
 
   window.renderEncargadosTable = function(r=false) {
@@ -2277,13 +2444,47 @@
     let html = ""; cats.forEach(cat => { let ic = "fa-users"; if(cat.toLowerCase().includes('rutas')) ic = "fa-truck-fast"; if(cat.toLowerCase().includes('marca')) ic = "fa-tags"; if(cat.toLowerCase().includes('team')) ic = "fa-user-tie"; if(cat.toLowerCase().includes('factura')) ic = "fa-file-invoice-dollar"; html += `<div class="enc-category-title"><i class="fa-solid ${ic}"></i> ${cat}</div><div class="enc-grid">`; grupos[cat].forEach(row => { let act = ""; if (canEdit) act += `<button onclick="window.editEncargado('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteEncargado('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let ini = row.n ? row.n.charAt(0).toUpperCase() : "?"; let rol = row.p || "Equipo"; let tel = row.t ? `<div class="enc-contact" onclick="window.copyToClip('${row.t}')"><div><span class="enc-contact-label"><i class="fa-solid fa-phone"></i> Teléfono</span><span class="enc-contact-value">${row.t}</span></div><button class="enc-copy-btn" title="Copiar"><i class="fa-solid fa-copy"></i></button></div>` : ``; let cor = row.c ? `<div class="enc-contact" onclick="window.copyToClip('${row.c}')"><div><span class="enc-contact-label"><i class="fa-solid fa-envelope"></i> Correo</span><span class="enc-contact-value">${row.c}</span></div><button class="enc-copy-btn" title="Copiar"><i class="fa-solid fa-copy"></i></button></div>` : ``; html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${row.n||'Sin Nombre'}</div><div class="enc-role">${row.p||'Equipo'}</div></div></div></div><div class="enc-body">${tel}${cor}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`; }); html += `</div>`; }); cont.innerHTML = html;
   };
   window.editEncargado = async (id) => { EDITING_ENC_ID = id; const d = DB.enc.find(x => x.id === id); document.getElementById('modalTitleEnc').innerText = "Editar Contacto"; document.getElementById('encCat').value = d.g || "Otro"; document.getElementById('encNom').value = d.n; document.getElementById('encTel').value = d.t; document.getElementById('encCor').value = d.c; document.getElementById('encPuesto').value = d.p; window.openModal('modalAddEnc', true); };
-  window.saveEncargado = async () => { const data = { g: document.getElementById('encCat').value, n: document.getElementById('encNom').value.trim(), t: document.getElementById('encTel').value.trim(), c: document.getElementById('encCor').value.trim(), p: document.getElementById('encPuesto').value.trim() }; if(!data.n) return; if(EDITING_ENC_ID) { await updateDoc(doc(db, "encargados", EDITING_ENC_ID), data); window.logAct("Directorio", "Editar", "Contacto: " + data.n); } else { await addDoc(collection(db, "encargados"), { ...data, ambienteId: window.effectiveAmb('enc') }); window.logAct("Directorio", "Crear", "Nuevo contacto: " + data.n); } window.closeModal('modalAddEnc'); };
+  window.saveEncargado = async () => { const data = { g: document.getElementById('encCat').value, n: document.getElementById('encNom').value.trim(), t: document.getElementById('encTel').value.trim(), c: document.getElementById('encCor').value.trim(), p: document.getElementById('encPuesto').value.trim() }; if(!data.n) return; if(!window.isValidPhone(data.t)) return alert("El teléfono no parece válido (revisa que tenga al menos 7 dígitos)."); if(!window.isValidEmail(data.c)) return alert("El correo no parece válido (revisa que tenga la forma nombre@dominio.com)."); if(EDITING_ENC_ID) { await updateDoc(doc(db, "encargados", EDITING_ENC_ID), data); window.logAct("Directorio", "Editar", "Contacto: " + data.n); } else { await addDoc(collection(db, "encargados"), { ...data, ambienteId: window.effectiveAmb('enc') }); window.logAct("Directorio", "Crear", "Nuevo contacto: " + data.n); } window.closeModal('modalAddEnc'); };
   window.deleteEncargado = async (id) => { if(confirm("¿Eliminar?")) { const d = DB.enc.find(x => x.id === id); await deleteDoc(doc(db, "encargados", id)); window.logAct("Directorio", "Eliminar", "Contacto: " + (d?d.n:'')); } }; window.changePageEnc = d => { PAGE_ENC += d; window.renderEncargadosTable(); };
 
   window.exportToExcel = function() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DB.cob.map(r => ({ "Municipio":r.m, "Nombre":r.n, "Categoria":r.c, "Zona":r.z, "Referencia":r.r, "Estado":r.s || "Sin Datos" }))), "Cobertura"); XLSX.writeFile(wb, "Cobertura.xlsx"); };
   window.exportTecnicosToExcel = function() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DB.tec.map(r => ({ "Técnico":r.n, "Teléfono 1":r.t1, "Teléfono 2":r.t2, "Área":r.a, "DPI":r.d, "Placa":r.p }))), "Técnicos"); XLSX.writeFile(wb, "Tecnicos.xlsx"); };
   window.exportEncargadosToExcel = function() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DB.enc.map(r => ({ "Categoría":r.g, "Nombre":r.n, "Teléfono":r.t, "Correo":r.c, "Puesto":r.p }))), "Encargados"); XLSX.writeFile(wb, "Encargados.xlsx"); };
   window.exportUsersToExcel = function() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DB_USERS.map(u => ({ "Usuario": u.u, "Rol": u.r, "Ambiente(s)": window.userAmbList(u).map(id => id ? (DB.ambientes.find(a=>a.id===id)||{nombre:'?'}).nombre : 'Principal').join(', ') }))), "Usuarios"); XLSX.writeFile(wb, "Usuarios.xlsx"); };
+
+  // Respaldo completo: un solo Excel con TODOS los ambientes y TODOS los módulos (fijos y personalizados).
+  // Usa DB_RAW (sin filtrar) a propósito, por eso queda restringido solo al admin.
+  window.exportarRespaldoCompleto = function() {
+      if (SESION.r !== 'admin') return alert("Solo el administrador puede generar el respaldo completo.");
+      if (!confirm("Esto genera un Excel con TODOS los datos de TODOS los ambientes (Cobertura, Técnicos, Directorio, Procedimientos, Avisos, Usuarios, Roles, Ambientes y Módulos Personalizados). Puede tardar unos segundos. ¿Continuar?")) return;
+      try {
+          const wb = XLSX.utils.book_new();
+          const ambNombre = (id) => id ? ((DB.ambientes.find(a => a.id === id) || {}).nombre || 'Ambiente eliminado') : 'Principal';
+          const fecha = (ms) => ms ? new Date(ms).toLocaleString() : '';
+
+          XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet((DB_RAW.cob || []).map(r => ({ Ambiente: ambNombre(r.ambienteId), Municipio: r.m, Nombre: r.n, Categoria: r.c, Zona: r.z, Referencia: r.r, Cobertura: r.s }))), "Cobertura");
+          XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet((DB_RAW.tec || []).map(r => ({ Ambiente: ambNombre(r.ambienteId), Nombre: r.n, Telefono1: r.t1, Telefono2: r.t2, Area: r.a, DPI: r.d, Placa: r.p }))), "Tecnicos");
+          XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet((DB_RAW.enc || []).map(r => ({ Ambiente: ambNombre(r.ambienteId), Categoria: r.g, Nombre: r.n, Telefono: r.t, Correo: r.c, Puesto: r.p }))), "Directorio");
+          XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet((DB_RAW.proc || []).map(r => ({ Modulo: r.modId ? ((DB_RAW.configModulos.find(m => m.id === r.modId) || {}).nombre || 'Módulo eliminado') : 'Procedimientos (Principal)', Ambiente: ambNombre(r.ambienteId), Titulo: r.tit, Categoria: r.cat, Fecha: fecha(r.fecha) }))), "Procedimientos");
+          XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet((DB_RAW.avisos || []).map(r => ({ Ambiente: ambNombre(r.ambienteId), Titulo: r.tit, Contenido: r.cont, Tipo: r.tipo || 'info', Fecha: fecha(r.fecha) }))), "Avisos");
+          XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(DB_USERS.map(u => ({ Usuario: u.u, Rol: u.r, "Ambiente(s)": window.userAmbList(u).map(id => ambNombre(id)).join(', ') }))), "Usuarios");
+          XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(window.getAllRolesForList().map(r => ({ Rol: r.nombre, "Ambiente(s)": (r.ambienteIds && r.ambienteIds.length) ? r.ambienteIds.map(id => ambNombre(id)).join(', ') : 'Todos los ambientes', Permisos: (r.perms || []).join(', ') }))), "Roles");
+          XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([{ Ambiente: 'Principal', Modulos_Activos: (PRINCIPAL_CONFIG.modulos || FIXED_MODS_DEFAULT).join(', '), Compartidos: '' }].concat(DB.ambientes.map(a => ({ Ambiente: a.nombre, Modulos_Activos: (a.modulos || FIXED_MODS_DEFAULT).join(', '), Compartidos: (a.shared || []).join(', ') })))), "Ambientes");
+          XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet((DB_RAW.configModulos || []).map(m => ({ Nombre: m.nombre, Vista: m.vista, Columnas: (m.columnas || []).join(', '), "Ambiente(s)": (m.ambienteIds || [window.ambKey(m.ambienteId)]).map(id => ambNombre(id)).join(', ') }))), "Modulos_Config");
+
+          (DB_RAW.configModulos || []).forEach(mod => {
+              if (mod.vista === 'procedimientos') return; // esos ya van en la hoja "Procedimientos"
+              const filas = DB.dynData.filter(d => d.modId === mod.id).map(row => { const obj = {}; (mod.columnas || []).forEach((col, i) => obj[col] = row['c' + i] || ''); return obj; });
+              if (filas.length === 0) return;
+              let base = mod.nombre.replace(/[\\/?*[\]:]/g, '').slice(0, 28) || 'Modulo'; let finalName = base; let n = 1;
+              while (wb.SheetNames.includes(finalName)) { finalName = base + '_' + n; n++; }
+              XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(filas), finalName);
+          });
+
+          XLSX.writeFile(wb, `Respaldo_Completo_${new Date().toISOString().slice(0, 10)}.xlsx`);
+          window.logAct("Sistema", "Exportar", "Respaldo completo descargado");
+      } catch(e) { alert("Error al generar el respaldo. Si tienes muchísimos datos, el navegador podría haberse quedado sin memoria."); console.error(e); }
+  };
 
   // Corrige en un solo clic a todos los usuarios que quedaron apuntando a un ambiente eliminado/inexistente (los devuelve a "Principal").
   window.repararAmbientesUsuarios = async function() {
@@ -2309,6 +2510,26 @@
               window.setAmbienteActual(SESION.a);
           }
       } catch(e) { alert("Error al reparar usuarios."); }
+  };
+
+  // Corrige en un solo clic los roles que quedaron apuntando a un ambiente eliminado o recreado
+  // (mismo problema que puede pasarle a un usuario). Los deja como "Todos los ambientes" (globales)
+  // en vez de adivinar a cuál ambiente pertenecían.
+  window.repararRolesAmbiente = async function() {
+      const validIds = new Set(DB.ambientes.map(a => a.id));
+      const brokenRoles = (DB_RAW.roles || []).filter(r => {
+          const ids = (r.ambienteIds && r.ambienteIds.length) ? r.ambienteIds : (r.ambienteId ? [window.ambKey(r.ambienteId)] : []);
+          return ids.some(id => id !== "" && !validIds.has(id));
+      });
+      if (brokenRoles.length === 0) { alert("No se encontró ningún rol con un ambiente inválido. Todo está en orden."); return; }
+      if (!confirm(`Se encontraron ${brokenRoles.length} rol(es) apuntando a un ambiente que ya no existe:\n\n${brokenRoles.map(r => r.nombre).join(', ')}\n\nSe dejarán como "Todos los ambientes" (globales), y podrás acotarlos de nuevo editándolos si quieres. ¿Continuar?`)) return;
+      try {
+          const batch = writeBatch(db);
+          brokenRoles.forEach(r => { batch.update(doc(db, "roles_config", r.id), { ambienteIds: [], ambienteId: null }); });
+          await batch.commit();
+          window.logAct("Roles", "Reparar", `Se repararon ${brokenRoles.length} rol(es) con ambiente inválido.`);
+          alert(`Listo. Se repararon ${brokenRoles.length} rol(es): ahora son globales, aplican en cualquier ambiente.`);
+      } catch(e) { alert("Error al reparar roles."); }
   };
   window.exportDynToExcel = function() { if(!CURRENT_DYN_CONFIG || DB.dynData.length === 0) return alert("Sin datos"); let data = DB.dynData.filter(d => d.modId === CURRENT_DYN_CONFIG.id).map(r => { let obj = {}; CURRENT_DYN_CONFIG.columnas.forEach((col, i) => obj[col] = r['c'+i] || ""); return obj; }); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), CURRENT_DYN_CONFIG.nombre); XLSX.writeFile(wb, CURRENT_DYN_CONFIG.nombre+".xlsx"); };
 
