@@ -234,6 +234,7 @@
     
     header { justify-content: space-between; padding: 0 15px; }
     .user-info { display: none; } 
+    .hide-mobile { display: none !important; }
     #ambienteSwitcherBox select { max-width: 100px !important; font-size: 11px !important; }
     
     #mainContainer { padding: 10px; }
@@ -289,7 +290,7 @@
   <div id="boxLogin" class="login-box">
     <h3 style="color:var(--blue); margin-top:0; font-size: 22px;">ST - CALL CENTER</h3>
     <p style="font-size:13px; color:var(--light-blue); font-weight: bold; margin-bottom:25px;">ACCESO AL SISTEMA</p>
-    <input id="txtUser" class="inp" placeholder="Tu Usuario o Regístrate">
+    <input id="txtUser" class="inp" placeholder="Tu Usuario (o correo si eres administrador)">
     <input id="txtPass" type="password" class="inp" placeholder="Contraseña">
     <button id="btnLogin" onclick="window.login()" class="btn btn-p" style="width:100%; height: 45px; font-size: 14px; margin-top: 10px;">INGRESAR</button>
     <p style="font-size: 13px; margin: 20px 0 0 0;">¿No tienes cuenta? <a href="#" onclick="window.toggleAuthBoxes(true)" style="color: var(--light-blue); font-weight: bold; text-decoration: none;">Regístrate aquí</a></p>
@@ -487,13 +488,13 @@
                                 </div>
                             </div>
                             <div class="span-2" id="ambCompartidosBox">
-                                <label style="font-size:12px; font-weight:bold; color:var(--blue);">Compartir estos módulos con "Principal" (mismos datos, en vez de datos propios)</label>
-                                <p style="font-size:11px; color:var(--mid-gray); margin:3px 0 8px 0;">Márcalo si quieres que, por ejemplo, la Cobertura que mantienes en Principal se vea igual aquí — editar desde cualquiera de los dos actualiza el mismo dato en ambos.</p>
-                                <div class="perm-grid" id="ambCompartidosContainer">
-                                    <label class="perm-item"><input type="checkbox" id="ac_cob"> Cobertura</label>
-                                    <label class="perm-item"><input type="checkbox" id="ac_tec"> Técnicos</label>
-                                    <label class="perm-item"><input type="checkbox" id="ac_enc"> Directorio</label>
-                                    <label class="perm-item"><input type="checkbox" id="ac_avisos"> Avisos</label>
+                                <label style="font-size:12px; font-weight:bold; color:var(--blue);">Origen de los datos, por módulo</label>
+                                <p style="font-size:11px; color:var(--mid-gray); margin:3px 0 8px 0;">Por defecto cada ambiente es 100% independiente. Solo cambia esto si de verdad quieres que este ambiente use los mismos datos que otro (editar desde cualquiera de los dos actualiza el mismo dato en ambos). Esta decisión la toma únicamente el administrador.</p>
+                                <div id="ambCompartidosContainer" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:10px;">
+                                    <div><label style="font-size:11px; color:var(--blue); font-weight:bold;">Cobertura</label><select id="ac_cob" class="inp" style="margin:2px 0 0;"><option value="">Datos propios (independiente)</option></select></div>
+                                    <div><label style="font-size:11px; color:var(--blue); font-weight:bold;">Técnicos</label><select id="ac_tec" class="inp" style="margin:2px 0 0;"><option value="">Datos propios (independiente)</option></select></div>
+                                    <div><label style="font-size:11px; color:var(--blue); font-weight:bold;">Directorio</label><select id="ac_enc" class="inp" style="margin:2px 0 0;"><option value="">Datos propios (independiente)</option></select></div>
+                                    <div><label style="font-size:11px; color:var(--blue); font-weight:bold;">Avisos</label><select id="ac_avisos" class="inp" style="margin:2px 0 0;"><option value="">Datos propios (independiente)</option></select></div>
                                 </div>
                             </div>
                             <div class="span-2" style="text-align:right; margin-top: 5px;">
@@ -538,6 +539,7 @@
                           <select id="uRol" class="inp"><option value="agente">Agente (Default)</option><option value="invitado">Invitado (Lector)</option><option value="pendiente">Pendiente (Bloqueado)</option></select>
                           <div style="width:100%;">
                             <label style="font-size:11px; font-weight:bold; color:var(--blue);">Ambiente(s) con acceso</label>
+                            <a href="javascript:void(0)" onclick="window.toggleAllCheckboxes('uAmbList', true, 'updateRolesSelect')" style="font-size:11px; color:var(--light-blue); font-weight:bold; margin-left:8px;">Marcar todos</a><a href="javascript:void(0)" onclick="window.toggleAllCheckboxes('uAmbList', false, 'updateRolesSelect')" style="font-size:11px; color:var(--mid-gray); font-weight:bold; margin-left:8px;">Ninguno</a>
                             <div id="uAmbList" class="perm-grid" style="margin-top:4px; max-height:110px; overflow-y:auto;"><label class="perm-item"><input type="checkbox" value="" checked> Principal</label></div>
                           </div>
                           <div style="display: flex; gap: 10px; width: 100%;"><button id="btnUserAction" onclick="window.submitUser()" class="btn btn-s" style="flex: 1; color:white;"><i class="fa-solid fa-plus"></i></button><button onclick="window.clearUserForm()" class="btn btn-d" style="flex: 1;"><i class="fa-solid fa-eraser"></i></button></div>
@@ -555,6 +557,8 @@
                             <input id="rolName" class="inp" placeholder="Ej: Servicio Técnico, Supervisor, Líder...">
 
                             <h4 style="margin: 15px 0 10px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">1. ¿En qué ambiente(s) trabaja este rol?</h4>
+                            <p style="font-size:11px; color:var(--mid-gray); margin:0 0 6px 0;">Si este rol va a funcionar igual en todos tus ambientes, dale a "Marcar todos" — no hace falta crearlo una vez por ambiente.</p>
+                            <div style="margin-bottom:6px;"><a href="javascript:void(0)" onclick="window.toggleAllCheckboxes('rolAmbList', true)" style="font-size:11px; color:var(--light-blue); font-weight:bold; margin-right:12px;">Marcar todos</a><a href="javascript:void(0)" onclick="window.toggleAllCheckboxes('rolAmbList', false)" style="font-size:11px; color:var(--mid-gray); font-weight:bold;">Ninguno</a></div>
                             <div id="rolAmbList" class="perm-grid"><label class="perm-item"><input type="checkbox" value="" checked> Principal</label></div>
                             
                             <h4 style="margin: 20px 0 10px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">2. ¿Qué puede hacer en los módulos principales?</h4>
@@ -577,9 +581,24 @@
                                 </table>
                             </div>
 
-                            <h4 style="margin: 20px 0 10px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">3. Módulos específicos que le creaste a tu equipo</h4>
-                            <p style="font-size:11px; color:var(--mid-gray); margin: 0 0 10px 0;">Marca a cuáles de tus módulos personalizados (los que hiciste con "Crear Módulo") tiene acceso este rol.</p>
-                            <div id="dynPermsContainer" class="perm-grid" style="grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));"></div>
+                            <h4 style="margin: 20px 0 10px; font-size:14px; color:var(--blue); border-bottom: 1px solid var(--border-soft); padding-bottom:5px;">3. Módulos personalizados</h4>
+                            <p style="font-size:11px; color:var(--mid-gray); margin: 0 0 10px 0;">Elige el nivel de acceso general — así no tienes que activar cada módulo nuevo uno por uno cada vez que crees uno.</p>
+                            <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+                                <button type="button" onclick="window.aplicarNivelModulos('ver')" class="btn btn-o" style="font-size:12px; padding:7px 14px;"><i class="fa-solid fa-eye"></i> Ver todos los módulos</button>
+                                <button type="button" onclick="window.aplicarNivelModulos('editar')" class="btn btn-o" style="font-size:12px; padding:7px 14px;"><i class="fa-solid fa-pen"></i> Ver y Editar todos</button>
+                                <button type="button" onclick="window.aplicarNivelModulos('ninguno')" class="btn btn-o" style="font-size:12px; padding:7px 14px;"><i class="fa-solid fa-ban"></i> Sin acceso a módulos</button>
+                            </div>
+                            <div class="perm-grid" style="margin-bottom:15px;">
+                                <label class="perm-item"><input type="checkbox" id="p_dyn_view"> Ver TODOS los módulos personalizados</label>
+                                <label class="perm-item"><input type="checkbox" id="p_dyn_edit"> Editar/Agregar en TODOS</label>
+                                <label class="perm-item"><input type="checkbox" id="p_dyn_exp"> Exportar TODOS</label>
+                            </div>
+                            <details style="margin-bottom:5px; border:1px solid var(--border-soft); border-radius:8px; overflow:hidden;">
+                                <summary style="cursor:pointer; padding:10px 15px; background:#eef3f8; font-weight:bold; color:var(--blue); font-size:12px;"><i class="fa-solid fa-sliders"></i> Excepciones — activar módulos uno por uno (solo si necesitas mezclar accesos distintos)</summary>
+                                <div style="padding:15px;">
+                                    <div id="dynPermsContainer" class="perm-grid" style="grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));"></div>
+                                </div>
+                            </details>
 
                             <details style="margin-top:20px; border:1px solid var(--border-soft); border-radius:8px; overflow:hidden;">
                                 <summary style="cursor:pointer; padding:12px 15px; background:#eef3f8; font-weight:bold; color:var(--blue); font-size:13px;"><i class="fa-solid fa-bell"></i> Notificaciones — qué avisa la campana a este rol</summary>
@@ -624,40 +643,13 @@
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-layer-group"></i> Creador y Editor de Módulos</h3>
                         <p style="font-size:13px; color:var(--mid-gray);">Agrega nuevas pestañas personalizadas o renombra las herramientas por defecto.</p>
                         
-                        <!-- FORMULARIO 1: RENOMBRAR SISTEMA -->
-                        <div class="form-grid" style="background:#f8fafc; padding:20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--border-soft);">
-                            <div class="span-2" style="border-bottom: 2px solid var(--border-soft); padding-bottom: 10px; margin-bottom: 5px;">
-                                <h4 style="margin:0; color:var(--blue); font-size: 14px;"><i class="fa-solid fa-lock" style="color: var(--light-blue);"></i> Renombrar Módulos del Sistema</h4>
-                            </div>
-                            <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Cobertura</label><input id="sysNomCob" class="inp" value="Cobertura"></div>
-                            <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Técnicos</label><input id="sysNomTec" class="inp" value="Técnicos"></div>
-                            <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Directorio</label><input id="sysNomEnc" class="inp" value="Directorio"></div>
-                            <div><label style="font-size:12px; font-weight:bold; color:var(--blue);">Módulo Procedimientos</label><input id="sysNomProc" class="inp" value="Procedimientos"></div>
-                            <div class="span-2" style="text-align:right;">
-                                <button onclick="window.saveSysMods()" class="btn btn-s" style="color:white; padding: 10px 20px;"><i class="fa-solid fa-save"></i> Guardar Nombres</button>
-                            </div>
+                        <!-- MÓDULOS DEL SISTEMA: mismo estilo de tarjeta que los personalizados -->
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px; border-bottom: 2px solid var(--border-soft); padding-bottom: 8px; flex-wrap:wrap; gap:8px;">
+                            <h4 style="color:var(--blue); margin:0;"><i class="fa-solid fa-lock" style="color:var(--light-blue)"></i> Módulos del Sistema</h4>
+                            <span id="lblModsAmbActual" style="font-size:11px; color:white; background:var(--light-blue); padding:3px 10px; border-radius:20px; font-weight:bold;"></span>
                         </div>
-
-                        <!-- FORMULARIO 1B: ACTIVAR/DESACTIVAR MÓDULOS DEL SISTEMA (por ambiente) -->
-                        <div class="form-grid" style="background:#f8fafc; padding:20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--border-soft);">
-                            <div class="span-2" style="border-bottom: 2px solid var(--border-soft); padding-bottom: 10px; margin-bottom: 5px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:5px;">
-                                <h4 style="margin:0; color:var(--blue); font-size: 14px;"><i class="fa-solid fa-toggle-on" style="color: var(--light-blue);"></i> Activar / Desactivar Módulos</h4>
-                                <span id="lblModsAmbActual" style="font-size:11px; color:white; background:var(--light-blue); padding:3px 10px; border-radius:20px; font-weight:bold;"></span>
-                            </div>
-                            <div class="span-2">
-                                <p style="font-size:12px; color:var(--mid-gray); margin:0 0 10px 0;">Elige cuáles de estos módulos existen en el ambiente que tienes seleccionado arriba (junto a la campana). Funciona igual que un módulo personalizado: si lo desmarcas, deja de aparecer en el menú de ese ambiente — no se borra ningún dato, solo se oculta.</p>
-                                <div class="perm-grid" id="modActivosContainer">
-                                    <label class="perm-item"><input type="checkbox" id="ma_cob" checked> Cobertura</label>
-                                    <label class="perm-item"><input type="checkbox" id="ma_tec" checked> Técnicos</label>
-                                    <label class="perm-item"><input type="checkbox" id="ma_enc" checked> Directorio</label>
-                                    <label class="perm-item"><input type="checkbox" id="ma_proc" checked> Procedimientos</label>
-                                    <label class="perm-item"><input type="checkbox" id="ma_avisos" checked> Avisos</label>
-                                </div>
-                            </div>
-                            <div class="span-2" style="text-align:right; margin-top:10px;">
-                                <button onclick="window.guardarModulosActivos()" class="btn btn-s" style="color:white; padding: 10px 20px;"><i class="fa-solid fa-save"></i> Guardar Módulos Activos</button>
-                            </div>
-                        </div>
+                        <p style="font-size:12px; color:var(--mid-gray); margin:0 0 15px 0;">Son los módulos que trae la app de fábrica. No se pueden eliminar, pero sí renombrar y activar/desactivar por ambiente — igual que cualquier módulo personalizado.</p>
+                        <div id="sysModsListContainer" style="margin-bottom:25px;"></div>
 
                         <!-- FORMULARIO 2: CREAR MÓDULO NUEVO -->
                         <div class="form-grid" style="background:#ffffff; padding:20px; border-radius:8px; margin-bottom:25px; border:1px solid var(--border-soft); box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
@@ -683,6 +675,7 @@
                             </div>
                             <div class="span-2">
                                 <label style="font-size:12px; font-weight:bold; color:var(--blue);">Ambiente(s) donde aparece este módulo</label>
+                                <a href="javascript:void(0)" onclick="window.toggleAllCheckboxes('confModAmbList', true)" style="font-size:11px; color:var(--light-blue); font-weight:bold; margin-left:8px;">Marcar todos</a><a href="javascript:void(0)" onclick="window.toggleAllCheckboxes('confModAmbList', false)" style="font-size:11px; color:var(--mid-gray); font-weight:bold; margin-left:8px;">Ninguno</a>
                                 <div id="confModAmbList" class="perm-grid" style="margin-top:4px; max-height:130px; overflow-y:auto;"><label class="perm-item"><input type="checkbox" value="" checked> Principal</label></div>
                                 <p style="font-size:11px; color:var(--mid-gray); margin:3px 0 0 2px;">Si marcas más de uno, este módulo y sus datos se comparten entre esos ambientes.</p>
                             </div>
@@ -693,7 +686,10 @@
                         </div>
 
                         <!-- LISTA DE MÓDULOS AISLADA -->
-                        <h4 style="color:var(--blue); margin-bottom: 15px; border-bottom: 2px solid var(--border-soft); padding-bottom: 8px;"><i class="fa-solid fa-puzzle-piece" style="color:var(--light-blue)"></i> Módulos Personalizados Creados</h4>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px; border-bottom: 2px solid var(--border-soft); padding-bottom: 8px; flex-wrap:wrap; gap:8px;">
+                            <h4 style="color:var(--blue); margin:0;"><i class="fa-solid fa-puzzle-piece" style="color:var(--light-blue)"></i> Módulos Personalizados Creados</h4>
+                            <button onclick="window.repararModulosAmbiente()" class="btn btn-o" style="padding:6px 12px; font-size:12px;" title="Corrige módulos que quedaron apuntando a un ambiente eliminado o inexistente"><i class="fa-solid fa-wrench"></i> Reparar Módulos</button>
+                        </div>
                         <div id="listaModulosCreados"></div>
                     </div>
 
@@ -903,6 +899,23 @@
     </div><div style="margin-top: 25px; text-align: right;"><button onclick="window.saveEncargado()" class="btn btn-s" style="width: 100%; color:white; padding: 12px; font-size: 15px;">Guardar Contacto</button></div></div>
 </div>
 
+<div id="modalSysMod" class="modal-backdrop hidden" style="z-index: 2050;">
+  <div class="modal" style="max-width: 420px;">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><h3 id="modalTitleSysMod" style="margin:0; color:var(--blue)">Editar Módulo</h3><button onclick="window.closeModal('modalSysMod')" class="btn btn-o" style="border:none; color:var(--mid-gray);"><i class="fa-solid fa-times fa-lg"></i></button></div>
+    <input type="hidden" id="sysModKey">
+    <div class="form-grid">
+      <div class="span-2" id="sysModNombreBox">
+        <label style="font-size:12px; font-weight:bold; color:var(--blue);">Nombre</label>
+        <input id="sysModNombre" class="inp">
+      </div>
+      <div class="span-2">
+        <label class="perm-item" style="font-size:13px;"><input type="checkbox" id="sysModActivo"> Activo en <span id="sysModAmbLbl" style="font-weight:bold;">este ambiente</span></label>
+      </div>
+    </div>
+    <div style="margin-top: 20px; text-align: right;"><button onclick="window.guardarSysMod()" class="btn btn-s" style="width: 100%; color:white; padding: 12px; font-size: 15px;"><i class="fa-solid fa-save"></i> Guardar</button></div>
+  </div>
+</div>
+
 <div id="modalDyn" class="modal-backdrop hidden">
   <div class="modal"><div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><h3 id="modalTitleDyn" style="margin:0; color:var(--blue)">Registro</h3><button onclick="window.closeModal('modalDyn')" class="btn btn-o" style="border:none; color:var(--mid-gray);"><i class="fa-solid fa-times fa-lg"></i></button></div>
     <div id="formGridDyn" class="form-grid"></div> 
@@ -928,6 +941,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, collection, getDocs, doc, updateDoc, setDoc, addDoc, deleteDoc, query, orderBy, limit, onSnapshot, writeBatch, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
   const firebaseConfig = { apiKey: "AIzaSyBsFKRDAYoCjGlr-np2Cqtjb-SIOLznPzY", authDomain: "coberturast-ab44c.firebaseapp.com", projectId: "coberturast-ab44c", storageBucket: "coberturast-ab44c.firebasestorage.app", messagingSenderId: "762980124389", appId: "1:762980124389:web:9d7a8b1ed7c7f259fbb60c" };
   const app = initializeApp(firebaseConfig); 
@@ -936,11 +950,19 @@
     localCache: persistentLocalCache({tabManager: persistentMultipleTabManager()})
   });
 
+  // ================= ADMINISTRADOR (FIREBASE AUTHENTICATION) =================
+  // El rol de administrador ya NO se toma del campo "r" de la colección usuarios (cualquiera podía editarlo).
+  // Solo es administrador quien inicia sesión con Firebase Authentication usando uno de estos correos.
+  // Para agregar otro administrador: créalo en Firebase > Authentication y agrega su correo aquí Y en las reglas de Firestore.
+  const auth = getAuth(app);
+  const ADMIN_EMAILS = ['krobles@distelsa.com.gt'];
+  window.isAdminEmail = (e) => ADMIN_EMAILS.includes((e || '').toLowerCase().trim());
+
   let DB = { cob: [], tec: [], enc: [], proc: [], avisos: [], configModulos: [], dynData: [], roles: [], logs: [], ambientes: [] };
   let DB_RAW = { cob: [], tec: [], enc: [], proc: [], avisos: [], configModulos: [], roles: [] };
   let DB_USERS = []; let SESION = { id: null, u: null, r: null, t: null, a: null };
   let AMBIENTE_ACTUAL = null;
-  const PRINCIPAL_DOC_ID = "__principal__";
+  const PRINCIPAL_DOC_ID = "principal_base"; // OJO: Firestore prohíbe IDs con formato __algo__ (reservados), por eso no lleva guiones bajos
   let PRINCIPAL_CONFIG = { modulos: ['cob','tec','enc','proc','avisos'], nombre: 'Principal', icono: '' };
 
   // ================= SEGURIDAD: HASH DE CONTRASEÑAS (Web Crypto, sin librerías) =================
@@ -991,7 +1013,17 @@
   };
 
   window.onload = () => { 
-      const saved = localStorage.getItem('distelsa_pro_fb'); if(saved) { SESION = JSON.parse(saved); window.startApp(); } 
+      const saved = localStorage.getItem('distelsa_pro_fb');
+      if(saved) {
+          SESION = JSON.parse(saved);
+          if (SESION.r === 'admin') {
+              const unsub = onAuthStateChanged(auth, (user) => {
+                  unsub();
+                  if (user && window.isAdminEmail(user.email) && user.uid === SESION.id) window.startApp();
+                  else { localStorage.removeItem('distelsa_pro_fb'); SESION = { id: null, u: null, r: null, t: null, a: null }; }
+              });
+          } else { window.startApp(); }
+      } 
       
       quillEditor = new Quill('#admProcEditor', {
         theme: 'snow', placeholder: 'Escribe tu procedimiento, pega imágenes o usa las herramientas de arriba...',
@@ -1064,7 +1096,7 @@
       if (feed.length === 0) { box.innerHTML = `<p style="text-align:center; color:var(--mid-gray); font-size:13px; padding:30px 15px;">No hay notificaciones para mostrar.<br>Revisa tus preferencias con el <i class="fa-solid fa-gear"></i> de arriba.</p>`; return; }
       box.innerHTML = feed.map(n => `<div onclick="${n.action}" style="display:flex; gap:10px; padding:12px 16px; border-bottom:1px solid var(--border-soft); cursor:pointer; transition:0.15s;" onmouseover="this.style.background='#f4f8fb'" onmouseout="this.style.background='white'">
           <div style="width:34px; height:34px; border-radius:50%; background:${n.color}; color:white; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:13px;"><i class="fa-solid ${n.icon}"></i></div>
-          <div style="min-width:0; flex:1;"><div style="font-weight:bold; font-size:13px; color:var(--blue);">${n.tit}</div><div style="font-size:12px; color:var(--mid-gray); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${n.sub || ''}</div><div style="font-size:10px; color:#adb5bd; margin-top:3px;">${window.timeAgo(n.fecha)}</div></div>
+          <div style="min-width:0; flex:1;"><div style="font-weight:bold; font-size:13px; color:var(--blue);">${window.esc(n.tit)}</div><div style="font-size:12px; color:var(--mid-gray); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${window.esc(n.sub || '')}</div><div style="font-size:10px; color:#adb5bd; margin-top:3px;">${window.timeAgo(n.fecha)}</div></div>
       </div>`).join('');
   };
 
@@ -1100,10 +1132,10 @@
       const q = document.getElementById('globalSearchInput').value; const box = document.getElementById('globalSearchResults');
       if ((q || '').trim().length < 2) { box.innerHTML = `<p style="text-align:center; color:var(--mid-gray); font-size:12px; padding:20px;">Escribe al menos 2 letras...</p>`; return; }
       const results = window.performGlobalSearch(q);
-      if (results.length === 0) { box.innerHTML = `<p style="text-align:center; color:var(--mid-gray); font-size:12px; padding:20px;">Sin resultados para "${q}".</p>`; return; }
+      if (results.length === 0) { box.innerHTML = `<p style="text-align:center; color:var(--mid-gray); font-size:12px; padding:20px;">Sin resultados para "${window.esc(q)}".</p>`; return; }
       box.innerHTML = results.map((r, i) => `<div onclick="window.goToGlobalResult(${i})" style="display:flex; gap:10px; padding:10px 12px; border-bottom:1px solid var(--border-soft); cursor:pointer;" onmouseover="this.style.background='#f4f8fb'" onmouseout="this.style.background='white'">
           <div style="width:30px; height:30px; border-radius:50%; background:${r.color}; color:white; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:12px;"><i class="fa-solid ${r.icon}"></i></div>
-          <div style="min-width:0; flex:1;"><div style="font-weight:bold; font-size:13px; color:var(--blue); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${r.tit}</div><div style="font-size:11px; color:var(--mid-gray);">${r.mod}${r.sub ? ' · ' + r.sub : ''}</div></div>
+          <div style="min-width:0; flex:1;"><div style="font-weight:bold; font-size:13px; color:var(--blue); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${window.esc(r.tit)}</div><div style="font-size:11px; color:var(--mid-gray);">${window.esc(r.mod)}${r.sub ? ' · ' + window.esc(r.sub) : ''}</div></div>
       </div>`).join('');
       window._globalSearchResultsCache = results;
   };
@@ -1260,6 +1292,10 @@
   window.copyToClip = function(text) { if(!text) return; navigator.clipboard.writeText(text).then(() => { window.showToastSuccess(`Texto Copiado`); }).catch(err => alert("Error al copiar")); };
   // Ícono representativo según el nombre del campo (Dirección, Horario, Correo, Teléfono, etc.) para las
   // tarjetas de directorio — funciona con cualquier módulo tipo directorio, sin configuración extra.
+  // Escapa texto para insertarlo como HTML (evita que un nombre o texto con <, >, comillas rompa la página o ejecute código).
+  window.esc = function(v) { return String(v === undefined || v === null ? '' : v).replace(/[&<>"'`]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;', '`':'&#96;' })[c]); };
+  // Convierte un valor en un argumento JS seguro para usar dentro de onclick="..." (soporta comillas, saltos de línea, etc.).
+  window.jsArg = function(v) { return "decodeURIComponent('" + encodeURIComponent(String(v === undefined || v === null ? '' : v)).replace(/'/g, '%27') + "')"; };
   window.fieldIcon = function(label) {
       const l = (label || '').toLowerCase();
       if (l.includes('direc') || l.includes('ubicaci') || l.includes('local')) return 'fa-location-dot';
@@ -1321,7 +1357,7 @@
       const btn = document.getElementById('menuAjs' + view.charAt(0).toUpperCase() + view.slice(1)); if(btn) btn.classList.add('active');
       ['amb', 'mon', 'usr', 'rol', 'mod', 'proc', 'avi', 'col'].forEach(v => document.getElementById('ajsView' + v.charAt(0).toUpperCase() + v.slice(1)).classList.add('hidden'));
       const targetView = document.getElementById('ajsView' + view.charAt(0).toUpperCase() + view.slice(1)); if(targetView) targetView.classList.remove('hidden');
-      if(view === 'amb') window.renderAdminAmbientesList(); if(view === 'mon') window.renderAdminMonitor(); if(view === 'usr') { window.renderUserAmbienteSelect(); window.renderUserList(); } if(view === 'rol') { window.renderRoleAmbienteSelect(); window.renderRolesList(); } if(view === 'mod') { window.renderModAmbienteSelect(); window.renderModulosActivosUi(); window.renderListaModulos(); } if(view === 'proc') { window.renderAdminProcTargetSelect(); window.renderAdminProcList(); } if(view === 'avi') window.renderAdminAvisos(); if(view === 'col') window.renderColorView();
+      if(view === 'amb') { window.renderAmbCompartidosSelects(EDITING_AMB_ID || null); window.renderAdminAmbientesList(); } if(view === 'mon') window.renderAdminMonitor(); if(view === 'usr') { window.renderUserAmbienteSelect(); window.renderUserList(); } if(view === 'rol') { window.renderRoleAmbienteSelect(); window.renderRolesList(); } if(view === 'mod') { window.renderModAmbienteSelect(); window.renderSysModsList(); window.renderListaModulos(); } if(view === 'proc') { window.renderAdminProcTargetSelect(); window.renderAdminProcList(); } if(view === 'avi') window.renderAdminAvisos(); if(view === 'col') window.renderColorView();
   };
 
   window.toggleAuthBoxes = (s) => { document.getElementById('boxLogin').classList.toggle('hidden', s); document.getElementById('boxRegister').classList.toggle('hidden', !s); };
@@ -1329,7 +1365,7 @@
   // ================= AUTH Y ARRANQUE =================
   window.registerAccount = async function() {
     const u = document.getElementById('regUser').value.trim(), p = document.getElementById('regPass').value.trim(); const btn = document.getElementById('btnRegister');
-    if(!u || !p) return alert("Completa todos los campos."); btn.innerText = 'Enviando...'; btn.disabled = true;
+    if(!u || !p) return alert("Completa todos los campos."); if(/[<>"'`&]/.test(u)) return alert("El usuario no puede contener los caracteres < > \" ' ` &"); btn.innerText = 'Enviando...'; btn.disabled = true;
     try {
       const snap = await getDocs(collection(db, "usuarios"));
       const exists = snap.docs.some(d => (d.data().u || "").toLowerCase() === u.toLowerCase());
@@ -1343,6 +1379,18 @@
     const u = document.getElementById('txtUser').value.trim(); const p = document.getElementById('txtPass').value.trim(); const btn = document.getElementById('btnLogin');
     if(!u || !p) return alert("Ingrese usuario y contraseña");
     btn.innerText = 'Cargando...'; btn.disabled = true;
+    if (u.includes('@')) {
+      try {
+        const cred = await signInWithEmailAndPassword(auth, u, p);
+        if (!window.isAdminEmail(cred.user.email)) { await signOut(auth); alert("Esta cuenta no tiene permisos de administrador."); }
+        else { await window.iniciarSesionAdmin(cred.user); return; }
+      } catch(e) {
+        if (e && e.code === 'auth/network-request-failed') alert("Fallo de red: no se pudo conectar con Firebase.");
+        else if (e && e.code === 'auth/too-many-requests') alert("Demasiados intentos. Espera unos minutos e intenta de nuevo.");
+        else alert("Correo o contraseña incorrectos.");
+      }
+      btn.innerText = 'INGRESAR'; btn.disabled = false; return;
+    }
     try {
       const snap = await getDocs(collection(db, "usuarios"));
       const uDoc = snap.docs.find(d => (d.data().u || "").toLowerCase() === u.toLowerCase());
@@ -1350,6 +1398,7 @@
       const check = uData ? await window.verifyPassword(uData.p, p) : { ok: false };
       if (uDoc && check.ok) {
         if(uData.r === 'pendiente') { alert("Tu cuenta está en estado PENDIENTE. Pide al admin que te apruebe."); } 
+        else if(uData.r === 'admin') { alert("El administrador ahora inicia sesión con su correo y contraseña."); } 
         else {
             const token = Math.random().toString(36).substring(2) + Date.now().toString(36);
             let rolFinal = uData.r === 'lider' ? 'agente' : uData.r;
@@ -1366,8 +1415,17 @@
     btn.innerText = 'INGRESAR'; btn.disabled = false;
   };
 
+  window.iniciarSesionAdmin = async function(user) {
+    const token = Math.random().toString(36).substring(2) + Date.now().toString(36);
+    SESION = { id: user.uid, u: user.email, r: 'admin', t: token, a: null, ambs: [""] };
+    localStorage.setItem('distelsa_pro_fb', JSON.stringify(SESION));
+    // Documento en "usuarios" con el mismo UID, para que aparezca en línea/actividad como cualquier otro usuario.
+    try { await setDoc(doc(db, "usuarios", user.uid), { u: user.email, r: 'admin', authUid: user.uid, token, lastActive: Date.now(), ambs: [""], a: null }, { merge: true }); } catch(e) { console.warn("No se pudo registrar el admin en usuarios:", e); }
+    window.startApp();
+  };
+
   window.loginInvitado = async function() {
-    const nombre = prompt("Ingresa tu nombre para el registro de visitantes:"); if(!nombre || nombre.trim() === "") return;
+    const nombre = prompt("Ingresa tu nombre para el registro de visitantes:"); if(!nombre || nombre.trim() === "") return; if(/[<>"'`&]/.test(nombre)) return alert("El nombre no puede contener los caracteres < > \" ' ` &");
     const uName = "Invitado - " + nombre.trim(); const token = Math.random().toString(36).substring(2) + Date.now().toString(36); const now = Date.now();
     try {
       const snap = await getDocs(collection(db, "usuarios")); const uDoc = snap.docs.find(d => (d.data().u || "").toLowerCase() === uName.toLowerCase()); let docId; let ambienteInvitado = null;
@@ -1400,7 +1458,7 @@
   };
 
   window.heartbeat = async () => { if(SESION.id && SESION.id !== "master_admin") { try { await updateDoc(doc(db, "usuarios", SESION.id), { lastActive: Date.now() }); } catch(e){} } };
-  window.logout = async (clear = true) => { if(clear && SESION.id && SESION.id !== "master_admin") try { await updateDoc(doc(db, "usuarios", SESION.id), { token: null, lastActive: 0 }); } catch(e){} localStorage.removeItem('distelsa_pro_fb'); location.reload(); };
+  window.logout = async (clear = true) => { if(clear && SESION.id && SESION.id !== "master_admin") try { await updateDoc(doc(db, "usuarios", SESION.id), { token: null, lastActive: 0 }); } catch(e){} try { await signOut(auth); } catch(e){} localStorage.removeItem('distelsa_pro_fb'); location.reload(); };
 
   // ================= USERS Y ROLES =================
   window.listenToUsers = () => { 
@@ -1408,7 +1466,7 @@
           DB_USERS = snap.docs.map(d => ({ id: d.id, ...d.data() })); 
           if (SESION.r === 'admin') { 
               let pending = DB_USERS.filter(u => u.r === 'pendiente'); 
-              if (!isFirstUserLoad) pending.forEach(u => { if (!knownPendingIds.has(u.id)) window.showToast(`Nueva solicitud: <b>${u.u}</b>. <u style="cursor:pointer; color:var(--blue)" onclick="window.switchModule('ajs'); window.showAjsView('usr');">Aprobar</u>`); }); 
+              if (!isFirstUserLoad) pending.forEach(u => { if (!knownPendingIds.has(u.id)) window.showToast(`Nueva solicitud: <b>${window.esc(u.u)}</b>. <u style="cursor:pointer; color:var(--blue)" onclick="window.switchModule('ajs'); window.showAjsView('usr');">Aprobar</u>`); }); 
               knownPendingIds = new Set(pending.map(u => u.id)); 
           } 
           isFirstUserLoad = false; 
@@ -1423,7 +1481,7 @@
       if(SESION.r !== 'admin') online = online.filter(u => u.r !== 'admin'); 
       let onlineNames = online.map(u => u.u); 
       document.getElementById('onlineCount').innerText = onlineNames.length; 
-      document.getElementById('onlineList').innerHTML = onlineNames.map(u => `<div class="online-item"><i class="fa-solid fa-user"></i> ${u}</div>`).join('') || 'Nadie conectado'; 
+      document.getElementById('onlineList').innerHTML = onlineNames.map(u => `<div class="online-item"><i class="fa-solid fa-user"></i> ${window.esc(u)}</div>`).join('') || 'Nadie conectado'; 
       if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewMon').classList.contains('hidden')) window.renderAdminMonitor();
   };
 
@@ -1431,14 +1489,14 @@
   window.renderAdminMonitor = function() {
       const now = Date.now(); 
       let online = DB_USERS.filter(u => u.lastActive && (now - u.lastActive < 190000) && u.r !== 'pendiente');
-      document.getElementById('adminOnlineList').innerHTML = online.map(u => `<div style="padding: 12px; border-bottom: 1px solid var(--border-soft); display: flex; justify-content: space-between; align-items: center;"><div style="font-weight: 600; color: var(--blue);"><i class="fa-solid fa-circle fa-beat" style="color:var(--green); font-size:8px; margin-right:8px;"></i> ${u.u}</div><span style="font-size:11px; background:white; border: 1px solid var(--border-soft); color:var(--mid-gray); padding:3px 8px; border-radius:4px; font-weight:bold; text-transform:uppercase;">${u.r}</span></div>`).join('') || '<div style="padding:15px; color:var(--mid-gray); font-size:13px; text-align:center;">Nadie conectado en este momento.</div>';
+      document.getElementById('adminOnlineList').innerHTML = online.map(u => `<div style="padding: 12px; border-bottom: 1px solid var(--border-soft); display: flex; justify-content: space-between; align-items: center;"><div style="font-weight: 600; color: var(--blue);"><i class="fa-solid fa-circle fa-beat" style="color:var(--green); font-size:8px; margin-right:8px;"></i> ${window.esc(u.u)}</div><span style="font-size:11px; background:white; border: 1px solid var(--border-soft); color:var(--mid-gray); padding:3px 8px; border-radius:4px; font-weight:bold; text-transform:uppercase;">${u.r}</span></div>`).join('') || '<div style="padding:15px; color:var(--mid-gray); font-size:13px; text-align:center;">Nadie conectado en este momento.</div>';
       document.getElementById('adminUpdatesLog').innerHTML = DB.logs.map(l => {
           let dateStr = l.ts ? new Date(l.ts).toLocaleString() : "Fecha Desconocida";
           let color = l.act === 'Crear' ? 'var(--green)' : (l.act === 'Eliminar' || l.act === 'Papelera' || l.act === 'Eliminar Permanente' ? '#e63946' : 'var(--light-blue)');
           return `<div style="padding: 12px; border-bottom: 1px solid var(--border-soft); transition:0.2s;" onmouseover="this.style.background='white'" onmouseout="this.style.background='transparent'">
                     <div style="font-weight: 700; color: var(--blue); font-size:13px; margin-bottom:4px;"><span style="color:${color};">[${l.act}]</span> ${l.mod}</div>
-                    <div style="font-size: 12px; color: var(--dark-gray); margin-bottom: 6px; line-height:1.3;">${l.det}</div>
-                    <div style="font-size: 11px; color: var(--mid-gray); display:flex; justify-content:space-between;"><span><i class="fa-solid fa-user" style="color:var(--light-blue);"></i> ${l.u}</span><span><i class="fa-regular fa-clock"></i> ${dateStr}</span></div>
+                    <div style="font-size: 12px; color: var(--dark-gray); margin-bottom: 6px; line-height:1.3;">${window.esc(l.det)}</div>
+                    <div style="font-size: 11px; color: var(--mid-gray); display:flex; justify-content:space-between;"><span><i class="fa-solid fa-user" style="color:var(--light-blue);"></i> ${window.esc(l.u)}</span><span><i class="fa-regular fa-clock"></i> ${dateStr}</span></div>
                   </div>`;
       }).join('') || '<div style="padding:15px; color:var(--mid-gray); font-size:13px; text-align:center;">No hay actividad reciente.</div>';
   };
@@ -1446,6 +1504,7 @@
   // ================= AMBIENTES (INTRANETS INDEPENDIENTES) =================
   window.ambKey = function(id) { return id || ""; };
   window.getCheckedValues = function(containerId) { const c = document.getElementById(containerId); if(!c) return []; return Array.from(c.querySelectorAll('input[type="checkbox"]:checked')).map(i => i.value); };
+  window.toggleAllCheckboxes = function(containerId, checked, callback) { const c = document.getElementById(containerId); if(!c) return; c.querySelectorAll('input[type="checkbox"]').forEach(i => i.checked = checked); if(callback && window[callback]) window[callback](); };
   window.setCheckedValues = function(containerId, values) { const c = document.getElementById(containerId); if(!c) return; c.querySelectorAll('input[type="checkbox"]').forEach(i => { i.checked = values.includes(i.value); }); };
   const FIXED_MODS_DEFAULT = ['cob', 'tec', 'enc', 'proc', 'avisos'];
   const SHARED_MODS_KEYS = ['cob', 'tec', 'enc', 'avisos'];
@@ -1455,12 +1514,15 @@
       if (!amb) return true;
       return (amb.modulos || FIXED_MODS_DEFAULT).includes(key);
   };
-  // Ambiente "real" del que se leen/escriben los datos de un módulo, considerando si este ambiente
-  // lo tiene marcado como "compartido con Principal" (mismos datos, no una copia).
+  // Ambiente "real" del que se leen/escriben los datos de un módulo. Admite dos formatos:
+  // - amb.linked = { cob: "<idAmbienteOrigen>", ... } (nuevo, apunta a CUALQUIER ambiente, no solo Principal)
+  // - amb.shared = ['cob', ...] (formato viejo, siempre significaba "compartido con Principal" — se sigue leyendo por compatibilidad)
   window.effectiveAmb = function(key) {
       if (!AMBIENTE_ACTUAL) return "";
       const amb = DB.ambientes.find(a => a.id === AMBIENTE_ACTUAL);
-      if (amb && Array.isArray(amb.shared) && amb.shared.includes(key)) return "";
+      if (!amb) return window.ambKey(AMBIENTE_ACTUAL);
+      if (amb.linked && amb.linked[key] !== undefined && amb.linked[key] !== null && amb.linked[key] !== amb.id) return amb.linked[key];
+      if (Array.isArray(amb.shared) && amb.shared.includes(key)) return "";
       return window.ambKey(AMBIENTE_ACTUAL);
   };
   // Ambientes a los que la sesión actual tiene acceso (admin = todos; usuario multi-ambiente = los suyos)
@@ -1485,6 +1547,7 @@
           window.recomputeAmbienteScopedData();
           window.applyPermissionsToUI();
           if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewAmb').classList.contains('hidden')) window.renderAdminAmbientesList();
+          if(CURRENT_MODULE === 'ajs' && document.getElementById('ajsViewMod') && !document.getElementById('ajsViewMod').classList.contains('hidden')) window.renderSysModsList();
       });
   }
 
@@ -1496,6 +1559,7 @@
           PRINCIPAL_CONFIG = { modulos: ['cob','tec','enc','proc','avisos'], nombre: 'Principal', icono: '', ...(snap.exists() ? snap.data() : {}) };
           window.applyPermissionsToUI();
           if(CURRENT_MODULE === 'ajs' && document.getElementById('ajsViewAmb') && !document.getElementById('ajsViewAmb').classList.contains('hidden')) window.renderAdminAmbientesList();
+          if(CURRENT_MODULE === 'ajs' && document.getElementById('ajsViewMod') && !document.getElementById('ajsViewMod').classList.contains('hidden')) window.renderSysModsList();
       });
   }
 
@@ -1541,11 +1605,24 @@
       c.innerHTML = html;
   };
 
+  // Llena los 4 selectores de "origen de datos" con Principal + todos los demás ambientes,
+  // EXCLUYENDO el que se está editando (excludeId) para no poder auto-referenciarse.
+  // "__own__" = datos propios/independientes; "" = Principal; cualquier otro valor = el id de ese ambiente.
+  window.renderAmbCompartidosSelects = function(excludeId) {
+      SHARED_MODS_KEYS.forEach(k => {
+          const sel = document.getElementById('ac_' + k); if(!sel) return;
+          let html = `<option value="__own__">Datos propios (independiente)</option>`;
+          if (excludeId !== PRINCIPAL_DOC_ID) html += `<option value="">Principal</option>`;
+          DB.ambientes.forEach(a => { if(a.id !== excludeId) html += `<option value="${a.id}">${a.nombre}</option>`; });
+          sel.innerHTML = html;
+      });
+  };
+
   window.guardarAmbiente = async function() {
       const nombre = document.getElementById('ambNombre').value.trim(); const icono = document.getElementById('ambIcono').value.trim();
       if(!nombre) return alert("Ingresa el nombre del ambiente.");
       const modulos = FIXED_MODS_DEFAULT.filter(k => document.getElementById('am_' + k).checked);
-      const shared = SHARED_MODS_KEYS.filter(k => document.getElementById('ac_' + k).checked);
+      const linked = {}; SHARED_MODS_KEYS.forEach(k => { const v = document.getElementById('ac_' + k).value; if (v !== '__own__') linked[k] = v; });
       try {
           const wasEditingId = EDITING_AMB_ID;
           if (EDITING_AMB_ID === PRINCIPAL_DOC_ID) {
@@ -1553,13 +1630,13 @@
               await setDoc(doc(db, "ambientes", PRINCIPAL_DOC_ID), { nombre, icono, modulos }, { merge: true });
               window.logAct("Ambientes", "Editar", "Ambiente Principal actualizado");
           } else {
-              let payload = { nombre, icono, modulos, shared };
+              let payload = { nombre, icono, modulos, linked, shared: [] }; // "shared" se deja vacío: el formato nuevo es "linked"
               if(EDITING_AMB_ID) { await updateDoc(doc(db, "ambientes", EDITING_AMB_ID), payload); window.logAct("Ambientes", "Editar", "Ambiente actualizado: " + nombre); }
               else { payload.fecha = Date.now(); await addDoc(collection(db, "ambientes"), payload); window.logAct("Ambientes", "Crear", "Nuevo ambiente: " + nombre); }
           }
           window.cancelarEdicionAmbiente();
           if (wasEditingId === AMBIENTE_ACTUAL || (wasEditingId === PRINCIPAL_DOC_ID && !AMBIENTE_ACTUAL)) window.recomputeAmbienteScopedData();
-      } catch(e) { alert("Error al guardar el ambiente."); }
+      } catch(e) { console.error(e); alert("Error al guardar el ambiente: " + (e && e.message ? e.message : e)); }
   };
 
   window.editarAmbiente = function(id) {
@@ -1567,10 +1644,18 @@
       const a = id === PRINCIPAL_DOC_ID ? PRINCIPAL_CONFIG : DB.ambientes.find(x => x.id === id);
       if(!a) return;
       document.getElementById('ambNombre').value = a.nombre || ''; document.getElementById('ambIcono').value = a.icono || '';
-      const modulos = a.modulos || FIXED_MODS_DEFAULT; const shared = a.shared || [];
+      const modulos = a.modulos || FIXED_MODS_DEFAULT;
       FIXED_MODS_DEFAULT.forEach(k => { document.getElementById('am_' + k).checked = modulos.includes(k); });
-      SHARED_MODS_KEYS.forEach(k => { document.getElementById('ac_' + k).checked = shared.includes(k); });
-      // "Compartir con Principal" no aplica cuando se edita el propio Principal.
+      window.renderAmbCompartidosSelects(id);
+      // Compatibilidad: si el ambiente todavía tiene el campo viejo "shared" (compartir con Principal)
+      // y no tiene "linked" definido para esa clave, se interpreta igual que antes.
+      SHARED_MODS_KEYS.forEach(k => {
+          const sel = document.getElementById('ac_' + k); if(!sel) return;
+          if (a.linked && a.linked[k] !== undefined && a.linked[k] !== null) sel.value = a.linked[k];
+          else if ((a.shared || []).includes(k)) sel.value = "";
+          else sel.value = "__own__";
+      });
+      // "Compartir" no aplica cuando se edita el propio Principal.
       const compartirBox = document.getElementById('ambCompartidosBox'); if(compartirBox) compartirBox.classList.toggle('hidden', id === PRINCIPAL_DOC_ID);
       document.getElementById('ambNombre').disabled = (id === PRINCIPAL_DOC_ID); // el nombre "Principal" no se renombra para no romper las etiquetas ya existentes en la app
       document.getElementById('btnSaveAmb').innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios'; document.getElementById('btnCancelAmb').classList.remove('hidden');
@@ -1580,7 +1665,8 @@
       EDITING_AMB_ID = null; document.getElementById('ambNombre').value = ''; document.getElementById('ambIcono').value = ''; document.getElementById('ambNombre').disabled = false;
       const compartirBox = document.getElementById('ambCompartidosBox'); if(compartirBox) compartirBox.classList.remove('hidden');
       FIXED_MODS_DEFAULT.forEach(k => { document.getElementById('am_' + k).checked = true; });
-      SHARED_MODS_KEYS.forEach(k => { document.getElementById('ac_' + k).checked = false; });
+      window.renderAmbCompartidosSelects(null);
+      SHARED_MODS_KEYS.forEach(k => { const sel = document.getElementById('ac_' + k); if(sel) sel.value = '__own__'; });
       document.getElementById('btnSaveAmb').innerHTML = '<i class="fa-solid fa-save"></i> Guardar Ambiente'; document.getElementById('btnCancelAmb').classList.add('hidden');
   };
 
@@ -1593,8 +1679,15 @@
 
   window.renderAdminAmbientesList = function() {
       const c = document.getElementById('adminAmbientesListContainer'); if(!c) return;
+      const ambNombreDe = (id) => id ? ((DB.ambientes.find(x => x.id === id) || {}).nombre || '?') : 'Principal';
       let html = `<div class="mod-list-item"><div><b style="color:var(--blue);">Principal</b> <span style="background:var(--light-blue); color:white; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px;"><i class="fa-solid fa-lock"></i> Base</span><br><small style="color:var(--mid-gray);">Módulos: ${(PRINCIPAL_CONFIG.modulos||FIXED_MODS_DEFAULT).join(', ') || 'ninguno'}</small></div><div><button onclick="window.editarAmbiente('${PRINCIPAL_DOC_ID}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button></div></div>`;
-      html += DB.ambientes.map(a => { const shared = a.shared || []; const sharedTxt = shared.length ? `<br><small style="color:var(--green); font-weight:bold;"><i class="fa-solid fa-arrows-rotate"></i> Compartido con Principal: ${shared.join(', ')}</small>` : ''; return `<div class="mod-list-item"><div><b style="color:var(--blue);">${a.nombre}</b><br><small style="color:var(--mid-gray);">Módulos: ${(a.modulos||FIXED_MODS_DEFAULT).join(', ') || 'ninguno'}</small>${sharedTxt}</div><div><button onclick="window.editarAmbiente('${a.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarAmbiente('${a.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`; }).join('');
+      html += DB.ambientes.map(a => {
+          let linkedTxt = '';
+          const linked = a.linked || {}; const legacyShared = a.shared || [];
+          const entries = SHARED_MODS_KEYS.filter(k => (linked[k] !== undefined && linked[k] !== null) || legacyShared.includes(k)).map(k => { const target = (linked[k] !== undefined && linked[k] !== null) ? linked[k] : ""; return `${k} → ${ambNombreDe(target)}`; });
+          if (entries.length) linkedTxt = `<br><small style="color:var(--green); font-weight:bold;"><i class="fa-solid fa-arrows-rotate"></i> ${entries.join(', ')}</small>`;
+          return `<div class="mod-list-item"><div><b style="color:var(--blue);">${a.nombre}</b><br><small style="color:var(--mid-gray);">Módulos: ${(a.modulos||FIXED_MODS_DEFAULT).join(', ') || 'ninguno'}</small>${linkedTxt}</div><div><button onclick="window.editarAmbiente('${a.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarAmbiente('${a.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`;
+      }).join('');
       c.innerHTML = html;
   };
 
@@ -1646,7 +1739,7 @@
       let checkedAmbs = window.getCheckedValues ? window.getCheckedValues('uAmbList') : [];
       if (checkedAmbs.length === 0) checkedAmbs = [window.ambKey(AMBIENTE_ACTUAL)];
       const disponibles = (DB_RAW.roles || []).filter(r => checkedAmbs.some(k => window.roleInAmb(r, k)));
-      let adminOpt = SESION.r === 'admin' ? `<option value="admin">Administrador (Total)</option>` : ``; 
+      let adminOpt = ``; 
       let html = `${adminOpt}<option value="pendiente">Pendiente (Bloqueado)</option>`; 
       let sortedRoles = disponibles.sort((a,b) => { if(a.nombre.toLowerCase() === 'agente') return -1; if(b.nombre.toLowerCase() === 'agente') return 1; if(a.nombre.toLowerCase() === 'invitado') return -1; if(b.nombre.toLowerCase() === 'invitado') return 1; return a.nombre.localeCompare(b.nombre); });
       if (sortedRoles.length === 0) html += `<option value="" disabled>— No hay roles creados para este ambiente —</option>`;
@@ -1656,6 +1749,16 @@
   
   // Botones de plantilla rápida: llenan de un jalón las casillas Ver/Editar/Exportar de los módulos
   // principales, para no obligar a marcar una por una en el caso más común.
+  // Nivel general de acceso a TODOS los módulos personalizados (existentes y futuros), usando los
+  // permisos "comodín" dyn_view/dyn_edit/dyn_exp que ya soporta hasPerm — así se evita tener que
+  // activar cada módulo nuevo, uno por uno, en cada rol.
+  window.aplicarNivelModulos = function(nivel) {
+      const v = document.getElementById('p_dyn_view'); const e = document.getElementById('p_dyn_edit'); const x = document.getElementById('p_dyn_exp');
+      if (nivel === 'ninguno') { v.checked = false; e.checked = false; x.checked = false; }
+      else { v.checked = true; e.checked = (nivel === 'editar'); x.checked = (nivel === 'editar'); }
+      window.showToastSuccess("Nivel aplicado — revisa y guarda cuando quieras.");
+  };
+
   window.aplicarPlantillaRol = function(nivel) {
       const viewKeys = ['p_cob_view', 'p_tec_view', 'p_enc_view', 'p_proc_view', 'p_avi_view'];
       const editKeys = ['p_cob_edit', 'p_tec_edit', 'p_enc_edit'];
@@ -1726,45 +1829,73 @@
       }).join('') || '<p style="font-size:13px;">No hay roles.</p>'; 
   };
 
-  window.renderUserList = function() { const c = document.getElementById('userListContainer'); const q = document.getElementById('searchUserBox').value; let f = DB_USERS; if (SESION.r !== 'admin') f = f.filter(u => u.r !== 'admin'); const k = window.ambKey(AMBIENTE_ACTUAL); f = f.filter(u => u.r === 'admin' || u.r === 'pendiente' || window.userAmbList(u).includes(k)); if (q) f = f.filter(u => window.matchSearch(`${u.u} ${u.r}`, q)); f.sort((a, b) => { if (a.r === 'pendiente' && b.r !== 'pendiente') return -1; if (a.r !== 'pendiente' && b.r === 'pendiente') return 1; return (a.u||"").localeCompare(b.u||""); }); c.innerHTML = f.map(u => { const isP = u.r === 'pendiente'; const ambList = window.userAmbList(u); const ambNoms = ambList.map(id => id ? (DB.ambientes.find(x=>x.id===id)||{nombre:'?'}).nombre : 'Principal').join(', ') || 'Principal'; return `<div class="user-row" style="${isP ? 'background:#ffe3e3; border-left:5px solid #e63946;' : ''}"><div><b style="color:var(--blue);">${u.u}</b> <br><small style="text-transform:uppercase; font-weight:bold; color: ${isP?'#e63946':'var(--light-blue)'}">${u.r}</small> <small style="color:var(--mid-gray); font-weight:bold;"><i class="fa-solid fa-building"></i> ${ambNoms}</small></div><div><button onclick="window.editUser('${u.id}')" class="btn btn-p" style="padding:4px"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteUser('${u.id}')" class="btn btn-d" style="padding:4px"><i class="fa-solid fa-trash"></i></button></div></div>`; }).join('') || `<p align="center" style="padding:15px; color:var(--mid-gray);">No hay usuarios</p>`; };
+  window.renderUserList = function() { const c = document.getElementById('userListContainer'); const q = document.getElementById('searchUserBox').value; let f = DB_USERS; if (SESION.r !== 'admin') f = f.filter(u => u.r !== 'admin'); const k = window.ambKey(AMBIENTE_ACTUAL); f = f.filter(u => u.r === 'admin' || u.r === 'pendiente' || window.userAmbList(u).includes(k)); if (q) f = f.filter(u => window.matchSearch(`${u.u} ${u.r}`, q)); f.sort((a, b) => { if (a.r === 'pendiente' && b.r !== 'pendiente') return -1; if (a.r !== 'pendiente' && b.r === 'pendiente') return 1; return (a.u||"").localeCompare(b.u||""); }); c.innerHTML = f.map(u => { const isP = u.r === 'pendiente'; const ambList = window.userAmbList(u); const ambNoms = ambList.map(id => id ? (DB.ambientes.find(x=>x.id===id)||{nombre:'?'}).nombre : 'Principal').join(', ') || 'Principal'; return `<div class="user-row" style="${isP ? 'background:#ffe3e3; border-left:5px solid #e63946;' : ''}"><div><b style="color:var(--blue);">${window.esc(u.u)}</b> <br><small style="text-transform:uppercase; font-weight:bold; color: ${isP?'#e63946':'var(--light-blue)'}">${u.r}</small> <small style="color:var(--mid-gray); font-weight:bold;"><i class="fa-solid fa-building"></i> ${ambNoms}</small></div><div><button onclick="window.editUser('${u.id}')" class="btn btn-p" style="padding:4px"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteUser('${u.id}')" class="btn btn-d" style="padding:4px"><i class="fa-solid fa-trash"></i></button></div></div>`; }).join('') || `<p align="center" style="padding:15px; color:var(--mid-gray);">No hay usuarios</p>`; };
   window.submitUser = async function() { const u = document.getElementById('uUser').value, p = document.getElementById('uPass').value, r = document.getElementById('uRol').value; let ambs = window.getCheckedValues('uAmbList'); if(ambs.length === 0) ambs = [window.ambKey(AMBIENTE_ACTUAL)]; if(!u) return; if(EDITING_USER_ID) { let payload = { u, r, ambs, a: ambs[0] }; if(p) payload.p = await window.hashPassword(p); await updateDoc(doc(db, "usuarios", EDITING_USER_ID), payload); window.logAct("Usuarios", "Editar", "Usuario editado: " + u); } else { if(!p && r !== 'invitado' && r !== 'pendiente') return alert("La contraseña es obligatoria para un usuario nuevo."); await addDoc(collection(db, "usuarios"), { u, p: p ? await window.hashPassword(p) : '', r, ambs, a: ambs[0], createdAt: Date.now() }); window.logAct("Usuarios", "Crear", "Nuevo usuario: " + u); } window.clearUserForm(); };
-  window.editUser = function(id) { const u = DB_USERS.find(x => x.id === id); if(!u) return; EDITING_USER_ID = id; document.getElementById('uUser').value = u.u; document.getElementById('uPass').value = ''; document.getElementById('uPass').placeholder = 'Dejar en blanco para no cambiarla'; window.renderUserAmbienteSelect(); window.setCheckedValues('uAmbList', window.userAmbList(u)); window.updateRolesSelect(); document.getElementById('uRol').value = u.r; document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-save"></i>'; }; window.clearUserForm = function() { EDITING_USER_ID = null; document.getElementById('uUser').value = ''; document.getElementById('uPass').value = ''; document.getElementById('uPass').placeholder = 'Clave'; document.getElementById('uRol').value = 'agente'; if(document.getElementById('uAmbList')) window.renderUserAmbienteSelect(); document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-plus"></i>'; }; window.deleteUser = async function(id) { if(confirm("¿Eliminar usuario?")) { const u = DB_USERS.find(x => x.id === id); await deleteDoc(doc(db, "usuarios", id)); window.logAct("Usuarios", "Eliminar", "Usuario eliminado: " + (u?u.u:'')); } };
+  window.editUser = function(id) { const u = DB_USERS.find(x => x.id === id); if(!u) return; if(u.authUid) return alert("La cuenta de administrador se gestiona en Firebase > Authentication, no desde aquí."); EDITING_USER_ID = id; document.getElementById('uUser').value = u.u; document.getElementById('uPass').value = ''; document.getElementById('uPass').placeholder = 'Dejar en blanco para no cambiarla'; window.renderUserAmbienteSelect(); window.setCheckedValues('uAmbList', window.userAmbList(u)); window.updateRolesSelect(); document.getElementById('uRol').value = u.r; document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-save"></i>'; }; window.clearUserForm = function() { EDITING_USER_ID = null; document.getElementById('uUser').value = ''; document.getElementById('uPass').value = ''; document.getElementById('uPass').placeholder = 'Clave'; document.getElementById('uRol').value = 'agente'; if(document.getElementById('uAmbList')) window.renderUserAmbienteSelect(); document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-plus"></i>'; }; window.deleteUser = async function(id) { if(confirm("¿Eliminar usuario?")) { const u = DB_USERS.find(x => x.id === id); await deleteDoc(doc(db, "usuarios", id)); window.logAct("Usuarios", "Eliminar", "Usuario eliminado: " + (u?u.u:'')); } };
 
   // ================= NOMBRES DE MÓDULOS DEL SISTEMA =================
   function listenToSysMods() { onSnapshot(doc(db, "configuracion", "nombres_modulos"), (docSnap) => { if (docSnap.exists()) { Object.assign(SYS_MOD_NAMES, docSnap.data()); } window.updateSysModUI(); }); }
   window.updateSysModUI = function() { document.getElementById('txtTabCob').innerText = SYS_MOD_NAMES.cob || 'Cobertura'; document.getElementById('txtTabTec').innerText = SYS_MOD_NAMES.tec || 'Técnicos'; document.getElementById('txtTabEnc').innerText = SYS_MOD_NAMES.enc || 'Directorio'; document.getElementById('txtTabProc').innerText = SYS_MOD_NAMES.proc || 'Procedimientos'; const lblProc = document.getElementById('lblProcSidebar'); if(lblProc) lblProc.innerText = SYS_MOD_NAMES.proc || 'Procedimientos'; 
-  
-      if (document.getElementById('sysNomCob')) document.getElementById('sysNomCob').value = SYS_MOD_NAMES.cob || 'Cobertura';
-      if (document.getElementById('sysNomTec')) document.getElementById('sysNomTec').value = SYS_MOD_NAMES.tec || 'Técnicos';
-      if (document.getElementById('sysNomEnc')) document.getElementById('sysNomEnc').value = SYS_MOD_NAMES.enc || 'Directorio';
-      if (document.getElementById('sysNomProc')) document.getElementById('sysNomProc').value = SYS_MOD_NAMES.proc || 'Procedimientos';
-  
+      window.renderSysModsList();
       if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewMod').classList.contains('hidden')) window.renderListaModulos(); 
   };
-  window.saveSysMods = async function() { const data = { cob: document.getElementById('sysNomCob').value.trim() || "Cobertura", tec: document.getElementById('sysNomTec').value.trim() || "Técnicos", enc: document.getElementById('sysNomEnc').value.trim() || "Directorio", proc: document.getElementById('sysNomProc').value.trim() || "Procedimientos" }; try { await setDoc(doc(db, "configuracion", "nombres_modulos"), data, { merge: true }); window.logAct("Módulos", "Editar", "Nombres del sistema actualizados"); window.showToastSuccess("Nombres actualizados"); } catch(e) { alert("Error al guardar"); } };
-  
-  // Refleja, en la pestaña Módulos, qué módulos fijos están activos para el ambiente actualmente
-  // seleccionado (mismo dato que Ajustes > Ambientes, mostrado aquí para no obligar a cambiar de pantalla).
-  window.renderModulosActivosUi = function() {
-      const lbl = document.getElementById('lblModsAmbActual'); if(!lbl) return;
+
+  // Módulos del sistema, mostrados con la misma tarjeta que los personalizados: nombre, tipo de vista,
+  // estado activo/inactivo (según el ambiente actual) y un lápiz para editar ambas cosas de un jalón.
+  const SYS_MODS_META = [
+      { key: 'cob', field: 'cob', vista: 'tabla', default: 'Cobertura' },
+      { key: 'tec', field: 'tec', vista: 'tabla', default: 'Técnicos' },
+      { key: 'enc', field: 'enc', vista: 'directorio', default: 'Directorio' },
+      { key: 'proc', field: 'proc', vista: 'procedimientos', default: 'Procedimientos' },
+      { key: 'avisos', field: null, vista: 'avisos', default: 'Avisos' }
+  ];
+  window.getSysModActivos = function() {
       const amb = AMBIENTE_ACTUAL ? DB.ambientes.find(a => a.id === AMBIENTE_ACTUAL) : null;
-      lbl.innerText = 'Ambiente: ' + (AMBIENTE_ACTUAL ? (amb ? amb.nombre : '?') : 'Principal');
-      const modulos = AMBIENTE_ACTUAL ? (amb ? (amb.modulos || FIXED_MODS_DEFAULT) : FIXED_MODS_DEFAULT) : (PRINCIPAL_CONFIG.modulos || FIXED_MODS_DEFAULT);
-      FIXED_MODS_DEFAULT.forEach(k => { const el = document.getElementById('ma_' + k); if(el) el.checked = modulos.includes(k); });
+      return AMBIENTE_ACTUAL ? (amb ? (amb.modulos || FIXED_MODS_DEFAULT) : FIXED_MODS_DEFAULT) : (PRINCIPAL_CONFIG.modulos || FIXED_MODS_DEFAULT);
   };
-  window.guardarModulosActivos = async function() {
-      const modulos = FIXED_MODS_DEFAULT.filter(k => document.getElementById('ma_' + k).checked);
+  window.renderSysModsList = function() {
+      const cont = document.getElementById('sysModsListContainer'); if(!cont) return;
+      const lbl = document.getElementById('lblModsAmbActual'); const amb = AMBIENTE_ACTUAL ? DB.ambientes.find(a => a.id === AMBIENTE_ACTUAL) : null;
+      if(lbl) lbl.innerText = 'Ambiente: ' + (AMBIENTE_ACTUAL ? (amb ? amb.nombre : '?') : 'Principal');
+      const activos = window.getSysModActivos();
+      cont.innerHTML = SYS_MODS_META.map(m => {
+          const nombreActual = m.field ? (SYS_MOD_NAMES[m.field] || m.default) : m.default;
+          const activo = activos.includes(m.key);
+          const badge = `<span style="background:${activo ? 'var(--green)' : '#adb5bd'}; color:white; font-size:10px; padding:2px 8px; border-radius:10px; margin-left:6px;">${activo ? 'Activo' : 'Inactivo'}</span>`;
+          return `<div class="mod-list-item"><div><b style="color:var(--blue);">${nombreActual}</b> <span style="color:var(--light-blue); font-size:12px;">(${m.vista})</span>${badge}<br><small style="color:var(--mid-gray);">Módulo del sistema — no se puede eliminar</small></div><div><button onclick="window.editarSysMod('${m.key}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;" title="Editar"><i class="fa-solid fa-pencil"></i></button></div></div>`;
+      }).join('');
+  };
+  window.editarSysMod = function(key) {
+      const meta = SYS_MODS_META.find(m => m.key === key); if(!meta) return;
+      document.getElementById('sysModKey').value = key;
+      document.getElementById('modalTitleSysMod').innerText = 'Editar Módulo — ' + (meta.field ? (SYS_MOD_NAMES[meta.field] || meta.default) : meta.default);
+      document.getElementById('sysModNombreBox').classList.toggle('hidden', !meta.field);
+      document.getElementById('sysModNombre').value = meta.field ? (SYS_MOD_NAMES[meta.field] || meta.default) : meta.default;
+      document.getElementById('sysModActivo').checked = window.getSysModActivos().includes(key);
+      const amb = AMBIENTE_ACTUAL ? DB.ambientes.find(a => a.id === AMBIENTE_ACTUAL) : null;
+      document.getElementById('sysModAmbLbl').innerText = AMBIENTE_ACTUAL ? (amb ? amb.nombre : '?') : 'Principal';
+      window.openModal('modalSysMod', false);
+  };
+  window.guardarSysMod = async function() {
+      const key = document.getElementById('sysModKey').value; const meta = SYS_MODS_META.find(m => m.key === key); if(!meta) return;
+      const activo = document.getElementById('sysModActivo').checked;
       try {
-          if (!AMBIENTE_ACTUAL) { await setDoc(doc(db, "ambientes", PRINCIPAL_DOC_ID), { modulos }, { merge: true }); window.logAct("Ambientes", "Editar", "Módulos activos de Principal actualizados"); }
-          else { await updateDoc(doc(db, "ambientes", AMBIENTE_ACTUAL), { modulos }); window.logAct("Ambientes", "Editar", "Módulos activos actualizados"); }
-          window.showToastSuccess("Listo — el menú se actualiza al instante para este ambiente.");
-      } catch(e) { alert("Error al guardar los módulos activos."); }
+          if (meta.field) {
+              const nombre = document.getElementById('sysModNombre').value.trim() || meta.default;
+              await setDoc(doc(db, "configuracion", "nombres_modulos"), { [meta.field]: nombre }, { merge: true });
+          }
+          const actuales = window.getSysModActivos(); let nuevos = activo ? Array.from(new Set([...actuales, key])) : actuales.filter(k => k !== key);
+          if (!AMBIENTE_ACTUAL) { await setDoc(doc(db, "ambientes", PRINCIPAL_DOC_ID), { modulos: nuevos }, { merge: true }); }
+          else { await updateDoc(doc(db, "ambientes", AMBIENTE_ACTUAL), { modulos: nuevos }); }
+          window.logAct("Módulos", "Editar", "Módulo del sistema actualizado: " + key);
+          window.closeModal('modalSysMod'); window.showToastSuccess("Guardado.");
+      } catch(e) { console.error(e); alert("Error al guardar: " + (e && e.message ? e.message : e)); }
   };
 
   // ================= CREADOR DE MÓDULOS DINÁMICOS =================
   function listenToConfigModulos() { 
       onSnapshot(collection(db, "modulos_config"), (snapshot) => { 
-          DB_RAW.configModulos = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); DB.configModulos = DB_RAW.configModulos.filter(window.inAmb);
+          DB_RAW.configModulos = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); DB.configModulos = DB_RAW.configModulos.filter(m => (m.ambienteIds || [window.ambKey(m.ambienteId)]).includes(window.ambKey(AMBIENTE_ACTUAL)));
           window.buildDynamicTabs(); 
           window.renderDynPermsUi(); 
           if(CURRENT_MODULE === 'ajs') window.renderListaModulos(); 
@@ -1778,10 +1909,16 @@
       const container = document.getElementById('dynPermsContainer');
       if(!container) return;
       let html = '';
-      DB.configModulos.forEach(mod => {
+      // Se listan TODOS los módulos personalizados que existan (sin importar el ambiente que tengas
+      // abierto ahora mismo), con una etiqueta de a qué ambiente(s) pertenece cada uno — así nunca falta
+      // uno solo porque estabas viendo otro ambiente al momento de editar el rol.
+      const todos = (DB_RAW.configModulos || []).slice().sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
+      todos.forEach(mod => {
+          const ambNoms = (mod.ambienteIds || [window.ambKey(mod.ambienteId)]).map(id => id ? ((DB.ambientes.find(a => a.id === id) || {}).nombre || '?') : 'Principal').join(', ');
           html += `
           <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid var(--border-soft); display:flex; flex-direction:column; gap:6px;">
               <b style="color:var(--blue); font-size:12px; border-bottom:1px solid #eee; padding-bottom:4px;"><i class="fa-solid fa-puzzle-piece" style="color:var(--light-blue)"></i> ${mod.nombre}</b>
+              <span style="font-size:10px; color:var(--mid-gray);"><i class="fa-solid fa-building"></i> ${ambNoms}</span>
               <label class="perm-item" style="font-size:11px;"><input type="checkbox" id="p_view_mod_${mod.id}"> Ver Módulo</label>
               <label class="perm-item" style="font-size:11px;"><input type="checkbox" id="p_edit_mod_${mod.id}"> Editar / Agregar</label>
               <label class="perm-item" style="font-size:11px;"><input type="checkbox" id="p_exp_mod_${mod.id}"> Exportar Data</label>
@@ -1881,10 +2018,10 @@
       
       if (chunk.length === 0) { container.innerHTML = `<div class="card" style="text-align:center; padding: 40px; color:var(--light-blue); font-weight:bold; font-size: 16px;">No se encontraron registros.</div>`; return; }
       if (isDir) {
-          let html = `<div class="enc-grid">`; chunk.forEach(row => { let title = row.c0 || "Sin Título"; let ini = title.charAt(0).toUpperCase(); let role = row.c1 || ""; if (role.trim().toLowerCase() === title.trim().toLowerCase()) role = ""; let act = ""; if (canEdit) act += `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let bodyHtml = ""; CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => { if(i < 2) return; let val = row['c'+i]; if(val) { bodyHtml += `<div class="enc-contact" onclick="window.copyToClip('${val}')"><div><span class="enc-contact-label"><i class="fa-solid ${window.fieldIcon(colName)}"></i> ${colName}</span><span class="enc-contact-value">${val}</span></div><button class="enc-copy-btn" title="Copiar"><i class="fa-solid fa-copy"></i></button></div>`; } }); html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${title}</div>${role?`<div class="enc-role">${role}</div>`:''}</div></div></div><div class="enc-body">${bodyHtml}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`; }); html += `</div>`; container.innerHTML = html;
+          let html = `<div class="enc-grid">`; chunk.forEach(row => { let title = row.c0 || "Sin Título"; let ini = window.esc(title.charAt(0).toUpperCase()); let role = row.c1 || ""; if (role.trim().toLowerCase() === title.trim().toLowerCase()) role = ""; let act = ""; if (canEdit) act += `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let bodyHtml = ""; CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => { if(i < 2) return; let val = row['c'+i]; if(val) { bodyHtml += `<div class="enc-contact" onclick="window.copyToClip(${window.jsArg(val)})"><div><span class="enc-contact-label"><i class="fa-solid ${window.fieldIcon(colName)}"></i> ${window.esc(colName)}</span><span class="enc-contact-value">${window.esc(val)}</span></div><button class="enc-copy-btn" title="Copiar"><i class="fa-solid fa-copy"></i></button></div>`; } }); html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${window.esc(title)}</div>${role?`<div class="enc-role">${window.esc(role)}</div>`:''}</div></div></div><div class="enc-body">${bodyHtml}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`; }); html += `</div>`; container.innerHTML = html;
       } else {
-          let ths = CURRENT_DYN_CONFIG.columnas.map(c => `<th>${c}</th>`).join(''); if(canEdit) ths += `<th width="15%">Acciones</th>`; let html = `<div class="card"><div class="table-responsive"><table><thead><tr>${ths}</tr></thead><tbody>`;
-          chunk.forEach(row => { html += `<tr>`; CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => { let val = row['c'+i] || ""; let displayVal = val; if (val.length > 55) { displayVal = `<span>${val.substring(0, 50)}...</span> <button class="btn-mini" onclick="window.abrirVerMas('${row.id}', ${i})" style="background:var(--blue); margin-top:5px;"><i class="fa-solid fa-eye"></i> Leer completo</button>`; } html += `<td>${i===0?`<b style="color:var(--blue);">${displayVal}</b>`:displayVal}</td>`; }); if(canEdit) { let act = `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:6px 10px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if(isAdmin) act += ` <button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:6px 10px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; html += `<td>${act}</td>`; } html += `</tr>`; }); html += `</tbody></table></div></div>`; container.innerHTML = html;
+          let ths = CURRENT_DYN_CONFIG.columnas.map(c => `<th>${window.esc(c)}</th>`).join(''); if(canEdit) ths += `<th width="15%">Acciones</th>`; let html = `<div class="card"><div class="table-responsive"><table><thead><tr>${ths}</tr></thead><tbody>`;
+          chunk.forEach(row => { html += `<tr>`; CURRENT_DYN_CONFIG.columnas.forEach((colName, i) => { let val = row['c'+i] || ""; let displayVal = window.esc(val); if (val.length > 55) { displayVal = `<span>${window.esc(val.substring(0, 50))}...</span> <button class="btn-mini" onclick="window.abrirVerMas('${row.id}', ${i})" style="background:var(--blue); margin-top:5px;"><i class="fa-solid fa-eye"></i> Leer completo</button>`; } html += `<td>${i===0?`<b style="color:var(--blue);">${displayVal}</b>`:displayVal}</td>`; }); if(canEdit) { let act = `<button onclick="window.editDynRecord('${row.id}')" class="btn btn-p" style="padding:6px 10px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if(isAdmin) act += ` <button onclick="window.deleteDynRecord('${row.id}')" class="btn btn-d" style="padding:6px 10px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; html += `<td>${act}</td>`; } html += `</tr>`; }); html += `</tbody></table></div></div>`; container.innerHTML = html;
       }
   };
 
@@ -1897,7 +2034,7 @@
                   const a = change.doc.data();
                   if(a.alerta === true) {
                       window.notificarChrome("Nuevo Aviso", a.tit);
-                      window.showToast(`<b>Nuevo Aviso:</b> ${a.tit}`);
+                      window.showToast(`<b>Nuevo Aviso:</b> ${window.esc(a.tit)}`);
                   }
               }
           });
@@ -2020,7 +2157,7 @@
           let badge = a.alerta ? `<span style="background:#fff3cd; color:#856404; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px;"><i class="fa-solid fa-bell"></i> Con Notificación</span>` : `<span style="background:#e9ecef; color:#6c757d; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px;"><i class="fa-solid fa-bell-slash"></i> Silencioso</span>`;
           let tipoBadge = `<span style="background:${ti.c}; color:white; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px;"><i class="fa-solid ${ti.i}"></i> ${ti.l}</span>`;
           let thumb = a.img ? `<img src="${a.img}" style="width:44px; height:44px; object-fit:cover; border-radius:6px; margin-right:10px; flex-shrink:0;">` : '';
-          return `<div class="mod-list-item" style="align-items:center;">${thumb}<div style="flex:1;"><b style="color:var(--blue);">${a.tit}</b> ${tipoBadge}${badge}<br><small style="color:var(--mid-gray);">${dateStr}</small></div><div><button onclick="window.editarAviso('${a.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarAviso('${a.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`;
+          return `<div class="mod-list-item" style="align-items:center;">${thumb}<div style="flex:1;"><b style="color:var(--blue);">${window.esc(a.tit)}</b> ${tipoBadge}${badge}<br><small style="color:var(--mid-gray);">${dateStr}</small></div><div><button onclick="window.editarAviso('${a.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarAviso('${a.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`;
       }).join('') || '<p style="font-size:13px; color:var(--mid-gray);">No hay avisos registrados.</p>';
   };
 
@@ -2040,8 +2177,8 @@
               ${imgHtml}
               <div class="aviso-content">
                   <span style="display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:bold; color:${ti.c}; text-transform:uppercase; margin-bottom:4px;"><i class="fa-solid ${ti.i}"></i> ${ti.l}</span>
-                  <h4>${a.tit}</h4>
-                  <p>${a.cont}</p>
+                  <h4>${window.esc(a.tit)}</h4>
+                  <p>${window.esc(a.cont)}</p>
                   <div class="aviso-date"><i class="fa-regular fa-clock"></i> ${dateStr}</div>
               </div>
           </div>`;
@@ -2104,7 +2241,7 @@
               }
           });
           isInitialProcLoad = false;
-          DB_RAW.proc = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); DB.proc = DB_RAW.proc.filter(window.inAmb);
+          DB_RAW.proc = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); DB.proc = DB_RAW.proc.filter(p => p.modId ? true : window.inAmb(p));
           LOAD_STATE.proc = true; 
           window.updateNotifBadge();
           
@@ -2397,8 +2534,8 @@
   window.openModal = (id, isEdit = false) => { document.getElementById(id).classList.remove('hidden'); if(!isEdit) { if(id==='modalAdd'){EDITING_LOCATION_ID=null;document.querySelectorAll('#modalAdd input').forEach(i=>i.value='');} if(id==='modalAddTec'){EDITING_TEC_ID=null;document.querySelectorAll('#modalAddTec input').forEach(i=>i.value='');} if(id==='modalAddEnc'){EDITING_ENC_ID=null;document.querySelectorAll('#modalAddEnc input').forEach(i=>i.value='');} } };
   window.closeModal = id => document.getElementById(id).classList.add('hidden');
   window.abrirDynProcedimiento = function(id) { DYN_PROC_ACTIVE_ID = id; window.renderDynData(); };
-  window.openModalDyn = function() { EDITING_DYN_ID = null; document.getElementById('modalTitleDyn').innerText = "Nuevo Registro - " + CURRENT_DYN_CONFIG.nombre; document.getElementById('formGridDyn').innerHTML = CURRENT_DYN_CONFIG.columnas.map((col, i) => `<div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">${col}</label><input id="dynInp_${i}" class="inp" placeholder="Ingresar ${col}"></div>`).join(''); window.openModal('modalDyn', false); };
-  window.editDynRecord = function(id) { EDITING_DYN_ID = id; const data = DB.dynData.find(d => d.id === id); document.getElementById('modalTitleDyn').innerText = "Editar Registro - " + CURRENT_DYN_CONFIG.nombre; document.getElementById('formGridDyn').innerHTML = CURRENT_DYN_CONFIG.columnas.map((col, i) => `<div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">${col}</label><input id="dynInp_${i}" class="inp" value="${data['c'+i] || ''}"></div>`).join(''); window.openModal('modalDyn', true); };
+  window.openModalDyn = function() { EDITING_DYN_ID = null; document.getElementById('modalTitleDyn').innerText = "Nuevo Registro - " + CURRENT_DYN_CONFIG.nombre; document.getElementById('formGridDyn').innerHTML = CURRENT_DYN_CONFIG.columnas.map((col, i) => `<div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">${window.esc(col)}</label><input id="dynInp_${i}" class="inp" placeholder="Ingresar ${window.esc(col)}"></div>`).join(''); window.openModal('modalDyn', false); };
+  window.editDynRecord = function(id) { EDITING_DYN_ID = id; const data = DB.dynData.find(d => d.id === id); document.getElementById('modalTitleDyn').innerText = "Editar Registro - " + CURRENT_DYN_CONFIG.nombre; document.getElementById('formGridDyn').innerHTML = CURRENT_DYN_CONFIG.columnas.map((col, i) => `<div class="span-2"><label style="font-size:12px; font-weight:bold; color:var(--blue);">${col}</label><input id="dynInp_${i}" class="inp" value="${window.esc(data['c'+i] || '')}"></div>`).join(''); window.openModal('modalDyn', true); };
   window.saveDynRecord = async function() { let payload = { modId: CURRENT_DYN_CONFIG.id }; CURRENT_DYN_CONFIG.columnas.forEach((_, i) => payload['c'+i] = document.getElementById('dynInp_'+i).value.trim()); if(!payload['c0']) return alert("El primer campo es obligatorio"); try { if(EDITING_DYN_ID) { await updateDoc(doc(db, "modulos_data", EDITING_DYN_ID), payload); window.logAct(CURRENT_DYN_CONFIG.nombre, "Editar", "Fila: " + payload['c0']); } else { payload.fecha = Date.now(); await addDoc(collection(db, "modulos_data"), payload); window.logAct(CURRENT_DYN_CONFIG.nombre, "Crear", "Nueva Fila: " + payload['c0']); } window.closeModal('modalDyn'); } catch(e) { alert("Error al guardar"); } };
   window.deleteDynRecord = async (id) => { if(confirm("¿Eliminar registro?")) { const d = DB.dynData.find(x => x.id === id); await deleteDoc(doc(db, "modulos_data", id)); window.logAct(CURRENT_DYN_CONFIG.nombre, "Eliminar", "Fila: " + (d?d.c0:'')); } }; window.changePageDyn = d => { PAGE_DYN += d; window.renderDynData(); };
 
@@ -2415,7 +2552,7 @@
     if (r) PAGE = 1; const tbody = document.getElementById('tableBody'); if (!LOAD_STATE.cob) { tbody.innerHTML = `<tr><td colspan="6"><div class="spinner-container"><div class="spinner"></div><div class="loading-text">Cargando coberturas...</div></div></td></tr>`; return; }
     const q = document.getElementById('searchBox').value; let f = DB.cob; if(q) f = f.filter(x => window.matchSearch(`${x.m} ${x.n} ${x.z} ${x.r} ${x.s}`, q)); const total = Math.ceil(f.length / 10) || 1; if (PAGE > total) PAGE = total; document.getElementById('pageLabel').innerText = `${PAGE} / ${total}`; const chunk = f.slice((PAGE - 1) * 10, PAGE * 10); tbody.innerHTML = ''; const canEdit = window.hasPerm('cob_edit'); const isAdmin = (SESION.r === 'admin');
     if (chunk.length === 0) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px; color:var(--light-blue); font-weight:bold;">No se encontraron ubicaciones.</td></tr>`; return; }
-    chunk.forEach(row => { let statusKey = row.s || "Sin Datos"; let bg = STATUS_COLORS[statusKey] || "#6c757d"; let color = 'white'; let act = ""; if (canEdit) { let sel = `<select onchange="window.saveStatus('${row.id}', this, '${row.n}')" style="background:${bg}; color:${color}; border:none; padding:8px; border-radius:4px; width:100%; outline:none; cursor:pointer; font-weight:bold;"><option value="Cobertura" ${row.s==='Cobertura'?'selected':''}>Cobertura</option><option value="Sin Cobertura" ${row.s==='Sin Cobertura'?'selected':''}>Sin Cobertura</option><option value="Consultar" ${row.s==='Consultar'?'selected':''}>Consultar</option><option value="Sin Datos" ${row.s==='Sin Datos' || !row.s ? 'selected':''}>Sin Datos</option></select>`; if (isAdmin) act = `<div style="display:flex;gap:5px;">${sel}<button onclick="window.editLocation('${row.id}')" class="btn btn-p" title="Modificar"><i class="fa-solid fa-pencil"></i></button><button onclick="window.deleteLocation('${row.id}')" class="btn btn-d" title="Eliminar"><i class="fa-solid fa-trash"></i></button></div>`; else act = sel; } else act = `<span class="badge" style="background:${bg}; color:${color}; width:100%; padding:8px 0;">${row.s || "Sin Datos"}</span>`; tbody.innerHTML += `<tr><td>${row.m}</td><td><b style="color:var(--blue);">${row.n}</b></td><td>${row.c}</td><td><span class="badge-tag" style="background:var(--bg);">${row.z}</span></td><td>${row.r}</td><td>${act}</td></tr>`; });
+    chunk.forEach(row => { let statusKey = row.s || "Sin Datos"; let bg = STATUS_COLORS[statusKey] || "#6c757d"; let color = 'white'; let act = ""; if (canEdit) { let sel = `<select onchange="window.saveStatus('${row.id}', this, ${window.esc(window.jsArg(row.n))})" style="background:${bg}; color:${color}; border:none; padding:8px; border-radius:4px; width:100%; outline:none; cursor:pointer; font-weight:bold;"><option value="Cobertura" ${row.s==='Cobertura'?'selected':''}>Cobertura</option><option value="Sin Cobertura" ${row.s==='Sin Cobertura'?'selected':''}>Sin Cobertura</option><option value="Consultar" ${row.s==='Consultar'?'selected':''}>Consultar</option><option value="Sin Datos" ${row.s==='Sin Datos' || !row.s ? 'selected':''}>Sin Datos</option></select>`; if (isAdmin) act = `<div style="display:flex;gap:5px;">${sel}<button onclick="window.editLocation('${row.id}')" class="btn btn-p" title="Modificar"><i class="fa-solid fa-pencil"></i></button><button onclick="window.deleteLocation('${row.id}')" class="btn btn-d" title="Eliminar"><i class="fa-solid fa-trash"></i></button></div>`; else act = sel; } else act = `<span class="badge" style="background:${bg}; color:${color}; width:100%; padding:8px 0;">${window.esc(row.s || "Sin Datos")}</span>`; tbody.innerHTML += `<tr><td>${window.esc(row.m)}</td><td><b style="color:var(--blue);">${window.esc(row.n)}</b></td><td>${window.esc(row.c)}</td><td><span class="badge-tag" style="background:var(--bg);">${window.esc(row.z)}</span></td><td>${window.esc(row.r)}</td><td>${act}</td></tr>`; });
   };
   window.saveStatus = async (id, sel, nombreUbi) => { await updateDoc(doc(db, "coberturas", id), { s: sel.value }); window.logAct("Cobertura", "Editar", `Cambio de estado a "${sel.value}" en: ${nombreUbi}`); };
   window.editLocation = async (id) => { EDITING_LOCATION_ID = id; const d = DB.cob.find(x => x.id === id); document.getElementById('modalTitle').innerText = "Editar Ubicación"; document.getElementById('newMun').value = d.m; document.getElementById('newNom').value = d.n; document.getElementById('newCat').value = d.c; document.getElementById('newZon').value = d.z; document.getElementById('newRef').value = d.r; document.getElementById('newCob').value = d.s || "Sin Datos"; window.openModal('modalAdd', true); };
@@ -2426,7 +2563,7 @@
     if (r) PAGE_TEC = 1; const tbody = document.getElementById('tableTecnicosBody'); if (!LOAD_STATE.tec) { tbody.innerHTML = `<tr><td colspan="6"><div class="spinner-container"><div class="spinner"></div><div class="loading-text">Cargando técnicos...</div></div></td></tr>`; return; }
     const q = document.getElementById('searchTecBox').value; let f = DB.tec; if (q) f = f.filter(row => window.matchSearch(`${row.n} ${row.t1} ${row.t2} ${row.a} ${row.d} ${row.p}`, q)); const total = Math.ceil(f.length / 10) || 1; if (PAGE_TEC > total) PAGE_TEC = total; document.getElementById('pageLabelTec').innerText = `${PAGE_TEC} / ${total}`; const chunk = f.slice((PAGE_TEC - 1) * 10, PAGE_TEC * 10); tbody.innerHTML = ''; const canEdit = window.hasPerm('tec_edit'); const isAdmin = (SESION.r === 'admin');
     if (chunk.length === 0) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px; color:var(--light-blue); font-weight:bold;">No se encontraron técnicos.</td></tr>`; return; }
-    chunk.forEach(row => { let act = ""; if (canEdit) act += `<button onclick="window.editTecnico('${row.id}')" class="btn btn-p" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += ` <button onclick="window.deleteTecnico('${row.id}')" class="btn btn-d" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let tels = row.t1 || ""; if(row.t2) tels += `<br><span style="color:var(--mid-gray); font-size:11px;">${row.t2}</span>`; tbody.innerHTML += `<tr><td><b style="color:var(--blue);">${row.n||''}</b></td><td>${tels}</td><td>${row.a||''}</td><td>${row.d||''}</td><td><span class="badge-tag">${row.p||'-'}</span></td><td>${act}</td></tr>`; });
+    chunk.forEach(row => { let act = ""; if (canEdit) act += `<button onclick="window.editTecnico('${row.id}')" class="btn btn-p" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += ` <button onclick="window.deleteTecnico('${row.id}')" class="btn btn-d" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let tels = window.esc(row.t1 || ""); if(row.t2) tels += `<br><span style="color:var(--mid-gray); font-size:11px;">${window.esc(row.t2)}</span>`; tbody.innerHTML += `<tr><td><b style="color:var(--blue);">${window.esc(row.n||'')}</b></td><td>${tels}</td><td>${window.esc(row.a||'')}</td><td>${window.esc(row.d||'')}</td><td><span class="badge-tag">${window.esc(row.p||'-')}</span></td><td>${act}</td></tr>`; });
   };
   window.editTecnico = async (id) => { EDITING_TEC_ID = id; const d = DB.tec.find(x => x.id === id); document.getElementById('modalTitleTec').innerText = "Editar Técnico"; document.getElementById('tecNom').value = d.n; document.getElementById('tecTel1').value = d.t1; document.getElementById('tecTel2').value = d.t2; document.getElementById('tecArea').value = d.a; document.getElementById('tecDPI').value = d.d; document.getElementById('tecPlaca').value = d.p; window.openModal('modalAddTec', true); };
   // Validación simple de formato — no bloquea si el campo está vacío (son opcionales), solo si
@@ -2441,7 +2578,7 @@
     if (r) PAGE_ENC = 1; const cont = document.getElementById('gridEncargadosContainer'); if (!LOAD_STATE.enc) { cont.innerHTML = `<div class="spinner-container"><div class="spinner"></div><div class="loading-text">Cargando directorio de contactos...</div></div>`; return; }
     const q = document.getElementById('searchEncBox').value; let f = DB.enc; if (q) f = f.filter(row => window.matchSearch(`${row.n} ${row.t} ${row.c} ${row.p} ${row.g}`, q)); const total = Math.ceil(f.length / ITEMS_PER_PAGE_ENC) || 1; if (PAGE_ENC > total) PAGE_ENC = total; document.getElementById('pageLabelEnc').innerText = `${PAGE_ENC} / ${total}`; const chunk = f.slice((PAGE_ENC - 1) * ITEMS_PER_PAGE_ENC, PAGE_ENC * ITEMS_PER_PAGE_ENC); if (chunk.length === 0) { cont.innerHTML = `<div style="text-align:center; padding:50px; background:white; border-radius:8px; color:var(--light-blue); font-weight:bold; font-size:16px;">No se encontraron contactos.</div>`; return; }
     const grupos = {}; chunk.forEach(r => { const c = r.g || "Otros"; if (!grupos[c]) grupos[c] = []; grupos[c].push(r); }); const canEdit = window.hasPerm('enc_edit'); const isAdmin = (SESION.r === 'admin'); const orden = ["Rutas domicilio", "Team Leaders", "Encargadas de marca", "Cambios y facturaciones", "Otro"]; const cats = Object.keys(grupos).sort((a,b) => (orden.indexOf(a)===-1?99:orden.indexOf(a)) - (orden.indexOf(b)===-1?99:orden.indexOf(b)));
-    let html = ""; cats.forEach(cat => { let ic = "fa-users"; if(cat.toLowerCase().includes('rutas')) ic = "fa-truck-fast"; if(cat.toLowerCase().includes('marca')) ic = "fa-tags"; if(cat.toLowerCase().includes('team')) ic = "fa-user-tie"; if(cat.toLowerCase().includes('factura')) ic = "fa-file-invoice-dollar"; html += `<div class="enc-category-title"><i class="fa-solid ${ic}"></i> ${cat}</div><div class="enc-grid">`; grupos[cat].forEach(row => { let act = ""; if (canEdit) act += `<button onclick="window.editEncargado('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteEncargado('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let ini = row.n ? row.n.charAt(0).toUpperCase() : "?"; let rol = row.p || "Equipo"; let tel = row.t ? `<div class="enc-contact" onclick="window.copyToClip('${row.t}')"><div><span class="enc-contact-label"><i class="fa-solid fa-phone"></i> Teléfono</span><span class="enc-contact-value">${row.t}</span></div><button class="enc-copy-btn" title="Copiar"><i class="fa-solid fa-copy"></i></button></div>` : ``; let cor = row.c ? `<div class="enc-contact" onclick="window.copyToClip('${row.c}')"><div><span class="enc-contact-label"><i class="fa-solid fa-envelope"></i> Correo</span><span class="enc-contact-value">${row.c}</span></div><button class="enc-copy-btn" title="Copiar"><i class="fa-solid fa-copy"></i></button></div>` : ``; html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${row.n||'Sin Nombre'}</div><div class="enc-role">${row.p||'Equipo'}</div></div></div></div><div class="enc-body">${tel}${cor}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`; }); html += `</div>`; }); cont.innerHTML = html;
+    let html = ""; cats.forEach(cat => { let ic = "fa-users"; if(cat.toLowerCase().includes('rutas')) ic = "fa-truck-fast"; if(cat.toLowerCase().includes('marca')) ic = "fa-tags"; if(cat.toLowerCase().includes('team')) ic = "fa-user-tie"; if(cat.toLowerCase().includes('factura')) ic = "fa-file-invoice-dollar"; html += `<div class="enc-category-title"><i class="fa-solid ${ic}"></i> ${window.esc(cat)}</div><div class="enc-grid">`; grupos[cat].forEach(row => { let act = ""; if (canEdit) act += `<button onclick="window.editEncargado('${row.id}')" class="btn btn-p" style="padding:4px 8px; font-size:11px;" title="Modificar"><i class="fa-solid fa-pencil"></i></button>`; if (isAdmin) act += `<button onclick="window.deleteEncargado('${row.id}')" class="btn btn-d" style="padding:4px 8px; font-size:11px;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>`; let ini = row.n ? window.esc(row.n.charAt(0).toUpperCase()) : "?"; let rol = row.p || "Equipo"; let tel = row.t ? `<div class="enc-contact" onclick="window.copyToClip(${window.jsArg(row.t)})"><div><span class="enc-contact-label"><i class="fa-solid fa-phone"></i> Teléfono</span><span class="enc-contact-value">${window.esc(row.t)}</span></div><button class="enc-copy-btn" title="Copiar"><i class="fa-solid fa-copy"></i></button></div>` : ``; let cor = row.c ? `<div class="enc-contact" onclick="window.copyToClip(${window.jsArg(row.c)})"><div><span class="enc-contact-label"><i class="fa-solid fa-envelope"></i> Correo</span><span class="enc-contact-value">${window.esc(row.c)}</span></div><button class="enc-copy-btn" title="Copiar"><i class="fa-solid fa-copy"></i></button></div>` : ``; html += `<div class="enc-card"><div class="enc-header"><div style="display:flex;align-items:center;"><div class="enc-avatar">${ini}</div><div><div class="enc-name">${window.esc(row.n||'Sin Nombre')}</div><div class="enc-role">${window.esc(row.p||'Equipo')}</div></div></div></div><div class="enc-body">${tel}${cor}</div>${act!==''?`<div class="enc-footer">${act}</div>`:''}</div>`; }); html += `</div>`; }); cont.innerHTML = html;
   };
   window.editEncargado = async (id) => { EDITING_ENC_ID = id; const d = DB.enc.find(x => x.id === id); document.getElementById('modalTitleEnc').innerText = "Editar Contacto"; document.getElementById('encCat').value = d.g || "Otro"; document.getElementById('encNom').value = d.n; document.getElementById('encTel').value = d.t; document.getElementById('encCor').value = d.c; document.getElementById('encPuesto').value = d.p; window.openModal('modalAddEnc', true); };
   window.saveEncargado = async () => { const data = { g: document.getElementById('encCat').value, n: document.getElementById('encNom').value.trim(), t: document.getElementById('encTel').value.trim(), c: document.getElementById('encCor').value.trim(), p: document.getElementById('encPuesto').value.trim() }; if(!data.n) return; if(!window.isValidPhone(data.t)) return alert("El teléfono no parece válido (revisa que tenga al menos 7 dígitos)."); if(!window.isValidEmail(data.c)) return alert("El correo no parece válido (revisa que tenga la forma nombre@dominio.com)."); if(EDITING_ENC_ID) { await updateDoc(doc(db, "encargados", EDITING_ENC_ID), data); window.logAct("Directorio", "Editar", "Contacto: " + data.n); } else { await addDoc(collection(db, "encargados"), { ...data, ambienteId: window.effectiveAmb('enc') }); window.logAct("Directorio", "Crear", "Nuevo contacto: " + data.n); } window.closeModal('modalAddEnc'); };
@@ -2531,7 +2668,33 @@
           alert(`Listo. Se repararon ${brokenRoles.length} rol(es): ahora son globales, aplican en cualquier ambiente.`);
       } catch(e) { alert("Error al reparar roles."); }
   };
-  window.exportDynToExcel = function() { if(!CURRENT_DYN_CONFIG || DB.dynData.length === 0) return alert("Sin datos"); let data = DB.dynData.filter(d => d.modId === CURRENT_DYN_CONFIG.id).map(r => { let obj = {}; CURRENT_DYN_CONFIG.columnas.forEach((col, i) => obj[col] = r['c'+i] || ""); return obj; }); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), CURRENT_DYN_CONFIG.nombre); XLSX.writeFile(wb, CURRENT_DYN_CONFIG.nombre+".xlsx"); };
+
+  // Corrige módulos personalizados que quedaron apuntando a un ambiente eliminado o recreado.
+  // A diferencia de los roles, un módulo con ambienteIds vacío queda INVISIBLE en todos lados (no "global"),
+  // así que aquí se reasignan a "Principal" para que no se pierdan de vista — luego se pueden reasignar bien.
+  window.repararModulosAmbiente = async function() {
+      const validIds = new Set(DB.ambientes.map(a => a.id));
+      const brokenMods = (DB_RAW.configModulos || []).filter(m => {
+          const ids = (m.ambienteIds && m.ambienteIds.length) ? m.ambienteIds : [window.ambKey(m.ambienteId)];
+          return ids.some(id => id !== "" && !validIds.has(id));
+      });
+      if (brokenMods.length === 0) { alert("No se encontró ningún módulo con un ambiente inválido. Todo está en orden."); return; }
+      if (!confirm(`Se encontraron ${brokenMods.length} módulo(s) apuntando a un ambiente que ya no existe:\n\n${brokenMods.map(m => m.nombre).join(', ')}\n\nSe dejarán visibles en "Principal" para que no se pierdan — luego los puedes reasignar al ambiente correcto editándolos. ¿Continuar?`)) return;
+      try {
+          const batch = writeBatch(db);
+          brokenMods.forEach(m => {
+              const ids = (m.ambienteIds && m.ambienteIds.length) ? m.ambienteIds : [window.ambKey(m.ambienteId)];
+              const cleaned = ids.filter(id => id === "" || validIds.has(id));
+              const finalIds = cleaned.length ? cleaned : [""];
+              batch.update(doc(db, "modulos_config", m.id), { ambienteIds: finalIds, ambienteId: finalIds[0] });
+          });
+          await batch.commit();
+          window.logAct("Módulos", "Reparar", `Se repararon ${brokenMods.length} módulo(s) con ambiente inválido.`);
+          alert(`Listo. Se repararon ${brokenMods.length} módulo(s).`);
+      } catch(e) { alert("Error al reparar módulos."); }
+  };
+
+  window.exportDynToExcel = function() { if(!CURRENT_DYN_CONFIG) return; let data = DB.dynData.filter(d => d.modId === CURRENT_DYN_CONFIG.id).map(r => { let obj = {}; CURRENT_DYN_CONFIG.columnas.forEach((col, i) => obj[col] = r['c'+i] || ""); return obj; }); if(data.length === 0) return alert("Este módulo no tiene datos para exportar."); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), (CURRENT_DYN_CONFIG.nombre.replace(/[\\/?*[\]:]/g, '').slice(0, 31) || 'Datos')); XLSX.writeFile(wb, CURRENT_DYN_CONFIG.nombre+".xlsx"); };
 
   window.handleImportCob = function(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar?`)) return; for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { const keys = Object.keys(row); const getVal = (possible) => { for(let k of keys) if(possible.includes(k.toLowerCase().trim())) return String(row[k] || ""); return ""; }; let s = "Sin Datos"; let rawS = getVal(["estado", "cobertura", "est"]).toLowerCase(); if (rawS.includes("sin")) s = "Sin Cobertura"; else if (rawS.includes("cobertura")) s = "Cobertura"; else if (rawS.includes("consultar")) s = "Consultar"; batch.set(doc(collection(db, "coberturas")), { m: getVal(["municipio", "mun"]).trim(), n: getVal(["nombre", "colonia", "nom"]).trim(), c: getVal(["categoria", "categoría", "cat"]).trim(), z: getVal(["zona", "z"]).trim(), r: getVal(["referencia", "ref"]).trim(), s: s, ambienteId: window.effectiveAmb('cob') }); }); await batch.commit(); } window.logAct("Cobertura", "Importación", "Importación masiva desde Excel"); alert("Éxito"); e.target.value = ""; }; r.readAsBinaryString(f); };
   window.handleImportTec = function(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = async (evt) => { const json = XLSX.utils.sheet_to_json(XLSX.read(evt.target.result, {type: 'binary'}).Sheets[XLSX.read(evt.target.result, {type: 'binary'}).SheetNames[0]]); if(!confirm(`¿Importar?`)) return; for (let i = 0; i < json.length; i += 400) { const batch = writeBatch(db); json.slice(i, i + 400).forEach(row => { const keys = Object.keys(row); const getVal = (possible) => { for(let k of keys) if(possible.includes(k.toLowerCase().trim())) return String(row[k] || ""); return ""; }; batch.set(doc(collection(db, "tecnicos")), { n: getVal(["nombre", "tecnico", "técnico", "tec"]).trim(), t1: getVal(["telefono", "teléfono", "tel1", "celular"]).trim(), t2: getVal(["telefono 2", "teléfono 2", "tel2", "otro"]).trim(), a: getVal(["area", "área", "zona"]).trim(), d: getVal(["dpi", "identificacion"]).trim(), p: getVal(["placa", "vehiculo"]).trim(), ambienteId: window.effectiveAmb('tec') }); }); await batch.commit(); } window.logAct("Técnicos", "Importación", "Importación masiva desde Excel"); alert("Éxito"); e.target.value = ""; }; r.readAsBinaryString(f); };
