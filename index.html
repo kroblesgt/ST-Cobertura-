@@ -793,6 +793,7 @@
                                     <div><label style="font-size:11px; color:var(--blue); font-weight:bold;">Cobertura</label><select id="ac_cob" class="inp" style="margin:2px 0 0;"><option value="">Datos propios (independiente)</option></select></div>
                                     <div><label style="font-size:11px; color:var(--blue); font-weight:bold;">Técnicos</label><select id="ac_tec" class="inp" style="margin:2px 0 0;"><option value="">Datos propios (independiente)</option></select></div>
                                     <div><label style="font-size:11px; color:var(--blue); font-weight:bold;">Directorio</label><select id="ac_enc" class="inp" style="margin:2px 0 0;"><option value="">Datos propios (independiente)</option></select></div>
+                                    <div><label style="font-size:11px; color:var(--blue); font-weight:bold;">Procedimientos</label><select id="ac_proc" class="inp" style="margin:2px 0 0;"><option value="">Datos propios (independiente)</option></select></div>
                                     <div><label style="font-size:11px; color:var(--blue); font-weight:bold;">Avisos</label><select id="ac_avisos" class="inp" style="margin:2px 0 0;"><option value="">Datos propios (independiente)</option></select></div>
                                 </div>
                             </div>
@@ -1333,6 +1334,8 @@
       return { ok: stored === plain, legacy: true };
   };
   window.inAmb = function(x) { return (x.ambienteId || null) === (AMBIENTE_ACTUAL || null); };
+  // Procedimientos del ambiente actual, o los del ambiente del que este toma sus datos (Ajustes > Ambientes > Origen de los datos).
+  window.procEnAmb = function(x) { return window.ambKey(x.ambienteId) === window.effectiveAmb('proc'); };
   let PAGE = 1, PAGE_TEC = 1, PAGE_ENC = 1, PAGE_DYN = 1; let ITEMS_PER_PAGE_ENC = 16;
   let EDITING_USER_ID = null, EDITING_LOCATION_ID = null, EDITING_TEC_ID = null, EDITING_ENC_ID = null, EDITING_DYN_ID = null, EDITING_ROLE_ID = null, EDITING_MOD_ID = null, EDITING_PROC_ID = null, EDITING_AVISO_ID = null, EDITING_AMB_ID = null;
   let AVISO_TIPO = 'info'; let AVISO_IMG_DATA = null;
@@ -1932,7 +1935,8 @@
   window.toggleAllCheckboxes = function(containerId, checked, callback) { const c = document.getElementById(containerId); if(!c) return; c.querySelectorAll('input[type="checkbox"]').forEach(i => i.checked = checked); if(callback && window[callback]) window[callback](); };
   window.setCheckedValues = function(containerId, values) { const c = document.getElementById(containerId); if(!c) return; c.querySelectorAll('input[type="checkbox"]').forEach(i => { i.checked = values.includes(i.value); }); };
   const FIXED_MODS_DEFAULT = ['cob', 'tec', 'enc', 'proc', 'avisos'];
-  const SHARED_MODS_KEYS = ['cob', 'tec', 'enc', 'avisos'];
+  const SHARED_MODS_KEYS = ['cob', 'tec', 'enc', 'proc', 'avisos'];
+  const SHARED_MODS_LABELS = { cob: 'Cobertura', tec: 'Técnicos', enc: 'Directorio', proc: 'Procedimientos', avisos: 'Avisos' };
   window.fixedModEnabled = function(key) {
       if (!AMBIENTE_ACTUAL) return (PRINCIPAL_CONFIG.modulos || FIXED_MODS_DEFAULT).includes(key);
       const amb = DB.ambientes.find(a => a.id === AMBIENTE_ACTUAL);
@@ -2015,7 +2019,7 @@
       DB.configModulos = DB_RAW.configModulos.filter(m => (m.ambienteIds || [window.ambKey(m.ambienteId)]).includes(k));
       // Procedimientos: el módulo principal (sin modId) sí se filtra por ambiente; los módulos dinámicos de procedimientos
       // ya quedan controlados por qué módulo (modId) es visible en este ambiente, así que sus documentos no se filtran aquí.
-      DB.proc = DB_RAW.proc.filter(p => p.modId ? true : window.inAmb(p));
+      DB.proc = DB_RAW.proc.filter(p => p.modId ? true : window.procEnAmb(p));
       DB.roles = DB_RAW.roles.filter(r => window.roleInAmb(r, k));
       if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) { DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] }); }
       if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) { DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] }); }
@@ -2109,7 +2113,7 @@
       html += DB.ambientes.map(a => {
           let linkedTxt = '';
           const linked = a.linked || {}; const legacyShared = a.shared || [];
-          const entries = SHARED_MODS_KEYS.filter(k => (linked[k] !== undefined && linked[k] !== null) || legacyShared.includes(k)).map(k => { const target = (linked[k] !== undefined && linked[k] !== null) ? linked[k] : ""; return `${k} → ${ambNombreDe(target)}`; });
+          const entries = SHARED_MODS_KEYS.filter(k => (linked[k] !== undefined && linked[k] !== null) || legacyShared.includes(k)).map(k => { const target = (linked[k] !== undefined && linked[k] !== null) ? linked[k] : ""; return `${SHARED_MODS_LABELS[k] || k} → ${ambNombreDe(target)}`; });
           if (entries.length) linkedTxt = `<br><small style="color:var(--green); font-weight:bold;"><i class="fa-solid fa-arrows-rotate"></i> ${entries.join(', ')}</small>`;
           return `<div class="mod-list-item"><div><b style="color:var(--blue);">${a.nombre}</b><br><small style="color:var(--mid-gray);">Módulos: ${(a.modulos||FIXED_MODS_DEFAULT).join(', ') || 'ninguno'}</small>${linkedTxt}</div><div><button onclick="window.editarAmbiente('${a.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarAmbiente('${a.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`;
       }).join('');
@@ -2684,13 +2688,13 @@
   function listenToProcedimientos() { 
       onSnapshot(collection(db, "procedimientos_html"), (snapshot) => { 
           snapshot.docChanges().forEach((change) => {
-              if (change.type === "added" && !isInitialProcLoad && window.hasPerm('proc_view') && !change.doc.data().modId && window.inAmb(change.doc.data())) {
+              if (change.type === "added" && !isInitialProcLoad && window.hasPerm('proc_view') && !change.doc.data().modId && window.procEnAmb(change.doc.data())) {
                   const p = change.doc.data();
                   window.notificarChrome("Nuevo Procedimiento", `${p.tit} (${p.cat || 'General'})`);
               }
           });
           isInitialProcLoad = false;
-          DB_RAW.proc = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); DB.proc = DB_RAW.proc.filter(p => p.modId ? true : window.inAmb(p));
+          DB_RAW.proc = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); DB.proc = DB_RAW.proc.filter(p => p.modId ? true : window.procEnAmb(p));
           LOAD_STATE.proc = true; 
           window.updateNotifBadge();
           
@@ -2888,7 +2892,7 @@
               await updateDoc(doc(db, "procedimientos_html", EDITING_PROC_ID), payload); 
               window.logAct("Procedimientos", "Editar", "Se actualizó: " + tit); alert("Procedimiento actualizado."); 
           } else { 
-              payload.fecha = Date.now(); payload.likes = []; payload.ambienteId = AMBIENTE_ACTUAL;
+              payload.fecha = Date.now(); payload.likes = []; payload.ambienteId = ADMIN_PROC_TARGET_MODID ? AMBIENTE_ACTUAL : (window.effectiveAmb('proc') || null);
               await addDoc(collection(db, "procedimientos_html"), payload); 
               window.logAct("Procedimientos", "Crear", "Nuevo manual: " + tit); alert("Procedimiento creado."); 
           } 
@@ -3228,9 +3232,20 @@
   };
 
   // Quiénes deberían confirmar: usuarios aprobados (no pendientes, invitados ni administrador) del ambiente de la publicación.
+  // Ambientes que ven los datos de un módulo guardados en "origen" (el propio origen + los que lo toman como fuente).
+  window.ambientesQueUsan = function(key, origen) {
+      const out = [origen];
+      DB.ambientes.forEach(a => {
+          let src = window.ambKey(a.id);
+          if (a.linked && a.linked[key] !== undefined && a.linked[key] !== null && a.linked[key] !== a.id) src = window.ambKey(a.linked[key]);
+          else if (Array.isArray(a.shared) && a.shared.includes(key)) src = "";
+          if (src === origen && !out.includes(a.id)) out.push(a.id);
+      });
+      return out;
+  };
   window.lectoresEsperados = function(tipo, item) {
-      const k = window.ambKey(item.ambienteId);
-      return DB_USERS.filter(u => !['pendiente', 'invitado', 'admin'].includes(u.r) && !u.authUid && window.userAmbList(u).includes(k));
+      const ambs = window.ambientesQueUsan(tipo === 'proc' ? 'proc' : 'avisos', window.ambKey(item.ambienteId));
+      return DB_USERS.filter(u => !['pendiente', 'invitado', 'admin'].includes(u.r) && !u.authUid && window.userAmbList(u).some(a => ambs.includes(a)));
   };
   window.cargarLecturasDe = async function(tipo, item) {
       const snap = await getDocs(query(collection(db, "lecturas"), where("itemId", "==", item.id)));
