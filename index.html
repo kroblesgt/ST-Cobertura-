@@ -560,6 +560,26 @@
   .est-li small { color: var(--muted); white-space: nowrap; } .est-li small.old { color: #c62834; font-weight: 600; }
   @media (max-width: 900px) { .est-grid { grid-template-columns: 1fr; } }
   @media (max-width: 768px) { .lect-actions { width: 100%; } .lect-actions .btn { flex: 1; } }
+
+  /* ---------- IMAGEN DE AVISOS + VISOR A PANTALLA COMPLETA ---------- */
+  .aviso-img-wrap { order: -1; position: relative; flex-shrink: 0; padding: 0; border: 1px solid var(--border-soft); background: #f5f8fb; border-radius: 10px; cursor: zoom-in; overflow: hidden; width: 200px; height: 140px; display: flex; align-items: center; justify-content: center; }
+  .aviso-img-wrap .aviso-img { width: 100%; height: 100%; object-fit: contain; border-radius: 0; box-shadow: none; order: 0; margin: 0; }
+  .aviso-img-hint { position: absolute; left: 0; right: 0; bottom: 0; background: rgba(10,34,64,0.78); color: white; font-size: 11.5px; font-weight: 600; padding: 6px; display: flex; align-items: center; justify-content: center; gap: 6px; opacity: 0; transition: opacity 0.2s; font-family: inherit; }
+  .aviso-img-wrap:hover .aviso-img-hint, .aviso-img-wrap:focus-visible .aviso-img-hint { opacity: 1; }
+  .proc-document img, #procViewerContainer .ql-editor img { cursor: zoom-in; }
+  #imgViewer { position: fixed; inset: 0; z-index: 10050; background: rgba(6,18,36,0.97); backdrop-filter: blur(6px); display: flex; flex-direction: column; }
+  #imgViewer.hidden { display: none !important; }
+  .iv-bar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; color: white; flex-shrink: 0; }
+  .iv-bar b { flex: 1; font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .iv-btn { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18); color: white; height: 38px; min-width: 38px; padding: 0 12px; border-radius: 10px; cursor: pointer; font-size: 14px; font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; }
+  .iv-btn:hover { background: rgba(255,255,255,0.22); }
+  .iv-zoom { color: rgba(255,255,255,0.75); font-size: 12.5px; min-width: 46px; text-align: center; font-variant-numeric: tabular-nums; }
+  .iv-stage { flex: 1; overflow: auto; display: flex; align-items: center; justify-content: center; padding: 10px; }
+  .iv-stage.zoomed { display: block; }
+  .iv-stage img { max-width: 100%; max-height: 100%; background: white; border-radius: 6px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); cursor: zoom-in; display: block; }
+  .iv-stage.zoomed img { max-width: none; max-height: none; cursor: zoom-out; margin: 0 auto; }
+  .iv-tip { text-align: center; color: rgba(255,255,255,0.55); font-size: 12px; padding: 0 0 10px; flex-shrink: 0; }
+  @media (max-width: 768px) { .aviso-img-wrap { width: 100%; height: 190px; } .iv-bar .iv-txt { display: none; } .iv-tip { display: none; } }
 </style>
 </head>
 <body>
@@ -1223,6 +1243,21 @@
   </div>
 </div>
 
+
+<!-- VISOR DE IMÁGENES A PANTALLA COMPLETA -->
+<div id="imgViewer" class="hidden" onclick="if(event.target === this || event.target.classList.contains('iv-stage')) window.cerrarImagen()">
+  <div class="iv-bar">
+    <b id="ivTitulo"></b>
+    <button class="iv-btn" onclick="window.zoomImagen(-1)" title="Alejar"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+    <span class="iv-zoom" id="ivZoom">Ajustar</span>
+    <button class="iv-btn" onclick="window.zoomImagen(1)" title="Acercar"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+    <button class="iv-btn" onclick="window.zoomImagen(0)" title="Ajustar a la pantalla"><i class="fa-solid fa-expand"></i></button>
+    <a class="iv-btn" id="ivDescargar" download="imagen-aviso.jpg" title="Descargar imagen"><i class="fa-solid fa-download"></i> <span class="iv-txt">Descargar</span></a>
+    <button class="iv-btn" onclick="window.cerrarImagen()" title="Cerrar (Esc)"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="iv-stage" id="ivStage"><img id="ivImg" alt="" onclick="window.zoomImagen(this.closest('.iv-stage').classList.contains('zoomed') ? 0 : 1)"></div>
+  <div class="iv-tip">Clic en la imagen para acercar · rueda del mouse con Ctrl para zoom · Esc para cerrar</div>
+</div>
 <!-- MODALES RESTANTES (Ubicaciones, Técnicos, Encargados, Dinámicos) -->
 <div id="modalAdd" class="modal-backdrop hidden">
   <div class="modal"><div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><h3 id="modalTitle" style="margin:0; color:var(--blue)">Nueva Ubicación</h3><button onclick="window.closeModal('modalAdd')" class="btn btn-o" style="border:none; color:var(--mid-gray);"><i class="fa-solid fa-times fa-lg"></i></button></div>
@@ -1882,10 +1917,19 @@
     window.switchModule('inicio'); 
     window.initSortableTabs(); 
     window.initExtras();
-    window.heartbeat(); heartbeatInterval = setInterval(window.heartbeat, 180000);
+    window.heartbeat(); heartbeatInterval = setInterval(window.heartbeat, HEARTBEAT_MS);
   };
 
-  window.heartbeat = async () => { if(SESION.id && SESION.id !== "master_admin") { try { await updateDoc(doc(db, "usuarios", SESION.id), { lastActive: Date.now(), ultimoAcceso: Date.now() }); } catch(e){} } };
+  // ---- "En línea" ----
+  // Cada sesión avisa que sigue activa cada 2 min (y además al volver a la pestaña). Se considera "en línea" a quien
+  // avisó en los últimos 5 min: así no "desaparece" la gente que tiene la intranet en una pestaña de fondo
+  // (Chrome/Edge retrasan los temporizadores de esas pestañas hasta 1 minuto).
+  const HEARTBEAT_MS = 120000; const ONLINE_WINDOW_MS = 300000; let LAST_HEARTBEAT = 0;
+  window.isOnline = (u) => u.lastActive && (Date.now() - u.lastActive < ONLINE_WINDOW_MS) && u.r !== 'pendiente';
+  window.heartbeat = async () => { if(SESION.id && SESION.id !== "master_admin") { LAST_HEARTBEAT = Date.now(); try { await updateDoc(doc(db, "usuarios", SESION.id), { lastActive: Date.now(), ultimoAcceso: Date.now() }); } catch(e){} } };
+  // Al volver a la pestaña o a la ventana, avisar de inmediato (sin repetir si se avisó hace menos de 1 min).
+  const heartbeatSiHaceFalta = () => { if (SESION.id && document.visibilityState === 'visible' && Date.now() - LAST_HEARTBEAT > 60000) window.heartbeat(); };
+  document.addEventListener('visibilitychange', heartbeatSiHaceFalta); window.addEventListener('focus', heartbeatSiHaceFalta);
   window.logout = async (clear = true) => { if(clear && SESION.id && SESION.id !== "master_admin") try { await updateDoc(doc(db, "usuarios", SESION.id), { token: null, lastActive: 0 }); } catch(e){} try { await signOut(auth); } catch(e){} localStorage.removeItem('distelsa_pro_fb'); location.reload(); };
 
   // ================= USERS Y ROLES =================
@@ -1905,7 +1949,7 @@
   };
   window.updateOnlineUI = () => { 
       const now = Date.now(); 
-      let online = DB_USERS.filter(u => u.lastActive && (now - u.lastActive < 190000) && u.r !== 'pendiente'); 
+      let online = DB_USERS.filter(window.isOnline); 
       if(SESION.r !== 'admin') online = online.filter(u => u.r !== 'admin'); 
       let onlineNames = online.map(u => u.u); 
       document.getElementById('onlineCount').innerText = onlineNames.length; 
@@ -1916,8 +1960,8 @@
   // MONITOR DE ACTIVIDAD
   window.renderAdminMonitor = function() {
       const now = Date.now(); 
-      let online = DB_USERS.filter(u => u.lastActive && (now - u.lastActive < 190000) && u.r !== 'pendiente');
-      document.getElementById('adminOnlineList').innerHTML = online.map(u => `<div style="padding: 12px; border-bottom: 1px solid var(--border-soft); display: flex; justify-content: space-between; align-items: center;"><div style="font-weight: 600; color: var(--blue);"><i class="fa-solid fa-circle fa-beat" style="color:var(--green); font-size:8px; margin-right:8px;"></i> ${window.esc(u.u)}</div><span style="font-size:11px; background:white; border: 1px solid var(--border-soft); color:var(--mid-gray); padding:3px 8px; border-radius:4px; font-weight:bold; text-transform:uppercase;">${u.r}</span></div>`).join('') || '<div style="padding:15px; color:var(--mid-gray); font-size:13px; text-align:center;">Nadie conectado en este momento.</div>';
+      let online = DB_USERS.filter(window.isOnline).sort((a, b) => (a.u || '').localeCompare(b.u || ''));
+      document.getElementById('adminOnlineList').innerHTML = online.map(u => `<div style="padding: 12px; border-bottom: 1px solid var(--border-soft); display: flex; justify-content: space-between; align-items: center;"><div style="font-weight: 600; color: var(--blue);"><i class="fa-solid fa-circle fa-beat" style="color:var(--green); font-size:8px; margin-right:8px;"></i> ${window.esc(u.u)}</div><span style="font-size:11px; background:white; border: 1px solid var(--border-soft); color:var(--mid-gray); padding:3px 8px; border-radius:4px; font-weight:bold; text-transform:uppercase;">${window.esc(u.r)}</span></div>`).join('') || '<div style="padding:15px; color:var(--mid-gray); font-size:13px; text-align:center;">Nadie conectado en este momento.</div>';
       document.getElementById('adminUpdatesLog').innerHTML = DB.logs.map(l => {
           let dateStr = l.ts ? new Date(l.ts).toLocaleString() : "Fecha Desconocida";
           let color = l.act === 'Crear' ? 'var(--green)' : (l.act === 'Eliminar' || l.act === 'Papelera' || l.act === 'Eliminar Permanente' ? '#e63946' : 'var(--light-blue)');
@@ -2500,10 +2544,19 @@
       reader.onload = (e) => {
           const img = new Image();
           img.onload = () => {
-              const maxW = 900; const scale = Math.min(1, maxW / img.width);
-              const canvas = document.createElement('canvas'); canvas.width = img.width * scale; canvas.height = img.height * scale;
-              canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-              AVISO_IMG_DATA = canvas.toDataURL('image/jpeg', 0.7);
+              // Se guarda con buena resolución para que tablas y texto se lean al ampliar, pero sin pasar
+              // el límite de Firestore (~1 MB por documento): si queda muy pesada, se reduce poco a poco.
+              const LIMITE = 900000; let maxW = 1800, calidad = 0.88, data = '';
+              for (let intento = 0; intento < 8; intento++) {
+                  const scale = Math.min(1, maxW / img.width);
+                  const canvas = document.createElement('canvas'); canvas.width = Math.round(img.width * scale); canvas.height = Math.round(img.height * scale);
+                  const ctx = canvas.getContext('2d'); ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, canvas.width, canvas.height); // PNG con transparencia no queda negro
+                  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                  data = canvas.toDataURL('image/jpeg', calidad);
+                  if (data.length <= LIMITE) break;
+                  if (calidad > 0.72) calidad -= 0.08; else maxW = Math.round(maxW * 0.8);
+              }
+              AVISO_IMG_DATA = data;
               document.getElementById('admAviImgPreview').src = AVISO_IMG_DATA;
               document.getElementById('admAviImgPreviewBox').classList.remove('hidden');
           };
@@ -2602,7 +2655,7 @@
       DB.avisos.forEach(a => {
           let dateStr = a.fecha ? new Date(a.fecha).toLocaleDateString() + ' ' + new Date(a.fecha).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
           let ti = tipoInfo[a.tipo] || tipoInfo.info;
-          let imgHtml = a.img ? `<img src="${a.img}" class="aviso-img" alt="Imagen del aviso">` : '';
+          let imgHtml = a.img ? `<button type="button" class="aviso-img-wrap" onclick="window.verImagen(this.querySelector('img').src, ${window.esc(window.jsArg(a.tit || ''))})" title="Ver imagen en grande"><img src="${a.img}" class="aviso-img" alt="Imagen del aviso"><span class="aviso-img-hint"><i class="fa-solid fa-magnifying-glass-plus"></i> Ver en grande</span></button>` : '';
           html += `
           <div class="aviso-card" style="border-left-color:${ti.c};">
               ${imgHtml}
@@ -3185,6 +3238,12 @@
   };
 
   // ---------------- CONFIRMACIÓN DE LECTURA ----------------
+  // Mensaje claro cuando Firebase rechaza guardar algo (casi siempre: reglas de Firestore sin publicar).
+  window.errorGuardado = function(e, coleccion) {
+      console.error('Error guardando en ' + coleccion + ':', e);
+      if (e && e.code === 'permission-denied') return alert(`Firebase no permitió guardar (permiso denegado en la colección "${coleccion}").\n\nEl administrador debe publicar las reglas actualizadas de Firestore (archivo firestore.rules) en Firebase > Firestore Database > Reglas.`);
+      alert('No se pudo guardar. Revisa tu conexión e intenta de nuevo.' + (e && e.code ? `\n\nDetalle: ${e.code}` : ''));
+  };
   window.lectKey = (tipo, id) => tipo + '_' + id;
   window.findLectItem = (tipo, id) => tipo === 'proc' ? DB.proc.find(p => p.id === id) : DB.avisos.find(a => a.id === id);
   // Una confirmación vale si es posterior a la última vez que se pidió "confirmar de nuevo" (lectVersion).
@@ -3218,7 +3277,7 @@
           await setDoc(doc(db, "lecturas", `${tipo}_${item.id}_${SESION.id}`), data);
           MY_READS[window.lectKey(tipo, item.id)] = data; window.refreshLecturaBoxes(); window.renderHomeExtras();
           window.showToastSuccess('¡Gracias! Tu lectura quedó confirmada.');
-      } catch(e) { alert('No se pudo guardar tu confirmación. Revisa tu conexión e intenta de nuevo.'); }
+      } catch(e) { window.errorGuardado(e, 'lecturas'); }
   };
 
   // Lo que la persona tiene pendiente de confirmar (se muestra en Inicio).
@@ -3347,7 +3406,7 @@
       MY_FAVS = on ? MY_FAVS.filter(x => x !== id) : [...MY_FAVS, id]; window.refreshFavButtons(); window.renderHomeExtras();
       if (CURRENT_MODULE === 'proc') window.renderProcMenu();
       try { await setDoc(doc(db, "favoritos", SESION.id), { procs: on ? arrayRemove(id) : arrayUnion(id), u: SESION.u }, { merge: true }); }
-      catch(e) { alert('No se pudo guardar el favorito.'); }
+      catch(e) { window.errorGuardado(e, 'favoritos'); }
   };
   window.getProcHeaderActions = function(proc) {
       const on = window.isFav(proc.id);
@@ -3461,6 +3520,51 @@
           <div class="est-card wide"><h4><i class="fa-solid fa-user-clock"></i> Último acceso por usuario</h4><p class="est-sub">Los que llevan más tiempo sin entrar aparecen primero.</p><div class="est-scroll">${users.length ? [...users].sort((a, b) => acceso(a) - acceso(b)).map(u => { const t = acceso(u); const viejo = !t || t < now - 7 * DIA; return `<div class="est-li"><span>${window.esc(u.u)} <em>${window.esc(u.r)}</em></span><small class="${viejo ? 'old' : ''}">${t ? window.timeAgo(t) : 'sin registro'}</small></div>`; }).join('') : vacio('No hay usuarios en este ambiente.')}</div></div>
         </div>`;
   };
+
+
+  // ---------------- VISOR DE IMÁGENES ----------------
+  // Se usa en las imágenes de los Avisos y en las imágenes dentro de los Procedimientos.
+  let IV_ZOOM = 0; // 0 = ajustar a la pantalla; si no, factor sobre el tamaño real
+  window.verImagen = function(src, titulo) {
+      if (!src) return;
+      const img = document.getElementById('ivImg'); img.src = src;
+      document.getElementById('ivTitulo').innerText = titulo || 'Imagen';
+      const a = document.getElementById('ivDescargar'); a.href = src; a.download = ((titulo || 'imagen').replace(/[\\/:*?"<>|]/g, '').slice(0, 60) || 'imagen') + '.jpg';
+      IV_ZOOM = 0; window.aplicarZoomImagen();
+      document.getElementById('imgViewer').classList.remove('hidden');
+  };
+  window.cerrarImagen = () => document.getElementById('imgViewer').classList.add('hidden');
+  window.aplicarZoomImagen = function() {
+      const img = document.getElementById('ivImg'), stage = document.getElementById('ivStage');
+      stage.classList.toggle('zoomed', IV_ZOOM > 0);
+      img.style.width = IV_ZOOM > 0 ? Math.round((img.naturalWidth || 800) * IV_ZOOM) + 'px' : '';
+      document.getElementById('ivZoom').innerText = IV_ZOOM > 0 ? Math.round(IV_ZOOM * 100) + '%' : 'Ajustar';
+  };
+  window.zoomImagen = function(dir) {
+      const img = document.getElementById('ivImg');
+      if (dir === 0) IV_ZOOM = 0;
+      else {
+          // Al empezar a hacer zoom se parte del tamaño con el que se ve "ajustada" a la pantalla.
+          let actual = IV_ZOOM > 0 ? IV_ZOOM : (img.clientWidth / (img.naturalWidth || img.clientWidth || 1));
+          IV_ZOOM = Math.min(4, Math.max(0.25, actual * (dir > 0 ? 1.35 : 1 / 1.35)));
+      }
+      window.aplicarZoomImagen();
+  };
+  document.addEventListener('keydown', (e) => {
+      const v = document.getElementById('imgViewer'); if (!v || v.classList.contains('hidden')) return;
+      if (e.key === 'Escape') window.cerrarImagen(); else if (e.key === '+' || e.key === '=') window.zoomImagen(1); else if (e.key === '-') window.zoomImagen(-1); else if (e.key === '0') window.zoomImagen(0);
+  });
+  document.addEventListener('wheel', (e) => {
+      const v = document.getElementById('imgViewer'); if (!v || v.classList.contains('hidden') || !e.ctrlKey) return;
+      e.preventDefault(); window.zoomImagen(e.deltaY < 0 ? 1 : -1);
+  }, { passive: false });
+  // Imágenes dentro de un procedimiento: clic para verlas en grande (excepto si la imagen es un enlace).
+  document.addEventListener('click', (e) => {
+      const img = e.target.closest && e.target.closest('#procViewerContainer img, .dyn-proc-wrap .proc-document img');
+      if (!img || img.closest('a') || img.closest('#imgViewer')) return;
+      const tit = (document.querySelector('#procViewerContainer h3') || {}).innerText || 'Imagen';
+      window.verImagen(img.src, tit);
+  });
 
 </script>
 </body>
