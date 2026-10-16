@@ -1051,6 +1051,14 @@
                                 </label>
                             </div>
 
+                            <!-- AMBIENTES DONDE SE PUBLICA -->
+                            <div class="span-2 lect-editor hidden" id="admProcAmbBox">
+                                <div class="quiz-editor-head" style="margin:0;"><b><i class="fa-solid fa-building"></i> Publicar en estos ambientes</b>
+                                    <span style="display:flex; gap:6px;"><button type="button" class="btn btn-o" style="padding:5px 10px; font-size:12px;" onclick="window.toggleAllCheckboxes('admProcAmbList', true)">Todos</button><button type="button" class="btn btn-o" style="padding:5px 10px; font-size:12px;" onclick="window.toggleAllCheckboxes('admProcAmbList', false)">Ninguno</button></span></div>
+                                <small style="color:var(--muted); font-size:12px; margin-top:-6px;">Un solo procedimiento visible en varios ambientes, sin duplicarlo. Si lo editas, el cambio se ve en todos.</small>
+                                <div id="admProcAmbList" class="perm-grid" style="margin-top:0;"></div>
+                            </div>
+
                             <!-- CONFIRMACIÓN DE LECTURA + MINI EVALUACIÓN -->
                             <div class="span-2 lect-editor">
                                 <label class="lect-check"><input type="checkbox" id="admProcReqLect"><span><b>Requiere confirmación de lectura</b><small>Cada agente deberá presionar “Leído y entendido”. Verás quién confirmó y quién no.</small></span></label>
@@ -1370,7 +1378,35 @@
   };
   window.inAmb = function(x) { return (x.ambienteId || null) === (AMBIENTE_ACTUAL || null); };
   // Procedimientos del ambiente actual, o los del ambiente del que este toma sus datos (Ajustes > Ambientes > Origen de los datos).
-  window.procEnAmb = function(x) { return window.ambKey(x.ambienteId) === window.effectiveAmb('proc'); };
+  // Un procedimiento puede estar publicado en varios ambientes a la vez (campo ambienteIds).
+  window.procAmbs = function(x) { return (Array.isArray(x.ambienteIds) && x.ambienteIds.length) ? x.ambienteIds.map(window.ambKey) : [window.ambKey(x.ambienteId)]; };
+  window.procEnAmb = function(x) { return window.procAmbs(x).includes(window.effectiveAmb('proc')); };
+  // Ambiente del que realmente toma sus procedimientos un ambiente dado (por si está enlazado a otro en "Origen de los datos").
+  window.fuenteProcDe = function(ambId) {
+      const k = window.ambKey(ambId); if (!k) return "";
+      const a = DB.ambientes.find(x => x.id === k); if (!a) return k;
+      if (a.linked && a.linked.proc !== undefined && a.linked.proc !== null && a.linked.proc !== a.id) return window.ambKey(a.linked.proc);
+      if (Array.isArray(a.shared) && a.shared.includes('proc')) return "";
+      return k;
+  };
+  // Lista de ambientes que se pueden elegir al publicar (solo los que tienen procedimientos propios).
+  window.renderAdminProcAmbList = function(seleccion) {
+      const box = document.getElementById('admProcAmbBox'), list = document.getElementById('admProcAmbList'); if (!box || !list) return;
+      const nombre = (id) => id ? ((DB.ambientes.find(a => a.id === id) || {}).nombre || '?') : 'Principal';
+      const fuentes = [...new Set(window.misAmbientes().map(window.fuenteProcDe))];
+      if (ADMIN_PROC_TARGET_MODID || fuentes.length <= 1) { box.classList.add('hidden'); list.innerHTML = ''; return; }
+      const sel = (seleccion || [window.effectiveAmb('proc')]).map(window.ambKey);
+      list.innerHTML = fuentes.map(id => {
+          const comparten = DB.ambientes.filter(a => a.id !== id && window.fuenteProcDe(a.id) === id).map(a => a.nombre);
+          return `<label class="perm-item"><input type="checkbox" value="${id}" ${sel.includes(id) ? 'checked' : ''}> ${window.esc(nombre(id))}${comparten.length ? ` <small style="color:var(--muted); font-weight:400;">(+ ${window.esc(comparten.join(', '))})</small>` : ''}</label>`;
+      }).join('');
+      box.classList.remove('hidden');
+  };
+  window.getAdminProcAmbs = function() {
+      const box = document.getElementById('admProcAmbBox');
+      if (!box || box.classList.contains('hidden')) return null; // sin selector: se usa el ambiente actual
+      return window.getCheckedValues('admProcAmbList').map(window.ambKey);
+  };
   let PAGE = 1, PAGE_TEC = 1, PAGE_ENC = 1, PAGE_DYN = 1; let ITEMS_PER_PAGE_ENC = 16;
   let EDITING_USER_ID = null, EDITING_LOCATION_ID = null, EDITING_TEC_ID = null, EDITING_ENC_ID = null, EDITING_DYN_ID = null, EDITING_ROLE_ID = null, EDITING_MOD_ID = null, EDITING_PROC_ID = null, EDITING_AVISO_ID = null, EDITING_AMB_ID = null;
   let AVISO_TIPO = 'info'; let AVISO_IMG_DATA = null;
@@ -1812,7 +1848,7 @@
       const btn = document.getElementById('menuAjs' + view.charAt(0).toUpperCase() + view.slice(1)); if(btn) btn.classList.add('active');
       ['amb', 'mon', 'est', 'usr', 'rol', 'mod', 'proc', 'avi', 'col'].forEach(v => document.getElementById('ajsView' + v.charAt(0).toUpperCase() + v.slice(1)).classList.add('hidden'));
       const targetView = document.getElementById('ajsView' + view.charAt(0).toUpperCase() + view.slice(1)); if(targetView) targetView.classList.remove('hidden');
-      if(view === 'amb') { window.renderAmbCompartidosSelects(EDITING_AMB_ID || null); window.renderAdminAmbientesList(); } if(view === 'mon') window.renderAdminMonitor(); if(view === 'usr') { window.renderUserAmbienteSelect(); window.renderUserList(); } if(view === 'rol') { window.renderRoleAmbienteSelect(); window.renderRolesList(); } if(view === 'mod') { window.renderModAmbienteSelect(); window.renderSysModsList(); window.renderListaModulos(); } if(view === 'proc') { window.renderAdminProcTargetSelect(); window.renderAdminProcList(); } if(view === 'avi') window.renderAdminAvisos(); if(view === 'col') window.renderColorView(); if(view === 'est') window.renderEstadisticas();
+      if(view === 'amb') { window.renderAmbCompartidosSelects(EDITING_AMB_ID || null); window.renderAdminAmbientesList(); } if(view === 'mon') window.renderAdminMonitor(); if(view === 'usr') { window.renderUserAmbienteSelect(); window.renderUserList(); } if(view === 'rol') { window.renderRoleAmbienteSelect(); window.renderRolesList(); } if(view === 'mod') { window.renderModAmbienteSelect(); window.renderSysModsList(); window.renderListaModulos(); } if(view === 'proc') { window.renderAdminProcTargetSelect(); window.renderAdminProcList(); if (!EDITING_PROC_ID) window.renderAdminProcAmbList(); } if(view === 'avi') window.renderAdminAvisos(); if(view === 'col') window.renderColorView(); if(view === 'est') window.renderEstadisticas();
   };
 
   window.toggleAuthBoxes = (s) => { document.getElementById('boxLogin').classList.toggle('hidden', s); document.getElementById('boxRegister').classList.toggle('hidden', !s); };
@@ -2935,17 +2971,20 @@
       if(!tit) return alert("El título es obligatorio."); 
       if(PROC_MODE !== 'drive' && !htmlContent) return alert("Debes escribir contenido en el procedimiento."); 
       const quizData = window.getQuizFromEditor(); if (quizData === null) return;
+      const ambsElegidos = window.getAdminProcAmbs();
+      if (ambsElegidos && ambsElegidos.length === 0) return alert("Elige al menos un ambiente donde publicar el procedimiento.");
       const reqLectura = document.getElementById('admProcReqLect').checked || quizData.length > 0;
       
       btnSave.disabled = true; btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...'; 
       try { 
           let payload = { cat, tit, html: htmlContent, driveLink: driveLink, modo: PROC_MODE, caducidad, fija, estado: 'activo', modId: ADMIN_PROC_TARGET_MODID, reqLectura, quiz: quizData }; 
+          if (ambsElegidos) { payload.ambienteIds = ambsElegidos; payload.ambienteId = ambsElegidos[0] || null; }
           if (EDITING_PROC_ID) { const prev = DB.proc.find(x => x.id === EDITING_PROC_ID); if (reqLectura && prev && prev.reqLectura && confirm("¿Pedir de nuevo la confirmación de lectura a todo el equipo?\n\nAcepta solo si el cambio es importante. Si fue una corrección menor, presiona Cancelar y se conservan las confirmaciones que ya existen.")) payload.lectVersion = Date.now(); }
           if (EDITING_PROC_ID) { 
               await updateDoc(doc(db, "procedimientos_html", EDITING_PROC_ID), payload); 
               window.logAct("Procedimientos", "Editar", "Se actualizó: " + tit); alert("Procedimiento actualizado."); 
           } else { 
-              payload.fecha = Date.now(); payload.likes = []; payload.ambienteId = ADMIN_PROC_TARGET_MODID ? AMBIENTE_ACTUAL : (window.effectiveAmb('proc') || null);
+              payload.fecha = Date.now(); payload.likes = []; if (!ambsElegidos) payload.ambienteId = ADMIN_PROC_TARGET_MODID ? AMBIENTE_ACTUAL : (window.effectiveAmb('proc') || null);
               await addDoc(collection(db, "procedimientos_html"), payload); 
               window.logAct("Procedimientos", "Crear", "Nuevo manual: " + tit); alert("Procedimiento creado."); 
           } 
@@ -2959,7 +2998,7 @@
       document.getElementById('admProcTit').value = p.tit || ''; 
       document.getElementById('admProcCaducidad').value = p.caducidad || '';
       document.getElementById('admProcFija').checked = p.fija || false;
-      document.getElementById('admProcReqLect').checked = !!p.reqLectura; window.loadQuizEditor(p.quiz || []);
+      document.getElementById('admProcReqLect').checked = !!p.reqLectura; window.loadQuizEditor(p.quiz || []); window.renderAdminProcAmbList(window.procAmbs(p));
       document.getElementById('driveLinksContainer').innerHTML = '';
       if(p.modo === 'drive' && p.driveLink) { try { let parsed = JSON.parse(p.driveLink); if(Array.isArray(parsed)) { parsed.forEach(link => window.addDriveLinkRow(link.n, link.u)); } else { window.addDriveLinkRow('Documento', p.driveLink); } } catch(e) { let rawLinks = (p.driveLink || "").split(/[\n,]+/).map(l => l.trim()).filter(l => l !== ""); rawLinks.forEach((l, i) => window.addDriveLinkRow('Documento '+(i+1), l)); } } else { window.addDriveLinkRow(); }
       const modoGuardado = p.modo || 'visual'; window.setProcMode(modoGuardado, false); 
@@ -2968,7 +3007,7 @@
   };
   
   window.cancelarEdicionProc = function() { 
-      EDITING_PROC_ID = null; document.getElementById('admProcTit').value = ''; document.getElementById('admProcCat').value = ''; document.getElementById('admProcCaducidad').value = ''; document.getElementById('admProcFija').checked = false; document.getElementById('admProcReqLect').checked = false; window.loadQuizEditor([]); quillEditor.root.innerHTML = ''; document.getElementById('admProcHtml').value = ''; document.getElementById('driveLinksContainer').innerHTML = ''; window.addDriveLinkRow(); window.setProcMode('visual', false); 
+      EDITING_PROC_ID = null; document.getElementById('admProcTit').value = ''; document.getElementById('admProcCat').value = ''; document.getElementById('admProcCaducidad').value = ''; document.getElementById('admProcFija').checked = false; document.getElementById('admProcReqLect').checked = false; window.loadQuizEditor([]); window.renderAdminProcAmbList(); quillEditor.root.innerHTML = ''; document.getElementById('admProcHtml').value = ''; document.getElementById('driveLinksContainer').innerHTML = ''; window.addDriveLinkRow(); window.setProcMode('visual', false); 
       const btnSave = document.getElementById('btnSaveProc'); btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Procedimiento'; btnSave.classList.replace('btn-p', 'btn-s'); document.getElementById('btnCancelProc').classList.add('hidden'); 
   };
   
@@ -3037,7 +3076,8 @@
                          <button onclick="window.eliminarProc('${p.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;" title="Enviar a Papelera"><i class="fa-solid fa-trash-can"></i></button>`;
           }
 
-          return `<div class="mod-list-item"><div><b style="color:var(--blue);">${badgeFija}${window.esc(p.tit)}</b> ${badgeModo} ${badgeCaducidad}${p.reqLectura ? ` <span style="background:#fff3d6; color:#a86a00; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold;"><i class="fa-solid fa-clipboard-check"></i> Lectura${(p.quiz || []).length ? ' + ' + p.quiz.length + ' preg.' : ''}</span>` : ''}<br><small style="color:var(--light-blue); font-weight:bold;"><i class="fa-solid fa-folder-open"></i> ${p.cat || "General"}</small></div><div>${actions}</div></div>` 
+          const ambsP = p.modId ? [] : window.procAmbs(p); const badgeAmbs = ambsP.length > 1 ? ` <span style="background:#eef6fc; color:var(--blue); padding:2px 6px; border-radius:4px; font-size:10px; border:1px solid #cce0f5;" title="${window.esc(ambsP.map(id => id ? ((DB.ambientes.find(a => a.id === id) || {}).nombre || '?') : 'Principal').join(', '))}"><i class="fa-solid fa-building"></i> ${ambsP.length} ambientes</span>` : '';
+          return `<div class="mod-list-item"><div><b style="color:var(--blue);">${badgeFija}${window.esc(p.tit)}</b> ${badgeModo} ${badgeCaducidad}${badgeAmbs}${p.reqLectura ? ` <span style="background:#fff3d6; color:#a86a00; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold;"><i class="fa-solid fa-clipboard-check"></i> Lectura${(p.quiz || []).length ? ' + ' + p.quiz.length + ' preg.' : ''}</span>` : ''}<br><small style="color:var(--light-blue); font-weight:bold;"><i class="fa-solid fa-folder-open"></i> ${p.cat || "General"}</small></div><div>${actions}</div></div>` 
       }).join('') || `<p style="font-size:13px; color:var(--mid-gray); text-align:center; padding: 20px;">No hay procedimientos en esta vista.</p>`; 
   };
 
@@ -3303,7 +3343,8 @@
       return out;
   };
   window.lectoresEsperados = function(tipo, item) {
-      const ambs = window.ambientesQueUsan(tipo === 'proc' ? 'proc' : 'avisos', window.ambKey(item.ambienteId));
+      const origenes = tipo === 'proc' ? window.procAmbs(item) : [window.ambKey(item.ambienteId)];
+      const ambs = [...new Set(origenes.flatMap(o => window.ambientesQueUsan(tipo === 'proc' ? 'proc' : 'avisos', o)))];
       return DB_USERS.filter(u => !['pendiente', 'invitado', 'admin'].includes(u.r) && !u.authUid && window.userAmbList(u).some(a => ambs.includes(a)));
   };
   window.cargarLecturasDe = async function(tipo, item) {
