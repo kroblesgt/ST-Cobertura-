@@ -2005,7 +2005,19 @@
   // (Chrome/Edge retrasan los temporizadores de esas pestañas hasta 1 minuto).
   const HEARTBEAT_MS = 120000; const ONLINE_WINDOW_MS = 300000; let LAST_HEARTBEAT = 0;
   window.isOnline = (u) => u.lastActive && (Date.now() - u.lastActive < ONLINE_WINDOW_MS) && u.r !== 'pendiente';
-  window.heartbeat = async () => { if(SESION.id && SESION.id !== "master_admin") { LAST_HEARTBEAT = Date.now(); try { await updateDoc(doc(db, "usuarios", SESION.id), { lastActive: Date.now(), ultimoAcceso: Date.now() }); } catch(e){} } };
+  // Si las reglas de Firestore publicadas no permiten el campo "ultimoAcceso" (reglas anteriores al 30/sep),
+  // antes fallaba TODO el aviso en silencio y la persona desaparecía de "en línea" a los 5 min de entrar.
+  // Ahora, si se rechaza, se reintenta solo con lastActive para que siga contando como conectada.
+  let HB_SOLO_LASTACTIVE = false;
+  window.heartbeat = async () => {
+      if(!SESION.id || SESION.id === "master_admin") return;
+      LAST_HEARTBEAT = Date.now(); const ref = doc(db, "usuarios", SESION.id);
+      if (!HB_SOLO_LASTACTIVE) {
+          try { await updateDoc(ref, { lastActive: Date.now(), ultimoAcceso: Date.now() }); return; }
+          catch(e) { if (!(e && e.code === 'permission-denied')) { console.warn('heartbeat:', e); return; } HB_SOLO_LASTACTIVE = true; console.warn('Las reglas de Firestore no permiten "ultimoAcceso"; publica el firestore.rules actualizado.'); }
+      }
+      try { await updateDoc(ref, { lastActive: Date.now() }); } catch(e) { console.warn('heartbeat:', e); }
+  };
   // Al volver a la pestaña o a la ventana, avisar de inmediato (sin repetir si se avisó hace menos de 1 min).
   const heartbeatSiHaceFalta = () => { if (SESION.id && document.visibilityState === 'visible' && Date.now() - LAST_HEARTBEAT > 60000) window.heartbeat(); };
   document.addEventListener('visibilitychange', heartbeatSiHaceFalta); window.addEventListener('focus', heartbeatSiHaceFalta);
