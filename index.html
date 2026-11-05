@@ -2044,19 +2044,23 @@
 
   // ================= AUTH Y ARRANQUE =================
   window.registerAccount = async function() {
-    const u = document.getElementById('regUser').value.trim(), p = document.getElementById('regPass').value.trim(); const btn = document.getElementById('btnRegister');
+    const u = window.limpiarUser(document.getElementById('regUser').value), p = document.getElementById('regPass').value.trim(); const btn = document.getElementById('btnRegister');
     if(!u || !p) return alert("Completa todos los campos."); if(/[<>"'`&]/.test(u)) return alert("El usuario no puede contener los caracteres < > \" ' ` &"); btn.innerText = 'Enviando...'; btn.disabled = true;
     try {
       const snap = await getDocs(collection(db, "usuarios"));
-      const exists = snap.docs.some(d => (d.data().u || "").toLowerCase() === u.toLowerCase());
+      const exists = snap.docs.some(d => window.normUser(d.data().u) === window.normUser(u));
       if(exists) { alert("Usuario en uso."); btn.innerText = 'ENVIAR SOLICITUD'; btn.disabled = false; return; }
       await addDoc(collection(db, "usuarios"), { u, p: await window.hashPassword(p), r: "pendiente", lastActive: 0, token: null, createdAt: Date.now() });
       alert("¡Solicitud enviada!"); window.toggleAuthBoxes(false);
     } catch(e) { alert("Error de conexión al enviar la solicitud."); } btn.innerText = 'ENVIAR SOLICITUD'; btn.disabled = false;
   };
 
+  // Usuario para comparar: sin espacios (al inicio, al final ni en medio) y sin distinguir mayúsculas/minúsculas.
+  window.normUser = (s) => (s || '').toString().replace(/\s+/g, '').toLowerCase();
+  // Usuario para guardar: sin espacios al inicio/final y sin espacios dobles.
+  window.limpiarUser = (s) => (s || '').toString().replace(/\s+/g, ' ').trim();
   window.login = async function() {
-    const u = document.getElementById('txtUser').value.trim(); const p = document.getElementById('txtPass').value.trim(); const btn = document.getElementById('btnLogin');
+    const u = document.getElementById('txtUser').value.trim(); const pRaw = document.getElementById('txtPass').value; const p = pRaw.trim(); const btn = document.getElementById('btnLogin');
     if(!u || !p) return alert("Ingrese usuario y contraseña");
     btn.innerText = 'Cargando...'; btn.disabled = true;
     if (u.includes('@')) {
@@ -2073,19 +2077,30 @@
     }
     try {
       const snap = await getDocs(collection(db, "usuarios"));
-      const uDoc = snap.docs.find(d => (d.data().u || "").toLowerCase() === u.toLowerCase());
+      // Puede haber más de un documento con el "mismo" usuario escrito distinto (ej. "oscar.lopez" y "Oscar.Lopez "):
+      // se prueba la contraseña en cada uno y se usa el que coincida. La contraseña se prueba sin espacios
+      // sobrantes y, por compatibilidad, también tal cual se escribió.
+      const candidatos = snap.docs.filter(d => window.normUser(d.data().u) === window.normUser(u));
+      let uDoc = null, check = { ok: false };
+      for (const d of candidatos) {
+          let c = await window.verifyPassword(d.data().p, p);
+          if (!c.ok && pRaw !== p) c = await window.verifyPassword(d.data().p, pRaw);
+          if (c.ok) { uDoc = d; check = c; break; }
+      }
       const uData = uDoc ? uDoc.data() : null;
-      const check = uData ? await window.verifyPassword(uData.p, p) : { ok: false };
       if (uDoc && check.ok) {
         if(uData.r === 'pendiente') { alert("Tu cuenta está en estado PENDIENTE. Pide al admin que te apruebe."); } 
         else if(uData.r === 'admin') { alert("El administrador ahora inicia sesión con su correo y contraseña."); } 
         else {
             const token = Math.random().toString(36).substring(2) + Date.now().toString(36);
-            let rolFinal = uData.r === 'lider' ? 'agente' : uData.r;
+            // Antes, "lider" se convertía siempre en "agente" (regla vieja). Ahora solo si NO existe un rol llamado "lider".
+            let rolFinal = uData.r;
+            if (uData.r === 'lider') { try { const rs = await getDocs(collection(db, "roles_config")); if (!rs.docs.some(x => (x.data().nombre || '').toLowerCase() === 'lider')) rolFinal = 'agente'; } catch(e) {} }
             const ambs = Array.isArray(uData.ambs) && uData.ambs.length ? uData.ambs : [uData.a || null];
-            SESION = { id: uDoc.id, u: uData.u, r: rolFinal, t: token, a: ambs[0] || null, ambs };
+            SESION = { id: uDoc.id, u: window.limpiarUser(uData.u), r: rolFinal, t: token, a: ambs[0] || null, ambs };
             localStorage.setItem('distelsa_pro_fb', JSON.stringify(SESION));
-            let updatePayload = { token: token, lastActive: Date.now(), r: rolFinal };
+            // El rol no se reescribe aquí: las reglas de Firestore no lo permiten y haría fallar todo el guardado.
+            let updatePayload = { token: token, lastActive: Date.now(), ultimoAcceso: Date.now() };
             if (check.legacy) { updatePayload.p = await window.hashPassword(p); } // migración silenciosa a hash
             updateDoc(doc(db, "usuarios", uDoc.id), updatePayload).catch(e => console.log("Login offline")); 
             window.startApp(); return;
@@ -2173,6 +2188,12 @@
   window.listenToUsers = () => { 
       onSnapshot(collection(db, "usuarios"), (snap) => { 
           DB_USERS = snap.docs.map(d => ({ id: d.id, ...d.data() })); 
+          // Cuando entra el administrador, se corrigen solos los usuarios guardados con espacios de más (ej. "oscar.lopez ").
+          if (SESION.r === 'admin' && !window._usuariosLimpiados) {
+              window._usuariosLimpiados = true;
+              const sucios = DB_USERS.filter(x => !x.authUid && typeof x.u === 'string' && window.limpiarUser(x.u) !== x.u);
+              if (sucios.length) { const b = writeBatch(db); sucios.forEach(x => b.update(doc(db, "usuarios", x.id), { u: window.limpiarUser(x.u) })); b.commit().then(() => window.logAct("Usuarios", "Editar", `Se quitaron espacios sobrantes en ${sucios.length} usuario(s)`)).catch(e => console.warn('limpiar usuarios:', e)); }
+          }
           if (SESION.r === 'admin') { 
               let pending = DB_USERS.filter(u => u.r === 'pendiente'); 
               if (!isFirstUserLoad) pending.forEach(u => { if (!knownPendingIds.has(u.id)) window.showToast(`Nueva solicitud: <b>${window.esc(u.u)}</b>. <u style="cursor:pointer; color:var(--blue)" onclick="window.switchModule('ajs'); window.showAjsView('usr');">Aprobar</u>`); }); 
@@ -2555,7 +2576,7 @@
   };
 
   window.renderUserList = function() { const c = document.getElementById('userListContainer'); const q = document.getElementById('searchUserBox').value; let f = DB_USERS; if (SESION.r !== 'admin') f = f.filter(u => u.r !== 'admin'); const k = window.ambKey(AMBIENTE_ACTUAL); f = f.filter(u => u.r === 'admin' || u.r === 'pendiente' || window.userAmbList(u).includes(k)); if (q) f = f.filter(u => window.matchSearch(`${u.u} ${u.r}`, q)); f.sort((a, b) => { if (a.r === 'pendiente' && b.r !== 'pendiente') return -1; if (a.r !== 'pendiente' && b.r === 'pendiente') return 1; return (a.u||"").localeCompare(b.u||""); }); c.innerHTML = f.map(u => { const isP = u.r === 'pendiente'; const ambList = window.userAmbList(u); const ambNoms = ambList.map(id => id ? (DB.ambientes.find(x=>x.id===id)||{nombre:'?'}).nombre : 'Principal').join(', ') || 'Principal'; return `<div class="user-row" style="${isP ? 'background:#ffe3e3; border-left:5px solid #e63946;' : ''}"><div><b style="color:var(--blue);">${window.esc(u.u)}</b> <br><small style="text-transform:uppercase; font-weight:bold; color: ${isP?'#e63946':'var(--light-blue)'}">${u.r}</small> <small style="color:var(--mid-gray); font-weight:bold;"><i class="fa-solid fa-building"></i> ${ambNoms}</small></div><div><button onclick="window.editUser('${u.id}')" class="btn btn-p" style="padding:4px"><i class="fa-solid fa-pencil"></i></button> <button onclick="window.deleteUser('${u.id}')" class="btn btn-d" style="padding:4px"><i class="fa-solid fa-trash"></i></button></div></div>`; }).join('') || `<p align="center" style="padding:15px; color:var(--mid-gray);">No hay usuarios</p>`; };
-  window.submitUser = async function() { const u = document.getElementById('uUser').value, p = document.getElementById('uPass').value, r = document.getElementById('uRol').value; let ambs = window.getCheckedValues('uAmbList'); if(ambs.length === 0) ambs = [window.ambKey(AMBIENTE_ACTUAL)]; if(!u) return; if(EDITING_USER_ID) { let payload = { u, r, ambs, a: ambs[0] }; if(p) payload.p = await window.hashPassword(p); await updateDoc(doc(db, "usuarios", EDITING_USER_ID), payload); window.logAct("Usuarios", "Editar", "Usuario editado: " + u); } else { if(!p && r !== 'invitado' && r !== 'pendiente') return alert("La contraseña es obligatoria para un usuario nuevo."); await addDoc(collection(db, "usuarios"), { u, p: p ? await window.hashPassword(p) : '', r, ambs, a: ambs[0], createdAt: Date.now() }); window.logAct("Usuarios", "Crear", "Nuevo usuario: " + u); } window.clearUserForm(); };
+  window.submitUser = async function() { const u = window.limpiarUser(document.getElementById('uUser').value), p = document.getElementById('uPass').value.trim(), r = document.getElementById('uRol').value; if (u && DB_USERS.some(x => x.id !== EDITING_USER_ID && window.normUser(x.u) === window.normUser(u))) return alert(`Ya existe un usuario "${u}" (sin contar mayúsculas ni espacios). Usa otro nombre o edita el existente.`); let ambs = window.getCheckedValues('uAmbList'); if(ambs.length === 0) ambs = [window.ambKey(AMBIENTE_ACTUAL)]; if(!u) return; if(EDITING_USER_ID) { let payload = { u, r, ambs, a: ambs[0] }; if(p) payload.p = await window.hashPassword(p); await updateDoc(doc(db, "usuarios", EDITING_USER_ID), payload); window.logAct("Usuarios", "Editar", "Usuario editado: " + u); } else { if(!p && r !== 'invitado' && r !== 'pendiente') return alert("La contraseña es obligatoria para un usuario nuevo."); await addDoc(collection(db, "usuarios"), { u, p: p ? await window.hashPassword(p) : '', r, ambs, a: ambs[0], createdAt: Date.now() }); window.logAct("Usuarios", "Crear", "Nuevo usuario: " + u); } window.clearUserForm(); };
   window.editUser = function(id) { const u = DB_USERS.find(x => x.id === id); if(!u) return; if(u.authUid) return alert("La cuenta de administrador se gestiona en Firebase > Authentication, no desde aquí."); EDITING_USER_ID = id; document.getElementById('uUser').value = u.u; document.getElementById('uPass').value = ''; document.getElementById('uPass').placeholder = 'Dejar en blanco para no cambiarla'; window.renderUserAmbienteSelect(); window.setCheckedValues('uAmbList', window.userAmbList(u)); window.updateRolesSelect(); document.getElementById('uRol').value = u.r; document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-save"></i>'; }; window.clearUserForm = function() { EDITING_USER_ID = null; document.getElementById('uUser').value = ''; document.getElementById('uPass').value = ''; document.getElementById('uPass').placeholder = 'Clave'; document.getElementById('uRol').value = 'agente'; if(document.getElementById('uAmbList')) window.renderUserAmbienteSelect(); document.getElementById('btnUserAction').innerHTML = '<i class="fa-solid fa-plus"></i>'; }; window.deleteUser = async function(id) { if(confirm("¿Eliminar usuario?")) { const u = DB_USERS.find(x => x.id === id); await deleteDoc(doc(db, "usuarios", id)); window.logAct("Usuarios", "Eliminar", "Usuario eliminado: " + (u?u.u:'')); } };
 
   // ================= NOMBRES DE MÓDULOS DEL SISTEMA =================
