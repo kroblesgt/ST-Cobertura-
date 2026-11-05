@@ -1090,6 +1090,7 @@
                                     <option value="directorio">Vista Directorio (Tarjetas de Contactos)</option>
                                     <option value="procedimientos">Vista Procedimientos (Documentos y Guías)</option>
                                     <option value="html">Vista HTML (Código libre o Iframes)</option>
+                                    <option value="talleres">Vista Red de Talleres (Buscador por marca con teléfonos)</option>
                                 </select>
                             </div>
                             <div id="divConfModCols" class="span-2">
@@ -1760,7 +1761,7 @@
       if (window.hasPerm('cob_view')) DB.cob.forEach(r => { if (window.matchSearch(`${r.m} ${r.n} ${r.c} ${r.z} ${r.r}`, q)) results.push({ mod: 'Cobertura', icon: 'fa-map-location-dot', color: 'var(--light-blue)', tit: r.n || 'Sin nombre', sub: r.m || '', target: 'cob' }); });
       if (window.hasPerm('tec_view')) DB.tec.forEach(r => { if (window.matchSearch(`${r.n} ${r.t1} ${r.t2} ${r.a} ${r.d} ${r.p}`, q)) results.push({ mod: 'Técnicos', icon: 'fa-screwdriver-wrench', color: 'var(--green)', tit: r.n || 'Sin nombre', sub: r.a || '', target: 'tec' }); });
       if (window.hasPerm('enc_view')) DB.enc.forEach(r => { if (window.matchSearch(`${r.n} ${r.t} ${r.c} ${r.p} ${r.g}`, q)) results.push({ mod: 'Directorio', icon: 'fa-address-card', color: 'var(--blue)', tit: r.n || 'Sin nombre', sub: r.p || r.g || '', target: 'enc' }); });
-      if (window.hasPerm('tal_view') && window.talHay) TAL.forEach(t => { if (window.matchSearch(`${t.centro} ${(t.marcas || []).join(' ')} ${t.productos} ${(t.tels || []).map(x => x.n).join(' ')}`, q)) results.push({ mod: 'Red de Talleres', icon: 'fa-store', color: '#c2410c', tit: t.centro, sub: (t.marcas || []).slice(0, 4).join(', '), target: 'tal', talQ: q }); });
+      if (window.hasPerm('tal_view') && window.talHay && window.fixedModEnabled('tal')) window.talSistema().forEach(t => { if (window.matchSearch(`${t.centro} ${(t.marcas || []).join(' ')} ${t.productos} ${(t.tels || []).map(x => x.n).join(' ')}`, q)) results.push({ mod: 'Red de Talleres', icon: 'fa-store', color: '#c2410c', tit: t.centro, sub: (t.marcas || []).slice(0, 4).join(', '), target: 'tal', talQ: q }); });
       if (window.hasPerm('proc_view')) DB.proc.filter(window.procEnPrincipal).forEach(p => { if (window.matchSearch(`${p.tit} ${p.cat}`, q)) results.push({ mod: 'Procedimientos', icon: 'fa-book', color: 'var(--blue)', tit: p.tit, sub: p.cat || '', target: 'proc', procId: p.id }); });
       if (window.hasPerm('avi_view')) DB.avisos.forEach(a => { if (window.matchSearch(`${a.tit} ${a.cont}`, q)) results.push({ mod: 'Avisos', icon: 'fa-bullhorn', color: '#e63946', tit: a.tit, sub: (a.cont || '').slice(0, 60), target: 'avisos' }); });
       DB.configModulos.forEach(mod => {
@@ -1788,7 +1789,7 @@
       const r = (window._globalSearchResultsCache || [])[idx]; if (!r) return;
       window.closeGlobalSearch(); window.switchModule(r.target);
       if (r.procId) setTimeout(() => window.abrirProcedimiento(r.procId), 200);
-      if (r.talQ) setTimeout(() => window.buscarTal(r.talQ), 50);
+      if (r.talQ) setTimeout(() => window.buscarTal(r.talQ), 80);
   };
 
   // Tarjeta en Inicio con lo que la persona todavía no ha visto (máx. 5), para que no dependa de abrir la campanita.
@@ -1900,7 +1901,7 @@
       document.getElementById('tabCob').classList.toggle('hidden', !window.hasPerm('cob_view') || !window.fixedModEnabled('cob'));
       document.getElementById('tabTec').classList.toggle('hidden', !window.hasPerm('tec_view') || !window.fixedModEnabled('tec'));
       document.getElementById('tabTal').classList.toggle('hidden', !window.hasPerm('tal_view') || !window.fixedModEnabled('tal'));
-      if (CURRENT_MODULE === 'tal' && window.renderTalleres) window.renderTalleres();
+      if (window.talAbierto && window.talAbierto() && window.renderTalleres) window.renderTalleres();
       document.getElementById('tabEnc').classList.toggle('hidden', !window.hasPerm('enc_view') || !window.fixedModEnabled('enc'));
       document.getElementById('tabProc').classList.toggle('hidden', !window.hasPerm('proc_view') || !window.fixedModEnabled('proc'));
       document.getElementById('tabAvisos').classList.toggle('hidden', !window.hasPerm('avi_view') || !window.fixedModEnabled('avisos'));
@@ -2019,7 +2020,8 @@
     if(mod === 'inicio') { document.getElementById('moduloInicio').classList.remove('hidden'); }
     else if(mod === 'cob') { document.getElementById('moduloCobertura').classList.remove('hidden'); window.renderTable(); }
     else if(mod === 'tec') { document.getElementById('moduloTecnicos').classList.remove('hidden'); window.renderTecnicosTable(); }
-    else if(mod === 'tal') { document.getElementById('moduloTalleres').classList.remove('hidden'); window.renderTalleres(); }
+    else if(mod === 'tal') { document.getElementById('moduloTalleres').classList.remove('hidden'); window.abrirTalleresCtx(null); }
+    else if(mod.startsWith('dyn_') && (DB.configModulos.find(m => m.id === mod.replace('dyn_', '')) || {}).vista === 'talleres') { document.getElementById('moduloTalleres').classList.remove('hidden'); window.abrirTalleresCtx(mod.replace('dyn_', '')); }
     else if(mod === 'enc') { document.getElementById('moduloEncargados').classList.remove('hidden'); window.renderEncargadosTable(); }
     else if(mod === 'proc') { document.getElementById('moduloProcedimientos').classList.remove('hidden'); window.renderProcMenu(); }
     else if(mod === 'avisos') { document.getElementById('moduloAvisos').classList.remove('hidden'); window.renderAvisosMuro(); }
@@ -2305,7 +2307,7 @@
 
   window.recomputeAmbienteScopedData = function() {
       const k = window.ambKey(AMBIENTE_ACTUAL);
-      if (window.filtrarTalleresAmb) { window.filtrarTalleresAmb(); if (CURRENT_MODULE === 'tal') window.renderTalleres(); }
+      if (window.filtrarTalleresAmb) { window.filtrarTalleresAmb(); if (window.talAbierto()) window.renderTalleres(); }
       DB.cob = DB_RAW.cob.filter(x => window.ambKey(x.ambienteId) === window.effectiveAmb('cob'));
       DB.tec = DB_RAW.tec.filter(x => window.ambKey(x.ambienteId) === window.effectiveAmb('tec'));
       DB.enc = DB_RAW.enc.filter(x => window.ambKey(x.ambienteId) === window.effectiveAmb('enc'));
@@ -2656,7 +2658,7 @@
     document.querySelectorAll('.tab-dyn').forEach(e => e.remove()); const container = document.getElementById('mainTabsContainer'); const tabAjustes = document.getElementById('tabAjs');
     DB.configModulos.forEach(mod => {
       const tab = document.createElement('div'); tab.className = `tab-btn tab-dyn ${CURRENT_MODULE === 'dyn_'+mod.id ? 'active' : ''}`; tab.id = 'tab_dyn_' + mod.id;
-      let ic = 'fa-folder-open'; if(mod.vista === 'directorio') ic = 'fa-id-card'; else if(mod.vista === 'html') ic = 'fa-globe';
+      let ic = 'fa-folder-open'; if(mod.vista === 'directorio') ic = 'fa-id-card'; else if(mod.vista === 'html') ic = 'fa-globe'; else if(mod.vista === 'talleres') ic = 'fa-store';
       tab.innerHTML = `<i class="fa-solid ${ic}"></i> <span>${mod.nombre}</span>`;
       tab.onclick = () => window.switchModule('dyn_' + mod.id); container.insertBefore(tab, tabAjustes);
     }); window.applyPermissionsToUI(); window.initSortableTabs();
@@ -2665,7 +2667,7 @@
   window.toggleModType = function() {
       const v = document.getElementById('confModVista').value;
       if(v === 'html') { document.getElementById('divConfModCols').classList.add('hidden'); document.getElementById('divConfModHtml').classList.remove('hidden'); } 
-      else if(v === 'procedimientos') { document.getElementById('divConfModCols').classList.add('hidden'); document.getElementById('divConfModHtml').classList.add('hidden'); }
+      else if(v === 'procedimientos' || v === 'talleres') { document.getElementById('divConfModCols').classList.add('hidden'); document.getElementById('divConfModHtml').classList.add('hidden'); }
       else { document.getElementById('divConfModCols').classList.remove('hidden'); document.getElementById('divConfModHtml').classList.add('hidden'); }
   };
 
@@ -2675,6 +2677,7 @@
       if(ambienteIds.length === 0) ambienteIds = [window.ambKey(AMBIENTE_ACTUAL)];
       if(!nombre) return alert("Completa el nombre del módulo"); let cols = [];
       if(vista === 'procedimientos') { cols = ['Título', 'Categoría', 'Contenido']; }
+      else if(vista === 'talleres') { cols = ['Taller', 'Marcas', 'Teléfonos']; }
       else if(vista !== 'html') { cols = colsRaw.split(',').map(c => c.trim()).filter(c => c !== ''); if(cols.length === 0) return alert("Debes agregar al menos una columna válida"); } else { if(!htmlCode) return alert("El código HTML no puede estar vacío"); }
       try { 
           let payload = { nombre, vista, columnas: cols, htmlContent: htmlCode, ambienteIds };
@@ -2689,11 +2692,11 @@
       const btnSave = document.getElementById('btnSaveMod'); btnSave.innerHTML = '<i class="fa-solid fa-save"></i> Guardar Cambios'; btnSave.classList.replace('btn-s', 'btn-p'); document.getElementById('btnCancelMod').classList.remove('hidden'); const container = document.querySelector('.ajs-content'); if(container) container.scrollTo({ top: 0, behavior: 'smooth' }); 
   };
   window.cancelarEdicionModulo = function() { EDITING_MOD_ID = null; document.getElementById('confModName').value = ''; document.getElementById('confModVista').value = 'tabla'; document.getElementById('confModCols').value = ''; document.getElementById('confModHtml').value = ''; window.toggleModType(); window.renderModAmbienteSelect(); const btnSave = document.getElementById('btnSaveMod'); btnSave.innerHTML = '<i class="fa-solid fa-layer-group"></i> Generar Módulo'; btnSave.classList.replace('btn-p', 'btn-s'); document.getElementById('btnCancelMod').classList.add('hidden'); };
-  window.eliminarModuloDinamico = async function(id) { if(!confirm("¿Eliminar módulo y todos sus datos?")) return; try { const m = DB.configModulos.find(x => x.id === id); await deleteDoc(doc(db, "modulos_config", id)); const batch = writeBatch(db); DB.dynData.filter(d => d.modId === id).forEach(d => batch.delete(doc(db, "modulos_data", d.id))); await batch.commit(); window.logAct("Módulos", "Eliminar", "Módulo dinámico: " + (m?m.nombre:'')); if (EDITING_MOD_ID === id) window.cancelarEdicionModulo(); if (CURRENT_MODULE === 'dyn_'+id) window.switchModule('cob'); } catch(e) { alert("Error al eliminar"); } };
+  window.eliminarModuloDinamico = async function(id) { if(!confirm("¿Eliminar módulo y todos sus datos?")) return; try { const m = DB.configModulos.find(x => x.id === id); await deleteDoc(doc(db, "modulos_config", id)); const batch = writeBatch(db); DB.dynData.filter(d => d.modId === id).forEach(d => batch.delete(doc(db, "modulos_data", d.id))); TAL_RAW.filter(t => t.modId === id).forEach(t => batch.delete(doc(db, "talleres", t.id))); TAL_POL_RAW.filter(t => t.modId === id).forEach(t => batch.delete(doc(db, "talleres_politicas", t.id))); await batch.commit(); window.logAct("Módulos", "Eliminar", "Módulo dinámico: " + (m?m.nombre:'')); if (EDITING_MOD_ID === id) window.cancelarEdicionModulo(); if (CURRENT_MODULE === 'dyn_'+id) window.switchModule('cob'); } catch(e) { alert("Error al eliminar"); } };
 
   window.renderListaModulos = function() {
     let dynHtml = DB.configModulos.map(m => { 
-        let desc = m.vista === 'html' ? `<i class="fa-solid fa-code"></i> Contenido HTML Personalizado` : (m.columnas||[]).join(', '); 
+        let desc = m.vista === 'html' ? `<i class="fa-solid fa-code"></i> Contenido HTML Personalizado` : m.vista === 'talleres' ? `<i class="fa-solid fa-store"></i> Buscador de talleres por marca (mismo formato que Red de Talleres)` : (m.columnas||[]).join(', '); 
         return `<div class="mod-list-item"><div><b style="color:var(--blue);">${m.nombre}</b> <span style="font-size:11px;color:var(--light-blue); font-weight:bold;">(${m.vista})</span> <br><small style="color:var(--mid-gray);">${desc}</small></div><div><button onclick="window.editarModuloDinamico('${m.id}')" class="btn btn-p" style="padding: 4px 8px; font-size:11px; margin-right:5px;"><i class="fa-solid fa-pencil"></i></button><button onclick="window.eliminarModuloDinamico('${m.id}')" class="btn btn-d" style="padding: 4px 8px; font-size:11px;"><i class="fa-solid fa-trash"></i></button></div></div>`; 
     }).join('');
     document.getElementById('listaModulosCreados').innerHTML = dynHtml || '<p style="font-size:13px; color:var(--mid-gray); padding:10px; text-align:center; background:#f8fafc; border-radius:6px; border:1px dashed #dce4ec;">Aún no has creado ningún módulo personalizado.</p>';
@@ -3843,14 +3846,33 @@
 
   // Cada ambiente ve sus talleres, o los de otro ambiente si así se configuró en Ajustes > Ambientes > Origen de los datos.
   // Los registros sin ambienteId (cargados antes de esto) pertenecen a Principal.
+  // El mismo diseño sirve para el módulo del sistema (TAL_CTX = null) y para módulos personalizados
+  // creados con la vista "Red de Talleres" (TAL_CTX = id del módulo; sus registros llevan modId).
+  let TAL_CTX = null;
+  window.talSistema = () => { const k = window.effectiveAmb('tal'); return TAL_RAW.filter(x => !x.modId && window.ambKey(x.ambienteId) === k); };
   window.filtrarTalleresAmb = function() {
+      if (TAL_CTX) { TAL = TAL_RAW.filter(x => x.modId === TAL_CTX); TAL_POL = TAL_POL_RAW.filter(x => x.modId === TAL_CTX); return; }
       const k = window.effectiveAmb('tal');
-      TAL = TAL_RAW.filter(x => window.ambKey(x.ambienteId) === k);
-      TAL_POL = TAL_POL_RAW.filter(x => window.ambKey(x.ambienteId) === k);
+      TAL = window.talSistema();
+      TAL_POL = TAL_POL_RAW.filter(x => !x.modId && window.ambKey(x.ambienteId) === k);
+  };
+  window.talAbierto = () => CURRENT_MODULE === 'tal' || (!!TAL_CTX && CURRENT_MODULE === 'dyn_' + TAL_CTX);
+  // Permisos según el contexto. En módulos personalizados: Ver / Editar / Exportar del módulo (importar = exportar, como en las tablas).
+  window.talPerm = function(k) {
+      if (!TAL_CTX) return window.hasPerm('tal_' + k);
+      return window.hasPerm(({ view: 'view_mod_', edit: 'edit_mod_', exp: 'exp_mod_', imp: 'exp_mod_' })[k] + TAL_CTX);
+  };
+  window.talDestino = () => TAL_CTX ? { modId: TAL_CTX } : { ambienteId: window.effectiveAmb('tal') };
+  window.abrirTalleresCtx = function(modId) {
+      TAL_CTX = modId || null; TAL_CAT = ''; document.getElementById('rtQ').value = '';
+      ['rtCF', 'rtG', 'rtSG'].forEach(i => document.getElementById(i).checked = false);
+      const cfg = TAL_CTX ? DB.configModulos.find(m => m.id === TAL_CTX) : null;
+      document.getElementById('rtTitulo').innerText = cfg ? cfg.nombre : (SYS_MOD_NAMES.tal || 'Red de Talleres');
+      window.filtrarTalleresAmb(); window.renderTalleres();
   };
   window.listenToTalleres = function() {
-      onSnapshot(collection(db, "talleres"), (snap) => { TAL_RAW = snap.docs.map(d => ({ id: d.id, ...d.data() })); window.filtrarTalleresAmb(); TAL_LOADED = true; if (CURRENT_MODULE === 'tal') window.renderTalleres(); }, (e) => { console.warn('talleres:', e); TAL_LOADED = true; if (CURRENT_MODULE === 'tal') window.renderTalleres(); });
-      onSnapshot(collection(db, "talleres_politicas"), (snap) => { TAL_POL_RAW = snap.docs.map(d => ({ id: d.id, ...d.data() })); window.filtrarTalleresAmb(); if (CURRENT_MODULE === 'tal') window.renderTalleres(); if (!document.getElementById('modalPoliticas').classList.contains('hidden')) window.renderPoliticas(); }, (e) => console.warn('talleres_politicas:', e));
+      onSnapshot(collection(db, "talleres"), (snap) => { TAL_RAW = snap.docs.map(d => ({ id: d.id, ...d.data() })); window.filtrarTalleresAmb(); TAL_LOADED = true; if (window.talAbierto()) window.renderTalleres(); }, (e) => { console.warn('talleres:', e); TAL_LOADED = true; if (window.talAbierto()) window.renderTalleres(); });
+      onSnapshot(collection(db, "talleres_politicas"), (snap) => { TAL_POL_RAW = snap.docs.map(d => ({ id: d.id, ...d.data() })); window.filtrarTalleresAmb(); if (window.talAbierto()) window.renderTalleres(); if (!document.getElementById('modalPoliticas').classList.contains('hidden')) window.renderPoliticas(); }, (e) => console.warn('talleres_politicas:', e));
       let tmr; document.getElementById('rtQ').addEventListener('input', () => { clearTimeout(tmr); tmr = setTimeout(window.renderTalleres, 90); });
       document.getElementById('rtQ').addEventListener('keydown', (e) => { if (e.key === 'Escape') window.limpiarBusquedaTal(); });
       // La pestaña nueva queda debajo de Directorio aunque la persona ya haya reordenado su menú.
@@ -3871,10 +3893,10 @@
       return out;
   };
   window.renderTalleres = function() {
-      const canEdit = window.hasPerm('tal_edit');
+      const canEdit = window.talPerm('edit');
       document.getElementById('btnTalAdd').classList.toggle('hidden', !canEdit);
-      document.getElementById('btnTalImp').classList.toggle('hidden', !window.hasPerm('tal_imp'));
-      document.getElementById('btnTalExp').classList.toggle('hidden', !window.hasPerm('tal_exp'));
+      document.getElementById('btnTalImp').classList.toggle('hidden', !window.talPerm('imp'));
+      document.getElementById('btnTalExp').classList.toggle('hidden', !window.talPerm('exp'));
       const grid = document.getElementById('rtGrid');
       if (!TAL_LOADED) { grid.innerHTML = `<div class="rt-empty"><div class="spinner"></div><b>Cargando talleres…</b></div>`; return; }
       // Accesos rápidos: las marcas con más talleres
@@ -3896,7 +3918,7 @@
       if (raw) window.registrarBusqueda && window.registrarBusqueda(raw, list.length, 'talleres');
       const pols = words.length ? TAL_POL.filter(p => { const pm = talNorm(p.marca); return words.some(w => w.length > 2 && (pm.indexOf(w) === 0 || pm === w)); }) : [];
       document.getElementById('rtPolicy').innerHTML = pols.map(p => `<div class="rt-policy"><i class="fa-solid fa-store"></i><div><b>Taller presencial ST · ${window.esc(p.marca)}:</b> ${window.esc(p.politica)}${p.destino && (p.politica || '').indexOf(p.destino) === -1 ? ` <b>→ ${window.esc(p.destino)}</b>` : ''}</div></div>`).join('');
-      if (!TAL.length) { grid.innerHTML = `<div class="rt-empty"><i class="fa-solid fa-store"></i><b>Aún no hay talleres</b>${window.hasPerm('tal_imp') ? 'Usa <b style="display:inline">Importar</b> con el archivo Directorio_Talleres_Unificado.xlsx para cargar la base inicial.' : (canEdit ? 'Agrega el primero con “Nuevo taller”.' : 'Cuando se carguen, aparecerán aquí.')}</div>`; return; }
+      if (!TAL.length) { grid.innerHTML = `<div class="rt-empty"><i class="fa-solid fa-store"></i><b>Aún no hay talleres</b>${window.talPerm('imp') ? 'Usa <b style="display:inline">Importar</b> con el archivo Directorio_Talleres_Unificado.xlsx para cargar la base inicial.' : (canEdit ? 'Agrega el primero con “Nuevo taller”.' : 'Cuando se carguen, aparecerán aquí.')}</div>`; return; }
       if (!list.length) { grid.innerHTML = `<div class="rt-empty"><i class="fa-solid fa-magnifying-glass"></i><b>No encontramos "${window.esc(raw)}"</b>Prueba con la marca, el tipo de producto o parte del nombre del taller.${canEdit ? '<br><br><button class="btn btn-s" onclick="window.abrirTaller()"><i class="fa-solid fa-plus"></i> Agregar un taller nuevo</button>' : ''}</div>`; return; }
       grid.innerHTML = list.map((x, idx) => {
           const t = x.t, ic = TAL_ICON[t.tipo] || TAL_ICON['Otros'];
@@ -3927,11 +3949,11 @@
       window.showToastSuccess('Copiado: ' + txt);
       if (b.classList.contains('rt-ph')) { b.classList.add('ok'); const em = b.querySelector('em'); if (em) em.textContent = '¡Copiado!'; setTimeout(() => { b.classList.remove('ok'); if (em) em.textContent = 'Copiar'; }, 1500); }
   });
-  document.addEventListener('keydown', (e) => { if (e.key === '/' && CURRENT_MODULE === 'tal' && !/INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || '')) { e.preventDefault(); document.getElementById('rtQ').focus(); } });
+  document.addEventListener('keydown', (e) => { if (e.key === '/' && window.talAbierto() && !/INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || '')) { e.preventDefault(); document.getElementById('rtQ').focus(); } });
 
   // ---- Agregar / editar / quitar ----
   window.abrirTaller = function(id) {
-      if (!window.hasPerm('tal_edit')) return;
+      if (!window.talPerm('edit')) return;
       EDITING_TAL_ID = id || null; const t = id ? TAL.find(x => x.id === id) : null;
       document.getElementById('talModalTitle').innerText = t ? 'Editar taller' : 'Nuevo taller';
       const tipos = TAL_TIPOS.slice(); if (t && t.tipo && !tipos.includes(t.tipo)) tipos.push(t.tipo);
@@ -3964,21 +3986,21 @@
       const btn = document.getElementById('btnGuardarTaller'); btn.disabled = true;
       try {
           if (EDITING_TAL_ID) { await updateDoc(doc(db, "talleres", EDITING_TAL_ID), data); window.logAct('Red de Talleres', 'Editar', data.centro); }
-          else { await addDoc(collection(db, "talleres"), { ...data, ambienteId: window.effectiveAmb('tal'), creado: Date.now(), creadoPor: SESION.u }); window.logAct('Red de Talleres', 'Crear', data.centro); }
+          else { await addDoc(collection(db, "talleres"), { ...data, ...window.talDestino(), creado: Date.now(), creadoPor: SESION.u }); window.logAct('Red de Talleres', 'Crear', data.centro); }
           window.closeModal('modalTaller'); window.showToastSuccess('Taller guardado.');
       } catch(e) { window.errorGuardado(e, 'talleres'); }
       btn.disabled = false;
   };
   window.eliminarTaller = async function(id) {
-      const t = TAL.find(x => x.id === id); if (!t || !window.hasPerm('tal_edit')) return;
+      const t = TAL.find(x => x.id === id); if (!t || !window.talPerm('edit')) return;
       if (!confirm(`¿Quitar "${t.centro}" de la Red de Talleres?`)) return;
       try { await deleteDoc(doc(db, "talleres", id)); window.logAct('Red de Talleres', 'Eliminar', t.centro); } catch(e) { window.errorGuardado(e, 'talleres'); }
   };
 
   // ---- Políticas de talleres presenciales ST ----
-  window.abrirPoliticas = function() { window.cancelarPolitica(); document.getElementById('rtPolForm').classList.toggle('hidden', !window.hasPerm('tal_edit')); window.renderPoliticas(); window.openModal('modalPoliticas', true); };
+  window.abrirPoliticas = function() { window.cancelarPolitica(); document.getElementById('rtPolForm').classList.toggle('hidden', !window.talPerm('edit')); window.renderPoliticas(); window.openModal('modalPoliticas', true); };
   window.renderPoliticas = function() {
-      const canEdit = window.hasPerm('tal_edit');
+      const canEdit = window.talPerm('edit');
       document.getElementById('rtPolList').innerHTML = TAL_POL.slice().sort((a, b) => (a.marca || '').localeCompare(b.marca || '')).map(p => `<div class="rt-pol-row"><b>${window.esc(p.marca)}</b><span>${window.esc(p.politica)}${p.destino ? ` <span style="color:var(--muted)">→ ${window.esc(p.destino)}</span>` : ''}</span>${canEdit ? `<button class="btn btn-o" style="padding:4px 8px; font-size:11px;" onclick="window.editarPolitica('${p.id}')"><i class="fa-solid fa-pen"></i></button><button class="btn btn-d" style="padding:4px 8px; font-size:11px;" onclick="window.eliminarPolitica('${p.id}')"><i class="fa-solid fa-trash"></i></button>` : ''}</div>`).join('') || '<p style="color:var(--muted); font-size:13px; text-align:center;">No hay políticas registradas.</p>';
   };
   window.editarPolitica = function(id) { const p = TAL_POL.find(x => x.id === id); if (!p) return; EDITING_POL_ID = id; document.getElementById('polMarca').value = p.marca || ''; document.getElementById('polTexto').value = p.politica || ''; document.getElementById('polDestino').value = p.destino || ''; };
@@ -3986,7 +4008,7 @@
   window.guardarPolitica = async function() {
       const data = { marca: document.getElementById('polMarca').value.trim(), politica: document.getElementById('polTexto').value.trim(), destino: document.getElementById('polDestino').value.trim() };
       if (!data.marca || !data.politica) return alert('Escribe la marca y la política.');
-      try { if (EDITING_POL_ID) await updateDoc(doc(db, "talleres_politicas", EDITING_POL_ID), data); else await addDoc(collection(db, "talleres_politicas"), { ...data, ambienteId: window.effectiveAmb('tal') }); window.logAct('Red de Talleres', 'Política', data.marca + ': ' + data.politica); window.cancelarPolitica(); }
+      try { if (EDITING_POL_ID) await updateDoc(doc(db, "talleres_politicas", EDITING_POL_ID), data); else await addDoc(collection(db, "talleres_politicas"), { ...data, ...window.talDestino() }); window.logAct('Red de Talleres', 'Política', data.marca + ': ' + data.politica); window.cancelarPolitica(); }
       catch(e) { window.errorGuardado(e, 'talleres_politicas'); }
   };
   window.eliminarPolitica = async function(id) { const p = TAL_POL.find(x => x.id === id); if (!p || !confirm(`¿Eliminar la política de "${p.marca}"?`)) return; try { await deleteDoc(doc(db, "talleres_politicas", id)); } catch(e) { window.errorGuardado(e, 'talleres_politicas'); } };
@@ -4002,7 +4024,7 @@
       return rows.slice(h + 1).filter(r => r.some(c => String(c).trim())).map(r => { const o = {}; head.forEach((k, i) => o[k] = String(r[i] == null ? '' : r[i]).trim()); return o; });
   };
   window.importarTalleres = function(e) {
-      const f = e.target.files[0]; e.target.value = ''; if (!f || !window.hasPerm('tal_imp')) return;
+      const f = e.target.files[0]; e.target.value = ''; if (!f || !window.talPerm('imp')) return;
       const r = new FileReader();
       r.onload = async (evt) => {
           try {
@@ -4024,13 +4046,13 @@
               for (const it of items) {
                   const ex = TAL.find(t => talNorm(t.centro) === talNorm(it.centro));
                   const data = { ...it, actPor: SESION.u, actFecha: Date.now() };
-                  if (ex) batch.update(doc(db, "talleres", ex.id), data); else batch.set(doc(collection(db, "talleres")), { ...data, ambienteId: window.effectiveAmb('tal'), creado: Date.now(), creadoPor: SESION.u });
+                  if (ex) batch.update(doc(db, "talleres", ex.id), data); else batch.set(doc(collection(db, "talleres")), { ...data, ...window.talDestino(), creado: Date.now(), creadoPor: SESION.u });
                   if (++n >= 400) await flush();
               }
               for (const p of pols) {
                   const marca = p['marca / producto']; if (!marca) continue; const data = { marca, politica: p['politica'] || '', destino: p['se envia a'] || '' };
                   const ex = TAL_POL.find(x => talNorm(x.marca) === talNorm(marca));
-                  if (ex) batch.update(doc(db, "talleres_politicas", ex.id), data); else batch.set(doc(collection(db, "talleres_politicas")), { ...data, ambienteId: window.effectiveAmb('tal') });
+                  if (ex) batch.update(doc(db, "talleres_politicas", ex.id), data); else batch.set(doc(collection(db, "talleres_politicas")), { ...data, ...window.talDestino() });
                   if (++n >= 400) await flush();
               }
               await flush();
@@ -4041,7 +4063,7 @@
       r.readAsArrayBuffer(f);
   };
   window.exportTalleres = function() {
-      if (!window.hasPerm('tal_exp')) return;
+      if (!window.talPerm('exp')) return;
       const telTxt = (t) => (t.tels || []).map(p => p.n + (p.l ? ` (${p.l})` : '')).join(' / ');
       const dir = TAL.slice().sort((a, b) => (a.centro || '').localeCompare(b.centro || '')).map(t => ({ 'Centro / taller': t.centro, 'Marcas': (t.marcas || []).join(', '), 'Tipo': t.tipo, 'Qué atiende': t.productos || '', 'Teléfonos': telTxt(t), 'Contacto': t.contacto || '', 'Correo / web': (t.correos || []).join(', ') || t.web || '', 'Dirección': t.direccion || '', 'Atiende cliente final': t.cliente_final === false ? 'No' : 'Sí', 'Garantía': t.garantia || '', 'Notas': ((t.notas || '') + (t.interno ? ' Solo uso interno.' : '')).trim(), 'Actualizado por': t.actPor || '', 'Fecha': t.actFecha ? new Date(t.actFecha).toLocaleString() : '' }));
       const pm = []; TAL.forEach(t => (t.marcas || []).forEach(m => { const p = TAL_POL.find(x => talNorm(x.marca) === talNorm(m)); pm.push({ 'Marca': m, 'Centro / taller': t.centro, 'Tipo': t.tipo, 'Teléfonos': telTxt(t), 'Atiende cliente final': t.cliente_final === false ? 'No' : 'Sí', 'Garantía': t.garantia || '', 'Política en taller presencial ST': p ? p.politica + (p.destino ? ' → ' + p.destino : '') : '' }); }));
@@ -4051,7 +4073,7 @@
       add(dir, 'Directorio', TAL_COLS.concat(['Actualizado por', 'Fecha']));
       add(pm, 'Por marca', ['Marca', 'Centro / taller', 'Tipo', 'Teléfonos', 'Atiende cliente final', 'Garantía', 'Política en taller presencial ST']);
       add(TAL_POL.map(p => ({ 'Marca / producto': p.marca, 'Política': p.politica, 'Se envía a': p.destino || '' })), 'Política talleres ST', ['Marca / producto', 'Política', 'Se envía a']);
-      XLSX.writeFile(wb, 'Red_de_Talleres_' + new Date().toISOString().slice(0, 10) + '.xlsx');
+      XLSX.writeFile(wb, (document.getElementById('rtTitulo').innerText || 'Red de Talleres').replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, '_') + '_' + new Date().toISOString().slice(0, 10) + '.xlsx');
       window.logAct('Red de Talleres', 'Exportar', `${TAL.length} talleres`);
   };
 
