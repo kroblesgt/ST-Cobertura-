@@ -580,6 +580,76 @@
   .iv-stage.zoomed img { max-width: none; max-height: none; cursor: zoom-out; margin: 0 auto; }
   .iv-tip { text-align: center; color: rgba(255,255,255,0.55); font-size: 12px; padding: 0 0 10px; flex-shrink: 0; }
   @media (max-width: 768px) { .aviso-img-wrap { width: 100%; height: 190px; } .iv-bar .iv-txt { display: none; } .iv-tip { display: none; } }
+
+  /* ---------- RED DE TALLERES ---------- */
+  #moduloTalleres, #moduloTalleres *, #modalTaller *, #modalPoliticas *{box-sizing:border-box}
+  #moduloTalleres{min-width:0;max-width:100%}
+  .rt-hero{position:relative;overflow:hidden;border-radius:18px;padding:24px 26px 20px;color:#fff;background:radial-gradient(circle at 88% 10%,rgba(0,159,227,.5),rgba(0,159,227,0) 45%),linear-gradient(120deg,var(--blue),#12335c);box-shadow:var(--shadow-lg);margin-bottom:6px}
+  .rt-hero:after{content:"";position:absolute;right:-60px;top:-80px;width:260px;height:260px;border-radius:50%;border:38px solid rgba(255,255,255,.05);pointer-events:none}
+  .rt-hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;position:relative;z-index:1}
+  .rt-eyebrow{display:inline-flex;gap:8px;align-items:center;font-size:12px;font-weight:600;color:#bfe7fa;background:rgba(255,255,255,.1);padding:5px 12px;border-radius:20px}
+  .rt-hero h2{font-family:var(--font-head);font-size:26px;margin:10px 0 2px;color:#fff}
+  .rt-hero p{margin:0;color:rgba(255,255,255,.72);font-size:14px}
+  .rt-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .rt-actions .wb-btn{padding:9px 13px}
+  .rt-search{position:relative;margin-top:16px;z-index:1}
+  .rt-search > i{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:17px}
+  .rt-search input{width:100%;font:inherit;font-size:17px;padding:15px 70px 15px 50px;border-radius:14px;border:none;outline:none;box-shadow:0 10px 30px rgba(0,0,0,.25);color:var(--text);background:#fff}
+  .rt-search input:focus{box-shadow:0 0 0 4px rgba(0,159,227,.45),0 10px 30px rgba(0,0,0,.25)}
+  .rt-kbd{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:11.5px;color:var(--muted);background:#eef3f8;border-radius:6px;padding:3px 8px;cursor:pointer;border:none;font-family:inherit}
+  .rt-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;position:relative;z-index:1}
+  .rt-chip{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.1);color:#fff;border-radius:20px;padding:6px 13px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;transition:.15s}
+  .rt-chip:hover{background:rgba(255,255,255,.22);transform:translateY(-1px)}
+  .rt-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:16px 0 10px}
+  .rt-seg{border:1px solid var(--border-soft);background:#fff;color:var(--muted);border-radius:20px;padding:7px 13px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;gap:6px;align-items:center;transition:.15s}
+  .rt-seg:hover{border-color:var(--light-blue);color:var(--blue)}
+  .rt-seg.on{background:var(--blue);border-color:var(--blue);color:#fff}
+  .rt-seg .n{background:#eef3f8;color:var(--muted);border-radius:10px;padding:0 7px;font-size:11px}.rt-seg.on .n{background:rgba(255,255,255,.18);color:#fff}
+  .rt-count{margin-left:auto;font-size:13px;color:var(--muted)}.rt-count b{color:var(--blue)}
+  .rt-toggles{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .rt-tg{display:inline-flex;gap:7px;align-items:center;font-size:12.5px;font-weight:600;color:var(--text);background:#fff;border:1px solid var(--border-soft);border-radius:10px;padding:7px 11px;cursor:pointer;user-select:none}
+  .rt-tg input{accent-color:var(--light-blue);width:15px;height:15px;margin:0}
+  .rt-policy{display:flex;gap:12px;align-items:flex-start;background:linear-gradient(90deg,#fff6e3,#fffaf0);border:1px solid #f4d9a0;border-left:5px solid #d98a00;border-radius:12px;padding:12px 16px;margin-bottom:12px}
+  .rt-policy > i{color:#d98a00;font-size:18px;margin-top:2px}.rt-policy b{color:var(--blue)}.rt-policy div{font-size:13.5px;line-height:1.5;flex:1}
+  .rt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;align-items:start}
+  @keyframes rtUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .rt-card{min-width:0;background:#fff;border:1px solid var(--border-soft);border-radius:16px;padding:16px 17px 12px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow-sm);transition:transform .18s,box-shadow .18s,border-color .18s;animation:rtUp .35s ease both}
+  .rt-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(10,34,64,.11);border-color:rgba(0,159,227,.45)}
+  .rt-top{display:flex;gap:12px;align-items:flex-start}
+  .rt-av{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;color:#fff}
+  .rt-name{flex:1;min-width:0}.rt-name h3{margin:0;font-family:var(--font-head);font-size:16px;color:var(--blue);line-height:1.3}
+  .rt-name small{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+  .rt-edit{display:flex;gap:2px}.rt-edit button{border:none;background:none;color:#9aa7b6;cursor:pointer;width:30px;height:30px;border-radius:8px}
+  .rt-edit button:hover{background:#eef3f8;color:var(--blue)}.rt-edit button.del:hover{color:#e63946;background:#fdecee}
+  .rt-brands{display:flex;flex-wrap:wrap;gap:5px}
+  .rt-brand{font-size:11.5px;font-weight:600;color:var(--blue);background:#eef4fa;border-radius:6px;padding:3px 8px}
+  .rt-brand.hit{background:var(--light-blue);color:#fff}
+  .rt-prod{font-size:13px;color:#405063;line-height:1.45}
+  .rt-card mark{background:#fff1b8;color:inherit;border-radius:3px;padding:0 1px}
+  .rt-tags{display:flex;flex-wrap:wrap;gap:6px}
+  .rt-tag{font-size:11px;font-weight:700;border-radius:6px;padding:3px 8px;display:inline-flex;gap:5px;align-items:center}
+  .rt-tag.no{background:#fdecee;color:#c62834}.rt-tag.int{background:#f1ecfb;color:#6b3fbf}.rt-tag.gar{background:#e8f6ee;color:#0b7a45}.rt-tag.sg{background:#fff3d6;color:#a86a00}.rt-tag.both{background:#eef4fa;color:var(--blue)}
+  .rt-phones{display:flex;flex-direction:column;gap:6px}
+  .rt-ph{display:flex;align-items:center;gap:10px;background:#f6f9fc;border:1px solid #edf1f6;border-radius:10px;padding:7px 8px 7px 11px;cursor:pointer;transition:.15s;font:inherit;text-align:left;width:100%;color:inherit}
+  .rt-ph:hover{border-color:var(--light-blue);background:#eef8fd}
+  .rt-ph > i{color:var(--light-blue);width:16px;text-align:center}
+  .rt-ph b{font-size:15.5px;color:var(--blue);font-variant-numeric:tabular-nums}
+  .rt-ph span{font-size:11.5px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .rt-ph em{font-style:normal;font-size:11px;font-weight:700;color:var(--light-blue);opacity:0;transition:.15s}.rt-ph:hover em{opacity:1}
+  .rt-ph.ok{background:#e8f6ee;border-color:#9fdcb9}.rt-ph.ok em{opacity:1;color:var(--green)}
+  .rt-meta{display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:#405063}
+  .rt-meta div{display:flex;gap:8px;align-items:flex-start}.rt-meta i{color:#9aa7b6;width:15px;margin-top:2px;text-align:center}
+  .rt-meta span,.rt-meta button,.rt-meta a{min-width:0;overflow-wrap:anywhere;background:none;border:none;padding:0;font:inherit;color:#405063;cursor:pointer;text-align:left;text-decoration:none;word-break:break-word}
+  .rt-meta button:hover,.rt-meta a:hover{color:var(--light-blue);text-decoration:underline}
+  .rt-note{font-size:12.5px;background:#fffbea;border:1px solid #f6e7b0;border-radius:8px;padding:7px 10px;color:#6b5200}
+  .rt-foot{font-size:11px;color:#9aa7b6;border-top:1px solid #eef2f6;padding-top:8px}
+  .rt-empty{grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted);background:#fff;border:1px dashed var(--border-soft);border-radius:16px}
+  .rt-empty > i{font-size:30px;color:#c3cdd8;display:block;margin-bottom:8px}.rt-empty b{color:var(--blue);display:block;font-size:15px;margin-bottom:4px}
+  .rt-pol-list{display:flex;flex-direction:column;gap:6px;max-height:50vh;overflow-y:auto}
+  .rt-pol-row{display:flex;gap:10px;align-items:center;border:1px solid var(--border-soft);border-radius:10px;padding:9px 12px;font-size:13px}
+  .rt-pol-row b{color:var(--blue);min-width:110px}.rt-pol-row span{flex:1}
+  @media (max-width:640px){.rt-hero{padding:18px 16px}.rt-hero h2{font-size:22px}.rt-grid{grid-template-columns:minmax(0,1fr)}.rt-count{margin-left:0;width:100%}.rt-kbd{display:none}.rt-search input{padding-right:16px;font-size:16px}}
+  .rt-lbl{font-size:12px;font-weight:bold;color:var(--blue);display:block;margin-bottom:2px}
 </style>
 </head>
 <body>
@@ -621,6 +691,7 @@
         <div id="tabCob" class="tab-btn" onclick="window.switchModule('cob')"><i class="fa-solid fa-map-location-dot"></i> <span id="txtTabCob">Cobertura</span></div>
         <div id="tabTec" class="tab-btn" onclick="window.switchModule('tec')"><i class="fa-solid fa-screwdriver-wrench"></i> <span id="txtTabTec">Técnicos</span></div>
         <div id="tabEnc" class="tab-btn" onclick="window.switchModule('enc')"><i class="fa-regular fa-address-card"></i> <span id="txtTabEnc">Directorio</span></div>
+        <div id="tabTal" class="tab-btn hidden" onclick="window.switchModule('tal')"><i class="fa-solid fa-store"></i> <span>Red de Talleres</span></div>
         <div id="tabProc" class="tab-btn" onclick="window.switchModule('proc')"><i class="fa-solid fa-book-open"></i> <span id="txtTabProc">Procedimientos</span></div>
         <div id="tabAvisos" class="tab-btn" onclick="window.switchModule('avisos')"><i class="fa-solid fa-bullhorn"></i> <span id="txtTabAvisos">Avisos</span></div>
         <div id="tabAjs" class="tab-btn hidden" onclick="window.switchModule('ajs')" style="margin-top: auto;"><i class="fa-solid fa-gear"></i> Ajustes</div>
@@ -718,6 +789,32 @@
             </div>
         </div>
         
+
+        <!-- MÓDULO RED DE TALLERES -->
+        <div id="moduloTalleres" class="hidden">
+            <section class="rt-hero">
+                <div class="rt-hero-top">
+                    <div><span class="rt-eyebrow"><i class="fa-solid fa-screwdriver-wrench"></i> Red de Talleres</span><h2>¿A dónde lo envío?</h2><p>Escribe la marca, el producto o el taller y copia el teléfono con un clic.</p></div>
+                    <div class="rt-actions">
+                        <button id="btnTalAdd" class="wb-btn primary hidden" onclick="window.abrirTaller()"><i class="fa-solid fa-plus"></i> Nuevo taller</button>
+                        <button id="btnTalPol" class="wb-btn" onclick="window.abrirPoliticas()"><i class="fa-solid fa-store"></i> Políticas ST</button>
+                        <button id="btnTalImp" class="wb-btn hidden" onclick="document.getElementById('fileImportTal').click()"><i class="fa-solid fa-file-import"></i> Importar</button>
+                        <button id="btnTalExp" class="wb-btn hidden" onclick="window.exportTalleres()"><i class="fa-solid fa-file-excel"></i> Exportar</button>
+                    </div>
+                </div>
+                <div class="rt-search"><i class="fa-solid fa-magnifying-glass"></i><input id="rtQ" type="text" autocomplete="off" placeholder="Ej. Oster, licuadora, Xiaomi, impresora…" aria-label="Buscar taller"><button class="rt-kbd" onclick="window.limpiarBusquedaTal()" title="Limpiar (Esc)">Esc</button></div>
+                <div class="rt-chips" id="rtChips"></div>
+            </section>
+            <div class="rt-bar" id="rtCats"></div>
+            <div class="rt-toggles">
+                <label class="rt-tg"><input type="checkbox" id="rtCF" onchange="window.renderTalleres()"> <i class="fa-solid fa-user-check" style="color:var(--green)"></i> Atienden cliente final</label>
+                <label class="rt-tg"><input type="checkbox" id="rtG" onchange="window.renderTalleres()"> <i class="fa-solid fa-shield-halved" style="color:var(--green)"></i> Con garantía</label>
+                <label class="rt-tg"><input type="checkbox" id="rtSG" onchange="window.renderTalleres()"> <i class="fa-solid fa-shield" style="color:#d98a00"></i> Fuera de garantía</label>
+            </div>
+            <div id="rtPolicy"></div>
+            <div class="rt-grid" id="rtGrid"></div>
+        </div>
+
         <!-- 3. MÓDULO ENCARGADOS -->
         <div id="moduloEncargados" class="hidden">
             <div class="tools">
@@ -896,13 +993,14 @@
                             <p style="font-size:11px; color:var(--mid-gray); margin:0 0 10px 0;">Usa un botón de arriba para llenar todo de un jalón, o marca casilla por casilla abajo.</p>
                             <div style="overflow-x:auto; border:1px solid var(--border-soft); border-radius:8px;">
                                 <table style="width:100%; border-collapse:collapse; font-size:13px; min-width:420px;">
-                                    <thead><tr><th style="text-align:left;">Módulo</th><th style="text-align:center; width:70px;">Ver</th><th style="text-align:center; width:70px;">Editar</th><th style="text-align:center; width:90px;">Exportar</th></tr></thead>
+                                    <thead><tr><th style="text-align:left;">Módulo</th><th style="text-align:center; width:70px;">Ver</th><th style="text-align:center; width:70px;">Editar</th><th style="text-align:center; width:90px;">Exportar</th><th style="text-align:center; width:80px;">Importar</th></tr></thead>
                                     <tbody>
-                                        <tr><td><i class="fa-solid fa-map-location-dot" style="color:var(--light-blue); width:18px;"></i> Cobertura</td><td style="text-align:center;"><input type="checkbox" id="p_cob_view" checked></td><td style="text-align:center;"><input type="checkbox" id="p_cob_edit"></td><td style="text-align:center;"><input type="checkbox" id="p_cob_exp"></td></tr>
-                                        <tr><td><i class="fa-solid fa-screwdriver-wrench" style="color:var(--light-blue); width:18px;"></i> Técnicos</td><td style="text-align:center;"><input type="checkbox" id="p_tec_view" checked></td><td style="text-align:center;"><input type="checkbox" id="p_tec_edit"></td><td style="text-align:center;"><input type="checkbox" id="p_tec_exp"></td></tr>
-                                        <tr><td><i class="fa-solid fa-address-card" style="color:var(--light-blue); width:18px;"></i> Directorio</td><td style="text-align:center;"><input type="checkbox" id="p_enc_view" checked></td><td style="text-align:center;"><input type="checkbox" id="p_enc_edit"></td><td style="text-align:center;"><input type="checkbox" id="p_enc_exp"></td></tr>
-                                        <tr><td><i class="fa-solid fa-book" style="color:var(--light-blue); width:18px;"></i> Procedimientos</td><td style="text-align:center;"><input type="checkbox" id="p_proc_view" checked></td><td style="text-align:center; color:#ced4da;">—</td><td style="text-align:center; color:#ced4da;">—</td></tr>
-                                        <tr><td><i class="fa-solid fa-bullhorn" style="color:var(--light-blue); width:18px;"></i> Avisos</td><td style="text-align:center;"><input type="checkbox" id="p_avi_view" checked></td><td style="text-align:center; color:#ced4da;">—</td><td style="text-align:center; color:#ced4da;">—</td></tr>
+                                        <tr><td><i class="fa-solid fa-map-location-dot" style="color:var(--light-blue); width:18px;"></i> Cobertura</td><td style="text-align:center;"><input type="checkbox" id="p_cob_view" checked></td><td style="text-align:center;"><input type="checkbox" id="p_cob_edit"></td><td style="text-align:center;"><input type="checkbox" id="p_cob_exp"></td><td style="text-align:center; color:#ced4da;">—</td></tr>
+                                        <tr><td><i class="fa-solid fa-screwdriver-wrench" style="color:var(--light-blue); width:18px;"></i> Técnicos</td><td style="text-align:center;"><input type="checkbox" id="p_tec_view" checked></td><td style="text-align:center;"><input type="checkbox" id="p_tec_edit"></td><td style="text-align:center;"><input type="checkbox" id="p_tec_exp"></td><td style="text-align:center; color:#ced4da;">—</td></tr>
+                                        <tr><td><i class="fa-solid fa-address-card" style="color:var(--light-blue); width:18px;"></i> Directorio</td><td style="text-align:center;"><input type="checkbox" id="p_enc_view" checked></td><td style="text-align:center;"><input type="checkbox" id="p_enc_edit"></td><td style="text-align:center;"><input type="checkbox" id="p_enc_exp"></td><td style="text-align:center; color:#ced4da;">—</td></tr>
+                                        <tr><td><i class="fa-solid fa-book" style="color:var(--light-blue); width:18px;"></i> Procedimientos</td><td style="text-align:center;"><input type="checkbox" id="p_proc_view" checked></td><td style="text-align:center; color:#ced4da;">—</td><td style="text-align:center; color:#ced4da;">—</td><td style="text-align:center; color:#ced4da;">—</td></tr>
+                                        <tr><td><i class="fa-solid fa-bullhorn" style="color:var(--light-blue); width:18px;"></i> Avisos</td><td style="text-align:center;"><input type="checkbox" id="p_avi_view" checked></td><td style="text-align:center; color:#ced4da;">—</td><td style="text-align:center; color:#ced4da;">—</td><td style="text-align:center; color:#ced4da;">—</td></tr>
+                                        <tr><td><i class="fa-solid fa-store" style="color:var(--light-blue); width:18px;"></i> Red de Talleres <small style="color:var(--mid-gray);">(Editar = agregar, editar y quitar)</small></td><td style="text-align:center;"><input type="checkbox" id="p_tal_view" checked></td><td style="text-align:center;"><input type="checkbox" id="p_tal_edit"></td><td style="text-align:center;"><input type="checkbox" id="p_tal_exp"></td><td style="text-align:center;"><input type="checkbox" id="p_tal_imp"></td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -1276,6 +1374,42 @@
   <div class="iv-stage" id="ivStage"><img id="ivImg" alt="" onclick="window.zoomImagen(this.closest('.iv-stage').classList.contains('zoomed') ? 0 : 1)"></div>
   <div class="iv-tip">Clic en la imagen para acercar · rueda del mouse con Ctrl para zoom · Esc para cerrar</div>
 </div>
+
+<input type="file" id="fileImportTal" accept=".xlsx, .xls" class="hidden" onchange="window.importarTalleres(event)">
+<!-- MODAL: TALLER -->
+<div id="modalTaller" class="modal-backdrop hidden">
+  <div class="modal" style="max-width:640px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;"><h3 id="talModalTitle" style="margin:0; color:var(--blue);">Nuevo taller</h3><button onclick="window.closeModal('modalTaller')" class="btn btn-o" style="border:none; color:var(--mid-gray);"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="form-grid">
+      <div class="span-2"><label class="rt-lbl">Nombre del taller *</label><input id="talCentro" class="inp" placeholder="Ej. Servicentro Kinal"></div>
+      <div><label class="rt-lbl">Tipo</label><select id="talTipo" class="inp"></select></div>
+      <div><label class="rt-lbl">Garantía</label><select id="talGar" class="inp"><option value="">Sin dato</option><option>Con garantía</option><option>Fuera de garantía</option><option>Con y sin garantía</option></select></div>
+      <div class="span-2"><label class="rt-lbl">Marcas (separadas por coma)</label><input id="talMarcas" class="inp" placeholder="Ej. Oster, Black & Decker"></div>
+      <div class="span-2"><label class="rt-lbl">Qué atiende</label><textarea id="talProd" class="inp" style="height:64px; resize:vertical; font-family:inherit;" placeholder="Ej. Licuadoras, planchas, batidoras"></textarea></div>
+      <div class="span-2"><label class="rt-lbl">Teléfonos (uno por línea; si quieres, agrega una etiqueta después de un guion)</label><textarea id="talTels" class="inp" style="height:76px; resize:vertical; font-family:inherit;" placeholder="2476-7367&#10;1-800-299-0033 - Call center"></textarea></div>
+      <div><label class="rt-lbl">Contacto</label><input id="talContacto" class="inp" placeholder="Nombre de la persona"></div>
+      <div><label class="rt-lbl">Correos (separados por coma)</label><input id="talCorreos" class="inp" placeholder="taller@correo.com"></div>
+      <div class="span-2"><label class="rt-lbl">Dirección</label><input id="talDir" class="inp"></div>
+      <div class="span-2"><label class="rt-lbl">Página web</label><input id="talWeb" class="inp" placeholder="https://"></div>
+      <div class="span-2"><label class="rt-lbl">Notas</label><textarea id="talNotas" class="inp" style="height:56px; resize:vertical; font-family:inherit;" placeholder="Horarios, condiciones, a quién llamar para presupuesto…"></textarea></div>
+      <label class="perm-item"><input type="checkbox" id="talCF" checked> Atiende cliente final</label>
+      <label class="perm-item"><input type="checkbox" id="talInt"> Solo uso interno</label>
+    </div>
+    <div style="margin-top:20px; display:flex; gap:10px; justify-content:flex-end;"><button class="btn btn-o" onclick="window.closeModal('modalTaller')">Cancelar</button><button id="btnGuardarTaller" class="btn btn-s" onclick="window.guardarTaller()"><i class="fa-solid fa-save"></i> Guardar</button></div>
+  </div>
+</div>
+<!-- MODAL: POLÍTICAS DE TALLERES PRESENCIALES ST -->
+<div id="modalPoliticas" class="modal-backdrop hidden">
+  <div class="modal" style="max-width:640px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;"><h3 style="margin:0; color:var(--blue);">Políticas de talleres presenciales ST</h3><button onclick="window.closeModal('modalPoliticas')" class="btn btn-o" style="border:none; color:var(--mid-gray);"><i class="fa-solid fa-xmark"></i></button></div>
+    <p style="font-size:12.5px; color:var(--muted); margin:0 0 12px;">Se muestran como aviso cuando alguien busca esa marca.</p>
+    <div id="rtPolList" class="rt-pol-list"></div>
+    <div id="rtPolForm" class="hidden" style="margin-top:14px; border-top:1px solid var(--border-soft); padding-top:12px;">
+      <div class="form-grid"><input id="polMarca" class="inp" placeholder="Marca o producto"><input id="polDestino" class="inp" placeholder="Se envía a (opcional)"><input id="polTexto" class="inp span-2" placeholder="Política, ej. Solo con garantía"></div>
+      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:10px;"><button class="btn btn-o" onclick="window.cancelarPolitica()">Limpiar</button><button class="btn btn-s" onclick="window.guardarPolitica()"><i class="fa-solid fa-save"></i> Guardar política</button></div>
+    </div>
+  </div>
+</div>
 <!-- MODALES RESTANTES (Ubicaciones, Técnicos, Encargados, Dinámicos) -->
 <div id="modalAdd" class="modal-backdrop hidden">
   <div class="modal"><div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><h3 id="modalTitle" style="margin:0; color:var(--blue)">Nueva Ubicación</h3><button onclick="window.closeModal('modalAdd')" class="btn btn-o" style="border:none; color:var(--mid-gray);"><i class="fa-solid fa-times fa-lg"></i></button></div>
@@ -1624,6 +1758,7 @@
       if (window.hasPerm('cob_view')) DB.cob.forEach(r => { if (window.matchSearch(`${r.m} ${r.n} ${r.c} ${r.z} ${r.r}`, q)) results.push({ mod: 'Cobertura', icon: 'fa-map-location-dot', color: 'var(--light-blue)', tit: r.n || 'Sin nombre', sub: r.m || '', target: 'cob' }); });
       if (window.hasPerm('tec_view')) DB.tec.forEach(r => { if (window.matchSearch(`${r.n} ${r.t1} ${r.t2} ${r.a} ${r.d} ${r.p}`, q)) results.push({ mod: 'Técnicos', icon: 'fa-screwdriver-wrench', color: 'var(--green)', tit: r.n || 'Sin nombre', sub: r.a || '', target: 'tec' }); });
       if (window.hasPerm('enc_view')) DB.enc.forEach(r => { if (window.matchSearch(`${r.n} ${r.t} ${r.c} ${r.p} ${r.g}`, q)) results.push({ mod: 'Directorio', icon: 'fa-address-card', color: 'var(--blue)', tit: r.n || 'Sin nombre', sub: r.p || r.g || '', target: 'enc' }); });
+      if (window.hasPerm('tal_view') && window.talHay) TAL.forEach(t => { if (window.matchSearch(`${t.centro} ${(t.marcas || []).join(' ')} ${t.productos} ${(t.tels || []).map(x => x.n).join(' ')}`, q)) results.push({ mod: 'Red de Talleres', icon: 'fa-store', color: '#c2410c', tit: t.centro, sub: (t.marcas || []).slice(0, 4).join(', '), target: 'tal', talQ: q }); });
       if (window.hasPerm('proc_view')) DB.proc.filter(window.procEnPrincipal).forEach(p => { if (window.matchSearch(`${p.tit} ${p.cat}`, q)) results.push({ mod: 'Procedimientos', icon: 'fa-book', color: 'var(--blue)', tit: p.tit, sub: p.cat || '', target: 'proc', procId: p.id }); });
       if (window.hasPerm('avi_view')) DB.avisos.forEach(a => { if (window.matchSearch(`${a.tit} ${a.cont}`, q)) results.push({ mod: 'Avisos', icon: 'fa-bullhorn', color: '#e63946', tit: a.tit, sub: (a.cont || '').slice(0, 60), target: 'avisos' }); });
       DB.configModulos.forEach(mod => {
@@ -1651,6 +1786,7 @@
       const r = (window._globalSearchResultsCache || [])[idx]; if (!r) return;
       window.closeGlobalSearch(); window.switchModule(r.target);
       if (r.procId) setTimeout(() => window.abrirProcedimiento(r.procId), 200);
+      if (r.talQ) setTimeout(() => window.buscarTal(r.talQ), 50);
   };
 
   // Tarjeta en Inicio con lo que la persona todavía no ha visto (máx. 5), para que no dependa de abrir la campanita.
@@ -1745,8 +1881,8 @@
       let basePerms = rolData && rolData.perms ? rolData.perms : [];
       
       if(!rolData) {
-          if(SESION.r === 'agente') { basePerms = ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'proc_view', 'avi_view', 'dyn_view', 'dyn_edit', 'dyn_exp', 'notif_avisos', 'notif_proc', 'notif_mod']; }
-          if(SESION.r === 'invitado') { basePerms = ['cob_view', 'tec_view', 'enc_view', 'proc_view', 'avi_view', 'dyn_view', 'notif_avisos', 'notif_proc', 'notif_mod']; }
+          if(SESION.r === 'agente') { basePerms = ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'proc_view', 'avi_view', 'tal_view', 'tal_edit', 'dyn_view', 'dyn_edit', 'dyn_exp', 'notif_avisos', 'notif_proc', 'notif_mod']; }
+          if(SESION.r === 'invitado') { basePerms = ['cob_view', 'tec_view', 'enc_view', 'proc_view', 'avi_view', 'tal_view', 'dyn_view', 'notif_avisos', 'notif_proc', 'notif_mod']; }
       }
 
       if(perm.startsWith('view_mod_') && basePerms.includes('dyn_view')) return true;
@@ -1761,6 +1897,8 @@
       if(document.getElementById('ambienteSwitcherBox')) document.getElementById('ambienteSwitcherBox').classList.toggle('hidden', SESION.r !== 'admin' && mios.length <= 1);
       document.getElementById('tabCob').classList.toggle('hidden', !window.hasPerm('cob_view') || !window.fixedModEnabled('cob'));
       document.getElementById('tabTec').classList.toggle('hidden', !window.hasPerm('tec_view') || !window.fixedModEnabled('tec'));
+      document.getElementById('tabTal').classList.toggle('hidden', !window.hasPerm('tal_view'));
+      if (CURRENT_MODULE === 'tal' && window.renderTalleres) window.renderTalleres();
       document.getElementById('tabEnc').classList.toggle('hidden', !window.hasPerm('enc_view') || !window.fixedModEnabled('enc'));
       document.getElementById('tabProc').classList.toggle('hidden', !window.hasPerm('proc_view') || !window.fixedModEnabled('proc'));
       document.getElementById('tabAvisos').classList.toggle('hidden', !window.hasPerm('avi_view') || !window.fixedModEnabled('avisos'));
@@ -1874,11 +2012,12 @@
         document.getElementById('mainContainer').style.padding = window.innerWidth <= 768 ? '10px' : '20px'; 
     }
 
-    ['moduloInicio', 'moduloCobertura', 'moduloTecnicos', 'moduloEncargados', 'moduloProcedimientos', 'moduloAvisos', 'moduloAjustes', 'moduloDinamico'].forEach(id => { document.getElementById(id).classList.add('hidden'); });
+    ['moduloInicio', 'moduloCobertura', 'moduloTecnicos', 'moduloTalleres', 'moduloEncargados', 'moduloProcedimientos', 'moduloAvisos', 'moduloAjustes', 'moduloDinamico'].forEach(id => { document.getElementById(id).classList.add('hidden'); });
 
     if(mod === 'inicio') { document.getElementById('moduloInicio').classList.remove('hidden'); }
     else if(mod === 'cob') { document.getElementById('moduloCobertura').classList.remove('hidden'); window.renderTable(); }
     else if(mod === 'tec') { document.getElementById('moduloTecnicos').classList.remove('hidden'); window.renderTecnicosTable(); }
+    else if(mod === 'tal') { document.getElementById('moduloTalleres').classList.remove('hidden'); window.renderTalleres(); }
     else if(mod === 'enc') { document.getElementById('moduloEncargados').classList.remove('hidden'); window.renderEncargadosTable(); }
     else if(mod === 'proc') { document.getElementById('moduloProcedimientos').classList.remove('hidden'); window.renderProcMenu(); }
     else if(mod === 'avisos') { document.getElementById('moduloAvisos').classList.remove('hidden'); window.renderAvisosMuro(); }
@@ -1994,7 +2133,7 @@
     window.solicitarPermisosChrome();
 
     listenToSysMods(); window.listenToRoles(); window.listenToUsers(); window.listenToLogs(); setInterval(window.updateOnlineUI, 5000); listenToColors(); listenToAmbientes(); listenToPrincipalConfig();
-    listenToCoberturas(); listenToTecnicos(); listenToEncargados(); listenToConfigModulos(); listenToDynData(); listenToProcedimientos(); window.listenToAvisos();
+    listenToCoberturas(); listenToTecnicos(); listenToEncargados(); window.listenToTalleres(); listenToConfigModulos(); listenToDynData(); listenToProcedimientos(); window.listenToAvisos();
     
     window.switchModule('inicio'); 
     window.initSortableTabs(); 
@@ -2164,8 +2303,8 @@
       // ya quedan controlados por qué módulo (modId) es visible en este ambiente, así que sus documentos no se filtran aquí.
       DB.proc = DB_RAW.proc.filter(window.procVisible);
       DB.roles = DB_RAW.roles.filter(r => window.roleInAmb(r, k));
-      if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) { DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] }); }
-      if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) { DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] }); }
+      if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) { DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['tal_view', 'tal_edit', 'cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] }); }
+      if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) { DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['tal_view', 'cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] }); }
       window.updateRolesSelect(); if(CURRENT_MODULE === 'ajs' && document.getElementById('ajsViewRol') && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList();
   };
 
@@ -2277,8 +2416,8 @@
           DB_RAW.roles = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); 
           const k = window.ambKey(AMBIENTE_ACTUAL);
           DB.roles = DB_RAW.roles.filter(r => window.roleInAmb(r, k));
-          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) { DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] }); }
-          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) { DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] }); }
+          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'agente')) { DB.roles.push({ id: 'default_agente', nombre: 'agente', perms: ['tal_view', 'tal_edit', 'cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] }); }
+          if (!DB.roles.some(r => r.nombre.toLowerCase() === 'invitado')) { DB.roles.push({ id: 'default_invitado', nombre: 'invitado', perms: ['tal_view', 'cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] }); }
           window.updateRolesSelect(); window.applyPermissionsToUI(); if(document.getElementById('rolAmbList')) window.renderRoleAmbienteSelect(); if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewRol').classList.contains('hidden')) window.renderRolesList(); 
       }); 
   };
@@ -2332,9 +2471,9 @@
   };
 
   window.aplicarPlantillaRol = function(nivel) {
-      const viewKeys = ['p_cob_view', 'p_tec_view', 'p_enc_view', 'p_proc_view', 'p_avi_view'];
-      const editKeys = ['p_cob_edit', 'p_tec_edit', 'p_enc_edit'];
-      const expKeys = ['p_cob_exp', 'p_tec_exp', 'p_enc_exp'];
+      const viewKeys = ['p_cob_view', 'p_tec_view', 'p_enc_view', 'p_proc_view', 'p_avi_view', 'p_tal_view'];
+      const editKeys = ['p_cob_edit', 'p_tec_edit', 'p_enc_edit', 'p_tal_edit'];
+      const expKeys = ['p_cob_exp', 'p_tec_exp', 'p_enc_exp', 'p_tal_exp', 'p_tal_imp'];
       viewKeys.forEach(id => { const el = document.getElementById(id); if(el) el.checked = true; });
       editKeys.forEach(id => { const el = document.getElementById(id); if(el) el.checked = (nivel !== 'ver'); });
       expKeys.forEach(id => { const el = document.getElementById(id); if(el) el.checked = (nivel === 'total'); });
@@ -2371,8 +2510,8 @@
   // lo funcional: qué permisos usa cada usuario que inició sesión (ver hasPerm).
   window.getAllRolesForList = function() {
       let all = [...(DB_RAW.roles || [])];
-      if (!all.some(r => (r.nombre||'').toLowerCase() === 'agente')) all.push({ id: 'default_agente', nombre: 'agente', perms: ['cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] });
-      if (!all.some(r => (r.nombre||'').toLowerCase() === 'invitado')) all.push({ id: 'default_invitado', nombre: 'invitado', perms: ['cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] });
+      if (!all.some(r => (r.nombre||'').toLowerCase() === 'agente')) all.push({ id: 'default_agente', nombre: 'agente', perms: ['tal_view', 'tal_edit', 'cob_view', 'cob_edit', 'cob_exp', 'tec_view', 'tec_edit', 'tec_exp', 'enc_view', 'enc_edit', 'enc_exp', 'dyn_view', 'dyn_edit', 'dyn_exp', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] });
+      if (!all.some(r => (r.nombre||'').toLowerCase() === 'invitado')) all.push({ id: 'default_invitado', nombre: 'invitado', perms: ['tal_view', 'cob_view', 'tec_view', 'enc_view', 'dyn_view', 'proc_view', 'avi_view', 'notif_avisos', 'notif_proc', 'notif_mod'] });
       return all;
   };
 
@@ -3676,6 +3815,225 @@
       const tit = (document.querySelector('#procViewerContainer h3') || {}).innerText || 'Imagen';
       window.verImagen(img.src, tit);
   });
+
+
+  // =====================================================================================
+  //  RED DE TALLERES (módulo nativo)
+  //  Colecciones: talleres/{id} y talleres_politicas/{id}. Son comunes a todos los ambientes.
+  //  Permisos: tal_view (ver), tal_edit (agregar, editar y quitar), tal_imp (importar), tal_exp (exportar).
+  // =====================================================================================
+  let TAL = [], TAL_POL = [], TAL_CAT = '', EDITING_TAL_ID = null, EDITING_POL_ID = null, TAL_LOADED = false;
+  const TAL_TIPOS = ['Línea blanca', 'Pequeños electrodomésticos', 'Electrónica y audio', 'Celulares y tablets', 'Cómputo e impresión', 'Call center de marca', 'Repuestos', 'Seguros', 'Otros'];
+  const TAL_ICON = { 'Línea blanca': ['fa-snowflake', '#0e7fb0'], 'Pequeños electrodomésticos': ['fa-blender', '#c2410c'], 'Electrónica y audio': ['fa-headphones', '#7c3aed'], 'Celulares y tablets': ['fa-mobile-screen', '#0891b2'], 'Cómputo e impresión': ['fa-laptop', '#1d4ed8'], 'Call center de marca': ['fa-headset', '#0A2240'], 'Repuestos': ['fa-gears', '#4d7c0f'], 'Seguros': ['fa-file-shield', '#be123c'], 'Otros': ['fa-store', '#64748b'] };
+  const talNorm = (s) => (s || '').toString().normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const talTel = (n) => { const d = (n || '').replace(/[^0-9+]/g, ''); if (/^\d{8}$/.test(d)) return d.slice(0, 4) + '-' + d.slice(4); if (/^1\d{10}$/.test(d)) return `${d[0]}-${d.slice(1, 4)}-${d.slice(4, 7)}-${d.slice(7)}`; return (n || '').trim(); };
+
+  window.listenToTalleres = function() {
+      onSnapshot(collection(db, "talleres"), (snap) => { TAL = snap.docs.map(d => ({ id: d.id, ...d.data() })); TAL_LOADED = true; if (CURRENT_MODULE === 'tal') window.renderTalleres(); }, (e) => { console.warn('talleres:', e); TAL_LOADED = true; if (CURRENT_MODULE === 'tal') window.renderTalleres(); });
+      onSnapshot(collection(db, "talleres_politicas"), (snap) => { TAL_POL = snap.docs.map(d => ({ id: d.id, ...d.data() })); if (CURRENT_MODULE === 'tal') window.renderTalleres(); if (!document.getElementById('modalPoliticas').classList.contains('hidden')) window.renderPoliticas(); }, (e) => console.warn('talleres_politicas:', e));
+      let tmr; document.getElementById('rtQ').addEventListener('input', () => { clearTimeout(tmr); tmr = setTimeout(window.renderTalleres, 90); });
+      document.getElementById('rtQ').addEventListener('keydown', (e) => { if (e.key === 'Escape') window.limpiarBusquedaTal(); });
+      // La pestaña nueva queda debajo de Directorio aunque la persona ya haya reordenado su menú.
+      try { const saved = JSON.parse(localStorage.getItem('distelsa_tabs_order_' + SESION.u) || '[]'); const t = document.getElementById('tabTal'), ref = document.getElementById('tabEnc'); if (t && ref && !saved.includes('tabTal')) ref.after(t); } catch(e) {}
+  };
+  window.limpiarBusquedaTal = function() { const q = document.getElementById('rtQ'); q.value = ''; window.renderTalleres(); q.focus(); };
+  window.setTalCat = function(c) { TAL_CAT = c; window.renderTalleres(); };
+  window.buscarTal = function(t) { document.getElementById('rtQ').value = t; TAL_CAT = ''; window.renderTalleres(); };
+  window.talHay = function(t) { return talNorm([t.centro, (t.marcas || []).join(' '), t.tipo, t.productos, t.notas, t.contacto, t.direccion, (t.tels || []).map(x => x.n + ' ' + x.n.replace(/\D/g, '')).join(' ')].join(' ')); };
+  window.talScore = function(t, words) {
+      const hay = window.talHay(t); let s = 0; const mh = talNorm((t.marcas || []).join(' '));
+      for (const w of words) { if (hay.indexOf(w) === -1) return -1; if ((t.marcas || []).some(m => talNorm(m) === w)) s += 10; else if (mh.indexOf(w) !== -1) s += 6; if (talNorm(t.centro).indexOf(w) !== -1) s += 5; if (talNorm(t.productos).indexOf(w) !== -1) s += 2; }
+      return s + (t.cliente_final !== false ? 1 : 0);
+  };
+  window.talHl = function(text, words) {
+      const t = window.esc(text); if (!words.length) return t; const n = talNorm(t); let out = '', i = 0;
+      while (i < t.length) { let best = 0; for (const w of words) if (w && n.substr(i, w.length) === w && w.length > best) best = w.length; if (best) { out += '<mark>' + t.substr(i, best) + '</mark>'; i += best; } else { out += t[i]; i++; } }
+      return out;
+  };
+  window.renderTalleres = function() {
+      const canEdit = window.hasPerm('tal_edit');
+      document.getElementById('btnTalAdd').classList.toggle('hidden', !canEdit);
+      document.getElementById('btnTalImp').classList.toggle('hidden', !window.hasPerm('tal_imp'));
+      document.getElementById('btnTalExp').classList.toggle('hidden', !window.hasPerm('tal_exp'));
+      const grid = document.getElementById('rtGrid');
+      if (!TAL_LOADED) { grid.innerHTML = `<div class="rt-empty"><div class="spinner"></div><b>Cargando talleres…</b></div>`; return; }
+      // Accesos rápidos: las marcas con más talleres
+      const cnt = {}; TAL.forEach(t => (t.marcas || []).forEach(m => { cnt[m] = (cnt[m] || 0) + 1; }));
+      document.getElementById('rtChips').innerHTML = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a] || a.localeCompare(b)).slice(0, 12).map(m => `<button class="rt-chip" onclick="window.buscarTal(${window.esc(window.jsArg(m))})">${window.esc(m)}</button>`).join('');
+      const raw = document.getElementById('rtQ').value.trim(); const words = talNorm(raw).split(/\s+/).filter(Boolean);
+      let base = TAL.map(t => ({ t, s: words.length ? window.talScore(t, words) : 0 })).filter(x => x.s >= 0);
+      if (document.getElementById('rtCF').checked) base = base.filter(x => x.t.cliente_final !== false);
+      if (document.getElementById('rtG').checked) base = base.filter(x => /con/i.test(x.t.garantia || '') && !/^fuera/i.test(x.t.garantia || ''));
+      if (document.getElementById('rtSG').checked) base = base.filter(x => /fuera|sin/i.test(x.t.garantia || ''));
+      const cc = {}; base.forEach(x => { const k = x.t.tipo || 'Otros'; cc[k] = (cc[k] || 0) + 1; });
+      if (TAL_CAT && !cc[TAL_CAT]) TAL_CAT = '';
+      document.getElementById('rtCats').innerHTML = `<button class="rt-seg ${!TAL_CAT ? 'on' : ''}" onclick="window.setTalCat('')">Todos <span class="n">${base.length}</span></button>`
+          + TAL_TIPOS.concat(Object.keys(cc).filter(k => !TAL_TIPOS.includes(k))).filter(k => cc[k]).map(k => `<button class="rt-seg ${TAL_CAT === k ? 'on' : ''}" onclick="window.setTalCat(${window.esc(window.jsArg(k))})"><i class="fa-solid ${(TAL_ICON[k] || TAL_ICON['Otros'])[0]}"></i> ${window.esc(k)} <span class="n">${cc[k]}</span></button>`).join('')
+          + `<span class="rt-count" id="rtCount"></span>`;
+      const list = (TAL_CAT ? base.filter(x => (x.t.tipo || 'Otros') === TAL_CAT) : base).sort((a, b) => b.s - a.s || (a.t.centro || '').localeCompare(b.t.centro || ''));
+      const nm = {}; list.forEach(x => (x.t.marcas || []).forEach(m => nm[m] = 1));
+      document.getElementById('rtCount').innerHTML = `<b>${list.length}</b> taller${list.length === 1 ? '' : 'es'} · <b>${Object.keys(nm).length}</b> marcas`;
+      if (raw) window.registrarBusqueda && window.registrarBusqueda(raw, list.length, 'talleres');
+      const pols = words.length ? TAL_POL.filter(p => { const pm = talNorm(p.marca); return words.some(w => w.length > 2 && (pm.indexOf(w) === 0 || pm === w)); }) : [];
+      document.getElementById('rtPolicy').innerHTML = pols.map(p => `<div class="rt-policy"><i class="fa-solid fa-store"></i><div><b>Taller presencial ST · ${window.esc(p.marca)}:</b> ${window.esc(p.politica)}${p.destino && (p.politica || '').indexOf(p.destino) === -1 ? ` <b>→ ${window.esc(p.destino)}</b>` : ''}</div></div>`).join('');
+      if (!TAL.length) { grid.innerHTML = `<div class="rt-empty"><i class="fa-solid fa-store"></i><b>Aún no hay talleres</b>${window.hasPerm('tal_imp') ? 'Usa <b style="display:inline">Importar</b> con el archivo Directorio_Talleres_Unificado.xlsx para cargar la base inicial.' : (canEdit ? 'Agrega el primero con “Nuevo taller”.' : 'Cuando se carguen, aparecerán aquí.')}</div>`; return; }
+      if (!list.length) { grid.innerHTML = `<div class="rt-empty"><i class="fa-solid fa-magnifying-glass"></i><b>No encontramos "${window.esc(raw)}"</b>Prueba con la marca, el tipo de producto o parte del nombre del taller.${canEdit ? '<br><br><button class="btn btn-s" onclick="window.abrirTaller()"><i class="fa-solid fa-plus"></i> Agregar un taller nuevo</button>' : ''}</div>`; return; }
+      grid.innerHTML = list.map((x, idx) => {
+          const t = x.t, ic = TAL_ICON[t.tipo] || TAL_ICON['Otros'];
+          const brands = (t.marcas || []).map(m => `<span class="rt-brand${words.length && words.some(w => talNorm(m).indexOf(w) !== -1) ? ' hit' : ''}">${window.esc(m)}</span>`).join('');
+          let tags = '';
+          if (t.cliente_final === false) tags += '<span class="rt-tag no"><i class="fa-solid fa-user-slash"></i> No atiende cliente final</span>';
+          if (t.interno) tags += '<span class="rt-tag int"><i class="fa-solid fa-lock"></i> Solo uso interno</span>';
+          if (t.garantia) tags += `<span class="rt-tag ${/con y sin|dentro y fuera/i.test(t.garantia) ? 'both' : /fuera|sin/i.test(t.garantia) ? 'sg' : 'gar'}"><i class="fa-solid fa-shield-halved"></i> ${window.esc(t.garantia)}</span>`;
+          const phones = (t.tels || []).map(p => `<button class="rt-ph" data-copy="${window.esc(p.n)}" title="Copiar teléfono"><i class="fa-solid fa-phone"></i><b>${window.talHl(p.n, words)}</b><span>${window.esc(p.l || '')}</span><em>Copiar</em></button>`).join('');
+          let meta = '';
+          if (t.contacto) meta += `<div><i class="fa-solid fa-user"></i><span>${window.talHl(t.contacto, words)}</span></div>`;
+          (t.correos || []).forEach(e => meta += `<div><i class="fa-solid fa-envelope"></i><button data-copy="${window.esc(e)}" title="Copiar correo">${window.esc(e)}</button></div>`);
+          if (t.web) meta += `<div><i class="fa-solid fa-globe"></i><a href="${window.esc(t.web)}" target="_blank" rel="noopener">${window.esc(t.web)}</a></div>`;
+          if (t.direccion) meta += `<div><i class="fa-solid fa-location-dot"></i><button data-copy="${window.esc(t.direccion)}" title="Copiar dirección">${window.talHl(t.direccion, words)}</button></div>`;
+          const edit = canEdit ? `<div class="rt-edit"><button onclick="window.abrirTaller('${t.id}')" title="Editar"><i class="fa-solid fa-pen"></i></button><button class="del" onclick="window.eliminarTaller('${t.id}')" title="Quitar"><i class="fa-solid fa-trash"></i></button></div>` : '';
+          const foot = t.actPor ? `<div class="rt-foot"><i class="fa-regular fa-clock"></i> Actualizado por ${window.esc(t.actPor)} · ${window.timeAgo(t.actFecha)}</div>` : '';
+          return `<article class="rt-card" style="animation-delay:${Math.min(idx, 12) * 35}ms"><div class="rt-top"><div class="rt-av" style="background:${ic[1]}"><i class="fa-solid ${ic[0]}"></i></div><div class="rt-name"><small>${window.esc(t.tipo || 'Otros')}</small><h3>${window.talHl(t.centro, words)}</h3></div>${edit}</div>`
+              + (brands ? `<div class="rt-brands">${brands}</div>` : '') + (t.productos ? `<div class="rt-prod">${window.talHl(t.productos, words)}</div>` : '')
+              + (tags ? `<div class="rt-tags">${tags}</div>` : '') + (phones ? `<div class="rt-phones">${phones}</div>` : '') + (meta ? `<div class="rt-meta">${meta}</div>` : '')
+              + (t.notas ? `<div class="rt-note"><i class="fa-solid fa-circle-info"></i> ${window.talHl(t.notas, words)}</div>` : '') + foot + `</article>`;
+      }).join('');
+  };
+  // Copiar teléfono, correo o dirección con un clic
+  document.addEventListener('click', async (e) => {
+      const b = e.target.closest && e.target.closest('#moduloTalleres [data-copy]'); if (!b) return;
+      const txt = b.getAttribute('data-copy');
+      try { await navigator.clipboard.writeText(txt); } catch(err) { const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
+      window.showToastSuccess('Copiado: ' + txt);
+      if (b.classList.contains('rt-ph')) { b.classList.add('ok'); const em = b.querySelector('em'); if (em) em.textContent = '¡Copiado!'; setTimeout(() => { b.classList.remove('ok'); if (em) em.textContent = 'Copiar'; }, 1500); }
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === '/' && CURRENT_MODULE === 'tal' && !/INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || '')) { e.preventDefault(); document.getElementById('rtQ').focus(); } });
+
+  // ---- Agregar / editar / quitar ----
+  window.abrirTaller = function(id) {
+      if (!window.hasPerm('tal_edit')) return;
+      EDITING_TAL_ID = id || null; const t = id ? TAL.find(x => x.id === id) : null;
+      document.getElementById('talModalTitle').innerText = t ? 'Editar taller' : 'Nuevo taller';
+      const tipos = TAL_TIPOS.slice(); if (t && t.tipo && !tipos.includes(t.tipo)) tipos.push(t.tipo);
+      document.getElementById('talTipo').innerHTML = tipos.map(k => `<option>${window.esc(k)}</option>`).join('');
+      const v = (id, val) => document.getElementById(id).value = val || '';
+      v('talCentro', t ? t.centro : ''); document.getElementById('talTipo').value = t ? (t.tipo || 'Otros') : (TAL_CAT || 'Otros'); v('talGar', t ? t.garantia : '');
+      v('talMarcas', t ? (t.marcas || []).join(', ') : (document.getElementById('rtQ').value.trim()));
+      v('talProd', t && t.productos); v('talTels', t ? (t.tels || []).map(p => p.n + (p.l ? ' - ' + p.l : '')).join('\n') : '');
+      v('talContacto', t && t.contacto); v('talCorreos', t ? (t.correos || []).join(', ') : ''); v('talDir', t && t.direccion); v('talWeb', t && t.web); v('talNotas', t && t.notas);
+      document.getElementById('talCF').checked = t ? t.cliente_final !== false : true; document.getElementById('talInt').checked = !!(t && t.interno);
+      window.openModal('modalTaller', true); setTimeout(() => document.getElementById('talCentro').focus(), 50);
+  };
+  window.parseTelsTal = function(txt) {
+      return (txt || '').split(/\n|\s\/\s|\/\//).map(s => s.trim()).filter(Boolean).map(s => {
+          let m = s.match(/^(.*?)\s*\((.+)\)\s*$/); if (m) return { n: talTel(m[1]), l: m[2].trim() };
+          m = s.match(/^([\d\s\-\+]+?)\s+[-–]\s+(.+)$/); if (m) return { n: talTel(m[1]), l: m[2].trim() };
+          return { n: talTel(s), l: '' };
+      });
+  };
+  const splitList = (s) => (s || '').split(/[,;]/).map(x => x.trim()).filter(Boolean);
+  window.guardarTaller = async function() {
+      const g = (id) => document.getElementById(id).value.trim();
+      const data = { centro: g('talCentro'), tipo: document.getElementById('talTipo').value, garantia: document.getElementById('talGar').value, marcas: [...new Set(splitList(g('talMarcas')))],
+          productos: g('talProd'), tels: window.parseTelsTal(g('talTels')), contacto: g('talContacto'), correos: splitList(g('talCorreos')), direccion: g('talDir'), web: g('talWeb'), notas: g('talNotas'),
+          cliente_final: document.getElementById('talCF').checked, interno: document.getElementById('talInt').checked, actPor: SESION.u, actFecha: Date.now() };
+      if (!data.centro) return alert('Escribe el nombre del taller.');
+      if (data.correos.some(c => !window.isValidEmail(c))) return alert('Revisa los correos: alguno no parece válido.');
+      const dup = TAL.find(x => x.id !== EDITING_TAL_ID && talNorm(x.centro) === talNorm(data.centro));
+      if (dup && !confirm(`Ya existe un taller llamado "${dup.centro}". ¿Guardar de todos modos?`)) return;
+      const btn = document.getElementById('btnGuardarTaller'); btn.disabled = true;
+      try {
+          if (EDITING_TAL_ID) { await updateDoc(doc(db, "talleres", EDITING_TAL_ID), data); window.logAct('Red de Talleres', 'Editar', data.centro); }
+          else { await addDoc(collection(db, "talleres"), { ...data, creado: Date.now(), creadoPor: SESION.u }); window.logAct('Red de Talleres', 'Crear', data.centro); }
+          window.closeModal('modalTaller'); window.showToastSuccess('Taller guardado.');
+      } catch(e) { window.errorGuardado(e, 'talleres'); }
+      btn.disabled = false;
+  };
+  window.eliminarTaller = async function(id) {
+      const t = TAL.find(x => x.id === id); if (!t || !window.hasPerm('tal_edit')) return;
+      if (!confirm(`¿Quitar "${t.centro}" de la Red de Talleres?`)) return;
+      try { await deleteDoc(doc(db, "talleres", id)); window.logAct('Red de Talleres', 'Eliminar', t.centro); } catch(e) { window.errorGuardado(e, 'talleres'); }
+  };
+
+  // ---- Políticas de talleres presenciales ST ----
+  window.abrirPoliticas = function() { window.cancelarPolitica(); document.getElementById('rtPolForm').classList.toggle('hidden', !window.hasPerm('tal_edit')); window.renderPoliticas(); window.openModal('modalPoliticas', true); };
+  window.renderPoliticas = function() {
+      const canEdit = window.hasPerm('tal_edit');
+      document.getElementById('rtPolList').innerHTML = TAL_POL.slice().sort((a, b) => (a.marca || '').localeCompare(b.marca || '')).map(p => `<div class="rt-pol-row"><b>${window.esc(p.marca)}</b><span>${window.esc(p.politica)}${p.destino ? ` <span style="color:var(--muted)">→ ${window.esc(p.destino)}</span>` : ''}</span>${canEdit ? `<button class="btn btn-o" style="padding:4px 8px; font-size:11px;" onclick="window.editarPolitica('${p.id}')"><i class="fa-solid fa-pen"></i></button><button class="btn btn-d" style="padding:4px 8px; font-size:11px;" onclick="window.eliminarPolitica('${p.id}')"><i class="fa-solid fa-trash"></i></button>` : ''}</div>`).join('') || '<p style="color:var(--muted); font-size:13px; text-align:center;">No hay políticas registradas.</p>';
+  };
+  window.editarPolitica = function(id) { const p = TAL_POL.find(x => x.id === id); if (!p) return; EDITING_POL_ID = id; document.getElementById('polMarca').value = p.marca || ''; document.getElementById('polTexto').value = p.politica || ''; document.getElementById('polDestino').value = p.destino || ''; };
+  window.cancelarPolitica = function() { EDITING_POL_ID = null; ['polMarca', 'polTexto', 'polDestino'].forEach(i => document.getElementById(i).value = ''); };
+  window.guardarPolitica = async function() {
+      const data = { marca: document.getElementById('polMarca').value.trim(), politica: document.getElementById('polTexto').value.trim(), destino: document.getElementById('polDestino').value.trim() };
+      if (!data.marca || !data.politica) return alert('Escribe la marca y la política.');
+      try { if (EDITING_POL_ID) await updateDoc(doc(db, "talleres_politicas", EDITING_POL_ID), data); else await addDoc(collection(db, "talleres_politicas"), data); window.logAct('Red de Talleres', 'Política', data.marca + ': ' + data.politica); window.cancelarPolitica(); }
+      catch(e) { window.errorGuardado(e, 'talleres_politicas'); }
+  };
+  window.eliminarPolitica = async function(id) { const p = TAL_POL.find(x => x.id === id); if (!p || !confirm(`¿Eliminar la política de "${p.marca}"?`)) return; try { await deleteDoc(doc(db, "talleres_politicas", id)); } catch(e) { window.errorGuardado(e, 'talleres_politicas'); } };
+
+  // ---- Importar / exportar Excel ----
+  // Formato: el de la hoja "Directorio" (y opcional "Política talleres ST") que genera Exportar.
+  // Si un taller ya existe (mismo nombre), se ACTUALIZA; si no, se agrega. Nada se borra al importar.
+  const TAL_COLS = ['Centro / taller', 'Marcas', 'Tipo', 'Qué atiende', 'Teléfonos', 'Contacto', 'Correo / web', 'Dirección', 'Atiende cliente final', 'Garantía', 'Notas'];
+  const talFilasHoja = function(ws, colClave) {
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+      const h = rows.findIndex(r => r.some(c => talNorm(c).trim() === talNorm(colClave))); if (h === -1) return [];
+      const head = rows[h].map(c => talNorm(c).trim());
+      return rows.slice(h + 1).filter(r => r.some(c => String(c).trim())).map(r => { const o = {}; head.forEach((k, i) => o[k] = String(r[i] == null ? '' : r[i]).trim()); return o; });
+  };
+  window.importarTalleres = function(e) {
+      const f = e.target.files[0]; e.target.value = ''; if (!f || !window.hasPerm('tal_imp')) return;
+      const r = new FileReader();
+      r.onload = async (evt) => {
+          try {
+              const wb = XLSX.read(evt.target.result, { type: 'array' });
+              let filas = []; for (const n of wb.SheetNames) { filas = talFilasHoja(wb.Sheets[n], 'Centro / taller'); if (filas.length) break; }
+              let pols = []; for (const n of wb.SheetNames) { pols = talFilasHoja(wb.Sheets[n], 'Política'); if (pols.length && pols[0]['marca / producto'] !== undefined) break; pols = []; }
+              if (!filas.length && !pols.length) return alert('No encontré la columna "Centro / taller". Usa el formato de la hoja "Directorio" (el mismo que genera Exportar).');
+              const k = (o, col) => o[talNorm(col)] || '';
+              const items = filas.filter(o => k(o, 'Centro / taller')).map(o => {
+                  const cw = k(o, 'Correo / web'); const web = /^https?:/i.test(cw) ? cw : '';
+                  const notas = k(o, 'Notas');
+                  return { centro: k(o, 'Centro / taller'), marcas: splitList(k(o, 'Marcas')), tipo: k(o, 'Tipo') || 'Otros', productos: k(o, 'Qué atiende'), tels: window.parseTelsTal(k(o, 'Teléfonos')),
+                      contacto: k(o, 'Contacto'), correos: web ? [] : splitList(cw), web, direccion: k(o, 'Dirección'), cliente_final: !/^no$/i.test(k(o, 'Atiende cliente final')),
+                      garantia: k(o, 'Garantía'), notas: notas.replace(/\s*Solo uso interno\.?\s*/i, ' ').trim(), interno: /solo uso interno/i.test(notas) };
+              });
+              const nuevos = items.filter(it => !TAL.some(t => talNorm(t.centro) === talNorm(it.centro))).length;
+              if (!confirm(`Se encontraron ${items.length} talleres (${nuevos} nuevos, ${items.length - nuevos} se actualizarán)${pols.length ? ` y ${pols.length} políticas` : ''}.\n\nNo se borra ningún taller que no venga en el archivo. ¿Continuar?`)) return;
+              let batch = writeBatch(db), n = 0; const flush = async () => { if (n) { await batch.commit(); batch = writeBatch(db); n = 0; } };
+              for (const it of items) {
+                  const ex = TAL.find(t => talNorm(t.centro) === talNorm(it.centro));
+                  const data = { ...it, actPor: SESION.u, actFecha: Date.now() };
+                  if (ex) batch.update(doc(db, "talleres", ex.id), data); else batch.set(doc(collection(db, "talleres")), { ...data, creado: Date.now(), creadoPor: SESION.u });
+                  if (++n >= 400) await flush();
+              }
+              for (const p of pols) {
+                  const marca = p['marca / producto']; if (!marca) continue; const data = { marca, politica: p['politica'] || '', destino: p['se envia a'] || '' };
+                  const ex = TAL_POL.find(x => talNorm(x.marca) === talNorm(marca));
+                  if (ex) batch.update(doc(db, "talleres_politicas", ex.id), data); else batch.set(doc(collection(db, "talleres_politicas")), data);
+                  if (++n >= 400) await flush();
+              }
+              await flush();
+              window.logAct('Red de Talleres', 'Importar', `${items.length} talleres, ${pols.length} políticas`);
+              window.showToastSuccess(`Importación lista: ${items.length} talleres.`);
+          } catch(err) { if (err && err.code) window.errorGuardado(err, 'talleres'); else alert('No se pudo leer el archivo: ' + (err && err.message || err)); }
+      };
+      r.readAsArrayBuffer(f);
+  };
+  window.exportTalleres = function() {
+      if (!window.hasPerm('tal_exp')) return;
+      const telTxt = (t) => (t.tels || []).map(p => p.n + (p.l ? ` (${p.l})` : '')).join(' / ');
+      const dir = TAL.slice().sort((a, b) => (a.centro || '').localeCompare(b.centro || '')).map(t => ({ 'Centro / taller': t.centro, 'Marcas': (t.marcas || []).join(', '), 'Tipo': t.tipo, 'Qué atiende': t.productos || '', 'Teléfonos': telTxt(t), 'Contacto': t.contacto || '', 'Correo / web': (t.correos || []).join(', ') || t.web || '', 'Dirección': t.direccion || '', 'Atiende cliente final': t.cliente_final === false ? 'No' : 'Sí', 'Garantía': t.garantia || '', 'Notas': ((t.notas || '') + (t.interno ? ' Solo uso interno.' : '')).trim(), 'Actualizado por': t.actPor || '', 'Fecha': t.actFecha ? new Date(t.actFecha).toLocaleString() : '' }));
+      const pm = []; TAL.forEach(t => (t.marcas || []).forEach(m => { const p = TAL_POL.find(x => talNorm(x.marca) === talNorm(m)); pm.push({ 'Marca': m, 'Centro / taller': t.centro, 'Tipo': t.tipo, 'Teléfonos': telTxt(t), 'Atiende cliente final': t.cliente_final === false ? 'No' : 'Sí', 'Garantía': t.garantia || '', 'Política en taller presencial ST': p ? p.politica + (p.destino ? ' → ' + p.destino : '') : '' }); }));
+      pm.sort((a, b) => a.Marca.localeCompare(b.Marca) || a['Centro / taller'].localeCompare(b['Centro / taller']));
+      const wb = XLSX.utils.book_new();
+      const add = (rows, name, cols) => { const ws = XLSX.utils.json_to_sheet(rows.length ? rows : [Object.fromEntries(cols.map(c => [c, '']))], { header: cols }); ws['!cols'] = cols.map(c => ({ wch: /Qué|Dirección|Notas|Marcas|Política/.test(c) ? 40 : 22 })); XLSX.utils.book_append_sheet(wb, ws, name); };
+      add(dir, 'Directorio', TAL_COLS.concat(['Actualizado por', 'Fecha']));
+      add(pm, 'Por marca', ['Marca', 'Centro / taller', 'Tipo', 'Teléfonos', 'Atiende cliente final', 'Garantía', 'Política en taller presencial ST']);
+      add(TAL_POL.map(p => ({ 'Marca / producto': p.marca, 'Política': p.politica, 'Se envía a': p.destino || '' })), 'Política talleres ST', ['Marca / producto', 'Política', 'Se envía a']);
+      XLSX.writeFile(wb, 'Red_de_Talleres_' + new Date().toISOString().slice(0, 10) + '.xlsx');
+      window.logAct('Red de Talleres', 'Exportar', `${TAL.length} talleres`);
+  };
 
 </script>
 </body>
