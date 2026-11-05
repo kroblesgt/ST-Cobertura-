@@ -882,7 +882,7 @@
                     <!-- VISTA: AMBIENTES -->
                     <div id="ajsViewAmb" class="hidden">
                         <h3 style="margin-top:0; color:var(--blue);"><i class="fa-solid fa-building"></i> Ambientes (Intranets Independientes)</h3>
-                        <p style="font-size:13px; color:var(--mid-gray);">Cada ambiente tiene su propia Cobertura, Técnicos, Directorio, Procedimientos y Avisos — completamente separados entre sí. Un usuario puede tener acceso a uno o varios ambientes; el rol Administrador siempre ve todos.</p>
+                        <p style="font-size:13px; color:var(--mid-gray);">Cada ambiente tiene su propia Cobertura, Técnicos, Directorio, Procedimientos, Avisos y Red de Talleres — completamente separados entre sí. Un usuario puede tener acceso a uno o varios ambientes; el rol Administrador siempre ve todos.</p>
                         <div class="form-grid" style="background:#f8fafc; padding:20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--border-soft);">
                             <div>
                                 <label style="font-size:12px; font-weight:bold; color:var(--blue);">Nombre del Ambiente</label>
@@ -913,6 +913,7 @@
                                     <div><label style="font-size:11px; color:var(--blue); font-weight:bold;">Directorio</label><select id="ac_enc" class="inp" style="margin:2px 0 0;"><option value="">Datos propios (independiente)</option></select></div>
                                     <div><label style="font-size:11px; color:var(--blue); font-weight:bold;">Procedimientos</label><select id="ac_proc" class="inp" style="margin:2px 0 0;"><option value="">Datos propios (independiente)</option></select></div>
                                     <div><label style="font-size:11px; color:var(--blue); font-weight:bold;">Avisos</label><select id="ac_avisos" class="inp" style="margin:2px 0 0;"><option value="">Datos propios (independiente)</option></select></div>
+                                    <div><label style="font-size:11px; color:var(--blue); font-weight:bold;">Red de Talleres</label><select id="ac_tal" class="inp" style="margin:2px 0 0;"><option value="">Datos propios (independiente)</option></select></div>
                                 </div>
                             </div>
                             <div class="span-2" style="text-align:right; margin-top: 5px;">
@@ -2227,8 +2228,8 @@
       MODS_NUEVOS.forEach(k => { if (!lista.includes(k) && !conocidos.includes(k)) lista.push(k); });
       return lista;
   };
-  const SHARED_MODS_KEYS = ['cob', 'tec', 'enc', 'proc', 'avisos'];
-  const SHARED_MODS_LABELS = { cob: 'Cobertura', tec: 'Técnicos', enc: 'Directorio', proc: 'Procedimientos', avisos: 'Avisos' };
+  const SHARED_MODS_KEYS = ['cob', 'tec', 'enc', 'proc', 'avisos', 'tal'];
+  const SHARED_MODS_LABELS = { cob: 'Cobertura', tec: 'Técnicos', enc: 'Directorio', proc: 'Procedimientos', avisos: 'Avisos', tal: 'Red de Talleres' };
   window.fixedModEnabled = function(key) {
       if (!AMBIENTE_ACTUAL) return window.modsActivosDe(PRINCIPAL_CONFIG).includes(key);
       const amb = DB.ambientes.find(a => a.id === AMBIENTE_ACTUAL);
@@ -2304,6 +2305,7 @@
 
   window.recomputeAmbienteScopedData = function() {
       const k = window.ambKey(AMBIENTE_ACTUAL);
+      if (window.filtrarTalleresAmb) { window.filtrarTalleresAmb(); if (CURRENT_MODULE === 'tal') window.renderTalleres(); }
       DB.cob = DB_RAW.cob.filter(x => window.ambKey(x.ambienteId) === window.effectiveAmb('cob'));
       DB.tec = DB_RAW.tec.filter(x => window.ambKey(x.ambienteId) === window.effectiveAmb('tec'));
       DB.enc = DB_RAW.enc.filter(x => window.ambKey(x.ambienteId) === window.effectiveAmb('enc'));
@@ -3833,15 +3835,22 @@
   //  Colecciones: talleres/{id} y talleres_politicas/{id}. Son comunes a todos los ambientes.
   //  Permisos: tal_view (ver), tal_edit (agregar, editar y quitar), tal_imp (importar), tal_exp (exportar).
   // =====================================================================================
-  let TAL = [], TAL_POL = [], TAL_CAT = '', EDITING_TAL_ID = null, EDITING_POL_ID = null, TAL_LOADED = false;
+  let TAL_RAW = [], TAL_POL_RAW = [], TAL = [], TAL_POL = [], TAL_CAT = '', EDITING_TAL_ID = null, EDITING_POL_ID = null, TAL_LOADED = false;
   const TAL_TIPOS = ['Línea blanca', 'Pequeños electrodomésticos', 'Electrónica y audio', 'Celulares y tablets', 'Cómputo e impresión', 'Call center de marca', 'Repuestos', 'Seguros', 'Otros'];
   const TAL_ICON = { 'Línea blanca': ['fa-snowflake', '#0e7fb0'], 'Pequeños electrodomésticos': ['fa-blender', '#c2410c'], 'Electrónica y audio': ['fa-headphones', '#7c3aed'], 'Celulares y tablets': ['fa-mobile-screen', '#0891b2'], 'Cómputo e impresión': ['fa-laptop', '#1d4ed8'], 'Call center de marca': ['fa-headset', '#0A2240'], 'Repuestos': ['fa-gears', '#4d7c0f'], 'Seguros': ['fa-file-shield', '#be123c'], 'Otros': ['fa-store', '#64748b'] };
   const talNorm = (s) => (s || '').toString().normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
   const talTel = (n) => { const d = (n || '').replace(/[^0-9+]/g, ''); if (/^\d{8}$/.test(d)) return d.slice(0, 4) + '-' + d.slice(4); if (/^1\d{10}$/.test(d)) return `${d[0]}-${d.slice(1, 4)}-${d.slice(4, 7)}-${d.slice(7)}`; return (n || '').trim(); };
 
+  // Cada ambiente ve sus talleres, o los de otro ambiente si así se configuró en Ajustes > Ambientes > Origen de los datos.
+  // Los registros sin ambienteId (cargados antes de esto) pertenecen a Principal.
+  window.filtrarTalleresAmb = function() {
+      const k = window.effectiveAmb('tal');
+      TAL = TAL_RAW.filter(x => window.ambKey(x.ambienteId) === k);
+      TAL_POL = TAL_POL_RAW.filter(x => window.ambKey(x.ambienteId) === k);
+  };
   window.listenToTalleres = function() {
-      onSnapshot(collection(db, "talleres"), (snap) => { TAL = snap.docs.map(d => ({ id: d.id, ...d.data() })); TAL_LOADED = true; if (CURRENT_MODULE === 'tal') window.renderTalleres(); }, (e) => { console.warn('talleres:', e); TAL_LOADED = true; if (CURRENT_MODULE === 'tal') window.renderTalleres(); });
-      onSnapshot(collection(db, "talleres_politicas"), (snap) => { TAL_POL = snap.docs.map(d => ({ id: d.id, ...d.data() })); if (CURRENT_MODULE === 'tal') window.renderTalleres(); if (!document.getElementById('modalPoliticas').classList.contains('hidden')) window.renderPoliticas(); }, (e) => console.warn('talleres_politicas:', e));
+      onSnapshot(collection(db, "talleres"), (snap) => { TAL_RAW = snap.docs.map(d => ({ id: d.id, ...d.data() })); window.filtrarTalleresAmb(); TAL_LOADED = true; if (CURRENT_MODULE === 'tal') window.renderTalleres(); }, (e) => { console.warn('talleres:', e); TAL_LOADED = true; if (CURRENT_MODULE === 'tal') window.renderTalleres(); });
+      onSnapshot(collection(db, "talleres_politicas"), (snap) => { TAL_POL_RAW = snap.docs.map(d => ({ id: d.id, ...d.data() })); window.filtrarTalleresAmb(); if (CURRENT_MODULE === 'tal') window.renderTalleres(); if (!document.getElementById('modalPoliticas').classList.contains('hidden')) window.renderPoliticas(); }, (e) => console.warn('talleres_politicas:', e));
       let tmr; document.getElementById('rtQ').addEventListener('input', () => { clearTimeout(tmr); tmr = setTimeout(window.renderTalleres, 90); });
       document.getElementById('rtQ').addEventListener('keydown', (e) => { if (e.key === 'Escape') window.limpiarBusquedaTal(); });
       // La pestaña nueva queda debajo de Directorio aunque la persona ya haya reordenado su menú.
@@ -3955,7 +3964,7 @@
       const btn = document.getElementById('btnGuardarTaller'); btn.disabled = true;
       try {
           if (EDITING_TAL_ID) { await updateDoc(doc(db, "talleres", EDITING_TAL_ID), data); window.logAct('Red de Talleres', 'Editar', data.centro); }
-          else { await addDoc(collection(db, "talleres"), { ...data, creado: Date.now(), creadoPor: SESION.u }); window.logAct('Red de Talleres', 'Crear', data.centro); }
+          else { await addDoc(collection(db, "talleres"), { ...data, ambienteId: window.effectiveAmb('tal'), creado: Date.now(), creadoPor: SESION.u }); window.logAct('Red de Talleres', 'Crear', data.centro); }
           window.closeModal('modalTaller'); window.showToastSuccess('Taller guardado.');
       } catch(e) { window.errorGuardado(e, 'talleres'); }
       btn.disabled = false;
@@ -3977,7 +3986,7 @@
   window.guardarPolitica = async function() {
       const data = { marca: document.getElementById('polMarca').value.trim(), politica: document.getElementById('polTexto').value.trim(), destino: document.getElementById('polDestino').value.trim() };
       if (!data.marca || !data.politica) return alert('Escribe la marca y la política.');
-      try { if (EDITING_POL_ID) await updateDoc(doc(db, "talleres_politicas", EDITING_POL_ID), data); else await addDoc(collection(db, "talleres_politicas"), data); window.logAct('Red de Talleres', 'Política', data.marca + ': ' + data.politica); window.cancelarPolitica(); }
+      try { if (EDITING_POL_ID) await updateDoc(doc(db, "talleres_politicas", EDITING_POL_ID), data); else await addDoc(collection(db, "talleres_politicas"), { ...data, ambienteId: window.effectiveAmb('tal') }); window.logAct('Red de Talleres', 'Política', data.marca + ': ' + data.politica); window.cancelarPolitica(); }
       catch(e) { window.errorGuardado(e, 'talleres_politicas'); }
   };
   window.eliminarPolitica = async function(id) { const p = TAL_POL.find(x => x.id === id); if (!p || !confirm(`¿Eliminar la política de "${p.marca}"?`)) return; try { await deleteDoc(doc(db, "talleres_politicas", id)); } catch(e) { window.errorGuardado(e, 'talleres_politicas'); } };
@@ -4015,13 +4024,13 @@
               for (const it of items) {
                   const ex = TAL.find(t => talNorm(t.centro) === talNorm(it.centro));
                   const data = { ...it, actPor: SESION.u, actFecha: Date.now() };
-                  if (ex) batch.update(doc(db, "talleres", ex.id), data); else batch.set(doc(collection(db, "talleres")), { ...data, creado: Date.now(), creadoPor: SESION.u });
+                  if (ex) batch.update(doc(db, "talleres", ex.id), data); else batch.set(doc(collection(db, "talleres")), { ...data, ambienteId: window.effectiveAmb('tal'), creado: Date.now(), creadoPor: SESION.u });
                   if (++n >= 400) await flush();
               }
               for (const p of pols) {
                   const marca = p['marca / producto']; if (!marca) continue; const data = { marca, politica: p['politica'] || '', destino: p['se envia a'] || '' };
                   const ex = TAL_POL.find(x => talNorm(x.marca) === talNorm(marca));
-                  if (ex) batch.update(doc(db, "talleres_politicas", ex.id), data); else batch.set(doc(collection(db, "talleres_politicas")), data);
+                  if (ex) batch.update(doc(db, "talleres_politicas", ex.id), data); else batch.set(doc(collection(db, "talleres_politicas")), { ...data, ambienteId: window.effectiveAmb('tal') });
                   if (++n >= 400) await flush();
               }
               await flush();
