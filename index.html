@@ -691,7 +691,7 @@
         <div id="tabCob" class="tab-btn" onclick="window.switchModule('cob')"><i class="fa-solid fa-map-location-dot"></i> <span id="txtTabCob">Cobertura</span></div>
         <div id="tabTec" class="tab-btn" onclick="window.switchModule('tec')"><i class="fa-solid fa-screwdriver-wrench"></i> <span id="txtTabTec">Técnicos</span></div>
         <div id="tabEnc" class="tab-btn" onclick="window.switchModule('enc')"><i class="fa-regular fa-address-card"></i> <span id="txtTabEnc">Directorio</span></div>
-        <div id="tabTal" class="tab-btn hidden" onclick="window.switchModule('tal')"><i class="fa-solid fa-store"></i> <span>Red de Talleres</span></div>
+        <div id="tabTal" class="tab-btn hidden" onclick="window.switchModule('tal')"><i class="fa-solid fa-store"></i> <span id="txtTabTal">Red de Talleres</span></div>
         <div id="tabProc" class="tab-btn" onclick="window.switchModule('proc')"><i class="fa-solid fa-book-open"></i> <span id="txtTabProc">Procedimientos</span></div>
         <div id="tabAvisos" class="tab-btn" onclick="window.switchModule('avisos')"><i class="fa-solid fa-bullhorn"></i> <span id="txtTabAvisos">Avisos</span></div>
         <div id="tabAjs" class="tab-btn hidden" onclick="window.switchModule('ajs')" style="margin-top: auto;"><i class="fa-solid fa-gear"></i> Ajustes</div>
@@ -794,7 +794,7 @@
         <div id="moduloTalleres" class="hidden">
             <section class="rt-hero">
                 <div class="rt-hero-top">
-                    <div><span class="rt-eyebrow"><i class="fa-solid fa-screwdriver-wrench"></i> Red de Talleres</span><h2>¿A dónde lo envío?</h2><p>Escribe la marca, el producto o el taller y copia el teléfono con un clic.</p></div>
+                    <div><span class="rt-eyebrow"><i class="fa-solid fa-screwdriver-wrench"></i> <span id="rtTitulo">Red de Talleres</span></span><h2>¿A dónde lo envío?</h2><p>Escribe la marca, el producto o el taller y copia el teléfono con un clic.</p></div>
                     <div class="rt-actions">
                         <button id="btnTalAdd" class="wb-btn primary hidden" onclick="window.abrirTaller()"><i class="fa-solid fa-plus"></i> Nuevo taller</button>
                         <button id="btnTalPol" class="wb-btn" onclick="window.abrirPoliticas()"><i class="fa-solid fa-store"></i> Políticas ST</button>
@@ -901,6 +901,7 @@
                                     <label class="perm-item"><input type="checkbox" id="am_enc" checked> Directorio</label>
                                     <label class="perm-item"><input type="checkbox" id="am_proc" checked> Procedimientos</label>
                                     <label class="perm-item"><input type="checkbox" id="am_avisos" checked> Avisos</label>
+                                    <label class="perm-item"><input type="checkbox" id="am_tal" checked> Red de Talleres</label>
                                 </div>
                             </div>
                             <div class="span-2" id="ambCompartidosBox">
@@ -1597,7 +1598,7 @@
   let SHOW_PAPELERA = false; let ADMIN_PROC_TARGET_MODID = null; 
   
   let LOAD_STATE = { cob: false, tec: false, enc: false, proc: false, avisos: false, dyn: false };
-  let SYS_MOD_NAMES = { cob: "Cobertura", tec: "Técnicos", enc: "Directorio", proc: "Procedimientos" };
+  let SYS_MOD_NAMES = { cob: "Cobertura", tec: "Técnicos", enc: "Directorio", proc: "Procedimientos", tal: "Red de Talleres" };
   let STATUS_COLORS = { "Cobertura": "#00A65A", "Sin Cobertura": "#e63946", "Consultar": "#009FE3", "Sin Datos": "#6c757d" };
   
   let quillEditor; let PROC_MODE = 'visual';
@@ -1897,7 +1898,7 @@
       if(document.getElementById('ambienteSwitcherBox')) document.getElementById('ambienteSwitcherBox').classList.toggle('hidden', SESION.r !== 'admin' && mios.length <= 1);
       document.getElementById('tabCob').classList.toggle('hidden', !window.hasPerm('cob_view') || !window.fixedModEnabled('cob'));
       document.getElementById('tabTec').classList.toggle('hidden', !window.hasPerm('tec_view') || !window.fixedModEnabled('tec'));
-      document.getElementById('tabTal').classList.toggle('hidden', !window.hasPerm('tal_view'));
+      document.getElementById('tabTal').classList.toggle('hidden', !window.hasPerm('tal_view') || !window.fixedModEnabled('tal'));
       if (CURRENT_MODULE === 'tal' && window.renderTalleres) window.renderTalleres();
       document.getElementById('tabEnc').classList.toggle('hidden', !window.hasPerm('enc_view') || !window.fixedModEnabled('enc'));
       document.getElementById('tabProc').classList.toggle('hidden', !window.hasPerm('proc_view') || !window.fixedModEnabled('proc'));
@@ -2216,14 +2217,23 @@
   window.getCheckedValues = function(containerId) { const c = document.getElementById(containerId); if(!c) return []; return Array.from(c.querySelectorAll('input[type="checkbox"]:checked')).map(i => i.value); };
   window.toggleAllCheckboxes = function(containerId, checked, callback) { const c = document.getElementById(containerId); if(!c) return; c.querySelectorAll('input[type="checkbox"]').forEach(i => i.checked = checked); if(callback && window[callback]) window[callback](); };
   window.setCheckedValues = function(containerId, values) { const c = document.getElementById(containerId); if(!c) return; c.querySelectorAll('input[type="checkbox"]').forEach(i => { i.checked = values.includes(i.value); }); };
-  const FIXED_MODS_DEFAULT = ['cob', 'tec', 'enc', 'proc', 'avisos'];
+  const FIXED_MODS_DEFAULT = ['cob', 'tec', 'enc', 'proc', 'avisos', 'tal'];
+  // Módulos agregados después: si un ambiente se guardó antes de que existieran (no están en "modulosConocidos"),
+  // se consideran ACTIVOS. Así aparecen sin tener que reconfigurar cada ambiente.
+  const MODS_NUEVOS = ['tal'];
+  window.modsActivosDe = function(cfg) {
+      const lista = (cfg && cfg.modulos) ? cfg.modulos.slice() : FIXED_MODS_DEFAULT.slice();
+      const conocidos = (cfg && cfg.modulosConocidos) || [];
+      MODS_NUEVOS.forEach(k => { if (!lista.includes(k) && !conocidos.includes(k)) lista.push(k); });
+      return lista;
+  };
   const SHARED_MODS_KEYS = ['cob', 'tec', 'enc', 'proc', 'avisos'];
   const SHARED_MODS_LABELS = { cob: 'Cobertura', tec: 'Técnicos', enc: 'Directorio', proc: 'Procedimientos', avisos: 'Avisos' };
   window.fixedModEnabled = function(key) {
-      if (!AMBIENTE_ACTUAL) return (PRINCIPAL_CONFIG.modulos || FIXED_MODS_DEFAULT).includes(key);
+      if (!AMBIENTE_ACTUAL) return window.modsActivosDe(PRINCIPAL_CONFIG).includes(key);
       const amb = DB.ambientes.find(a => a.id === AMBIENTE_ACTUAL);
       if (!amb) return true;
-      return (amb.modulos || FIXED_MODS_DEFAULT).includes(key);
+      return window.modsActivosDe(amb).includes(key);
   };
   // Ambiente "real" del que se leen/escriben los datos de un módulo. Admite dos formatos:
   // - amb.linked = { cob: "<idAmbienteOrigen>", ... } (nuevo, apunta a CUALQUIER ambiente, no solo Principal)
@@ -2338,10 +2348,10 @@
           const wasEditingId = EDITING_AMB_ID;
           if (EDITING_AMB_ID === PRINCIPAL_DOC_ID) {
               // Principal no comparte consigo mismo, así que ese campo no aplica aquí.
-              await setDoc(doc(db, "ambientes", PRINCIPAL_DOC_ID), { nombre, icono, modulos }, { merge: true });
+              await setDoc(doc(db, "ambientes", PRINCIPAL_DOC_ID), { nombre, icono, modulos, modulosConocidos: FIXED_MODS_DEFAULT }, { merge: true });
               window.logAct("Ambientes", "Editar", "Ambiente Principal actualizado");
           } else {
-              let payload = { nombre, icono, modulos, linked, shared: [] }; // "shared" se deja vacío: el formato nuevo es "linked"
+              let payload = { nombre, icono, modulos, modulosConocidos: FIXED_MODS_DEFAULT, linked, shared: [] }; // "shared" se deja vacío: el formato nuevo es "linked"
               if(EDITING_AMB_ID) { await updateDoc(doc(db, "ambientes", EDITING_AMB_ID), payload); window.logAct("Ambientes", "Editar", "Ambiente actualizado: " + nombre); }
               else { payload.fecha = Date.now(); await addDoc(collection(db, "ambientes"), payload); window.logAct("Ambientes", "Crear", "Nuevo ambiente: " + nombre); }
           }
@@ -2355,7 +2365,7 @@
       const a = id === PRINCIPAL_DOC_ID ? PRINCIPAL_CONFIG : DB.ambientes.find(x => x.id === id);
       if(!a) return;
       document.getElementById('ambNombre').value = a.nombre || ''; document.getElementById('ambIcono').value = a.icono || '';
-      const modulos = a.modulos || FIXED_MODS_DEFAULT;
+      const modulos = window.modsActivosDe(a);
       FIXED_MODS_DEFAULT.forEach(k => { document.getElementById('am_' + k).checked = modulos.includes(k); });
       window.renderAmbCompartidosSelects(id);
       // Compatibilidad: si el ambiente todavía tiene el campo viejo "shared" (compartir con Principal)
@@ -2546,7 +2556,7 @@
 
   // ================= NOMBRES DE MÓDULOS DEL SISTEMA =================
   function listenToSysMods() { onSnapshot(doc(db, "configuracion", "nombres_modulos"), (docSnap) => { if (docSnap.exists()) { Object.assign(SYS_MOD_NAMES, docSnap.data()); } window.updateSysModUI(); }); }
-  window.updateSysModUI = function() { document.getElementById('txtTabCob').innerText = SYS_MOD_NAMES.cob || 'Cobertura'; document.getElementById('txtTabTec').innerText = SYS_MOD_NAMES.tec || 'Técnicos'; document.getElementById('txtTabEnc').innerText = SYS_MOD_NAMES.enc || 'Directorio'; document.getElementById('txtTabProc').innerText = SYS_MOD_NAMES.proc || 'Procedimientos'; const lblProc = document.getElementById('lblProcSidebar'); if(lblProc) lblProc.innerText = SYS_MOD_NAMES.proc || 'Procedimientos'; 
+  window.updateSysModUI = function() { const nTal = SYS_MOD_NAMES.tal || 'Red de Talleres'; document.getElementById('txtTabTal').innerText = nTal; document.getElementById('rtTitulo').innerText = nTal; document.getElementById('txtTabCob').innerText = SYS_MOD_NAMES.cob || 'Cobertura'; document.getElementById('txtTabTec').innerText = SYS_MOD_NAMES.tec || 'Técnicos'; document.getElementById('txtTabEnc').innerText = SYS_MOD_NAMES.enc || 'Directorio'; document.getElementById('txtTabProc').innerText = SYS_MOD_NAMES.proc || 'Procedimientos'; const lblProc = document.getElementById('lblProcSidebar'); if(lblProc) lblProc.innerText = SYS_MOD_NAMES.proc || 'Procedimientos'; 
       window.renderSysModsList();
       if(CURRENT_MODULE === 'ajs' && !document.getElementById('ajsViewMod').classList.contains('hidden')) window.renderListaModulos(); 
   };
@@ -2558,11 +2568,12 @@
       { key: 'tec', field: 'tec', vista: 'tabla', default: 'Técnicos' },
       { key: 'enc', field: 'enc', vista: 'directorio', default: 'Directorio' },
       { key: 'proc', field: 'proc', vista: 'procedimientos', default: 'Procedimientos' },
-      { key: 'avisos', field: null, vista: 'avisos', default: 'Avisos' }
+      { key: 'avisos', field: null, vista: 'avisos', default: 'Avisos' },
+      { key: 'tal', field: 'tal', vista: 'talleres', default: 'Red de Talleres' }
   ];
   window.getSysModActivos = function() {
       const amb = AMBIENTE_ACTUAL ? DB.ambientes.find(a => a.id === AMBIENTE_ACTUAL) : null;
-      return AMBIENTE_ACTUAL ? (amb ? (amb.modulos || FIXED_MODS_DEFAULT) : FIXED_MODS_DEFAULT) : (PRINCIPAL_CONFIG.modulos || FIXED_MODS_DEFAULT);
+      return AMBIENTE_ACTUAL ? (amb ? window.modsActivosDe(amb) : FIXED_MODS_DEFAULT) : window.modsActivosDe(PRINCIPAL_CONFIG);
   };
   window.renderSysModsList = function() {
       const cont = document.getElementById('sysModsListContainer'); if(!cont) return;
@@ -2596,8 +2607,8 @@
               await setDoc(doc(db, "configuracion", "nombres_modulos"), { [meta.field]: nombre }, { merge: true });
           }
           const actuales = window.getSysModActivos(); let nuevos = activo ? Array.from(new Set([...actuales, key])) : actuales.filter(k => k !== key);
-          if (!AMBIENTE_ACTUAL) { await setDoc(doc(db, "ambientes", PRINCIPAL_DOC_ID), { modulos: nuevos }, { merge: true }); }
-          else { await updateDoc(doc(db, "ambientes", AMBIENTE_ACTUAL), { modulos: nuevos }); }
+          if (!AMBIENTE_ACTUAL) { await setDoc(doc(db, "ambientes", PRINCIPAL_DOC_ID), { modulos: nuevos, modulosConocidos: FIXED_MODS_DEFAULT }, { merge: true }); }
+          else { await updateDoc(doc(db, "ambientes", AMBIENTE_ACTUAL), { modulos: nuevos, modulosConocidos: FIXED_MODS_DEFAULT }); }
           window.logAct("Módulos", "Editar", "Módulo del sistema actualizado: " + key);
           window.closeModal('modalSysMod'); window.showToastSuccess("Guardado.");
       } catch(e) { console.error(e); alert("Error al guardar: " + (e && e.message ? e.message : e)); }
